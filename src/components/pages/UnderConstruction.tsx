@@ -1,5 +1,5 @@
 import "./UnderConstruction.css"
-import { ColorProvider } from "../client/ColorProvider"
+import { ColorProvider } from "../client/colorProvider/ColorProvider"
 import Logo from "@/components/client/Logo"
 export default function UnderConstruction(){
   return(

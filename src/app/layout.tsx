@@ -28,11 +28,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${lemonMilk.variable} antialiased`}>
+        <NavBar />
         <MouseProvider>
-          <NavBar />
-          {children}
-        </MouseProvider>
+        {children}
+          </MouseProvider>
+   
       </body>
+   
     </html>
   );
 }

@@ -1,3 +1,4 @@
+"use client"
 import Logo from "./Logo";
 import Link from "next/link";
 import "./NavBar.css";
