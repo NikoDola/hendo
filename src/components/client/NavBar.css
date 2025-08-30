@@ -1,0 +1,19 @@
+.navBarWrapper{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  padding-left: 10%;
+  padding-right: 10%;
+  ul {
+    display: flex;
+    gap: 3rem;
+    *{
+      color: white;
+      text-decoration: none;
+    }
+  }
+}
+
+
+

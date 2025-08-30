@@ -1,0 +1,57 @@
+.underWrapper{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10rem;
+}
+
+.underConstructionText{
+  border-radius: 2rem;
+  text-align: center;
+  font-size: var(--text-5xl);
+  font-family: var(--lemonmilk);
+  background-color: yellow;
+  color: black;
+  padding: 1rem;
+  margin-top: 1rem;
+    background: var(--theme-color);
+  transition: background-color 1s ease, box-shadow 1s ease;
+  box-shadow: 0 0 20px var(--theme-color);
+}
+.newsletterWrapper {
+  display: flex;          /* put input + button side by side */
+  justify-content: center;
+  gap: 0;                 /* no gap between */
+  width: 40%;
+  margin-top: 3rem;
+
+  padding: 1rem;
+}
+
+.inputNewsletter {
+  flex: 0 0 80%;          /* lock to 80% width */
+  padding: 1rem;
+  border-radius: 20px 0px 0 20px;
+}
+
+.subscribe {
+  flex: 0 0 20%;          /* lock to 20% width */
+  padding: 1rem;
+  border-radius: 0 20px 20px 0;
+  cursor: pointer;
+  background-color: yellow;
+  border: none;
+}
+
+.subscribe:hover{
+  background-color: orange;
+}
+
+.subscribe {
+
+ 
+  /* here is the magic */
+  background: var(--theme-color);
+  transition: background-color 1s ease, box-shadow 1s ease;
+  box-shadow: 0 0 20px var(--theme-color);
+}

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 60">
+  <!-- Bold D with inner counter using evenodd to punch the hole -->
+  <path fill="black" fill-rule="evenodd" clip-rule="evenodd"
+        d="M0,0 H22
+           A18,30 0 0 1 22,60
+           H0 Z
+           M10,10 H22
+           A8,20 0 0 1 22,50
+           H10 Z"/>
+</svg>

@@ -1,0 +1,22 @@
+.logoWrapper { 
+  font-family: var(--font-lemonmilk); 
+}
+
+.letter {
+  display: inline-block;
+  transition: transform .3s, color .3s;
+  will-change: transform;
+  font-size: var(--text-5xl);
+  color: white; 
+  cursor: pointer;
+}
+
+/* Hover colors per position */
+.logoWrapper .letter:nth-child(1):hover { color: hsl(317 100% 54%); } /* neon pink */
+.logoWrapper .letter:nth-child(2):hover { color: hsl(190 100% 50%); } /* neon cyan (dot) */
+.logoWrapper .letter:nth-child(3):hover { color: hsl(120 100% 45%); } /* neon green */
+.logoWrapper .letter:nth-child(4):hover { color: hsl(50 100% 50%); }  /* neon yellow */
+.logoWrapper .letter:nth-child(5):hover { color: hsl(280 100% 60%); } /* neon purple */
+.logoWrapper .letter:nth-child(6):hover { color: hsl(0 100% 60%); }   /* neon red */
+.logoWrapper .letter:nth-child(7):hover { color: hsl(30 100% 55%); }  /* neon orange */
+

@@ -1,0 +1,7 @@
+<!-- /public/logo2/logo_N.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 60">
+  <!-- Scale your original 10.3×13.3 path to 40×60 -->
+  <g transform="scale(3.8834951456, 4.5112781955)">
+    <path d="M10.3,0.2v13.1h-0.1L2.6,5.9v7.2H0V0h0.1l7.6,7.4V0.2H10.3z" fill="black"/>
+  </g>
+</svg>
