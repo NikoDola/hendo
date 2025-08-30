@@ -1,10 +1,11 @@
 import "./globals.css"
+import ColorBackground from "@/components/client/ColorBackground"
 
 export default function Home() {
   
   return (
-      <main>
-        <div>hello</div>
+      <main className="w-full">
+        < ColorBackground children={<div>ee</div>}/>
       </main>
       
   );
