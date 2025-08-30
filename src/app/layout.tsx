@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "./globals.css";
+// import "./globals.css";
 import localFont from "next/font/local";
 import { MouseProvider } from "@/context/context";
 import NavBar from "@/components/client/NavBar"
@@ -28,8 +28,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${lemonMilk.variable} antialiased`}>
-        <NavBar />
+    
         <MouseProvider>
+              <NavBar />
         {children}
           </MouseProvider>
    
