@@ -24,8 +24,17 @@
   gap: 0;                 /* no gap between */
   width: 40%;
   margin-top: 3rem;
-
   padding: 1rem;
+}
+
+.inputNewsletter:focus{
+  outline: var(--theme-color);
+  border: none;
+  transition: background-color 0.5s ease, box-shadow 1s ease;
+  box-shadow: 0 0 20px var(--theme-color);
+}
+.inputNewsletter::placeholder{
+  color: gray;
 }
 
 .inputNewsletter {
@@ -41,17 +50,35 @@
   cursor: pointer;
   background-color: yellow;
   border: none;
+  font-family: var(--lemonmilk);
+    background: var(--theme-color);
+  transition: background-color 0.3s ease, box-shadow 1s ease;
+  box-shadow: 0 0 20px var(--theme-color);
 }
 
 .subscribe:hover{
-  background-color: orange;
+  background-color: lightgray;
+  color: black;
 }
 
-.subscribe {
 
- 
-  /* here is the magic */
-  background: var(--theme-color);
+
+.subscribeDescription {
+  font-family: roboto;
+  margin-top: 2rem;
+  max-width: 600px;
+  font-weight: 200;
+  text-align: center;
+  text-transform: none;
+  font-size: 22px;  
+}
+
+.subscribeDescription::selection{
+    margin-top: 1rem;
+    background: var(--theme-color);
   transition: background-color 1s ease, box-shadow 1s ease;
   box-shadow: 0 0 20px var(--theme-color);
+  color: black;
 }
+
+

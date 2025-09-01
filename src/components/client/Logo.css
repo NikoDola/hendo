@@ -1,5 +1,6 @@
 .logoWrapper { 
-  font-family: var(--font-lemonmilk); 
+  font-family: var(--font-lemonmilk);
+  letter-spacing: 0.3rem;
 }
 
 .letter {

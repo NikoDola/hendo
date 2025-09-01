@@ -12,7 +12,6 @@ const colors = [
   "hsl(30 100% 55%)"   // neon orange
 ];
 
-
 export function ColorProvider({ children }: { children: React.ReactNode }) {
   const [i, setI] = useState(0);
   const palRef = useRef(colors);
@@ -20,14 +19,21 @@ export function ColorProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const id = setInterval(() => {
       setI((prev) => (prev + 1) % palRef.current.length);
-    }, 3000); // change every 1s
+    }, 3000); // change every 3s
     return () => clearInterval(id);
   }, []);
 
   const color = palRef.current[i];
 
   return (
-    <div style={{ "--theme-color": color } as React.CSSProperties}>
+    <div
+      style={
+        {
+          "--theme-color": color,
+          transition: "var(--theme-color) 1s ease"
+        } as React.CSSProperties
+      }
+    >
       {children}
     </div>
   );

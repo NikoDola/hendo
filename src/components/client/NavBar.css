@@ -1,19 +1,326 @@
-.navBarWrapper{
+.navWrapper {
+  width: 100%;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding-top: 1rem;
-  padding-left: 10%;
-  padding-right: 10%;
-  ul {
-    display: flex;
-    gap: 3rem;
-    *{
-      color: white;
-      text-decoration: none;
-    }
-  }
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--white-color);
+  padding: 2rem 10%;
+  z-index: 100;
+  transition: all 0.3s ease;
+
 }
 
 
 
+
+.links {
+  display: flex;
+  gap: 2rem;
+  align-items: end;
+}
+
+.navLinksWrapper {
+  display: flex;
+  gap: 2rem;
+
+}
+
+.navLink {
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  /* Ensure proper width */
+  padding: 0.5rem 1rem;
+  /* Adjust padding as needed */
+  text-decoration: none;
+  line-height: 1.1;
+  font-size: 1.1rem;
+}
+
+.navLink::before {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 0%;
+  background-color: var(--brand-color);
+  top: 2.1rem;
+  /* Align to the bottom of the link */
+  left: 0;
+  /* Ensure alignment */
+
+}
+
+.navLink:hover {
+  color: red;
+}
+
+
+
+.navLink:hover::before {
+  width: 100%;
+  height: 2px;
+}
+
+.icon {
+  color: var(--text-color);
+  width: 25px;
+  height: 25px;
+  float: right;
+  cursor: pointer;
+}
+
+.icon:hover {
+  color: var(--brand-color);
+}
+
+.profile_loginWrapper {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.userWrapper {
+  position: relative;
+  display: flex;
+  gap: 1rem;
+  justify-content: end;
+  align-items: center;
+  display: none;
+
+}
+
+
+
+.burger {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+
+  position: relative;
+
+  .top {
+    width: 50%;
+    height: 5px;
+    background-color: var(--brand-color);
+    transition: 0.3s ease;
+    border-radius: 1rem;
+  }
+
+  .middle {
+    position: absolute;
+    width: 100%;
+    height: 5px;
+    background-color: var(--brand-color);
+    top: 50%;
+    transform: translateY(-50%);
+    transition: 0.3s ease;
+    border-radius: 1rem;
+  }
+
+  .bottom {
+    position: absolute;
+    width: 50%;
+    height: 5px;
+    background-color: var(--brand-color);
+    bottom: 0;
+    right: 0;
+    transition: 0.3s ease;
+    border-radius: 1rem;
+  }
+
+  .topActive {
+    position: absolute;
+    top: 0;
+    width: 60%;
+    height: 5px;
+    background-color: var(--brand-color);
+    transform: rotate(45deg) translate(22%, 140%);
+    transition: 0.3s ease;
+    border-radius: 1rem;
+  }
+
+  .middleActive {
+    position: absolute;
+    width: 100%;
+    height: 5px;
+    background-color: var(--brand-color);
+    top: 50%;
+    transform: rotate(-45deg) translateY(-50%);
+    transition: 0.3s ease;
+    width: 110%;
+    left: -9%;
+    border-radius: 1rem;
+  }
+
+  .bottomActive {
+    position: absolute;
+    width: 60%;
+    height: 5px;
+    background-color: var(--brand-color);
+    right: 5%;
+    bottom: 5%;
+    transform: rotate(45deg) translate(-25.5%, -50%);
+    transition: 0.3s ease;
+    border-radius: 1rem;
+
+  }
+}
+
+
+@media screen and (max-width: 1000px) {
+  .navWrapper {
+    align-items: start;
+    padding: 2rem;
+  }
+
+  .navLinksWrapper {
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+    text-align: right;
+    width: 100%;
+  }
+
+  .links {
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    margin-right: 0;
+    display: flex;
+    gap: 0;
+  }
+
+  .navLink {
+    margin-top: 1rem;
+    font-size: 2rem;
+    text-align: right;
+    padding-right: 0;
+  }
+
+  .logo {
+    width: 60px;
+  }
+
+  .burger {
+    cursor: pointer;
+  }
+
+  .profilePopup {
+    z-index: 10;
+    border: 1px solid var(--tan-dark-color);
+    right: 0;
+  }
+
+  .navLink:hover::before {
+    width: 100%;
+    height: 3px;
+  }
+
+  .navLink:hover {
+    color: red;
+  }
+
+  .navLink::before {
+    top: 2.8rem;
+  }
+
+  .nav-dropdown-content {
+    position: static !important;
+    background-color: transparent;
+    box-shadow: none !important;
+    padding: 0;
+    text-align: right;
+    align-items: flex-end;
+    width: 100%;
+    
+        
+  }
+
+  .nav-dropdown-item {
+    padding: 1.25rem 0;
+    white-space: nowrap;
+    background: none;
+    text-align: right;
+    width: 100%;
+    display: block;
+    font-size: 1rem;
+  }
+
+  .nav-dropdown-button {
+    width: 100%;
+    text-align: right;
+    justify-content: flex-end;
+  }
+
+  .nav-dropdown-button::before {
+    left: auto;
+    right: 0;
+  }
+}
+
+.nav-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.nav-dropdown-button {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dropdown-arrow {
+  font-size: 0.8rem;
+  transition: transform 0.3s ease;
+}
+
+.dropdown-arrow.open {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown-content {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  min-width: 200px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  margin-top: 0.5rem;
+  z-index: 1000;
+  animation: slideDown 0.3s ease;
+}
+
+.nav-dropdown-item {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: #333;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  
+}
+
+.nav-dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
