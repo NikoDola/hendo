@@ -1,326 +1,184 @@
-.navWrapper {
-  width: 100%;
+/* Desktop */
+.headerWrapperDesktop {
+  padding: 3% 10% 3% 10%;
+  position: relative;
+}
+
+.navWrapperDesktop {
   display: flex;
   justify-content: space-between;
-
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background-color: var(--white-color);
-  padding: 2rem 10%;
-  z-index: 100;
-  transition: all 0.3s ease;
-
 }
 
-
-
-
-.links {
+.linksWrapperDesktop {
   display: flex;
-  gap: 2rem;
-  align-items: end;
+  gap: 3rem;
+  align-items: center;
 }
 
-.navLinksWrapper {
-  display: flex;
-  gap: 2rem;
-
+.logoDesktop {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
-.navLink {
-  cursor: pointer;
+.linkDesktop {
   position: relative;
-  display: inline-block;
-  /* Ensure proper width */
-  padding: 0.5rem 1rem;
-  /* Adjust padding as needed */
+  color: gainsboro;
   text-decoration: none;
-  line-height: 1.1;
-  font-size: 1.1rem;
+  transition: color 1s;
+  font-size: 1rem;
 }
 
-.navLink::before {
+.linkDesktop:hover {
+  color: var(--theme-color);
+}
+
+.linkDesktop:before {
   content: "";
-  display: block;
   position: absolute;
+  display: block;
+  top: 120%;
+  height: 5px;
   width: 0%;
-  background-color: var(--brand-color);
-  top: 2.1rem;
-  /* Align to the bottom of the link */
-  left: 0;
-  /* Ensure alignment */
-
+  background: var(--theme-color);
+  transition: background-color 1s ease, box-shadow 1s ease, width 1s;
+  box-shadow: 0 0 20px var(--theme-color);
 }
 
-.navLink:hover {
-  color: red;
-}
-
-
-
-.navLink:hover::before {
+.linkDesktop:hover::before {
   width: 100%;
-  height: 2px;
 }
 
-.icon {
-  color: var(--text-color);
-  width: 25px;
-  height: 25px;
-  float: right;
-  cursor: pointer;
-}
-
-.icon:hover {
-  color: var(--brand-color);
-}
-
-.profile_loginWrapper {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.userWrapper {
-  position: relative;
-  display: flex;
-  gap: 1rem;
-  justify-content: end;
-  align-items: center;
-  display: none;
-
-}
-
-
-
-.burger {
-  position: absolute;
-  width: 30px;
-  height: 30px;
-
-  position: relative;
-
-  .top {
-    width: 50%;
-    height: 5px;
-    background-color: var(--brand-color);
-    transition: 0.3s ease;
-    border-radius: 1rem;
-  }
-
-  .middle {
-    position: absolute;
-    width: 100%;
-    height: 5px;
-    background-color: var(--brand-color);
-    top: 50%;
-    transform: translateY(-50%);
-    transition: 0.3s ease;
-    border-radius: 1rem;
-  }
-
-  .bottom {
-    position: absolute;
-    width: 50%;
-    height: 5px;
-    background-color: var(--brand-color);
-    bottom: 0;
-    right: 0;
-    transition: 0.3s ease;
-    border-radius: 1rem;
-  }
-
-  .topActive {
-    position: absolute;
-    top: 0;
-    width: 60%;
-    height: 5px;
-    background-color: var(--brand-color);
-    transform: rotate(45deg) translate(22%, 140%);
-    transition: 0.3s ease;
-    border-radius: 1rem;
-  }
-
-  .middleActive {
-    position: absolute;
-    width: 100%;
-    height: 5px;
-    background-color: var(--brand-color);
-    top: 50%;
-    transform: rotate(-45deg) translateY(-50%);
-    transition: 0.3s ease;
-    width: 110%;
-    left: -9%;
-    border-radius: 1rem;
-  }
-
-  .bottomActive {
-    position: absolute;
-    width: 60%;
-    height: 5px;
-    background-color: var(--brand-color);
-    right: 5%;
-    bottom: 5%;
-    transform: rotate(45deg) translate(-25.5%, -50%);
-    transition: 0.3s ease;
-    border-radius: 1rem;
-
+@media (min-width: 1200px) {
+  .headerWrapperMobile {
+    display: none;
   }
 }
 
-
-@media screen and (max-width: 1000px) {
-  .navWrapper {
-    align-items: start;
-    padding: 2rem;
+/* Mobile */
+@media (max-width: 1200px) {
+  .headerWrapperDesktop {
+    display: none;
   }
-
-  .navLinksWrapper {
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: flex-end;
-    text-align: right;
-    width: 100%;
-  }
-
-  .links {
-    flex-direction: column-reverse;
-    align-items: flex-end;
-    margin-right: 0;
-    display: flex;
-    gap: 0;
-  }
-
-  .navLink {
-    margin-top: 1rem;
-    font-size: 2rem;
-    text-align: right;
-    padding-right: 0;
-  }
-
-  .logo {
-    width: 60px;
-  }
-
-  .burger {
-    cursor: pointer;
-  }
-
-  .profilePopup {
-    z-index: 10;
-    border: 1px solid var(--tan-dark-color);
-    right: 0;
-  }
-
-  .navLink:hover::before {
-    width: 100%;
-    height: 3px;
-  }
-
-  .navLink:hover {
-    color: red;
-  }
-
-  .navLink::before {
-    top: 2.8rem;
-  }
-
-  .nav-dropdown-content {
-    position: static !important;
-    background-color: transparent;
-    box-shadow: none !important;
-    padding: 0;
-    text-align: right;
-    align-items: flex-end;
-    width: 100%;
-    
-        
-  }
-
-  .nav-dropdown-item {
-    padding: 1.25rem 0;
-    white-space: nowrap;
-    background: none;
-    text-align: right;
-    width: 100%;
-    display: block;
-    font-size: 1rem;
-  }
-
-  .nav-dropdown-button {
-    width: 100%;
-    text-align: right;
-    justify-content: flex-end;
-  }
-
-  .nav-dropdown-button::before {
-    left: auto;
-    right: 0;
-  }
-}
-
-.nav-dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.nav-dropdown-button {
-  background: none;
-  border: none;
-  color: inherit;
-  font-size: inherit;
-  cursor: pointer;
-  padding: 0.5rem 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.dropdown-arrow {
-  font-size: 0.8rem;
-  transition: transform 0.3s ease;
-}
-
-.dropdown-arrow.open {
-  transform: rotate(180deg);
-}
-
-.nav-dropdown-content {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: white;
-  min-width: 200px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-  margin-top: 0.5rem;
-  z-index: 1000;
-  animation: slideDown 0.3s ease;
-}
-
-.nav-dropdown-item {
-  display: block;
-  padding: 0.75rem 1rem;
-  color: #333;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
   
-}
-
-.nav-dropdown-item:hover {
-  background-color: #f5f5f5;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
+  .headerWrapperMobile {
+    position: relative;
+    padding: 1rem;
   }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  
+  .navWrapperMobile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  
+  /* Burger Button Styles */
+  .burgerButton {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 10;
+  }
+  
+  .burgerLine {
+    width: 30px;
+    height: 3px;
+    background: gainsboro;
+    border-radius: 10px;
+    transition: all 0.3s linear;
+    position: relative;
+    transform-origin: center;
+  }
+  
+  /* Burger Animation when Open */
+  .burgerButton.open .burgerLine:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 8px);
+  }
+  
+  .burgerButton.open .burgerLine:nth-child(2) {
+    opacity: 0;
+  }
+  
+  .burgerButton.open .burgerLine:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -8px);
+  }
+  
+  /* Mobile Menu Overlay */
+  .mobileNavOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 5;
+  }
+  
+  .mobileNavOverlay.open {
+    transform: translateX(0);
+  }
+  
+  .mobileNavContent {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .linksWrapperMobile {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    text-align: center;
+    list-style: none;
+    padding: 0;
+  }
+  
+  .linkMobile {
+    position: relative;
+    color: gainsboro;
+    text-decoration: none;
+    transition: color 1s;
+    font-size: 1.5rem;
+    padding: 0.5rem 0;
+  }
+  
+  .linkMobile:hover {
+    color: var(--theme-color);
+  }
+  
+  .linkMobile:before {
+    content: "";
+    position: absolute;
+    top: 120%;
+    height: 5px;
+    width: 0%;
+    background: var(--theme-color);
+    transition: background-color 1s ease, box-shadow 1s ease, width 1s;
+    box-shadow: 0 0 20px var(--theme-color);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .linkMobile:hover::before {
+    width: 100%;
+  }
+  
+  .logoMobile {
+    z-index: 10;
   }
 }

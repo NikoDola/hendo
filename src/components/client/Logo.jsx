@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react"
 import "./Logo.css"
 
-export default function Logo() {
+export default function Logo({size = "30px"}) {
   const wrapperRef = useRef(null)
 
   useEffect(() => {
@@ -44,13 +44,13 @@ export default function Logo() {
 
   return (
     <div ref={wrapperRef} className="logoWrapper">
-      <span className="letter">T</span>
-      <span className="letter">.</span>
-      <span className="letter">H</span>
-      <span className="letter">E</span>
-      <span className="letter">N</span>
-      <span className="letter">D</span>
-      <span className="letter">O</span>
+      <span style={{fontSize: size}} className="letter">T</span>
+      <span style={{fontSize: size}} className="letter">.</span>
+      <span style={{fontSize: size}} className="letter">H</span>
+      <span style={{fontSize: size}} className="letter">E</span>
+      <span style={{fontSize: size}} className="letter">N</span>
+      <span style={{fontSize: size}} className="letter">D</span>
+      <span style={{fontSize: size}} className="letter">O</span>
     </div>
   )
 }
