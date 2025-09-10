@@ -6,8 +6,9 @@
   background-size: 120%;   /* a bit zoomed-in so we can move it */
   background-position: -200% 0%;
   margin: 0;
+  
   animation: driveBy 1s ease forwards;
-  animation-delay: 1s;
+
 }
 
 @keyframes driveBy {

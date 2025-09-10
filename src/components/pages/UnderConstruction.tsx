@@ -1,7 +1,7 @@
 "use client";
 import "./UnderConstruction.css";
 import { ColorProvider } from "../client/colorProvider/ColorProvider";
-import Logo from "@/components/client/Logo";
+
 import { newsletter } from "@/lib/actions";
 import { useState, useEffect } from "react";
 
@@ -82,7 +82,6 @@ export default function UnderConstruction() {
   return (
     <ColorProvider>
       <section className="section-regular underWrapper">
-        <Logo />
         <span className="underConstructionText">UNDER CONSTRUCTION </span>
         <p className="subscribeDescription">
           Subscribe so you&apos;ll be the first to hear my new music, see what
