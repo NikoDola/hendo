@@ -1,14 +1,25 @@
+import Image from "next/image";
 import "@/components/pages/about.css";
+
 export default function About() {
   return (
     <section className="section-full aboutSection">
-      
+      {/* Moving background as a real element */}
+      <div className="aboutBg">
+        <Image
+          src="/images/test2.png"
+          alt="bg"
+          fill
+          priority
+          sizes="100vw"
+          className="aboutBgImg"
+        />
+      </div>
+
       <div className="aboutTextWrapper">
-        <h1 className="aboutHeadline">
-          Waves <br/> Beyond  5D
-        </h1>
+        <h1 className="aboutHeadline">Waves <br/> Beyond 5D</h1>
         <p className="aboutBodyText">
-          My beats are more than sound—they’re portals. Born from the limitless
+          My beats are more than sound—they&apos;re portals. Born from the limitless
           depths of the subconscious and the expansive 5D realm, they channel
           otherworldly inspiration into living, breathing soundscapes. Each
           rhythm weaves raw imagination with untamed creativity, shattering
@@ -18,11 +29,6 @@ export default function About() {
           ordinary into the extraordinary.
         </p>
       </div>
-        <div className="imageWrapper">
-          <div className="imageBackground"></div>
-    
-      </div>
-  
     </section>
   );
 }

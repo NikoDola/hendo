@@ -1,25 +1,38 @@
 .aboutSection {
+  position: relative;
   display: flex;
-  background-image: url("/images/test2.png");
-  background-repeat: no-repeat;
   height: 100vh;
-  background-size: 120%;   /* a bit zoomed-in so we can move it */
-  background-position: -200% 0%;
-  margin: 0;
-  animation: driveBy 1s ease forwards;
+  overflow: hidden;
+}
+
+/* BG as element so we can animate transform */
+.aboutBg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.aboutBgImg {
+  object-fit: cover;
+  transform: translateX(-200%) translateY(-10% ) scale(1.2);
+  animation: driveBy 1200ms ease forwards;
+  will-change: transform;
 }
 
 @keyframes driveBy {
   0% {
-    background-position: -200% -100%;
+    transform: translateX(-200%) translateY(-10%) scale(1.2);
   }
   100% {
-    background-position: center 10%;
+    transform: translateX(0%) translateY(-10%) scale(1.2);
   }
 }
 
-
+/* Content */
 .aboutTextWrapper{
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   flex: 1 1 0;
@@ -28,49 +41,43 @@
   margin-top: 7%;
 }
 
-
-
 .aboutHeadline {
   font-size: 5em;
-  white-space: normal; 
-  text-shadow: 0px 0px 1rem rgb(0, 0, 0, 0.5); /* 👈 proper syntax */
+  white-space: normal;
+  text-shadow: 0 0 1rem rgba(0,0,0,0.5);
   line-height: 1.2em;
   width: 50%;
 }
+
 .aboutBodyText{
   width: 60%;
-  text-shadow: 0px 0px 2px black; /* 👈 proper syntax */
-  background-color: rgb(27, 27, 27, 0.6);
+  text-shadow: 0 0 2px black;
+  background-color: rgba(27,27,27,0.6);
   backdrop-filter: blur(5px);
   padding: 1rem;
- 
   border-radius: 20px;
 }
 
-/* Image */
-
-
+/* Mobile */
 @media (max-width: 1000px) {
-  .aboutSection{
-    margin-top: 2rem;
+  .aboutSection { margin-top: 2rem; }
+
+  /* No nesting in plain CSS */
+  .aboutHeadline { font-size: 4em; }
+  .aboutBodyText { width: 100%; }
+
+  .aboutBgImg {
+    transform: translateX(-200%) translateY(0%) scale(1.2);
+    animation-name: driveByMobile;
   }
-  .aboutTextWrapper{
-    margin: 5%;
-    margin-top: 12%;
-    .aboutHeadline{
-      font-size: 4em;
-    }
-    .aboutBodyText{
-      width: 100%;
-    }
-  }
-  @keyframes driveBy {
-  0% {
-    background-position: -200% 0%;
-  }
-  100% {
-    background-position: center 0%;
+
+  @keyframes driveByMobile {
+    0% { transform: translateX(-200%) translateY(0%) scale(1.2); }
+    100% { transform: translateX(0%) translateY(0%) scale(1.2); }
   }
 }
 
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .aboutBgImg { animation: none; transform: translateX(0) scale(1.2); }
 }
