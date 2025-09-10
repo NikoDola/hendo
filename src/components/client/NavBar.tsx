@@ -1,27 +1,16 @@
 "use client";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./NavBar.css";
 import Logo from "./Logo";
 import { ColorProvider } from "./ColorProvider";
 
 export default function NavMenu() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+
 
   // Check if we're on mobile to conditionally render
-  useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth <= 1200);
-    };
-    
-    checkIfMobile();
-    window.addEventListener('resize', checkIfMobile);
-    
-    return () => {
-      window.removeEventListener('resize', checkIfMobile);
-    };
-  }, []);
+
 
   // Close menu when clicking on a link
   const handleLinkClick = () => {
@@ -42,7 +31,7 @@ export default function NavMenu() {
             <Link className="linkDesktop" href="/" onClick={handleLinkClick}>
               Home
             </Link>
-            <Link className="linkDesktop" href="/About" onClick={handleLinkClick}>
+            <Link className="linkDesktop" href="/about" onClick={handleLinkClick}>
               About
             </Link>
             <Link className="linkDesktop" href="/Contact" onClick={handleLinkClick}>

@@ -164,7 +164,7 @@
   .linkMobile:before {
     content: "";
     position: absolute;
-    top: 120%;
+    top: 95%;
     height: 5px;
     width: 0%;
     background: var(--theme-color);

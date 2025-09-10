@@ -22,7 +22,7 @@ function ColorSliderInner({
   className = ""
 }: ColorSliderProps) {
   const [value, setValue] = useState(defaultValue);
-  const [isDragging, setIsDragging] = useState(false);
+  // const [isDragging, setIsDragging] = useState(false);
   const [currentColor, setCurrentColor] = useState("hsl(317 100% 54%)");
 
   // Listen for color changes from the ColorProvider
@@ -50,8 +50,8 @@ function ColorSliderInner({
     onChange?.(newValue);
   };
 
-  const handleMouseDown = () => setIsDragging(true);
-  const handleMouseUp = () => setIsDragging(false);
+  // const handleMouseDown = () => setIsDragging(true);
+  // const handleMouseUp = () => setIsDragging(false);
 
   // Calculate the percentage for the fill
   const percentage = ((value - min) / (max - min)) * 100;
@@ -66,10 +66,10 @@ function ColorSliderInner({
           step={step}
           value={value}
           onChange={handleChange}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
-          onTouchStart={handleMouseDown}
-          onTouchEnd={handleMouseUp}
+          // onMouseDown={handleMouseDown}
+          // onMouseUp={handleMouseUp}
+          // onTouchStart={handleMouseDown}
+          // onTouchEnd={handleMouseUp}
           className="color-slider"
           style={{
             '--slider-fill': `${percentage}%`,

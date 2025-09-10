@@ -44,7 +44,7 @@ a{
 }
 h1{
   font-size: var(--text-7xl);
-  font-family: 'Oswald', sans-serif;
+  font-family: var(--font-lemonmilk);
   font-weight: 200;
   letter-spacing: var(--space-2);
   line-height: var(--text-7xl);
@@ -74,6 +74,9 @@ h4{
 
 p, li{
   font-size: var(--text-lg);
+  font-family: 'Roboto';
+  font-weight: 200;
+  line-height: 1.5rem;
 }
 p::selection{
   background-color: red;
@@ -136,7 +139,7 @@ input::placeholder{
   
 }
 .section-regular, .heroSection{
-  width: 60%;
+  width: 80%;
   margin: 0 auto;
   margin-top: var(--space-10);
   margin-bottom: var(--space-25);

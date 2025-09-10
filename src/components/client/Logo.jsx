@@ -23,7 +23,7 @@ export default function Logo({size = "30px"}) {
     const handlers = letters.map((el, i) => {
       const enter = () => { 
         el.style.color = colors[i] 
-        el.style.transform = "translateY(-300%)"
+        el.style.transform = "translateY(-30%)"
       }
       const leave = () => { 
         el.style.color = "white" 
