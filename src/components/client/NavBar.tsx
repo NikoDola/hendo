@@ -7,7 +7,7 @@ import { ColorProvider } from "./ColorProvider";
 
 export default function NavMenu() {
   const [isOpen, setIsOpen] = useState(false);
-
+ 
 
   // Check if we're on mobile to conditionally render
 

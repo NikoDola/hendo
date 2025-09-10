@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import { MouseProvider } from "@/context/context";
 import NavBar from "@/components/client/NavBar"
 
+
 const lemonMilk = localFont({
   src: [
     { path: "../../public/fonts/LEMONMILK-Light.woff2",        weight: "300", style: "normal" },

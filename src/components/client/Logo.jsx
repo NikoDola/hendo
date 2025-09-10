@@ -12,12 +12,12 @@ export default function Logo({size = "30px"}) {
     const letters = Array.from(wrap.querySelectorAll(".letter"))
     const colors = [
   "hsl(317 100% 54%)",
-  "hsl(190 100% 50%)",
+  "hsl(30 100% 55%) ",
   "hsl(120 100% 45%)", 
   "hsl(50 100% 50%)", 
   "hsl(280 100% 60%)", 
   "hsl(0 100% 60%)",   
-  "hsl(30 100% 55%)" 
+  "hsl(190 100% 50%)" 
 ];
 
     const handlers = letters.map((el, i) => {
