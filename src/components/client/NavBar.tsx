@@ -83,7 +83,7 @@ export default function NavMenu() {
                   </Link>
                 </li>
                 <li>
-                  <Link className="linkMobile" href="/About" onClick={handleLinkClick}>
+                  <Link className="linkMobile" href="/about" onClick={handleLinkClick}>
                     About
                   </Link>
                 </li>
