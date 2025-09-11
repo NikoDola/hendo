@@ -33,18 +33,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <div style={{ width: '100%', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 0, pointerEvents: 'auto' }}>
           <LiquidChrome
-            baseColor={[0.1, 0.1, 0.1]}
-            speed={1}
-            amplitude={0.5}
+            baseColor={[0.1, 0.1, 0.2]}
+            speed={0.5}
+            amplitude={0.2}
             interactive={true}
           />
         </div>
         <div style={{ position: 'relative', zIndex: 1, pointerEvents: 'none' }}>
           <MouseProvider>
-            <div style={{ pointerEvents: 'none' }}>
+            <div style={{ pointerEvents: 'auto' }}>
               <NavBar />
             </div>
-            <div style={{ pointerEvents: 'none' }}>
+            <div style={{ pointerEvents: 'auto' }}>
               {children}
             </div>
           </MouseProvider>

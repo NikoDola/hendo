@@ -115,13 +115,15 @@ export const LiquidChrome: React.FC<LiquidChromeProps> = ({
     window.addEventListener('resize', resize);
     resize();
 
+    let targetMouseX = 0.5;
+    let targetMouseY = 0.5;
+    let currentMouseX = 0.5;
+    let currentMouseY = 0.5;
+
     function handleMouseMove(event: MouseEvent) {
       const rect = container.getBoundingClientRect();
-      const x = (event.clientX - rect.left) / rect.width;
-      const y = 1 - (event.clientY - rect.top) / rect.height;
-      const mouseUniform = program.uniforms.uMouse.value as Float32Array;
-      mouseUniform[0] = x;
-      mouseUniform[1] = y;
+      targetMouseX = (event.clientX - rect.left) / rect.width;
+      targetMouseY = 1 - (event.clientY - rect.top) / rect.height;
     }
 
     function handleTouchMove(event: TouchEvent) {
@@ -145,6 +147,16 @@ export const LiquidChrome: React.FC<LiquidChromeProps> = ({
     function update(t: number) {
       animationId = requestAnimationFrame(update);
       program.uniforms.uTime.value = t * 0.001 * speed;
+
+      // Smooth interpolation for mouse position
+      const lerpFactor = 0.1; // Adjust this value (0.1 = smooth, 1.0 = instant)
+      currentMouseX += (targetMouseX - currentMouseX) * lerpFactor;
+      currentMouseY += (targetMouseY - currentMouseY) * lerpFactor;
+
+      const mouseUniform = program.uniforms.uMouse.value as Float32Array;
+      mouseUniform[0] = currentMouseX;
+      mouseUniform[1] = currentMouseY;
+
       renderer.render({ scene: mesh });
     }
     animationId = requestAnimationFrame(update);
