@@ -41,10 +41,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </div>
         <div style={{ position: 'relative', zIndex: 1, pointerEvents: 'none' }}>
           <MouseProvider>
-            <div style={{ pointerEvents: 'auto' }}>
+            <div style={{ pointerEvents: 'none' }}>
               <NavBar />
             </div>
-            <div style={{ pointerEvents: 'auto' }}>
+            <div style={{ pointerEvents: 'none' }}>
               {children}
             </div>
           </MouseProvider>
