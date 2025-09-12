@@ -4,8 +4,9 @@ import Logo from "../client/Logo";
 import "./UnderConstruction.css";
 import { ColorProvider } from "../client/colorProvider/ColorProvider";
 
-import { newsletter } from "@/lib/actions";
 import { useState, useEffect } from "react";
+import { auth } from "@/lib/firebase";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 
 declare global {
   interface Window {
@@ -19,12 +20,13 @@ declare global {
 }
 
 export default function UnderConstruction() {
-  const [email, setEmail] = useState<string>("");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [attempts, setAttempts] = useState<number>(0);
 
-  // Load reCAPTCHA script on mount
+  // Load reCAPTCHA script once
   useEffect(() => {
     if (!document.querySelector("#recaptcha-script")) {
       const script = document.createElement("script");
@@ -33,12 +35,13 @@ export default function UnderConstruction() {
       script.async = true;
       document.body.appendChild(script);
     }
+
+    // Load attempts from localStorage
+    const saved = localStorage.getItem("newsletter_attempts");
+    if (saved) setAttempts(Number(saved));
   }, []);
 
-  const validateEmail = (email: string) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
+  const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -55,27 +58,48 @@ export default function UnderConstruction() {
       return;
     }
 
+    if (attempts >= 5) {
+      setError("You have reached the maximum number of attempts. Try again later.");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      // 🔑 Get reCAPTCHA token (strongly typed)
-      const token = await window.grecaptcha.execute(
+      // 1️⃣ reCAPTCHA validation
+      await window.grecaptcha.execute(
         process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string,
         { action: "newsletter" }
       );
 
-      // Pass email + token to server action
-      const result = await newsletter(email, token);
+      // 2️⃣ Create user + send verification email
+      const password = Math.random().toString(36).slice(-10);
+      const userCred = await createUserWithEmailAndPassword(auth, email, password);
 
-      if (result?.error) {
-        setError(result.error);
-      } else {
-        setSuccess("You have been subscribed 🎉");
-        setEmail("");
+      try {
+        await sendEmailVerification(userCred.user, {
+          url: `${process.env.NEXT_PUBLIC_BASE_URL}/special/verify`,
+          handleCodeInApp: true,
+        });
+        console.log("✅ Verification email sent to:", email);
+        setSuccess("Check your email inbox/spam to verify your subscription 🎉");
+      } catch (err: unknown) {
+        console.error("❌ Verification email failed:", err);
+        const errorMessage = err instanceof Error ? err.message : "Unknown error";
+        const errorCode = (err as { code?: string }).code || "unknown";
+        setError(`Firebase error: ${errorCode} - ${errorMessage}`);
       }
-    } catch (err) {
-      console.error(err);
-      setError("Something went wrong. Try again later.");
+
+      setEmail("");
+
+      // Update attempts
+      const newAttempts = attempts + 1;
+      setAttempts(newAttempts);
+      localStorage.setItem("newsletter_attempts", String(newAttempts));
+    } catch (err: unknown) {
+      console.error("Newsletter signup error:", err);
+      const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+      setError(`Could not send verification email: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -85,7 +109,7 @@ export default function UnderConstruction() {
     <ColorProvider>
       <section className="section-regular underWrapper">
         <Logo />
-        <span className="underConstructionText">UNDER CONSTRUCTION </span>
+        <span className="underConstructionText">UNDER CONSTRUCTION</span>
         <p className="subscribeDescription">
           Subscribe so you&apos;ll be the first to hear my new music, see what
           I&apos;m creating behind the scenes, and catch exclusive drops from my
@@ -100,34 +124,33 @@ export default function UnderConstruction() {
             placeholder="Your Email"
             type="email"
           />
-          <button
-            onClick={handleSubmit}
-            className="subscribe"
-            disabled={loading}
-          >
+          <button onClick={handleSubmit} className="subscribe" disabled={loading}>
             {loading ? "Loading..." : "SUBSCRIBE"}
           </button>
         </div>
-        {error && <p className="errorMessage" >{error}</p>}
+        {error && <p className="errorMessage">{error}</p>}
         {success && <p style={{ color: "green" }}>{success}</p>}
-        <p  className="my-recaptcha-disclaimer ">
+        <p style={{ fontSize: "0.9rem", color: "#888" }}>
+          Attempts: {attempts}/3
+        </p>
+        <p className="my-recaptcha-disclaimer">
           This site is protected by reCAPTCHA and the Google
-          <br></br>
-          <a className="linkRecaptcha"
+          <br />
+          <a
+            className="linkRecaptcha"
             href="https://policies.google.com/privacy"
             target="_blank"
             rel="noopener noreferrer"
           >
-            {" "}
             Privacy Policy
           </a>
           and
-          <a className="linkRecaptcha"
+          <a
+            className="linkRecaptcha"
             href="https://policies.google.com/terms"
             target="_blank"
             rel="noopener noreferrer"
           >
-            {" "}
             Terms of Service
           </a>{" "}
           apply.

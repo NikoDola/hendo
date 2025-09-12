@@ -548,7 +548,7 @@ export default function LiquidEther({
         this.props = (props as Record<string, unknown>) || {};
         this.uniforms = (this.props.material as { uniforms?: Uniforms })?.uniforms;
       }
-      init(..._args: unknown[]) {
+      init(_simProps?: unknown) {
         this.scene = new THREE.Scene();
         this.camera = new THREE.Camera();
         if (this.uniforms) {
@@ -558,7 +558,7 @@ export default function LiquidEther({
           this.scene.add(this.plane);
         }
       }
-      update(..._args: unknown[]) {
+      update() {
         if (!Common.renderer || !this.scene || !this.camera) return;
         Common.renderer.setRenderTarget((this.props.output as THREE.WebGLRenderTarget) || null);
         Common.renderer.render(this.scene, this.camera);
