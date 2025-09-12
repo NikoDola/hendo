@@ -13,7 +13,7 @@
 }
 
 html, body {
-  background-color: var(--background);
+  background-color: var(--foreground);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -34,7 +34,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
- 
+  
 }
 img::selection{
   background-color: transparent;

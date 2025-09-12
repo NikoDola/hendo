@@ -1,14 +1,17 @@
-.underWrapper{
+.underWrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 10rem;
+  position: fixed; /* <--- instead of absolute */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .underConstructionText{
   border-radius: 2rem;
   text-align: center;
-  font-size: var(--text-5xl);
+  font-size: var(--text-3xl);
   font-family: var(--lemonmilk);
   background-color: yellow;
   color: black;
@@ -82,3 +85,20 @@
 }
 
 
+.my-recaptcha-disclaimer{
+  color: rgb(61, 61, 61);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.linkRecaptcha{
+  color: rgb(72, 72, 142);
+  text-decoration: none;
+}
+.errorMessage{
+  color: var(--neon-red);
+  font-weight: 400;
+}
+@media (max-width: 1000px){
+
+}

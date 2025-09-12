@@ -1,4 +1,6 @@
 "use client";
+
+import Logo from "../client/Logo";
 import "./UnderConstruction.css";
 import { ColorProvider } from "../client/colorProvider/ColorProvider";
 
@@ -82,6 +84,7 @@ export default function UnderConstruction() {
   return (
     <ColorProvider>
       <section className="section-regular underWrapper">
+        <Logo />
         <span className="underConstructionText">UNDER CONSTRUCTION </span>
         <p className="subscribeDescription">
           Subscribe so you&apos;ll be the first to hear my new music, see what
@@ -105,12 +108,12 @@ export default function UnderConstruction() {
             {loading ? "Loading..." : "SUBSCRIBE"}
           </button>
         </div>
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p className="errorMessage" >{error}</p>}
         {success && <p style={{ color: "green" }}>{success}</p>}
-        <p style={{fontSize: '11px'}} className="my-recaptcha-disclaimer ">
+        <p  className="my-recaptcha-disclaimer ">
           This site is protected by reCAPTCHA and the Google
           <br></br>
-          <a
+          <a className="linkRecaptcha"
             href="https://policies.google.com/privacy"
             target="_blank"
             rel="noopener noreferrer"
@@ -119,7 +122,7 @@ export default function UnderConstruction() {
             Privacy Policy
           </a>
           and
-          <a
+          <a className="linkRecaptcha"
             href="https://policies.google.com/terms"
             target="_blank"
             rel="noopener noreferrer"

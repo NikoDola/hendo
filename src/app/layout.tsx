@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "@/app/globals.css";
 import localFont from "next/font/local";
 import { MouseProvider } from "@/context/context";
-import NavBar from "@/components/client/NavBar";
+// import NavBar from "@/components/client/NavBar";
 import LiquidEther from "@/components/client/backgrounds/LiquidEther";
 // import LiquidChrome from "@/components/client/LiquidEther";
 
@@ -62,7 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div style={{ position: 'relative', zIndex: 1, pointerEvents: 'none' }}>
           <MouseProvider>
             <div style={{ pointerEvents: 'auto' }}>
-              <NavBar />
+              {/* <NavBar /> */}
             </div>
             <div style={{ pointerEvents: 'auto' }}>
               {children}

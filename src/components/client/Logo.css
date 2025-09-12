@@ -2,7 +2,6 @@
   font-family: var(--font-lemonmilk);
   letter-spacing: 0.3rem;
   margin: 0 auto;
-
 }
 
 .letter {
@@ -12,6 +11,11 @@
   font-size: var(--text-5xl);
   color: white; 
   cursor: pointer;
+}
+
+.letter::selection{
+  background-color: none;
+  background: none;
 }
 
 /* Hover colors per position */
