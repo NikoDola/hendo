@@ -12,8 +12,8 @@ export default function About() {
       img.src = hendoImage.src;
 
       img.onload = () => {
-        // Wait a tiny bit to ensure first render happens before animation starts
-        setTimeout(() => setLoaded(true), 50); // you can tweak 50ms if needed
+        // Wait a tiny bit to ensure first paint is done before showing
+        setTimeout(() => setLoaded(true), 50);
       };
     }
   }, []);
@@ -37,15 +37,18 @@ export default function About() {
       </div>
 
       <div className="imageWrapper">
-        <div
-          className={`imageBackground ${loaded ? "animate" : ""}`}
-          style={{
-            backgroundImage: `url(${hendoImage.src})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-          }}
-        ></div>
+        {/** ✅ Only render when loaded = true */}
+        {loaded && (
+          <div
+            className="imageBackground animate"
+            style={{
+              backgroundImage: `url(${hendoImage.src})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+            }}
+          ></div>
+        )}
       </div>
     </section>
   );
