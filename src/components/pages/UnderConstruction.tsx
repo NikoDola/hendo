@@ -129,7 +129,7 @@ export default function UnderConstruction() {
           </button>
         </div>
         {error && <p className="errorMessage">{error}</p>}
-        {success && <p style={{ color: "green" }}>{success}</p>}
+        {success && <p  style={{ color: "green" }}>{success}</p>}
         <p style={{ fontSize: "0.9rem", color: "#888" }}>
           Attempts: {attempts}/3
         </p>
