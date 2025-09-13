@@ -1,6 +1,6 @@
 .aboutSection {
   display: flex;
-
+  background-image: url("/images/test2.png");
   background-repeat: no-repeat;
   height: 100vh;
   background-size: 120%;   /* a bit zoomed-in so we can move it */

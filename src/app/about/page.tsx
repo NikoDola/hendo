@@ -28,6 +28,7 @@ export default function About() {
           className="imageBackground"
           style={{
             backgroundImage: `url(${hendoImage})`,
+
           }}
         ></div>
       </div>
