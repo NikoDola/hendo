@@ -1,12 +1,12 @@
 "use client";
+import { useState } from "react";
 import hendoImage from "../../../public/images/test2.png";
 import "@/components/pages/about.css";
 
 export default function About() {
+  const [load, setLoaded] = useState(false)
   return (
     <section className="section-full aboutSection">
-     
-
       <div className="aboutTextWrapper">
         <h1 className="aboutHeadline">
           Waves <br /> Beyond 5D
@@ -23,15 +23,13 @@ export default function About() {
         </p>
       </div>
 
-      <div className="imageWrapper">
         <div
-          className="imageBackground"
+          className={`imageBackground ${load ? "fade-in" : ""}`}
           style={{
-            backgroundImage: `url(${hendoImage})`,
-
+            backgroundImage: `url(${hendoImage.src})`,
           }}
-        ></div>
-      </div>
+          onLoadCapture={() => setLoaded(true)} // ✅ fires when image loads
+        />
     </section>
   );
 }
