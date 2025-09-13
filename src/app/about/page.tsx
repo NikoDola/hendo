@@ -1,8 +1,9 @@
+import hendoImage from "../../../public/images/test2.png";
 import "@/components/pages/about.css";
 export default function About() {
   return (
     <section className="section-full aboutSection">
-      
+      {!hendoImage ? <p>Loading</p>: 'AAA'}
       <div className="aboutTextWrapper">
         <h1 className="aboutHeadline">
           Waves <br/> Beyond  5D
