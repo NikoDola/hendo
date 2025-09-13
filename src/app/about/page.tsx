@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import hendoImage from "../../../public/images/test2.png"; // returns StaticImageData
+import hendoImage from "../../../public/images/test2.png";
 import "@/components/pages/about.css";
 
 export default function About() {
@@ -9,15 +9,17 @@ export default function About() {
   useEffect(() => {
     if (hendoImage?.src) {
       const img = new Image();
-      img.src = hendoImage.src; // ✅ use .src here
-      img.onload = () => setLoaded(true);
+      img.src = hendoImage.src;
+
+      img.onload = () => {
+        // Wait a tiny bit to ensure first render happens before animation starts
+        setTimeout(() => setLoaded(true), 50); // you can tweak 50ms if needed
+      };
     }
   }, []);
 
   return (
     <section className="section-full aboutSection">
-      
-
       <div className="aboutTextWrapper">
         <h1 className="aboutHeadline">
           Waves <br /> Beyond 5D
@@ -38,7 +40,7 @@ export default function About() {
         <div
           className={`imageBackground ${loaded ? "animate" : ""}`}
           style={{
-            backgroundImage: `url(${hendoImage.src})`, // ✅ use .src
+            backgroundImage: `url(${hendoImage.src})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
