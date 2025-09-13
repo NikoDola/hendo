@@ -4,8 +4,8 @@ import UnderConstruction from "@/components/pages/UnderConstruction";
 export default function Home() {
   
   return (
-      <main className="w-full">
-        <UnderConstruction />
+      <main >
+        <p className="text-black">Home</p>
       </main>
       
   );

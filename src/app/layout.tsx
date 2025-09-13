@@ -30,35 +30,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${lemonMilk.variable} antialiased relative`}>
+      <body style={{ backgroundColor: "#1e1e1e" }} className={`${lemonMilk.variable} antialiased relative`}>
 
 
 
-        <div style={{ width: '100%', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 0, pointerEvents: 'auto' }}>
-          {/* <LiquidChrome
-    baseColor={[0.1, 0.1, 0.1]}
-    speed={1}
-    amplitude={0.6}
-    interactive={true}
-  /> */}
-          <LiquidEther
-            colors={['#5227FF', '#FF9FFC', '#B19EEF']}
-            mouseForce={50}
-            cursorSize={15}
-            isViscous={false}
-            viscous={20}
-            iterationsViscous={16}
-            iterationsPoisson={16}
-            resolution={0.1}
-            isBounce={false}
-            autoDemo={false}
-            autoSpeed={1}
-            autoIntensity={1.5}
-            takeoverDuration={0.25}
-            autoResumeDelay={3000}
-            autoRampDuration={0.6}
-          />
-        </div>
+    
         <div style={{ position: 'relative', zIndex: 1, pointerEvents: 'none' }}>
           <MouseProvider>
             <div style={{ pointerEvents: 'auto' }}>

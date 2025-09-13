@@ -1,8 +1,8 @@
 
+@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;700;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap');
 @import './variables.css';
-
 *{
   padding: 0;
   margin: 0;
@@ -13,7 +13,7 @@
 }
 
 html, body {
-  background-color: var(--background);
+  background-color: var(#000000);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -29,7 +29,7 @@ html, body {
 
 body {
   color: var(--background);
-  background: var(--foreground);
+  background-color: #000000;
   font-family: var(--font-lemonmilk);
   margin: 0;
   padding: 0;
