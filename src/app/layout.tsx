@@ -3,6 +3,7 @@ import "@/app/globals.css";
 import localFont from "next/font/local";
 import { MouseProvider } from "@/context/context";
 import NavBar from "@/components/client/NavBar";
+import Footer from "@/components/client/Footer";
 // import LiquidEther from "@/components/client/backgrounds/LiquidEther";
 // import LiquidChrome from "@/components/client/LiquidEther";
 
@@ -31,17 +32,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body style={{ backgroundColor: "#1e1e1e" }} className={`${lemonMilk.variable} antialiased relative`}>
-
-
-
-    
-        <div style={{ position: 'relative', zIndex: 1, pointerEvents: 'none' }}>
+        <div style={{ position: 'relative', zIndex: 1, pointerEvents: 'none', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
           <MouseProvider>
             <div style={{ pointerEvents: 'auto' }}>
               <NavBar />
             </div>
-            <div style={{ pointerEvents: 'auto' }}>
+            <div style={{ pointerEvents: 'auto', flex: 1 }}>
               {children}
+            </div>
+            <div style={{ pointerEvents: 'auto' }}>
+              <Footer />
             </div>
           </MouseProvider>
         </div>
