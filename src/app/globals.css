@@ -111,7 +111,7 @@ form{
 input, textarea{
 
   background-color: transparent;
-  
+  color: gray;
   padding: 0.5rem;
   padding-left: 1rem;
 }
