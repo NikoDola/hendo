@@ -5,7 +5,7 @@ export default function Home() {
   
   return (
       <main >
-        <p className="text-black">Home</p>
+        <p className="text-black"></p>
       </main>
       
   );
