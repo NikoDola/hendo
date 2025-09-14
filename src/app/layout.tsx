@@ -3,7 +3,7 @@ import "@/app/globals.css";
 import localFont from "next/font/local";
 import { MouseProvider } from "@/context/context";
 import NavBar from "@/components/client/NavBar";
-import LiquidEther from "@/components/client/backgrounds/LiquidEther";
+// import LiquidEther from "@/components/client/backgrounds/LiquidEther";
 // import LiquidChrome from "@/components/client/LiquidEther";
 
 
