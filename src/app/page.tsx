@@ -1,12 +1,13 @@
 import "./globals.css"
 import UnderConstruction from "@/components/pages/UnderConstruction";
+import Contact from "@/components/pages/Contact";
 
 export default function Home() {
-  
+
   return (
-      <main >
-        <p className="text-black"></p>
-      </main>
-      
+    <main >
+      <Contact />
+    </main>
+
   );
 }

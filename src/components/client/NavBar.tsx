@@ -79,7 +79,7 @@ export default function NavMenu() {
           </div>
 
           {/* Burger Button */}
-          <button
+          <div
             className={`burgerButton ${isOpen ? "open" : ""}`}
             onClick={toggleMenu}
             aria-label="Toggle menu"
@@ -87,7 +87,7 @@ export default function NavMenu() {
             <span className="burgerLine"></span>
             <span className="burgerLine"></span>
             <span className="burgerLine"></span>
-          </button>
+          </div>
 
           {/* Mobile Menu Overlay */}
           <div className={`mobileNavOverlay ${isOpen ? "open" : ""}`}>
