@@ -1,9 +1,9 @@
-import "@/components/pages/Auth.css";
+import "@/components/pages/Form.css";
 
 export default function Contact() {
   return (
     <section className="section-regular">
-      <form className="authWrapper">
+      <form className="formWrapper">
         <div className="inputWrapper">
           <label>Name *</label>
           <input placeholder="Enter your name" required />

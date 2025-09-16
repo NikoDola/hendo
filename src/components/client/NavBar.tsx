@@ -55,12 +55,12 @@ export default function NavMenu() {
           </div>
           <ul className="linksWrapperDesktop">
             <Link className="linkDesktop" href="/" onClick={handleLinkClick}>
-              Store
+              ✨Store
             </Link>
-            <Link className="linkDesktop" href="/" onClick={handleLinkClick}>
+            <Link className="linkDesktop" href="/login" onClick={handleLinkClick}>
               Login
             </Link>
-            <Link className="linkDesktop" href="/" onClick={handleLinkClick}>
+            <Link className="linkDesktop" href="/signup" onClick={handleLinkClick}>
               Signup
             </Link>
           </ul>
@@ -126,13 +126,13 @@ export default function NavMenu() {
                     href="/"
                     onClick={handleLinkClick}
                   >
-                    Store
+                    ✨Storee
                   </Link>
                 </li>
                 <li>
                   <Link
                     className="linkMobile"
-                    href="/"
+                    href="/login"
                     onClick={handleLinkClick}
                   >
                     Login
@@ -141,7 +141,7 @@ export default function NavMenu() {
                 <li>
                   <Link
                     className="linkMobile"
-                    href="/"
+                    href="/signup"
                     onClick={handleLinkClick}
                   >
                     Signup

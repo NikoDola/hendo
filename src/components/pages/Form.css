@@ -1,4 +1,4 @@
-.authWrapper {
+.formWrapper {
   display: flex;
   gap: 2rem;
   width: 40%;
@@ -29,6 +29,13 @@
   align-items: center;
   gap: 1rem;
 }
+
+.hrLine{
+  width: 100%;
+  height: 1px;
+  background-color:rgb(225, 225, 225,0.3);
+}
+
 
 /* Google Button Styling */
 .googleButton {
@@ -63,7 +70,7 @@
 }
 
 @media (max-width: 1000px) {
-  .authWrapper {
+  .formWrapper {
     width: 100%;
   }
 }

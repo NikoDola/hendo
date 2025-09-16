@@ -1,10 +1,10 @@
-import "@/components/pages/Auth.css";
+import "@/components/pages/Form.css";
 import Link from "next/link";
 
 export default function Login() {
   return (
     <section className="section-regular">
-      <form className="authWrapper">
+      <form className="formWrapper">
         <div className="inputWrapper">
           <label>Email</label>
           <input placeholder="Enter your email" />
@@ -23,7 +23,7 @@ export default function Login() {
           <div className="googleIcon"></div>
           Login with Google
         </button>
-        <div className="orSignupWrapper">
+        <div className="orWrapper">
           <p className="italic"> Don&apos;t have an account? <Link className="underline" href={"/signup"}>signup</Link></p>
         </div>
       </form>

@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body style={{ backgroundColor: "#1e1e1e" }} className={`${lemonMilk.variable} antialiased relative`}>
+      <body style={{ backgroundColor: "black" }} className={`${lemonMilk.variable} antialiased relative`}>
         <ColorProvider>
         <div style={{ position: 'relative', zIndex: 1, pointerEvents: 'none', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
           <MouseProvider>
