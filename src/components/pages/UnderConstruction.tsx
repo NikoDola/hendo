@@ -130,9 +130,7 @@ export default function UnderConstruction() {
         </div>
         {error && <p className="errorMessage">{error}</p>}
         {success && <p  style={{ color: "green" }}>{success}</p>}
-        <p style={{ fontSize: "0.9rem", color: "#888" }}>
-          Attempts: {attempts}/3
-        </p>
+ 
         <p className="my-recaptcha-disclaimer">
           This site is protected by reCAPTCHA and the Google
           <br />
