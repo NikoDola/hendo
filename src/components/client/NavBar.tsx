@@ -54,7 +54,7 @@ export default function NavMenu() {
             <Logo size="40px" />
           </div>
           <ul className="linksWrapperDesktop">
-            <Link className="linkDesktop" href="/" onClick={handleLinkClick}>
+            <Link className="linkDesktop" href="/shop" onClick={handleLinkClick}>
               ✨Store
             </Link>
             <Link className="linkDesktop" href="/login" onClick={handleLinkClick}>
@@ -70,10 +70,10 @@ export default function NavMenu() {
       {/* Mobile Navigation */}
       <header className="headerWrapperMobile">
         <nav className="navWrapperMobile">
-            <div className="cardProfileWrapperMobile">
-                <CiUser className="navIcons" />
-                <CiShoppingCart className="navIcons" />
-              </div>
+          <div className="cardProfileWrapperMobile">
+            <CiUser className="navIcons" />
+            <CiShoppingCart className="navIcons" />
+          </div>
           <div className="logoMobile">
             <Logo size="22px" />
           </div>
@@ -123,10 +123,10 @@ export default function NavMenu() {
                 <li>
                   <Link
                     className="linkMobile"
-                    href="/"
+                    href="/shop"
                     onClick={handleLinkClick}
                   >
-                    ✨Storee
+                    ✨Store
                   </Link>
                 </li>
                 <li>
@@ -150,9 +150,9 @@ export default function NavMenu() {
               </ul>
             </nav>
           </div>
-          
+
         </nav>
-        
+
       </header>
     </ColorProvider>
   );
