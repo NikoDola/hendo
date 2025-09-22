@@ -81,7 +81,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const getCartId = () => {
     if (typeof window !== 'undefined') {
       const cartId = localStorage.getItem('shopify_cart_id');
-      console.log('Retrieved cart ID from localStorage:', cartId);
       return cartId;
     }
     return null;
@@ -90,15 +89,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // Set cart ID in localStorage
   const setCartId = (cartId: string) => {
     if (typeof window !== 'undefined') {
-      console.log('Saving cart ID to localStorage:', cartId);
       try {
         localStorage.setItem('shopify_cart_id', cartId);
-        // Verify it was saved
-        const saved = localStorage.getItem('shopify_cart_id');
-        console.log('Verification - saved cart ID:', saved);
-        if (saved !== cartId) {
-          console.error('Cart ID was not saved correctly!');
-        }
       } catch (error) {
         console.error('Error saving cart ID to localStorage:', error);
       }
@@ -108,19 +100,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // Load cart on mount
   useEffect(() => {
     const cartId = getCartId();
-    console.log('Loading cart on mount, cartId:', cartId);
-
-    // Debug: Check all localStorage items
-    if (typeof window !== 'undefined') {
-      console.log('All localStorage items:');
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        const value = localStorage.getItem(key || '');
-        console.log(`  ${key}: ${value}`);
-      }
-    }
 
     if (cartId) {
+      refreshCart();
+    } else {
+      // Create a new empty cart if no cart ID exists
       refreshCart();
     }
   }, []);
@@ -128,29 +112,43 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // Save cart ID when cart is created
   useEffect(() => {
     if (cart?.id) {
-      console.log('Cart created/updated, saving ID:', cart.id);
       setCartId(cart.id);
     }
   }, [cart?.id]);
 
   const refreshCart = async () => {
     const cartId = getCartId();
-    console.log('Refreshing cart with ID:', cartId);
-    if (!cartId) return;
+
+    if (!cartId) {
+      // Create a new empty cart if no cart ID exists
+      try {
+        setIsLoading(true);
+        const newCart = await createCart([]);
+        setCart(newCart);
+        setCartId(newCart.id);
+      } catch (error) {
+        console.error('Failed to create new cart:', error);
+        setCart(null);
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
 
     try {
       setIsLoading(true);
       const cartData = await getCart(cartId);
-      console.log('Cart loaded successfully:', cartData);
       setCart(cartData);
     } catch (error) {
-      console.error('Failed to load cart:', error);
-      console.log('🚨 CART LOAD FAILED - This will clear the cart ID!');
-      // If cart doesn't exist, remove the ID and clear cart state
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('shopify_cart_id');
+      // If cart doesn't exist (expired), create a new one instead of clearing
+      try {
+        const newCart = await createCart([]);
+        setCart(newCart);
+        setCartId(newCart.id);
+      } catch (createError) {
+        console.error('Failed to create new cart after expiration:', createError);
+        setCart(null);
       }
-      setCart(null);
     } finally {
       setIsLoading(false);
     }
@@ -160,28 +158,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       setIsLoading(true);
       let cartId = getCartId();
-      console.log('Adding to cart, existing cartId:', cartId);
 
       if (!cartId) {
-        // Create new cart
-        console.log('No existing cart, creating new one');
+        // Create new cart with the item
         const newCart = await createCart([{
           merchandiseId,
           quantity
         }]);
-        console.log('New cart created:', newCart);
         setCart(newCart);
         setCartId(newCart.id);
       } else {
         try {
           // Try to add to existing cart
-          console.log('Adding to existing cart:', cartId);
           const updatedCart = await addToCartAPI(cartId, merchandiseId, quantity);
-          console.log('Cart updated:', updatedCart);
           setCart(updatedCart);
         } catch (error) {
-          // If cart doesn't exist anymore, create a new one
-          console.log('Cart not found, creating new cart');
+          // If cart doesn't exist anymore (expired), create a new one with the item
           const newCart = await createCart([{
             merchandiseId,
             quantity
@@ -200,23 +192,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const removeFromCart = async (lineIds: string[]) => {
     const cartId = getCartId();
-    if (!cartId) return;
+    if (!cartId) {
+      return;
+    }
 
     try {
       setIsLoading(true);
       const updatedCart = await removeFromCartAPI(cartId, lineIds);
       setCart(updatedCart);
     } catch (error) {
-      console.error('Failed to remove from cart:', error);
-      throw error;
+      // If cart doesn't exist anymore, refresh the cart to create a new one
+      await refreshCart();
     } finally {
       setIsLoading(false);
     }
   };
 
   const clearCart = () => {
-    console.log('🚨 CLEARING CART AND LOCALSTORAGE - This should not happen unless user logs out!');
-    console.trace('Stack trace for clearCart call:');
     setCart(null);
     if (typeof window !== 'undefined') {
       localStorage.removeItem('shopify_cart_id');

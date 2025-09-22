@@ -46,12 +46,10 @@ export function ShopifyAuthProvider({ children }: { children: ReactNode }) {
   // Load customer data on mount if access token exists
   useEffect(() => {
     const token = localStorage.getItem('shopify_access_token');
-    console.log('ShopifyAuth mount - token from localStorage:', token);
     if (token) {
       setAccessToken(token);
       loadCustomer(token);
     } else {
-      console.log('No token found, setting loading to false');
       setIsLoading(false);
     }
   }, []);
@@ -59,9 +57,7 @@ export function ShopifyAuthProvider({ children }: { children: ReactNode }) {
   const loadCustomer = async (token: string) => {
     try {
       setIsLoading(true);
-      console.log('Loading customer with token:', token);
       const customerData = await getCustomer(token);
-      console.log('Customer loaded successfully:', customerData);
       setCustomer(customerData);
     } catch (error) {
       console.error('Failed to load customer:', error);
@@ -80,7 +76,6 @@ export function ShopifyAuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
-    console.log('ShopifyAuth logout called - clearing cart');
     setCustomer(null);
     setAccessToken(null);
     localStorage.removeItem('shopify_access_token');

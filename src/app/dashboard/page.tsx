@@ -16,7 +16,6 @@ export default function Dashboard() {
     if (!isLoading && !customer) {
       router.push("/login");
     } else if (customer) {
-      console.log('Customer loaded, refreshing cart');
       refreshCart();
     }
   }, [customer, isLoading, router, refreshCart]);
@@ -74,7 +73,6 @@ export default function Dashboard() {
   );
 
   const renderCart = () => {
-    console.log('Rendering cart, cart state:', cart);
     return (
       <div className={`contentSection ${activeSection === 'cart' ? 'active' : ''}`}>
         <h2 className="sectionTitle">Shopping Cart</h2>
