@@ -8,7 +8,11 @@ if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
   throw new Error('Missing Shopify Storefront API configuration');
 }
 
-const STOREFRONT_API_URL = `https://${SHOPIFY_STORE_DOMAIN}/api/2024-01/graphql.json`;
+// Type assertions to tell TypeScript that these are now guaranteed to be defined
+const STORE_DOMAIN = SHOPIFY_STORE_DOMAIN as string;
+const STOREFRONT_TOKEN = SHOPIFY_STOREFRONT_ACCESS_TOKEN as string;
+
+const STOREFRONT_API_URL = `https://${STORE_DOMAIN}/api/2024-01/graphql.json`;
 
 // GraphQL client
 class ShopifyStorefrontClient {
@@ -18,12 +22,12 @@ class ShopifyStorefrontClient {
     this.accessToken = accessToken || '';
   }
 
-  async request(query: string, variables: any = {}) {
+  async request(query: string, variables: Record<string, unknown> = {}) {
     const response = await fetch(STOREFRONT_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_ACCESS_TOKEN,
+        'X-Shopify-Storefront-Access-Token': STOREFRONT_TOKEN,
         ...(this.accessToken && { 'Authorization': `Bearer ${this.accessToken}` })
       },
       body: JSON.stringify({ query, variables })

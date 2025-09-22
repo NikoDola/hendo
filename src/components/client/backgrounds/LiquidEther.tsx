@@ -548,7 +548,7 @@ export default function LiquidEther({
         this.props = (props as Record<string, unknown>) || {};
         this.uniforms = (this.props.material as { uniforms?: Uniforms })?.uniforms;
       }
-      init(..._args: unknown[]) {
+      init(_simProps: unknown) {
         this.scene = new THREE.Scene();
         this.camera = new THREE.Camera();
         if (this.uniforms) {
@@ -558,7 +558,7 @@ export default function LiquidEther({
           this.scene.add(this.plane);
         }
       }
-      update(..._args: unknown[]) {
+      update(_simProps: unknown) {
         if (!Common.renderer || !this.scene || !this.camera) return;
         Common.renderer.setRenderTarget((this.props.output as THREE.WebGLRenderTarget) || null);
         Common.renderer.render(this.scene, this.camera);
@@ -595,7 +595,7 @@ export default function LiquidEther({
         this.init();
       }
       init() {
-        super.init();
+        super.init({});
         this.createBoundary();
       }
       createBoundary() {
@@ -618,7 +618,7 @@ export default function LiquidEther({
         if (typeof dt === 'number') this.uniforms.dt.value = dt;
         if (typeof isBounce === 'boolean') this.line.visible = isBounce;
         if (typeof BFECC === 'boolean') this.uniforms.isBFECC.value = BFECC;
-        super.update();
+        super.update({});
       }
     }
 
@@ -634,7 +634,7 @@ export default function LiquidEther({
           cellScale: THREE.Vector2;
           cursor_size: number;
         };
-        super.init();
+        super.init({});
         const mouseG = new THREE.PlaneGeometry(1, 1);
         const mouseM = new THREE.RawShaderMaterial({
           vertexShader: mouse_vert,
@@ -675,7 +675,7 @@ export default function LiquidEther({
         uniforms.force.value.set(forceX, forceY);
         uniforms.center.value.set(centerX, centerY);
         uniforms.scale.value.set(cursorSize, cursorSize);
-        super.update();
+        super.update({});
       }
     }
 
@@ -707,7 +707,7 @@ export default function LiquidEther({
           output0: props.dst_,
           output1: props.dst
         });
-        this.init();
+        this.init({});
       }
       update(...args: unknown[]) {
         const { viscous, iterations, dt } = (args[0] || {}) as { viscous?: number; iterations?: number; dt?: number };
@@ -726,7 +726,7 @@ export default function LiquidEther({
           this.uniforms.velocity_new.value = (fbo_in as { texture: THREE.Texture }).texture;
           this.props.output = fbo_out;
           if (typeof dt === 'number') this.uniforms.dt.value = dt;
-          super.update();
+          super.update({});
         }
         return fbo_out;
       }
@@ -754,14 +754,14 @@ export default function LiquidEther({
           },
           output: props.dst
         });
-        this.init();
+        this.init({});
       }
       update(...args: unknown[]) {
         const { vel } = (args[0] || {}) as { vel?: unknown };
         if (this.uniforms && vel) {
           this.uniforms.velocity.value = (vel as { texture: THREE.Texture }).texture;
         }
-        super.update();
+        super.update({});
       }
     }
 
@@ -789,7 +789,7 @@ export default function LiquidEther({
           output0: props.dst_,
           output1: props.dst
         });
-        this.init();
+        this.init({});
       }
       update(...args: unknown[]) {
         const { iterations } = (args[0] || {}) as { iterations?: number };
@@ -805,7 +805,7 @@ export default function LiquidEther({
           }
           if (this.uniforms) this.uniforms.pressure.value = (p_in as { texture: THREE.Texture }).texture;
           this.props.output = p_out;
-          super.update();
+          super.update({});
         }
         return p_out;
       }
@@ -835,7 +835,7 @@ export default function LiquidEther({
           },
           output: props.dst
         });
-        this.init();
+        this.init({});
       }
       update(...args: unknown[]) {
         const { vel, pressure } = (args[0] || {}) as { vel?: unknown; pressure?: unknown };
@@ -843,7 +843,7 @@ export default function LiquidEther({
           this.uniforms.velocity.value = (vel as { texture: THREE.Texture }).texture;
           this.uniforms.pressure.value = (pressure as { texture: THREE.Texture }).texture;
         }
-        super.update();
+        super.update({});
       }
     }
 

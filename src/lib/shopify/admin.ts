@@ -7,6 +7,9 @@ if (!SHOPIFY_ADMIN_ACCESS_TOKEN) {
   throw new Error('Missing Shopify Admin API access token');
 }
 
+// Type assertion to tell TypeScript that this is now guaranteed to be defined
+const ADMIN_TOKEN = SHOPIFY_ADMIN_ACCESS_TOKEN as string;
+
 const ADMIN_API_URL = `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2024-01`;
 
 // Admin API client
@@ -14,7 +17,7 @@ class ShopifyAdminClient {
   private accessToken: string;
 
   constructor(accessToken?: string) {
-    this.accessToken = accessToken || SHOPIFY_ADMIN_ACCESS_TOKEN;
+    this.accessToken = accessToken || ADMIN_TOKEN;
   }
 
   async request(endpoint: string, options: RequestInit = {}) {
@@ -86,7 +89,7 @@ export async function getCustomer(customerId: string) {
   }
 }
 
-export async function updateCustomer(customerId: string, customerData: any) {
+export async function updateCustomer(customerId: string, customerData: Record<string, unknown>) {
   const client = new ShopifyAdminClient();
 
   try {

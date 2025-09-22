@@ -15,7 +15,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart, isLoading } = useCart();
   const mainImage = product.images[0];
   const price = product.variants[0]?.price || '0';
-  const comparePrice = product.variants[0]?.compare_at_price;
+  const comparePrice = (product.variants[0] as { compare_at_price?: string })?.compare_at_price;
   const variantId = product.variants[0]?.id;
 
   const handleAddToCart = async () => {

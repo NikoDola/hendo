@@ -39,7 +39,7 @@ export default function Signup() {
     }
 
     try {
-      const customerData = await registerCustomer({
+      await registerCustomer({
         email: formData.email,
         password: formData.password,
         firstName: formData.firstName,

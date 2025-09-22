@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { getCart, createCart, addToCart as addToCartAPI, removeFromCart as removeFromCartAPI } from '@/lib/shopify/storefront';
 
 interface CartItem {
@@ -116,7 +116,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [cart?.id]);
 
-  const refreshCart = async () => {
+  const refreshCart = useCallback(async () => {
     const cartId = getCartId();
 
     if (!cartId) {
@@ -139,7 +139,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setIsLoading(true);
       const cartData = await getCart(cartId);
       setCart(cartData);
-    } catch (error) {
+    } catch {
       // If cart doesn't exist (expired), create a new one instead of clearing
       try {
         const newCart = await createCart([]);
@@ -152,12 +152,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   const addToCart = async (merchandiseId: string, quantity: number = 1) => {
     try {
       setIsLoading(true);
-      let cartId = getCartId();
+      const cartId = getCartId();
 
       if (!cartId) {
         // Create new cart with the item
@@ -172,7 +172,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           // Try to add to existing cart
           const updatedCart = await addToCartAPI(cartId, merchandiseId, quantity);
           setCart(updatedCart);
-        } catch (error) {
+        } catch {
           // If cart doesn't exist anymore (expired), create a new one with the item
           const newCart = await createCart([{
             merchandiseId,
@@ -200,7 +200,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setIsLoading(true);
       const updatedCart = await removeFromCartAPI(cartId, lineIds);
       setCart(updatedCart);
-    } catch (error) {
+    } catch {
       // If cart doesn't exist anymore, refresh the cart to create a new one
       await refreshCart();
     } finally {
