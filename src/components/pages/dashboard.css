@@ -1,0 +1,266 @@
+.dashboardContainer {
+  display: flex;
+  gap: 2rem;
+  min-height: 70vh;
+}
+
+.dashboardSidebar {
+  width: 250px;
+  background-color: #2c2c2c;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  border-top: solid rgb(225, 225, 225, 0.1);
+  height: fit-content;
+}
+
+.dashboardContent {
+  flex: 1;
+  background-color: #2c2c2c;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  border-top: solid rgb(225, 225, 225, 0.1);
+  min-height: 500px;
+}
+
+.sidebarNav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebarNavItem {
+  margin-bottom: 0.5rem;
+}
+
+.sidebarNavButton {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: transparent;
+  color: var(--background);
+  text-align: left;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: var(--font-lemonmilk);
+  font-size: 1rem;
+}
+
+.sidebarNavButton:hover {
+  background-color: var(--theme-color);
+  color: var(--foreground);
+}
+
+.sidebarNavButton.active {
+  background-color: var(--theme-color);
+  color: var(--foreground);
+}
+
+.dashboardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #444;
+}
+
+.dashboardTitle {
+  font-size: 1.5rem;
+  color: var(--theme-color);
+  margin: 0;
+}
+
+.logoutButton {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: var(--theme-color);
+  color: var(--foreground);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-family: var(--font-lemonmilk);
+}
+
+.logoutButton:hover {
+  background-color: var(--foreground);
+  color: white;
+}
+
+.contentSection {
+  display: none;
+}
+
+.contentSection.active {
+  display: block;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  color: var(--theme-color);
+  margin-bottom: 1rem;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.infoItem {
+  background-color: #1a1a1a;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #444;
+}
+
+.infoLabel {
+  color: gray;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.infoValue {
+  color: var(--background);
+  font-weight: bold;
+}
+
+.pointsDisplay {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--theme-color);
+  margin: 0.5rem 0;
+}
+
+.pointsDescription {
+  color: gray;
+  font-size: 0.9rem;
+}
+
+.cartSummary {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: #1a1a1a;
+  border-radius: 0.5rem;
+  border: 1px solid #444;
+}
+
+.cartItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-bottom: 1px solid #444;
+  margin-bottom: 0.5rem;
+}
+
+.cartItem:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.cartItemImage {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 0.25rem;
+}
+
+.cartItemDetails {
+  flex: 1;
+}
+
+.cartItemTitle {
+  margin: 0;
+  font-weight: bold;
+  color: var(--background);
+}
+
+.cartItemVariant {
+  margin: 0;
+  color: gray;
+  font-size: 0.9rem;
+}
+
+.cartItemPrice {
+  margin: 0;
+  color: var(--theme-color);
+  font-weight: bold;
+}
+
+.removeButton {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  border: none;
+  background: red;
+  color: white;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background-color 0.3s ease;
+}
+
+.removeButton:hover {
+  background: darkred;
+}
+
+.checkoutButton {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: var(--theme-color);
+  color: var(--foreground);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-family: var(--font-lemonmilk);
+  font-size: 1rem;
+}
+
+.checkoutButton:hover {
+  background-color: var(--foreground);
+  color: white;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 2rem;
+  color: gray;
+}
+
+.emptyStateButton {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: var(--theme-color);
+  color: var(--foreground);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-family: var(--font-lemonmilk);
+}
+
+.emptyStateButton:hover {
+  background-color: var(--foreground);
+  color: white;
+}
+
+.cartItemsList {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .dashboardContainer {
+    flex-direction: column;
+  }
+
+  .dashboardSidebar {
+    width: 100%;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+}

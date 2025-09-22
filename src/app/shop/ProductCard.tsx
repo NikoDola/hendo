@@ -1,15 +1,48 @@
 "use client";
 
+import { useState } from "react";
 import { ShopifyProduct } from "@/lib/shopify";
+import { useShopifyAuth } from "@/context/ShopifyAuthContext";
+import { useCart } from "@/context/CartContext";
 
 interface ProductCardProps {
   product: ShopifyProduct;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const [cartMessage, setCartMessage] = useState("");
+  const { customer } = useShopifyAuth();
+  const { addToCart, isLoading } = useCart();
   const mainImage = product.images[0];
   const price = product.variants[0]?.price || '0';
   const comparePrice = product.variants[0]?.compare_at_price;
+  const variantId = product.variants[0]?.id;
+
+  const handleAddToCart = async () => {
+    if (!customer) {
+      setCartMessage("Please login to add items to cart");
+      setTimeout(() => setCartMessage(""), 3000);
+      return;
+    }
+
+    if (!variantId) {
+      setCartMessage("Product variant not available");
+      setTimeout(() => setCartMessage(""), 3000);
+      return;
+    }
+
+    setCartMessage("");
+
+    try {
+      await addToCart(`gid://shopify/ProductVariant/${variantId}`, 1);
+      setCartMessage("Added to cart! 🎉");
+      setTimeout(() => setCartMessage(""), 3000);
+    } catch (error) {
+      console.error('Add to cart error:', error);
+      setCartMessage("Failed to add to cart");
+      setTimeout(() => setCartMessage(""), 3000);
+    }
+  };
 
   return (
     <div style={{
@@ -92,28 +125,46 @@ export default function ProductCard({ product }: ProductCardProps) {
         )}
       </div>
 
-      <button style={{
-        width: '100%',
-        padding: '0.75rem',
-        borderRadius: '0.5rem',
-        border: 'none',
-        background: 'var(--theme-color)',
-        color: 'var(--foreground)',
-        fontFamily: 'var(--font-lemonmilk)',
-        cursor: 'pointer',
-        transition: 'background-color 0.3s ease, box-shadow 1s ease'
-      }}
+      {cartMessage && (
+        <div style={{
+          color: cartMessage.includes('🎉') ? 'green' : 'red',
+          marginBottom: '1rem',
+          textAlign: 'center',
+          fontSize: '0.9rem'
+        }}>
+          {cartMessage}
+        </div>
+      )}
+
+      <button
+        onClick={handleAddToCart}
+        disabled={isLoading}
+        style={{
+          width: '100%',
+          padding: '0.75rem',
+          borderRadius: '0.5rem',
+          border: 'none',
+          background: isLoading ? 'gray' : 'var(--theme-color)',
+          color: 'var(--foreground)',
+          fontFamily: 'var(--font-lemonmilk)',
+          cursor: isLoading ? 'not-allowed' : 'pointer',
+          transition: 'background-color 0.3s ease, box-shadow 1s ease'
+        }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = 'var(--foreground)';
-          e.currentTarget.style.color = 'white';
-          e.currentTarget.style.boxShadow = '0 0 20px var(--theme-color)';
+          if (!isLoading) {
+            e.currentTarget.style.backgroundColor = 'var(--foreground)';
+            e.currentTarget.style.color = 'white';
+            e.currentTarget.style.boxShadow = '0 0 20px var(--theme-color)';
+          }
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = 'var(--theme-color)';
-          e.currentTarget.style.color = 'var(--foreground)';
-          e.currentTarget.style.boxShadow = 'none';
+          if (!isLoading) {
+            e.currentTarget.style.backgroundColor = 'var(--theme-color)';
+            e.currentTarget.style.color = 'var(--foreground)';
+            e.currentTarget.style.boxShadow = 'none';
+          }
         }}>
-        Add to Cart
+        {isLoading ? "Adding..." : "Add to Cart"}
       </button>
     </div>
   );

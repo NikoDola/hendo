@@ -6,9 +6,11 @@ import Logo from "./Logo";
 import { ColorProvider } from "./ColorProvider";
 import { CiShoppingCart } from "react-icons/ci";
 import { CiUser } from "react-icons/ci";
+import { useShopifyAuth } from "@/context/ShopifyAuthContext";
 
 export default function NavMenu() {
   const [isOpen, setIsOpen] = useState(false);
+  const { customer, logout } = useShopifyAuth();
 
   // Check if we're on mobile to conditionally render
 
@@ -57,12 +59,32 @@ export default function NavMenu() {
             <Link className="linkDesktop" href="/shop" onClick={handleLinkClick}>
               ✨Store
             </Link>
-            <Link className="linkDesktop" href="/login" onClick={handleLinkClick}>
-              Login
-            </Link>
-            <Link className="linkDesktop" href="/signup" onClick={handleLinkClick}>
-              Signup
-            </Link>
+            {customer ? (
+              <>
+                <Link className="linkDesktop" href="/dashboard" onClick={handleLinkClick}>
+                  Dashboard
+                </Link>
+                <button
+                  className="linkDesktop"
+                  onClick={() => {
+                    logout();
+                    handleLinkClick();
+                  }}
+                  style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link className="linkDesktop" href="/login" onClick={handleLinkClick}>
+                  Login
+                </Link>
+                <Link className="linkDesktop" href="/signup" onClick={handleLinkClick}>
+                  Signup
+                </Link>
+              </>
+            )}
           </ul>
         </nav>
       </header>
@@ -129,24 +151,52 @@ export default function NavMenu() {
                     ✨Store
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    className="linkMobile"
-                    href="/login"
-                    onClick={handleLinkClick}
-                  >
-                    Login
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className="linkMobile"
-                    href="/signup"
-                    onClick={handleLinkClick}
-                  >
-                    Signup
-                  </Link>
-                </li>
+                {customer ? (
+                  <>
+                    <li>
+                      <Link
+                        className="linkMobile"
+                        href="/dashboard"
+                        onClick={handleLinkClick}
+                      >
+                        Dashboard
+                      </Link>
+                    </li>
+                    <li>
+                      <button
+                        className="linkMobile"
+                        onClick={() => {
+                          logout();
+                          handleLinkClick();
+                        }}
+                        style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
+                      >
+                        Logout
+                      </button>
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li>
+                      <Link
+                        className="linkMobile"
+                        href="/login"
+                        onClick={handleLinkClick}
+                      >
+                        Login
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        className="linkMobile"
+                        href="/signup"
+                        onClick={handleLinkClick}
+                      >
+                        Signup
+                      </Link>
+                    </li>
+                  </>
+                )}
               </ul>
             </nav>
           </div>
