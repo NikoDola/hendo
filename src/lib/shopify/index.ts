@@ -83,46 +83,5 @@ export async function createShopifyCustomer(customerData: ShopifyCustomer): Prom
   return data.data.customerCreate;
 }
 
-// Check if customer already exists
-export async function checkCustomerExists(email: string): Promise<boolean> {
-  const query = `
-    query getCustomer($email: String!) {
-      customers(first: 1, query: $email) {
-        edges {
-          node {
-            id
-            email
-          }
-        }
-      }
-    }
-  `;
-
-  const variables = {
-    email: `email:${email}`
-  };
-
-  const response = await fetch(`https://${SHOPIFY_STORE_DOMAIN}/api/2023-10/graphql.json`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_TOKEN!,
-    },
-    body: JSON.stringify({
-      query: query,
-      variables: variables
-    })
-  });
-
-  if (!response.ok) {
-    throw new Error(`Shopify API error: ${response.status} ${response.statusText}`);
-  }
-
-  const data = await response.json();
-
-  if (data.errors) {
-    throw new Error(`GraphQL errors: ${JSON.stringify(data.errors)}`);
-  }
-
-  return data.data.customers.edges.length > 0;
-}
+// Note: Storefront API doesn't support querying customers
+// We'll handle duplicates by catching the error from customerCreate

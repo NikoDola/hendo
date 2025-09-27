@@ -7,7 +7,7 @@ import { ColorProvider } from "../client/colorProvider/ColorProvider";
 import { useState, useEffect } from "react";
 import { auth } from "@/lib/firebase";
 import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
-import { createShopifyCustomer, checkCustomerExists } from "@/lib/shopify";
+import { createShopifyCustomer } from "@/lib/shopify";
 
 declare global {
   interface Window {
@@ -59,8 +59,8 @@ export default function UnderConstruction() {
       return;
     }
 
-    if (attempts >= 5) {
-      setError("You have reached the maximum number of attempts. Try again later.");
+    if (attempts >= 3) {
+      setError("You have reached the maximum number of attempts. Try again tomorrow.");
       return;
     }
 
@@ -73,25 +73,32 @@ export default function UnderConstruction() {
         { action: "newsletter" }
       );
 
-      // 2️⃣ Check if customer already exists in Shopify
-      const customerExists = await checkCustomerExists(email);
-      if (customerExists) {
-        setError("This email is already subscribed to our newsletter!");
-        return;
+      // 2️⃣ Create customer in Shopify
+      try {
+        const shopifyCustomer = await createShopifyCustomer({
+          email: email,
+          acceptsMarketing: true,
+          tags: ["newsletter-subscriber", "hendo-music"]
+        });
+
+        if (shopifyCustomer.userErrors.length > 0) {
+          // Check if it's a duplicate email error
+          if (shopifyCustomer.userErrors[0].message.includes("Email has already been taken")) {
+            setError("This email is already subscribed to our newsletter!");
+            return;
+          }
+          throw new Error(`Shopify error: ${shopifyCustomer.userErrors[0].message}`);
+        }
+
+        console.log("✅ Customer created in Shopify:", shopifyCustomer.customer.id);
+      } catch (shopifyError) {
+        // If it's a duplicate customer error, show friendly message
+        if (shopifyError instanceof Error && shopifyError.message.includes("Email has already been taken")) {
+          setError("This email is already subscribed to our newsletter!");
+          return;
+        }
+        throw shopifyError;
       }
-
-      // 3️⃣ Create customer in Shopify
-      const shopifyCustomer = await createShopifyCustomer({
-        email: email,
-        acceptsMarketing: true,
-        tags: ["newsletter-subscriber", "hendo-music"]
-      });
-
-      if (shopifyCustomer.userErrors.length > 0) {
-        throw new Error(`Shopify error: ${shopifyCustomer.userErrors[0].message}`);
-      }
-
-      console.log("✅ Customer created in Shopify:", shopifyCustomer.customer.id);
 
       // 4️⃣ Create Firebase user + send verification email
       const password = Math.random().toString(36).slice(-10);
