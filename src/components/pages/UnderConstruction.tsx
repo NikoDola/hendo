@@ -78,10 +78,7 @@ export default function UnderConstruction() {
       const userCred = await createUserWithEmailAndPassword(auth, email, password);
 
       try {
-        await sendEmailVerification(userCred.user, {
-          url: `${process.env.NEXT_PUBLIC_BASE_URL}/special/verify`,
-          handleCodeInApp: true,
-        });
+        await sendEmailVerification(userCred.user);
         console.log("✅ Verification email sent to:", email);
         setSuccess("Check your email inbox/spam to verify your subscription 🎉");
       } catch (err: unknown) {
