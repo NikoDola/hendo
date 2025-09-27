@@ -8,6 +8,7 @@ import { ColorProvider } from "../client/colorProvider/ColorProvider";
 import { useState, useEffect } from "react";
 import { auth } from "@/lib/firebase";
 import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { createShopifyCustomer, checkCustomerExists } from "@/lib/shopify";
 
 declare global {
   interface Window {
@@ -73,7 +74,27 @@ export default function UnderConstruction() {
         { action: "newsletter" }
       );
 
-      // 2️⃣ Create user + send verification email
+      // 2️⃣ Check if customer already exists in Shopify
+      const customerExists = await checkCustomerExists(email);
+      if (customerExists) {
+        setError("This email is already subscribed to our newsletter!");
+        return;
+      }
+
+      // 3️⃣ Create customer in Shopify
+      const shopifyCustomer = await createShopifyCustomer({
+        email: email,
+        acceptsMarketing: true,
+        tags: ["newsletter-subscriber", "hendo-music"]
+      });
+
+      if (shopifyCustomer.userErrors.length > 0) {
+        throw new Error(`Shopify error: ${shopifyCustomer.userErrors[0].message}`);
+      }
+
+      console.log("✅ Customer created in Shopify:", shopifyCustomer.customer.id);
+
+      // 4️⃣ Create Firebase user + send verification email
       const password = Math.random().toString(36).slice(-10);
       const userCred = await createUserWithEmailAndPassword(auth, email, password);
 
@@ -97,7 +118,7 @@ export default function UnderConstruction() {
     } catch (err: unknown) {
       console.error("Newsletter signup error:", err);
       const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
-      setError(`Could not send verification email: ${errorMessage}`);
+      setError(`Could not subscribe: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
