@@ -26,19 +26,17 @@ export interface ShopifyCustomerResponse {
   }>;
 }
 
-// Create a new customer in Shopify
+// Create a new customer in Shopify using Storefront API
 export async function createShopifyCustomer(customerData: ShopifyCustomer): Promise<ShopifyCustomerResponse> {
+  // Storefront API has limited customer creation capabilities
+  // Let's use a simpler approach with customerCreate mutation
   const mutation = `
-    mutation customerCreate($input: CustomerInput!) {
+    mutation customerCreate($input: CustomerCreateInput!) {
       customerCreate(input: $input) {
         customer {
           id
           email
-          firstName
-          lastName
           acceptsMarketing
-          tags
-          createdAt
         }
         userErrors {
           field
@@ -51,10 +49,8 @@ export async function createShopifyCustomer(customerData: ShopifyCustomer): Prom
   const variables = {
     input: {
       email: customerData.email,
-      firstName: customerData.firstName || "",
-      lastName: customerData.lastName || "",
-      acceptsMarketing: customerData.acceptsMarketing,
-      tags: customerData.tags || ["newsletter-subscriber"]
+      password: Math.random().toString(36).slice(-12), // Generate random password
+      acceptsMarketing: customerData.acceptsMarketing
     }
   };
 

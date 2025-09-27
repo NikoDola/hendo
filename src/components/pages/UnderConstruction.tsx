@@ -5,8 +5,6 @@ import "./UnderConstruction.css";
 import { ColorProvider } from "../client/colorProvider/ColorProvider";
 
 import { useState, useEffect } from "react";
-import { auth } from "@/lib/firebase";
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { createShopifyCustomer } from "@/lib/shopify";
 
 declare global {
@@ -59,8 +57,8 @@ export default function UnderConstruction() {
       return;
     }
 
-    if (attempts >= 3) {
-      setError("You have reached the maximum number of attempts. Try again tomorrow.");
+    if (attempts >= 10) {
+      setError("You have reached the maximum number of attempts. Please try again later.");
       return;
     }
 
@@ -74,47 +72,23 @@ export default function UnderConstruction() {
       );
 
       // 2️⃣ Create customer in Shopify
-      try {
-        const shopifyCustomer = await createShopifyCustomer({
-          email: email,
-          acceptsMarketing: true,
-          tags: ["newsletter-subscriber", "hendo-music"]
-        });
+      const shopifyCustomer = await createShopifyCustomer({
+        email: email,
+        acceptsMarketing: true,
+        tags: ["newsletter-subscriber", "hendo-music"]
+      });
 
-        if (shopifyCustomer.userErrors.length > 0) {
-          // Check if it's a duplicate email error
-          if (shopifyCustomer.userErrors[0].message.includes("Email has already been taken")) {
-            setError("This email is already subscribed to our newsletter!");
-            return;
-          }
-          throw new Error(`Shopify error: ${shopifyCustomer.userErrors[0].message}`);
-        }
-
-        console.log("✅ Customer created in Shopify:", shopifyCustomer.customer.id);
-      } catch (shopifyError) {
-        // If it's a duplicate customer error, show friendly message
-        if (shopifyError instanceof Error && shopifyError.message.includes("Email has already been taken")) {
+      if (shopifyCustomer.userErrors.length > 0) {
+        // Check if it's a duplicate email error
+        if (shopifyCustomer.userErrors[0].message.includes("Email has already been taken")) {
           setError("This email is already subscribed to our newsletter!");
           return;
         }
-        throw shopifyError;
+        throw new Error(`Shopify error: ${shopifyCustomer.userErrors[0].message}`);
       }
 
-      // 4️⃣ Create Firebase user + send verification email
-      const password = Math.random().toString(36).slice(-10);
-      const userCred = await createUserWithEmailAndPassword(auth, email, password);
-
-      try {
-        await sendEmailVerification(userCred.user);
-        console.log("✅ Verification email sent to:", email);
-        setSuccess("Check your email inbox/spam to verify your subscription 🎉");
-      } catch (err: unknown) {
-        console.error("❌ Verification email failed:", err);
-        const errorMessage = err instanceof Error ? err.message : "Unknown error";
-        const errorCode = (err as { code?: string }).code || "unknown";
-        setError(`Firebase error: ${errorCode} - ${errorMessage}`);
-      }
-
+      console.log("✅ Customer created in Shopify:", shopifyCustomer.customer.id);
+      setSuccess("Successfully subscribed to our newsletter! 🎉");
       setEmail("");
 
       // Update attempts
