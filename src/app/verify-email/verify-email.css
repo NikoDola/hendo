@@ -1,0 +1,141 @@
+.verifyWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  margin-top: 5rem;
+}
+
+.verificationCard {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  padding: 3rem;
+  text-align: center;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.verificationCard h2 {
+  font-family: var(--lemonmilk);
+  font-size: var(--text-3xl);
+  margin: 1rem 0;
+  color: var(--foreground);
+}
+
+.verificationCard p {
+  font-family: roboto;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin: 1rem 0 2rem 0;
+  color: var(--foreground);
+  opacity: 0.8;
+}
+
+.loadingSpinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid var(--theme-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.successIcon,
+.errorIcon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.successActions,
+.errorActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.homeButton,
+.newsletterButton,
+.retryButton {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-family: var(--lemonmilk);
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.homeButton {
+  background: var(--theme-color);
+  color: black;
+  box-shadow: 0 0 20px var(--theme-color);
+}
+
+.homeButton:hover {
+  background: transparent;
+  color: var(--theme-color);
+  border-color: var(--theme-color);
+  box-shadow: 0 0 20px var(--theme-color);
+}
+
+.newsletterButton {
+  background: transparent;
+  color: var(--theme-color);
+  border-color: var(--theme-color);
+}
+
+.newsletterButton:hover {
+  background: var(--theme-color);
+  color: black;
+  box-shadow: 0 0 20px var(--theme-color);
+}
+
+.retryButton {
+  background: #ef4444;
+  color: white;
+  box-shadow: 0 0 20px #ef4444;
+}
+
+.retryButton:hover {
+  background: transparent;
+  color: #ef4444;
+  border-color: #ef4444;
+  box-shadow: 0 0 20px #ef4444;
+}
+
+@media (max-width: 768px) {
+  .verificationCard {
+    padding: 2rem;
+    margin: 1rem;
+  }
+
+  .successActions,
+  .errorActions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .homeButton,
+  .newsletterButton,
+  .retryButton {
+    width: 100%;
+    max-width: 200px;
+  }
+}

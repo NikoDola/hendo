@@ -1,0 +1,3 @@
+;/*FB_PKG_DELIM*/
+
+__d("LexicalReactProviderExtension",["cr:13740"],(function(a,b,c,d,e,f){e.exports=b("cr:13740")}),null);

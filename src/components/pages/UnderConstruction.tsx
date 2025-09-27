@@ -16,7 +16,7 @@ declare global {
   }
 }
 
-export default function UnderConstruction() {
+export default function Newsletter() {
   const [email, setEmail] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -68,7 +68,7 @@ export default function UnderConstruction() {
       if (result?.error) {
         setError(result.error);
       } else {
-        setSuccess("You have been subscribed 🎉");
+        setSuccess("Check your email for verification! 🎉");
         setEmail("");
       }
     } catch (err) {
@@ -82,12 +82,11 @@ export default function UnderConstruction() {
   return (
     <ColorProvider>
       <section className="section-regular underWrapper">
-        <span className="underConstructionText">UNDER CONSTRUCTION </span>
+        <span className="newsletterTitle">NEWSLETTER</span>
         <p className="subscribeDescription">
-          Subscribe so you&apos;ll be the first to hear my new music, see what
-          I&apos;m creating behind the scenes, and catch exclusive drops from my
-          clothing brand. I&apos;ll also send you a heads-up the moment this
-          site goes live.
+          Subscribe to our newsletter and be the first to hear about new music,
+          exclusive drops from our clothing brand, and behind-the-scenes content.
+          We&apos;ll also send you updates when new features go live.
         </p>
         <div className="newsletterWrapper">
           <input
@@ -106,8 +105,26 @@ export default function UnderConstruction() {
           </button>
         </div>
         {error && <p style={{ color: "red" }}>{error}</p>}
-        {success && <p style={{ color: "green" }}>{success}</p>}
-        <p style={{fontSize: '11px'}} className="my-recaptcha-disclaimer ">
+        {success && (
+          <div style={{
+            color: 'green',
+            marginBottom: '1rem',
+            padding: '1rem',
+            backgroundColor: '#f0f9ff',
+            border: '1px solid #0ea5e9',
+            borderRadius: '0.5rem',
+            textAlign: 'center'
+          }}>
+            <h3 style={{ margin: '0 0 0.5rem 0', color: '#0ea5e9' }}>Verification Email Sent! 📧</h3>
+            <p style={{ margin: '0 0 0.5rem 0' }}>
+              We&apos;ve sent a verification email to <strong>{email}</strong>
+            </p>
+            <p style={{ margin: '0', fontSize: '0.9rem', color: '#64748b' }}>
+              Please check your email and click the verification link to complete your subscription.
+            </p>
+          </div>
+        )}
+        <p style={{ fontSize: '11px' }} className="my-recaptcha-disclaimer ">
           This site is protected by reCAPTCHA and the Google
           <br></br>
           <a

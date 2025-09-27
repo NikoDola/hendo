@@ -1,0 +1,5 @@
+;/*FB_PKG_DELIM*/
+
+__d("IGDEnableOffMsysThreadListQE.relayprovider",["qex"],(function(a,b,c,d,e,f,g){"use strict";a={get:function(){return c("qex")._("2757")===!0}};g["default"]=a}),98);
+__d("IGDMessageRequestLeftRailStandaloneQuery_instagramRelayOperation",[],(function(a,b,c,d,e,f){e.exports="25505223545732116"}),null);
+__d("PolarisDirectInboxQuery_instagramRelayOperation",[],(function(a,b,c,d,e,f){e.exports="31531681873113241"}),null);

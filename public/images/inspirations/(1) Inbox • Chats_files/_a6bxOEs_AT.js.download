@@ -1,0 +1,4 @@
+;/*FB_PKG_DELIM*/
+
+__d("useIGDSystemFolderUnreadThreadCountQuery_instagramRelayOperation",[],(function(a,b,c,d,e,f){e.exports="10051232361642982"}),null);
+__d("useIGDSystemFolderUnreadThreadCountQuery$Parameters",["useIGDSystemFolderUnreadThreadCountQuery_instagramRelayOperation"],(function(a,b,c,d,e,f){"use strict";a={kind:"PreloadableConcreteRequest",params:{id:b("useIGDSystemFolderUnreadThreadCountQuery_instagramRelayOperation"),metadata:{connection:[{count:null,cursor:null,direction:"forward",path:["get_slide_mailbox_for_iris_subscription","threads_by_folder"]}]},name:"useIGDSystemFolderUnreadThreadCountQuery",operationKind:"query",text:null}};e.exports=a}),null);

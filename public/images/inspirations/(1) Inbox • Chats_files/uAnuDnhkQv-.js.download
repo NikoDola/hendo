@@ -1,0 +1,21 @@
+;/*FB_PKG_DELIM*/
+
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ *
+ * @fullSyntaxTransform
+ * @es6-async_DO_NOT_USE
+ * @generated SignedSource<<053a5941068424ecbe5402a89ba938cf>>
+ * 
+ * @nolint
+ * @oncall lexical_web_text_editor
+ * @preserve-invariant-messages
+ * @preserve-whitespace
+ * @preventMunge
+ */__d("LexicalReactProviderExtension.prod",["Lexical"],(function $module_LexicalReactProviderExtension_prod(global,require,requireDynamic,requireLazy,module,exports){
+
+"use strict";var e=require("Lexical").defineExtension({name:"@lexical/react/ReactProvider"});exports.ReactProviderExtension=e;}),null);

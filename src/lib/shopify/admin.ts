@@ -1,5 +1,5 @@
 // Shopify Admin API client for customer management
-const SHOPIFY_STORE_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || 'nebulacloudco.com';
+const SHOPIFY_STORE_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || 'thelegendofhendo.com';
 const SHOPIFY_ADMIN_ACCESS_TOKEN = process.env.NEXT_PUBLIC_SHOPIFY;
 
 if (!SHOPIFY_ADMIN_ACCESS_TOKEN) {
@@ -55,6 +55,7 @@ export async function createCustomer(customerData: {
   phone?: string;
   password?: string;
   accepts_marketing?: boolean;
+  send_email_welcome?: boolean;
 }) {
   const client = new ShopifyAdminClient();
 
@@ -65,7 +66,7 @@ export async function createCustomer(customerData: {
         customer: {
           ...customerData,
           accepts_marketing: customerData.accepts_marketing || false,
-          send_email_welcome: true
+          send_email_welcome: customerData.send_email_welcome || true
         }
       })
     });

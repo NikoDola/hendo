@@ -12,8 +12,12 @@ import {
   serverTimestamp,
 } from "firebase/firestore"
 import { headers } from "next/headers"
+import { registerCustomer } from "@/lib/shopify/storefront"
+import { createCustomer } from "@/lib/shopify/admin"
+import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email"
 
 const COOLDOWN_MS = 60 * 1000 // 1 minute
+const MAX_ATTEMPTS = 3 // Maximum attempts per IP
 
 export async function newsletter(email: string, token: string) {
   try {
@@ -33,38 +37,86 @@ export async function newsletter(email: string, token: string) {
     const forwardedFor = headerStore.get("x-forwarded-for")
     const ip = forwardedFor ? forwardedFor.split(",")[0].trim() : "unknown"
 
-    // 3. Check last attempt from Firestore
+    // 3. Check attempts from Firestore
     const attemptDoc = doc(db, "newsletter_attempts", ip)
     const attemptSnap = await getDocs(
       query(collection(db, "newsletter_attempts"), where("__name__", "==", ip))
     )
 
+    const now = Date.now()
+    let attemptData: { attempts: any[], lastAttempt: any } = { attempts: [], lastAttempt: null }
+
     if (!attemptSnap.empty) {
-      const lastAttempt = attemptSnap.docs[0].data().lastAttempt?.toMillis?.()
-      const now = Date.now()
-      if (lastAttempt && now - lastAttempt < COOLDOWN_MS) {
-        return { error: "Too many attempts. Please wait a minute." }
+      const docData = attemptSnap.docs[0].data()
+      attemptData = {
+        attempts: docData.attempts || [],
+        lastAttempt: docData.lastAttempt || null
       }
     }
 
-    // 4. Save/update attempt timestamp
-    await setDoc(attemptDoc, { lastAttempt: new Date() })
+    // Filter out attempts older than 1 minute
+    const recentAttempts = attemptData.attempts?.filter((timestamp: any) => {
+      const attemptTime = timestamp?.toMillis?.() || timestamp
+      return now - attemptTime < COOLDOWN_MS
+    }) || []
 
-    // 5. Prevent duplicates
+    // Check if user has exceeded max attempts
+    if (recentAttempts.length >= MAX_ATTEMPTS) {
+      return { error: `Too many attempts. You can try ${MAX_ATTEMPTS} times per minute. Please wait.` }
+    }
+
+    // 4. Save/update attempt data
+    const newAttempts = [...recentAttempts, new Date()]
+    await setDoc(attemptDoc, {
+      attempts: newAttempts,
+      lastAttempt: new Date()
+    })
+
+    // 5. Check if email already exists in Firestore
     const q = query(collection(db, "subscribers"), where("email", "==", email))
     const snap = await getDocs(q)
     if (!snap.empty) {
       return { error: "This email is already subscribed." }
     }
 
-    // 6. Save subscriber
+    // 6. Generate verification token
+    const verificationToken = Math.random().toString(36).slice(-12) + Date.now().toString(36)
+
+    // 7. Save subscriber to Firestore for tracking
     await addDoc(collection(db, "subscribers"), {
       email,
       createdAt: serverTimestamp(),
       ip,
+      source: "newsletter",
+      verified: false,
+      verificationToken: verificationToken
     })
 
-    return { success: true }
+    // 8. Try to send verification email using custom service
+    try {
+      await sendVerificationEmail(email, verificationToken)
+      return { success: true }
+    } catch (emailError) {
+      console.error('Custom email service failed:', emailError)
+
+      // Fallback: Try Shopify customer creation
+      try {
+        await createCustomer({
+          email: email,
+          first_name: "Newsletter",
+          last_name: "Subscriber",
+          password: Math.random().toString(36).slice(-12),
+          accepts_marketing: true,
+          send_email_welcome: true
+        })
+        return { success: true }
+      } catch (shopifyError) {
+        console.error('Shopify fallback also failed:', shopifyError)
+        // Even if both email services fail, we still saved the subscriber
+        return { success: true, warning: "Subscription saved, but verification email may not have been sent. Please check your spam folder." }
+      }
+    }
+
   } catch (err) {
     console.error("Newsletter error:", err)
     return { error: "Something went wrong." }

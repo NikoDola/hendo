@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { registerCustomer } from "@/lib/shopify/storefront";
 import { useShopifyAuth } from "@/context/ShopifyAuthContext";
+import { initiateGoogleAuth } from "@/lib/shopify/googleAuth";
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -13,17 +14,20 @@ export default function Signup() {
     password: "",
     confirmPassword: "",
     firstName: "",
-    lastName: ""
+    lastName: "",
+    acceptsMarketing: false
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
   const router = useRouter();
   const { login } = useShopifyAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: type === 'checkbox' ? checked : value
     });
   };
 
@@ -44,19 +48,25 @@ export default function Signup() {
         password: formData.password,
         firstName: formData.firstName,
         lastName: formData.lastName,
-        acceptsMarketing: false
+        acceptsMarketing: formData.acceptsMarketing
       });
 
-      // After successful registration, automatically log them in
-      const { loginCustomer } = await import("@/lib/shopify/storefront");
-      const accessToken = await loginCustomer(formData.email, formData.password);
-      login(accessToken.accessToken);
-      router.push("/dashboard");
+      // Show success message about email verification
+      setSuccess(true);
+      setError("");
     } catch (err) {
       console.error('Registration error:', err);
       setError(err instanceof Error ? err.message : "Registration failed");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignup = () => {
+    try {
+      initiateGoogleAuth();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Google signup failed");
     }
   };
 
@@ -119,14 +129,49 @@ export default function Signup() {
           />
         </div>
 
+        <div className="inputWrapper">
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+            <input
+              type="checkbox"
+              name="acceptsMarketing"
+              checked={formData.acceptsMarketing}
+              onChange={handleChange}
+              style={{ margin: 0 }}
+            />
+            <span>Subscribe to our newsletter for updates and special offers</span>
+          </label>
+        </div>
+
         {error && (
           <div style={{ color: 'red', marginBottom: '1rem' }}>
             {error}
           </div>
         )}
 
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? "Creating Account..." : "Signup"}
+        {success && (
+          <div style={{
+            color: 'green',
+            marginBottom: '1rem',
+            padding: '1rem',
+            backgroundColor: '#f0f9ff',
+            border: '1px solid #0ea5e9',
+            borderRadius: '0.5rem'
+          }}>
+            <h3 style={{ margin: '0 0 0.5rem 0', color: '#0ea5e9' }}>Account Created Successfully! 🎉</h3>
+            <p style={{ margin: '0 0 0.5rem 0' }}>
+              We've sent a verification email to <strong>{formData.email}</strong>
+            </p>
+            <p style={{ margin: '0 0 0.5rem 0' }}>
+              Please check your email and click the verification link to activate your account.
+            </p>
+            <p style={{ margin: '0', fontSize: '0.9rem', color: '#64748b' }}>
+              Once verified, you can <Link href="/login" style={{ color: '#0ea5e9', textDecoration: 'underline' }}>login here</Link>
+            </p>
+          </div>
+        )}
+
+        <button type="submit" disabled={isLoading || success}>
+          {isLoading ? "Creating Account..." : success ? "Account Created!" : "Signup"}
         </button>
 
         <div className="orWrapper">
@@ -135,7 +180,7 @@ export default function Signup() {
           <div className="hrLine" />
         </div>
 
-        <button type="button" className="googleButton">
+        <button type="button" className="googleButton" onClick={handleGoogleSignup}>
           <div className="googleIcon"></div>
           Signup with Google
         </button>
