@@ -59,12 +59,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             autoRampDuration={0.6}
           />
         </div>
-        <div style={{ position: 'relative', zIndex: 1, pointerEvents: 'none' }}>
+        <div style={{ position: 'relative', zIndex: 10, pointerEvents: 'none' }}>
           <MouseProvider>
             <div style={{ pointerEvents: 'auto' }}>
               {/* <NavBar /> */}
             </div>
-            <div style={{ pointerEvents: 'auto' }}>
+            <div style={{
+              pointerEvents: 'auto',
+              minHeight: '100vh',
+              position: 'relative'
+            }}>
               {children}
             </div>
           </MouseProvider>
