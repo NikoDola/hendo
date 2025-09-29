@@ -44,3 +44,6 @@ next-env.d.ts
 *.psd
 *.ai
 *.fig
+
+# Firebase credentials (NEVER commit these!)
+firebase-service-account.json
