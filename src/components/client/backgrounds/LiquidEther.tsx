@@ -294,7 +294,7 @@ export default function LiquidEther({
         this.hasUserControl = true;
         this.isHoverInside = true;
       }
-      onPointerUp(event: PointerEvent) {
+      onPointerUp() {
         this.isHoverInside = false;
       }
       update() {
@@ -580,7 +580,7 @@ export default function LiquidEther({
         this.props = (props as Record<string, unknown>) || {};
         this.uniforms = (this.props.material as { uniforms?: Uniforms })?.uniforms;
       }
-      init(_simProps?: unknown) {
+      init() {
         this.scene = new THREE.Scene();
         this.camera = new THREE.Camera();
         if (this.uniforms) {
@@ -656,16 +656,21 @@ export default function LiquidEther({
 
     class ExternalForce extends ShaderPass {
       mouse!: THREE.Mesh;
+      private cellScale: THREE.Vector2;
+      private cursor_size: number;
+
       constructor(simProps: unknown) {
-        const props = simProps as { dst: THREE.WebGLRenderTarget };
-        super({ output: props.dst });
-        this.init(simProps);
-      }
-      init(simProps: unknown) {
         const props = simProps as {
+          dst: THREE.WebGLRenderTarget;
           cellScale: THREE.Vector2;
           cursor_size: number;
         };
+        super({ output: props.dst });
+        this.cellScale = props.cellScale;
+        this.cursor_size = props.cursor_size;
+        this.init();
+      }
+      init() {
         super.init();
         const mouseG = new THREE.PlaneGeometry(1, 1);
         const mouseM = new THREE.RawShaderMaterial({
@@ -674,10 +679,10 @@ export default function LiquidEther({
           blending: THREE.AdditiveBlending,
           depthWrite: false,
           uniforms: {
-            px: { value: props.cellScale },
+            px: { value: this.cellScale },
             force: { value: new THREE.Vector2(0, 0) },
             center: { value: new THREE.Vector2(0, 0) },
-            scale: { value: new THREE.Vector2(props.cursor_size, props.cursor_size) }
+            scale: { value: new THREE.Vector2(this.cursor_size, this.cursor_size) }
           }
         });
         this.mouse = new THREE.Mesh(mouseG, mouseM);

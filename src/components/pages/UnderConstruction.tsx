@@ -5,7 +5,6 @@ import "./UnderConstruction.css";
 import { ColorProvider } from "../client/colorProvider/ColorProvider";
 
 import { useState, useEffect } from "react";
-import { createShopifyCustomer } from "@/lib/shopify";
 
 declare global {
   interface Window {
@@ -23,8 +22,6 @@ export default function UnderConstruction() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [attempts, setAttempts] = useState<number>(0);
-
   // Load reCAPTCHA script once
   useEffect(() => {
     if (!document.querySelector("#recaptcha-script")) {
@@ -34,10 +31,6 @@ export default function UnderConstruction() {
       script.async = true;
       document.body.appendChild(script);
     }
-
-    // Load attempts from localStorage
-    const saved = localStorage.getItem("newsletter_attempts");
-    if (saved) setAttempts(Number(saved));
   }, []);
 
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -57,10 +50,6 @@ export default function UnderConstruction() {
       return;
     }
 
-    if (attempts >= 10) {
-      setError("You have reached the maximum number of attempts. Please try again later.");
-      return;
-    }
 
     setLoading(true);
 
@@ -71,30 +60,41 @@ export default function UnderConstruction() {
         { action: "newsletter" }
       );
 
-      // 2️⃣ Create customer in Shopify
-      const shopifyCustomer = await createShopifyCustomer({
-        email: email,
-        acceptsMarketing: true,
-        tags: ["newsletter-subscriber", "hendo-music"]
+      // 2️⃣ Save email to Firebase for marketing
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
       });
 
-      if (shopifyCustomer.userErrors.length > 0) {
-        // Check if it's a duplicate email error
-        if (shopifyCustomer.userErrors[0].message.includes("Email has already been taken")) {
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (errorData.error?.includes("already")) {
           setError("This email is already subscribed to our newsletter!");
           return;
         }
-        throw new Error(`Shopify error: ${shopifyCustomer.userErrors[0].message}`);
+        throw new Error(errorData.error || "Failed to subscribe");
       }
 
-      console.log("✅ Customer created in Shopify:", shopifyCustomer.customer.id);
-      setSuccess("Successfully subscribed to our newsletter! 🎉");
-      setEmail("");
+      console.log("✅ Email saved to newsletter database");
 
-      // Update attempts
-      const newAttempts = attempts + 1;
-      setAttempts(newAttempts);
-      localStorage.setItem("newsletter_attempts", String(newAttempts));
+      // 3️⃣ Send verification email
+      const verifyResponse = await fetch('/api/verify-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (verifyResponse.ok) {
+        setSuccess("Check your email to verify your subscription! 📧");
+      } else {
+        setSuccess("Successfully subscribed! Please check your email to verify. 🎉");
+      }
+      setEmail("");
     } catch (err: unknown) {
       console.error("Newsletter signup error:", err);
       const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";

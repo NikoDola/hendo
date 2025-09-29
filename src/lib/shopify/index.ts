@@ -8,6 +8,7 @@ export interface ShopifyCustomer {
   lastName?: string;
   acceptsMarketing: boolean;
   tags?: string[];
+  note?: string; // Add note field for domain tracking
 }
 
 export interface ShopifyCustomerResponse {
@@ -50,7 +51,8 @@ export async function createShopifyCustomer(customerData: ShopifyCustomer): Prom
     input: {
       email: customerData.email,
       password: Math.random().toString(36).slice(-12), // Generate random password
-      acceptsMarketing: customerData.acceptsMarketing
+      acceptsMarketing: customerData.acceptsMarketing,
+      note: `Newsletter signup from: ${process.env.NEXT_PUBLIC_BASE_URL || window.location.origin}`
     }
   };
 
@@ -77,6 +79,53 @@ export async function createShopifyCustomer(customerData: ShopifyCustomer): Prom
   }
 
   return data.data.customerCreate;
+}
+
+// Trigger password reset email for newsletter subscribers
+export async function sendPasswordResetEmail(customerEmail: string): Promise<boolean> {
+  const mutation = `
+    mutation customerRecover($email: String!) {
+      customerRecover(email: $email) {
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  const variables = {
+    email: customerEmail
+  };
+
+  try {
+    const response = await fetch(`https://${SHOPIFY_STORE_DOMAIN}/api/2023-10/graphql.json`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_TOKEN!,
+      },
+      body: JSON.stringify({
+        query: mutation,
+        variables: variables
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Shopify API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    if (data.errors) {
+      throw new Error(`GraphQL errors: ${JSON.stringify(data.errors)}`);
+    }
+
+    return data.data.customerRecover.userErrors.length === 0;
+  } catch (error) {
+    console.error('Password reset email error:', error);
+    return false;
+  }
 }
 
 // Note: Storefront API doesn't support querying customers
