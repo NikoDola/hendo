@@ -37,9 +37,16 @@ export async function POST(req: Request) {
       createdAt: new Date(),
     });
 
-    // Generate verification link - use HTTP for development or if SSL isn't set up
+    // Generate verification link - use www version for SSL
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const verificationLink = `${baseUrl}/special/verify?token=${verificationToken}&email=${encodeURIComponent(email)}`;
+
+    let verificationLink;
+    if (baseUrl.includes('thelegendofhendo.com')) {
+      // Use www version since SSL is configured for www.thelegendofhendo.com
+      verificationLink = `https://www.thelegendofhendo.com/special/verify?token=${verificationToken}&email=${encodeURIComponent(email)}`;
+    } else {
+      verificationLink = `${baseUrl}/special/verify?token=${verificationToken}&email=${encodeURIComponent(email)}`;
+    }
 
     console.log(`🔗 Generated verification link: ${verificationLink}`);
 
