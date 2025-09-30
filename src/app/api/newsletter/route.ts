@@ -59,7 +59,7 @@ export async function POST(req: Request) {
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 2rem;">
             <div style="text-align: center; margin-bottom: 2rem;">
-              <h1 style="color: #5227FF; font-size: 2rem; margin: 0;">T. HENDO DREAMSTATION</h1>
+              <h1 style="color: #5227FF; font-size: 2rem; margin: 0; font-family: 'LEMONMILK', Arial, sans-serif; font-weight: bold; letter-spacing: 2px;">T. HENDO DREAMSTATION</h1>
               <p style="color: #666; margin: 0.5rem 0;">Welcome to the family!</p>
             </div>
             
