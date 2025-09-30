@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     // Send verification email using Resend
     try {
       await resend.emails.send({
-        from: 'HENDO Music <noreply@thelegendofhendo.com>',
+        from: 'T.HENDO<noreply@thelegendofhendo.com>',
         to: [email],
         subject: '🎵 Verify your HENDO Music subscription',
         html: `
