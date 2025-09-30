@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "@/app/globals.css";
 import localFont from "next/font/local";
 import { MouseProvider } from "@/context/context";
+import { ColorProvider } from "@/components/client/ColorProvider";
 // import NavBar from "@/components/client/NavBar";
 import LiquidEther from "@/components/client/backgrounds/LiquidEther";
 // import LiquidChrome from "@/components/client/LiquidEther";
@@ -60,18 +61,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           />
         </div>
         <div style={{ position: 'relative', zIndex: 10, pointerEvents: 'none' }}>
-          <MouseProvider>
-            <div style={{ pointerEvents: 'auto' }}>
-              {/* <NavBar /> */}
-            </div>
-            <div style={{
-              pointerEvents: 'auto',
-              minHeight: '100vh',
-              position: 'relative'
-            }}>
-              {children}
-            </div>
-          </MouseProvider>
+          <ColorProvider>
+            <MouseProvider>
+              <div style={{ pointerEvents: 'auto' }}>
+                {/* <NavBar /> */}
+              </div>
+              <div style={{
+                pointerEvents: 'auto',
+                minHeight: '100vh',
+                position: 'relative'
+              }}>
+                {children}
+              </div>
+            </MouseProvider>
+          </ColorProvider>
         </div>
       </body>
     </html>

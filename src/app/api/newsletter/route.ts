@@ -59,14 +59,14 @@ export async function POST(req: Request) {
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 2rem;">
             <div style="text-align: center; margin-bottom: 2rem;">
-              <h1 style="color: #5227FF; font-size: 2rem; margin: 0;">HENDO MUSIC</h1>
+              <h1 style="color: #5227FF; font-size: 2rem; margin: 0;">T. HENDO DREAMSTATION</h1>
               <p style="color: #666; margin: 0.5rem 0;">Welcome to the family!</p>
             </div>
             
-            <div style="background: linear-gradient(135deg, #5227FF, #FF9FFC); padding: 2rem; border-radius: 15px; text-align: center; margin-bottom: 2rem;">
-              <h2 style="color: white; margin: 0 0 1rem 0; font-size: 1.5rem;">🎉 Almost there!</h2>
+            <div style="background: linear-gradient(135deg, #5227FF, #FF9FFC, #8B0000); padding: 2rem; border-radius: 15px; text-align: center; margin-bottom: 2rem;">
+              <h2 style="color: white; margin: 0 0 1rem 0; font-size: 1.5rem;">⭐ Almost there!</h2>
               <p style="color: white; margin: 0; line-height: 1.6;">
-                Click the button below to verify your email and start receiving exclusive updates about:
+                Click the button below to verify your email and start receiving exclusive updates:
               </p>
             </div>
             
@@ -95,7 +95,7 @@ export async function POST(req: Request) {
             <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #eee;">
               <p style="color: #999; font-size: 0.8rem; margin: 0;">
                 Best regards,<br>
-                <strong>The HENDO Music Team</strong>
+                <strong>The T. HENDO DREAMSTATION Team</strong>
               </p>
             </div>
           </div>
