@@ -22,12 +22,14 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 4px;
-  height: 4px;
-  background: #fff;
+  width: 3px;
+  height: 3px;
+  background: var(--theme-color, #fff);
   border-radius: 50%;
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1), 0 0 0 8px rgba(255, 255, 255, 0.1), 0 0 20px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 2px var(--theme-color, rgba(255, 255, 255, 0.3)), 0 0 0 4px var(--theme-color, rgba(255, 255, 255, 0.2)), 0 0 8px var(--theme-color, rgba(255, 255, 255, 0.4));
   animation: animate 3s linear infinite;
+  filter: blur(0.5px);
+  transition: background 1s ease, box-shadow 1s ease;
 }
 
 .star::before {
@@ -37,7 +39,50 @@
   transform: translateY(-50%);
   width: 300px;
   height: 1px;
-  background: linear-gradient(90deg, #fff, transparent);
+  background: linear-gradient(90deg, var(--theme-color, #fff), transparent);
+  filter: blur(0.3px);
+  transition: background 1s ease;
+}
+
+/* Different blur effects for different stars */
+.star:nth-child(1) {
+  filter: blur(0.2px);
+}
+
+.star:nth-child(2) {
+  filter: blur(0.8px);
+}
+
+.star:nth-child(3) {
+  filter: blur(0.1px);
+}
+
+.star:nth-child(4) {
+  filter: blur(1px);
+}
+
+.star:nth-child(5) {
+  filter: blur(0.3px);
+}
+
+.star:nth-child(6) {
+  filter: blur(0.6px);
+}
+
+.star:nth-child(7) {
+  filter: blur(0.4px);
+}
+
+.star:nth-child(8) {
+  filter: blur(0.9px);
+}
+
+.star:nth-child(9) {
+  filter: blur(0.2px);
+}
+
+.star:nth-child(10) {
+  filter: blur(0.7px);
 }
 
 @keyframes animate {
