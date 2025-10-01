@@ -5,7 +5,7 @@
   align-items: center;
   flex-direction: column;
   text-align: center;
-  font-family: var(--font-lemonmilk), system-ui, sans-serif;
+  font-family: 'LEMONMILK', var(--font-lemonmilk), 'Arial Black', Arial, sans-serif;
   color: white;
 }
 
@@ -61,10 +61,12 @@
   font-size: 1.1rem;
   font-weight: bold;
   background-color: var(--theme-color);
+  font-family: 'LEMONMILK', var(--font-lemonmilk), 'Arial Black', Arial, sans-serif;
+  letter-spacing: 1px;
 }
 
 .verify-link:hover {
-  
+
   background-color: black;
   box-shadow: 0 0 20px var(--theme-color);
   transform: translateY(-2px);

@@ -55,16 +55,16 @@ export async function POST(req: Request) {
       await resend.emails.send({
         from: 'T.HENDO<noreply@thelegendofhendo.com>',
         to: [email],
-        subject: 'Verify your T.HENDO DREAMSTATION subscription',
+        subject: 'Verify your T. HENDO DREAMSTATION subscription',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 2rem;">
             <div style="text-align: center; margin-bottom: 2rem;">
-              <h1 style="color: #22C063; font-size: 2rem; margin: 0; font-family: 'Arial Black', Arial, sans-serif; font-weight: 900; letter-spacing: 3px; text-transform: uppercase;">T. HENDO DREAMSTATION</h1>
+              <h1 style="color: #22C063; font-size: 2rem; margin: 0; font-family: 'LEMONMILK', 'Arial Black', Arial, sans-serif; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;">T. HENDO DREAMSTATION</h1>
               <p style="color: #666; margin: 0.5rem 0;">Welcome to the family!</p>
             </div>
             
             <div style="background: #000000; padding: 2rem; border-radius: 15px; text-align: center; margin-bottom: 2rem; border: 2px solid #00FF00;">
-              <h2 style="color: #22C063; margin: 0 0 1rem 0; font-size: 1.5rem; font-weight: bold; letter-spacing: 2px;">⭐ ALMOST THERE!</h2>
+              <h2 style="color: #22C063; margin: 0 0 1rem 0; font-size: 1.5rem; font-weight: 700; letter-spacing: 2px; font-family: 'LEMONMILK', 'Arial Black', Arial, sans-serif;">⭐ ALMOST THERE!</h2>
               <p style="color: #E0E0E0; margin: 0; line-height: 1.6; font-size: 1rem;">
                 Click the button below to verify your email and start receiving exclusive updates:
               </p>
@@ -72,13 +72,13 @@ export async function POST(req: Request) {
             
             <div style="text-align: center; margin: 2rem 0;">
               <a href="${verificationLink}" 
-                 style="background: #22C063; color: #FFFFFF; padding: 1rem 2rem; text-decoration: none; border-radius: 50px; font-weight: bold; display: inline-block; font-size: 1.1rem;">
+                 style="background: #22C063; color: #FFFFFF; padding: 1rem 2rem; text-decoration: none; border-radius: 50px; font-weight: 700; display: inline-block; font-size: 1.1rem; font-family: 'LEMONMILK', 'Arial Black', Arial, sans-serif; letter-spacing: 1px;">
                 ✅ Verify My Email
               </a>
             </div>
             
             <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 10px; margin: 2rem 0;">
-              <h3 style="color: #333; margin: 0 0 1rem 0;">What you'll get:</h3>
+              <h3 style="color: #333; margin: 0 0 1rem 0; font-family: 'LEMONMILK', 'Arial Black', Arial, sans-serif; font-weight: 700; letter-spacing: 1px;">What you'll get:</h3>
               <ul style="color: #666; margin: 0; padding-left: 1.5rem;">
                 <li>🎵 First access to new music releases</li>
                 <li>👕 Exclusive clothing drops and merch</li>
