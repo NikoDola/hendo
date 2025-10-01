@@ -24,7 +24,7 @@ function VerifyContent() {
       .then(async (response) => {
         const data = await response.json();
         if (response.ok) {
-          setStatus("✅ Email verified! Welcome to HENDO DREAMSTATION! 🎵");
+          setStatus("✅ Email verified! Welcome to HENDO DREAMSTATION! ⭐");
         } else {
           setStatus(`❌ ${data.error || "Verification failed"}`);
         }
@@ -45,7 +45,16 @@ function VerifyContent() {
           {loading ? "⏳" : status.includes("✅") ? "🎉" : "❌"}
         </h1>
 
-        <p className="verify-status">{status}</p>
+        <div className="verify-status">
+          {status.includes("✅") ? (
+            <>
+              <p>✅ Email verified!</p>
+              <p>Welcome to HENDO DREAMSTATION! ⭐</p>
+            </>
+          ) : (
+            <p>{status}</p>
+          )}
+        </div>
 
         {status.includes("✅") && (
           <div className="verify-updates">
