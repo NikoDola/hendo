@@ -48,7 +48,7 @@ function VerifyContent() {
         <div className="verify-status">
           {status.includes("✅") ? (
             <>
-              <p>✅ Email verified!</p>
+              <h3>✅ Email verified!</h3>
               <p>Welcome to HENDO DREAMSTATION! ⭐</p>
             </>
           ) : (

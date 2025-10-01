@@ -92,7 +92,7 @@ export default function UnderConstruction() {
       if (verifyResponse.ok) {
         setSuccess("Check your email to verify your subscription! 📧");
       } else {
-        setSuccess("Successfully subscribed! Please check your email to verify. 🎉");
+        setSuccess("Successfully subscribed! Please check your email to verify. ⭐");
       }
       setEmail("");
     } catch (err: unknown) {
