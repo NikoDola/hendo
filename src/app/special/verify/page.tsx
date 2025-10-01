@@ -107,7 +107,7 @@ function VerifyContent() {
             ) : (
               <p>{status}</p>
             )}
-          </div>c
+          </div>
 
           {status.includes("✅") && (
             <div className="verify-updates">
