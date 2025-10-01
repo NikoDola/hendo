@@ -24,7 +24,7 @@ function VerifyContent() {
       .then(async (response) => {
         const data = await response.json();
         if (response.ok) {
-          setStatus("✅ Email verified! Welcome to HENDO Music! 🎵");
+          setStatus("✅ Email verified! Welcome to HENDO DREAMSTATION! 🎵");
         } else {
           setStatus(`❌ ${data.error || "Verification failed"}`);
         }
