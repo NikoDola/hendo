@@ -65,14 +65,17 @@ h1::selection {
 
 h2 {
   font-size: var(--text-5xl);
-  font-family: 'Oswald', sans-serif;
-  font-weight: 200;
+  font-family: 'LEMONMILK', var(--font-lemonmilk), 'Arial Black', Arial, sans-serif;
+  font-weight: 700;
   letter-spacing: var(--space-1);
   margin-bottom: 1rem;
 }
 
 h3 {
   font-size: var(--text-4xl);
+  font-family: 'LEMONMILK', var(--font-lemonmilk), 'Arial Black', Arial, sans-serif;
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
 h4 {

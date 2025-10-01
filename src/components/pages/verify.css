@@ -35,7 +35,8 @@
 }
 
 .verify-status p,
-.verify-status h2 {
+.verify-status h2,
+.verify-status h3 {
   font-family: 'LEMONMILK', var(--font-lemonmilk), 'Arial Black', Arial, sans-serif !important;
   font-weight: 700 !important;
   letter-spacing: 1px !important;
