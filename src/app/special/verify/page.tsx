@@ -125,7 +125,7 @@ function VerifyContent() {
             href="/"
             className="verify-link"
           >
-            {status.includes("✅") ? "Back to HENDO" : "Try Again"}
+            {status.includes("✅") ? "Back to T.HENDO" : "Try Again"}
           </Link>
         </div>
       </div>
