@@ -42,7 +42,7 @@ function VerifyContent() {
     <div className="verify-container">
       <div className="verify-box">
         <h1 className="verify-icon">
-          {loading ? "⏳" : status.includes("✅") ? "🎉" : "❌"}
+          {loading ? "⏳" : status.includes("✅") ? "⭐" : "❌"}
         </h1>
 
         <div className="verify-status">
