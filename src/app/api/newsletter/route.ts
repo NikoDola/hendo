@@ -55,7 +55,7 @@ export async function POST(req: Request) {
       await resend.emails.send({
         from: 'T.HENDO<noreply@thelegendofhendo.com>',
         to: [email],
-        subject: '🎵 Verify your HENDO Music subscription',
+        subject: 'Verify your T.HENDO DREAMSTATION subscription',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 2rem;">
             <div style="text-align: center; margin-bottom: 2rem;">
