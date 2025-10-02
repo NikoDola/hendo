@@ -22,11 +22,29 @@ function VerifyContent() {
       return;
     }
 
+    // First verify the email
     fetch(`/api/verify?token=${token}&email=${encodeURIComponent(email)}`)
       .then(async (response) => {
         const data = await response.json();
         if (response.ok) {
-          setStatus("✅ Email verified! Welcome to HENDO DREAMSTATION! ⭐");
+          // Email verified successfully, now create Shopify customer
+          console.log("✅ Email verified, creating Shopify customer...");
+
+          try {
+            const shopifyResponse = await fetch(`/api/create-customer?email=${encodeURIComponent(email)}`);
+            const shopifyData = await shopifyResponse.json();
+
+            if (shopifyResponse.ok) {
+              console.log("✅ Shopify customer created:", shopifyData);
+              setStatus("✅ Email verified! Welcome to HENDO DREAMSTATION! ⭐");
+            } else {
+              console.log("⚠️ Shopify customer creation failed:", shopifyData);
+              setStatus("✅ Email verified! Welcome to HENDO DREAMSTATION! ⭐");
+            }
+          } catch (shopifyError) {
+            console.error("❌ Shopify customer creation error:", shopifyError);
+            setStatus("✅ Email verified! Welcome to HENDO DREAMSTATION! ⭐");
+          }
         } else {
           setStatus(`❌ ${data.error || "Verification failed"}`);
         }

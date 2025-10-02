@@ -1,0 +1,53 @@
+import { NextResponse } from "next/server";
+import { createShopifyCustomer, checkCustomerExists } from "@/lib/shopify";
+
+export async function GET(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const email = searchParams.get('email');
+
+    if (!email) {
+      return NextResponse.json({ error: "Email parameter is required" }, { status: 400 });
+    }
+
+    console.log(`🆕 Creating Shopify customer for: ${email}`);
+
+    // Check if customer already exists
+    const customerExists = await checkCustomerExists(email);
+
+    if (customerExists) {
+      return NextResponse.json({
+        message: `Customer ${email} already exists in Shopify`,
+        email,
+        exists: true
+      });
+    }
+
+    // Create new customer
+    const shopifyCustomer = await createShopifyCustomer({
+      email: email,
+      acceptsMarketing: true,
+      tags: ['newsletter-subscriber', 'hendo-fan'],
+      note: `Newsletter subscriber created on ${new Date().toISOString()}`
+    });
+
+    console.log(`✅ Shopify customer created: ${shopifyCustomer.customer.id} for ${email}`);
+
+    return NextResponse.json({
+      success: true,
+      message: `Customer ${email} created successfully in Shopify`,
+      customer: {
+        id: shopifyCustomer.customer.id,
+        email: shopifyCustomer.customer.email,
+        tags: shopifyCustomer.customer.tags
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Failed to create Shopify customer:', error);
+    return NextResponse.json({
+      error: 'Failed to create Shopify customer',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 });
+  }
+}
