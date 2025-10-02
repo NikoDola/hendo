@@ -44,3 +44,6 @@ next-env.d.ts
 *.psd
 *.ai
 *.fig
+
+# Firebase service account credentials
+firebase-service-account.json

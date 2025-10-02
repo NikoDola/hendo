@@ -124,7 +124,7 @@ export default function Newsletter() {
             </p>
           </div>
         )}
-        <p style={{ fontSize: '11px' }} className="my-recaptcha-disclaimer ">
+        <p  className="my-recaptcha-disclaimer ">
           This site is protected by reCAPTCHA and the Google
           <br></br>
           <a
