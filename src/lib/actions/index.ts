@@ -15,6 +15,7 @@ import { headers } from "next/headers"
 import { registerCustomer } from "@/lib/shopify/storefront"
 import { createCustomer } from "@/lib/shopify/admin"
 import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email"
+import { syncNewsletterSubscriberToShopify } from "@/lib/firebase-shopify-sync"
 
 const COOLDOWN_MS = 60 * 1000 // 1 minute
 const MAX_ATTEMPTS = 3 // Maximum attempts per IP
@@ -83,7 +84,7 @@ export async function newsletter(email: string, token: string) {
     const verificationToken = Math.random().toString(36).slice(-12) + Date.now().toString(36)
 
     // 7. Save subscriber to Firestore for tracking
-    await addDoc(collection(db, "subscribers"), {
+    const subscriberRef = await addDoc(collection(db, "subscribers"), {
       email,
       createdAt: serverTimestamp(),
       ip,
@@ -92,29 +93,23 @@ export async function newsletter(email: string, token: string) {
       verificationToken: verificationToken
     })
 
-    // 8. Try to send verification email using custom service
+    // 8. Sync to Shopify (create customer account)
+    try {
+      await syncNewsletterSubscriberToShopify(email, "Newsletter", "Subscriber")
+      console.log('Successfully synced newsletter subscriber to Shopify')
+    } catch (syncError) {
+      console.error('Failed to sync to Shopify, but continuing with newsletter signup:', syncError)
+      // Don't fail the newsletter signup if Shopify sync fails
+    }
+
+    // 9. Try to send verification email using custom service
     try {
       await sendVerificationEmail(email, verificationToken)
       return { success: true }
     } catch (emailError) {
       console.error('Custom email service failed:', emailError)
-
-      // Fallback: Try Shopify customer creation
-      try {
-        await createCustomer({
-          email: email,
-          first_name: "Newsletter",
-          last_name: "Subscriber",
-          password: Math.random().toString(36).slice(-12),
-          accepts_marketing: true,
-          send_email_welcome: true
-        })
-        return { success: true }
-      } catch (shopifyError) {
-        console.error('Shopify fallback also failed:', shopifyError)
-        // Even if both email services fail, we still saved the subscriber
-        return { success: true, warning: "Subscription saved, but verification email may not have been sent. Please check your spam folder." }
-      }
+      // Even if email service fails, we still saved the subscriber and synced to Shopify
+      return { success: true, warning: "Subscription saved, but verification email may not have been sent. Please check your spam folder." }
     }
 
   } catch (err) {

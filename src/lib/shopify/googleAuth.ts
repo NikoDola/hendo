@@ -1,5 +1,6 @@
 // Google OAuth integration for Shopify
 import { ShopifyStorefrontClient } from './storefront';
+import { syncShopifyCustomerToFirebase } from '@/lib/firebase-shopify-sync';
 
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 const SHOPIFY_STORE_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
@@ -287,7 +288,25 @@ async function createOrLoginCustomerWithGoogle(googleUser: {
       throw new Error(loginResponse.customerAccessTokenCreate.customerUserErrors[0].message);
     }
 
-    return loginResponse.customerAccessTokenCreate.customerAccessToken;
+    const accessToken = loginResponse.customerAccessTokenCreate.customerAccessToken;
+
+    // Sync to Firebase for new customers
+    if (createResponse.customerCreate.customer) {
+      try {
+        await syncShopifyCustomerToFirebase({
+          email: googleUser.email,
+          first_name: googleUser.given_name,
+          last_name: googleUser.family_name,
+          id: createResponse.customerCreate.customer.id
+        });
+        console.log('Successfully synced Google OAuth customer to Firebase');
+      } catch (syncError) {
+        console.error('Failed to sync Google OAuth customer to Firebase:', syncError);
+        // Don't fail the OAuth flow if Firebase sync fails
+      }
+    }
+
+    return accessToken;
   } catch (error) {
     console.error('Error creating/logging in customer:', error);
     throw error;

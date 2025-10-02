@@ -66,7 +66,8 @@ export async function createCustomer(customerData: {
         customer: {
           ...customerData,
           accepts_marketing: customerData.accepts_marketing || false,
-          send_email_welcome: customerData.send_email_welcome || true
+          send_email_welcome: customerData.send_email_welcome || false, // Default to false - Firebase handles verification
+          send_email_invite: false // Disable invitation emails
         }
       })
     });

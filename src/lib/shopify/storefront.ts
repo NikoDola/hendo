@@ -1,4 +1,5 @@
 // Shopify Storefront API client for customer authentication and cart management
+import { syncShopifyCustomerToFirebase } from '@/lib/firebase-shopify-sync';
 
 
 const SHOPIFY_STORE_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
@@ -350,7 +351,23 @@ export async function registerCustomer(customerData: {
       throw new Error(response.customerCreate.customerUserErrors[0].message);
     }
 
-    return response.customerCreate.customer;
+    const customer = response.customerCreate.customer;
+
+    // Sync to Firebase
+    try {
+      await syncShopifyCustomerToFirebase({
+        email: customer.email,
+        first_name: customer.firstName || 'Customer',
+        last_name: customer.lastName || 'User',
+        id: customer.id
+      });
+      console.log('Successfully synced Shopify customer to Firebase');
+    } catch (syncError) {
+      console.error('Failed to sync to Firebase, but continuing with Shopify registration:', syncError);
+      // Don't fail the Shopify registration if Firebase sync fails
+    }
+
+    return customer;
   } catch (error) {
     console.error('Registration error:', error);
     throw error;
