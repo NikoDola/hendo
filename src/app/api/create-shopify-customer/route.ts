@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     console.error('❌ Failed to create Shopify customer:', error);
     return NextResponse.json({
       error: 'Failed to create Shopify customer',
-      details: error.message
+      details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 }

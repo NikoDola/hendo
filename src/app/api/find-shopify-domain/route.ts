@@ -60,10 +60,11 @@ export async function GET(req: Request) {
         console.log(`📡 ${domain} -> Base: ${baseResponse.status}, Admin: ${adminResponse.status}`);
 
       } catch (error) {
-        console.error(`❌ Error testing ${domain}:`, error.message);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error(`❌ Error testing ${domain}:`, errorMessage);
         results.push({
           domain,
-          error: error.message,
+          error: errorMessage,
           success: false
         });
       }
@@ -91,7 +92,7 @@ export async function GET(req: Request) {
     console.error('❌ Domain test failed:', error);
     return NextResponse.json({
       error: 'Domain test failed',
-      details: error.message
+      details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 }

@@ -57,7 +57,7 @@ export async function GET(req: Request) {
         });
       } catch (error) {
         console.error(`❌ Customer creation failed:`, error);
-        creationResult = { error: error.message };
+        creationResult = { error: error instanceof Error ? error.message : 'Unknown error' };
       }
     }
 
@@ -70,7 +70,7 @@ export async function GET(req: Request) {
       creationResult,
       message: customerExists
         ? 'Customer already exists in Shopify'
-        : creationResult?.error
+        : creationResult && 'error' in creationResult
           ? `Customer creation failed: ${creationResult.error}`
           : 'Customer created successfully'
     });
@@ -79,7 +79,7 @@ export async function GET(req: Request) {
     console.error('❌ Test failed:', error);
     return NextResponse.json({
       error: 'Test failed',
-      details: error.message
+      details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 }

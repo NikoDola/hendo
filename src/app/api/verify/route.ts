@@ -87,8 +87,8 @@ export async function GET(req: Request) {
     } catch (shopifyError) {
       console.error(`⚠️ Failed to create Shopify customer for ${email}:`, shopifyError);
       console.error(`⚠️ Error details:`, {
-        message: shopifyError.message,
-        stack: shopifyError.stack
+        message: shopifyError instanceof Error ? shopifyError.message : 'Unknown error',
+        stack: shopifyError instanceof Error ? shopifyError.stack : undefined
       });
       // Don't fail the verification if Shopify creation fails
       // The user is still verified in Firebase

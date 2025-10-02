@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     const shopifyDomain = process.env.SHOPIFY_STORE_DOMAIN;
     const shopifyToken = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
@@ -38,7 +38,7 @@ export async function GET(req: Request) {
         let responseData = null;
         try {
           responseData = await response.json();
-        } catch (e) {
+        } catch {
           responseData = { error: 'Could not parse JSON response' };
         }
 
@@ -58,10 +58,11 @@ export async function GET(req: Request) {
         }
 
       } catch (error) {
-        console.error(`❌ Error testing ${url}:`, error.message);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error(`❌ Error testing ${url}:`, errorMessage);
         results.push({
           url,
-          error: error.message,
+          error: errorMessage,
           success: false
         });
       }
@@ -91,7 +92,7 @@ export async function GET(req: Request) {
 
     } catch (error) {
       permissionsTest = {
-        error: error.message,
+        error: error instanceof Error ? error.message : 'Unknown error',
         success: false
       };
     }
@@ -118,7 +119,7 @@ export async function GET(req: Request) {
 
     } catch (error) {
       domainTest = {
-        error: error.message,
+        error: error instanceof Error ? error.message : 'Unknown error',
         success: false
       };
     }
@@ -145,7 +146,7 @@ export async function GET(req: Request) {
     console.error('❌ Debug test failed:', error);
     return NextResponse.json({
       error: 'Debug test failed',
-      details: error.message
+      details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 }

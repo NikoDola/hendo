@@ -138,7 +138,7 @@ export async function testShopifyConnection(): Promise<{ success: boolean, error
         console.log(`❌ API ${version} failed: ${response.status} ${response.statusText}`, errorData);
       }
     } catch (error) {
-      console.log(`❌ API ${version} error:`, error.message);
+      console.log(`❌ API ${version} error:`, error instanceof Error ? error.message : 'Unknown error');
     }
   }
 
