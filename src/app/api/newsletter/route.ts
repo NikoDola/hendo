@@ -16,8 +16,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
-    // Check if email already exists
-    const emailDoc = await getDoc(doc(collection(db, "newsletter"), email));
+    // Convert email to lowercase to prevent duplicates
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Check if email already exists (using normalized email)
+    const emailDoc = await getDoc(doc(collection(db, "newsletter"), normalizedEmail));
     if (emailDoc.exists()) {
       const data = emailDoc.data();
       if (data.verified) {
@@ -30,44 +33,45 @@ export async function POST(req: Request) {
     // Generate verification token
     const verificationToken = crypto.randomBytes(32).toString('hex');
 
-    // Store email with verification token (not verified yet)
-    await setDoc(doc(collection(db, "newsletter"), email), {
-      email,
+    // Store email with verification token (not verified yet) - using normalized email as document ID
+    await setDoc(doc(collection(db, "newsletter"), normalizedEmail), {
+      email: normalizedEmail, // Store the normalized email
+      originalEmail: email, // Keep track of original case for display purposes
       verified: false,
       verificationToken,
       createdAt: new Date(),
     });
 
     // 🚀 CREATE SHOPIFY CUSTOMER IMMEDIATELY (before email verification)
-    console.log(`🚀 Creating Shopify customer immediately for ${email}`);
+    console.log(`🚀 Creating Shopify customer immediately for ${normalizedEmail}`);
     try {
       // Check if customer already exists in Shopify
-      const customerExists = await checkCustomerExists(email);
-      
+      const customerExists = await checkCustomerExists(normalizedEmail);
+
       if (!customerExists) {
-        console.log(`🆕 Creating new Shopify customer for ${email}...`);
+        console.log(`🆕 Creating new Shopify customer for ${normalizedEmail}...`);
         const shopifyCustomer = await createShopifyCustomer({
-          email: email,
+          email: normalizedEmail,
           acceptsMarketing: true,
           tags: ['newsletter-subscriber', 'hendo-fan'],
           note: `Newsletter subscriber (unverified) from: ${process.env.NEXT_PUBLIC_BASE_URL || 'hendo-website'}`
         });
 
-        console.log(`✅ Shopify customer created: ${shopifyCustomer.customer.id} for ${email}`);
+        console.log(`✅ Shopify customer created: ${shopifyCustomer.customer.id} for ${normalizedEmail}`);
 
         // Update Firebase record with Shopify customer ID
-        await updateDoc(doc(collection(db, "newsletter"), email), {
+        await updateDoc(doc(collection(db, "newsletter"), normalizedEmail), {
           shopifyCustomerId: shopifyCustomer.customer.id,
           shopifyCreatedAt: shopifyCustomer.customer.createdAt
         });
 
         console.log(`✅ Firebase record updated with Shopify customer ID`);
       } else {
-        console.log(`ℹ️ Customer ${email} already exists in Shopify, skipping creation`);
+        console.log(`ℹ️ Customer ${normalizedEmail} already exists in Shopify, skipping creation`);
       }
 
     } catch (shopifyError) {
-      console.error(`⚠️ Failed to create Shopify customer for ${email}:`, shopifyError);
+      console.error(`⚠️ Failed to create Shopify customer for ${normalizedEmail}:`, shopifyError);
       // Don't fail the signup if Shopify creation fails
       // The user is still signed up in Firebase
     }
@@ -78,9 +82,9 @@ export async function POST(req: Request) {
     let verificationLink;
     if (baseUrl.includes('thelegendofhendo.com')) {
       // Use www version since SSL is configured for www.thelegendofhendo.com
-      verificationLink = `https://www.thelegendofhendo.com/special/verify?token=${verificationToken}&email=${encodeURIComponent(email)}`;
+      verificationLink = `https://www.thelegendofhendo.com/special/verify?token=${verificationToken}&email=${encodeURIComponent(normalizedEmail)}`;
     } else {
-      verificationLink = `${baseUrl}/special/verify?token=${verificationToken}&email=${encodeURIComponent(email)}`;
+      verificationLink = `${baseUrl}/special/verify?token=${verificationToken}&email=${encodeURIComponent(normalizedEmail)}`;
     }
 
     console.log(`🔗 Generated verification link: ${verificationLink}`);
@@ -89,7 +93,7 @@ export async function POST(req: Request) {
     try {
       await resend.emails.send({
         from: 'T. HENDO<noreply@thelegendofhendo.com>',
-        to: [email],
+        to: [normalizedEmail],
         subject: 'Verify your T. HENDO DREAMSTATION subscription',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 2rem;">
@@ -137,7 +141,7 @@ export async function POST(req: Request) {
         `,
       });
 
-      console.log(`✅ Verification email sent to ${email} via Resend`);
+      console.log(`✅ Verification email sent to ${normalizedEmail} via Resend`);
       return NextResponse.json({ message: "Verification email sent! Please check your inbox." });
 
     } catch (emailError) {
