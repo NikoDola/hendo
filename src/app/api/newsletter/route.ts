@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/firebase";
-import { collection, doc, setDoc, getDoc } from "firebase/firestore";
+import { collection, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import crypto from "crypto";
 import { Resend } from "resend";
+import { createShopifyCustomer, checkCustomerExists } from "@/lib/shopify";
 
 // Initialize Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -36,6 +37,40 @@ export async function POST(req: Request) {
       verificationToken,
       createdAt: new Date(),
     });
+
+    // 🚀 CREATE SHOPIFY CUSTOMER IMMEDIATELY (before email verification)
+    console.log(`🚀 Creating Shopify customer immediately for ${email}`);
+    try {
+      // Check if customer already exists in Shopify
+      const customerExists = await checkCustomerExists(email);
+      
+      if (!customerExists) {
+        console.log(`🆕 Creating new Shopify customer for ${email}...`);
+        const shopifyCustomer = await createShopifyCustomer({
+          email: email,
+          acceptsMarketing: true,
+          tags: ['newsletter-subscriber', 'hendo-fan'],
+          note: `Newsletter subscriber (unverified) from: ${process.env.NEXT_PUBLIC_BASE_URL || 'hendo-website'}`
+        });
+
+        console.log(`✅ Shopify customer created: ${shopifyCustomer.customer.id} for ${email}`);
+
+        // Update Firebase record with Shopify customer ID
+        await updateDoc(doc(collection(db, "newsletter"), email), {
+          shopifyCustomerId: shopifyCustomer.customer.id,
+          shopifyCreatedAt: shopifyCustomer.customer.createdAt
+        });
+
+        console.log(`✅ Firebase record updated with Shopify customer ID`);
+      } else {
+        console.log(`ℹ️ Customer ${email} already exists in Shopify, skipping creation`);
+      }
+
+    } catch (shopifyError) {
+      console.error(`⚠️ Failed to create Shopify customer for ${email}:`, shopifyError);
+      // Don't fail the signup if Shopify creation fails
+      // The user is still signed up in Firebase
+    }
 
     // Generate verification link - use www version for SSL
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';

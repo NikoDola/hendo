@@ -39,58 +39,49 @@ export async function GET(req: Request) {
 
     console.log(`✅ Email ${email} verified and stored in Firestore`);
 
-    // Create Shopify customer after successful Firebase verification
-    console.log(`🚀 ABOUT TO START SHOPIFY INTEGRATION FOR ${email}`);
+    // Update Shopify customer note to reflect verification (customer already exists from signup)
+    console.log(`🚀 UPDATING SHOPIFY CUSTOMER FOR VERIFIED ${email}`);
     try {
-      console.log(`🔍 Starting Shopify integration for ${email}`);
-
-      // Check environment variables
-      const shopifyDomain = process.env.SHOPIFY_STORE_DOMAIN;
-      const shopifyToken = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
-
-      if (!shopifyDomain || !shopifyToken) {
-        console.error(`❌ Missing Shopify environment variables:`, {
-          SHOPIFY_STORE_DOMAIN: shopifyDomain ? 'SET' : 'MISSING',
-          SHOPIFY_ADMIN_ACCESS_TOKEN: shopifyToken ? 'SET' : 'MISSING'
-        });
-        throw new Error('Shopify environment variables not configured');
-      }
-
-      console.log(`✅ Shopify environment variables found`);
-
-      // Check if customer already exists in Shopify
-      console.log(`🔍 Checking if customer ${email} exists in Shopify...`);
-      const customerExists = await checkCustomerExists(email);
-
-      if (customerExists) {
-        console.log(`ℹ️ Customer ${email} already exists in Shopify, skipping creation`);
+      // Check if customer already has Shopify ID (created during signup)
+      if (data.shopifyCustomerId) {
+        console.log(`✅ Customer ${email} already has Shopify ID: ${data.shopifyCustomerId}`);
+        console.log(`ℹ️ Customer was already subscribed to marketing during signup`);
       } else {
-        console.log(`🆕 Creating new Shopify customer for ${email}...`);
-        const shopifyCustomer = await createShopifyCustomer({
-          email: email,
-          acceptsMarketing: true,
-          tags: ['newsletter-subscriber', 'hendo-fan'],
-          note: `Newsletter subscriber verified on ${new Date().toISOString()}`
-        });
+        console.log(`⚠️ Customer ${email} doesn't have Shopify ID, creating now...`);
+        
+        // Check if customer already exists in Shopify
+        const customerExists = await checkCustomerExists(email);
 
-        console.log(`✅ Shopify customer created: ${shopifyCustomer.customer.id} for ${email}`);
+        if (customerExists) {
+          console.log(`ℹ️ Customer ${email} exists in Shopify but not linked, updating Firebase record`);
+          // We can't easily get the Shopify ID without more API calls, so just note it exists
+          await updateDoc(doc(collection(db, "newsletter"), email), {
+            shopifyNote: 'Customer exists in Shopify but ID not linked'
+          });
+        } else {
+          console.log(`🆕 Creating new Shopify customer for ${email}...`);
+          const shopifyCustomer = await createShopifyCustomer({
+            email: email,
+            acceptsMarketing: true,
+            tags: ['newsletter-subscriber', 'hendo-fan'],
+            note: `Newsletter subscriber verified on ${new Date().toISOString()}`
+          });
 
-        // Update Firebase record with Shopify customer ID
-        await updateDoc(doc(collection(db, "newsletter"), email), {
-          shopifyCustomerId: shopifyCustomer.customer.id,
-          shopifyCreatedAt: shopifyCustomer.customer.createdAt
-        });
+          console.log(`✅ Shopify customer created: ${shopifyCustomer.customer.id} for ${email}`);
 
-        console.log(`✅ Firebase record updated with Shopify customer ID`);
+          // Update Firebase record with Shopify customer ID
+          await updateDoc(doc(collection(db, "newsletter"), email), {
+            shopifyCustomerId: shopifyCustomer.customer.id,
+            shopifyCreatedAt: shopifyCustomer.customer.createdAt
+          });
+
+          console.log(`✅ Firebase record updated with Shopify customer ID`);
+        }
       }
 
     } catch (shopifyError) {
-      console.error(`⚠️ Failed to create Shopify customer for ${email}:`, shopifyError);
-      console.error(`⚠️ Error details:`, {
-        message: shopifyError instanceof Error ? shopifyError.message : 'Unknown error',
-        stack: shopifyError instanceof Error ? shopifyError.stack : undefined
-      });
-      // Don't fail the verification if Shopify creation fails
+      console.error(`⚠️ Failed to update Shopify customer for ${email}:`, shopifyError);
+      // Don't fail the verification if Shopify update fails
       // The user is still verified in Firebase
     }
 
