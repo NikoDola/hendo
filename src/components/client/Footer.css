@@ -89,6 +89,28 @@
   margin: 0;
 }
 
+.contactWrapper {
+  display: flex;
+
+  h1 {
+    font-family: var(--font-lemonmilk);
+    font-weight: 700;
+    font-size: 6.5em;
+    line-height: 1em;
+    text-align: right;
+  }
+
+  h3 {
+    text-align: right;
+    letter-spacing: 1rem;
+  }
+
+  h1::selection {
+    background-color: var(--theme-color);
+  }
+}
+
+
 /* Responsive design */
 @media (max-width: 768px) {
   .social-links {
@@ -111,6 +133,23 @@
 
   .footer-content {
     padding: 0 1rem;
+  }
+
+  .contactWrapper {
+    flex-direction: column;
+    gap: 3rem;
+
+    h1 {
+      font-size: 2em;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    h3 {
+      font-size: 1em;
+      text-align: center;
+      letter-spacing: 0.5rem;
+    }
   }
 }
 

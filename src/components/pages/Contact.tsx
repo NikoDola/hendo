@@ -2,7 +2,11 @@ import "@/components/pages/Form.css";
 
 export default function Contact() {
   return (
-    <section className="section-regular">
+    <section className="section-regular contactWrapper">
+      <div>
+        <h1> DreamStation <br/> hotline<br/> </h1>
+        <h3>straight to T. Hendo HQ</h3>
+      </div>
       <form className="formWrapper">
         <div className="inputWrapper">
           <label>Name *</label>
