@@ -45,6 +45,14 @@ useEffect(() => {
           width={400}
           alt="hendo image"
         />
+          <Image
+          style={{zIndex: "100"}}
+          className="hendoImage"
+          src={"/images/hendo/hand.png"}
+          height={300}
+          width={400}
+          alt="hendo image"
+        />
       </div>
       <div className="textWrapper" style={{opacity: opacity}}>
         <span>L</span>
