@@ -1,0 +1,136 @@
+.stars-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background-color: var(--theme-color, hsl(317 100% 54%));
+  box-shadow: 0 0 20px var(--theme-color, hsl(317 100% 54%));
+}
+
+.star.static {
+  animation: twinkle infinite ease-in-out;
+}
+
+.star.falling {
+  animation: diagonalFall infinite linear;
+}
+
+
+@keyframes twinkle {
+  0% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+
+  100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes diagonalFall {
+  0% {
+    transform: translateY(-100px) translateX(-160px);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(calc(100vh + 100px)) translateX(160px);
+    opacity: 0;
+  }
+}
+
+/* Different diagonal falling patterns for variety - only for falling stars */
+.star.falling:nth-child(3n) {
+  animation: diagonalFallLeft infinite linear;
+}
+
+.star.falling:nth-child(5n) {
+  animation: diagonalFallRight infinite linear;
+}
+
+.star.falling:nth-child(7n) {
+  animation: diagonalFallSlow infinite linear;
+}
+
+@keyframes diagonalFallLeft {
+  0% {
+    transform: translateY(-100px) translateX(160px);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(calc(100vh + 100px)) translateX(-160px);
+    opacity: 0;
+  }
+}
+
+@keyframes diagonalFallRight {
+  0% {
+    transform: translateY(-100px) translateX(-80px);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(calc(100vh + 100px)) translateX(80px);
+    opacity: 0;
+  }
+}
+
+@keyframes diagonalFallSlow {
+  0% {
+    transform: translateY(-100px) translateX(-120px);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(calc(100vh + 100px)) translateX(120px);
+    opacity: 0;
+  }
+}

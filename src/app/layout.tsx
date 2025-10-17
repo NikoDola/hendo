@@ -7,6 +7,7 @@ import Footer from "@/components/client/Footer";
 import { ColorProvider } from "@/components/client/ColorProvider";
 import { ShopifyAuthProvider } from "@/context/ShopifyAuthContext";
 import { CartProvider } from "@/context/CartContext";
+import ParallaxStars from "@/components/client/ParallaxStars";
 // import LiquidEther from "@/components/client/backgrounds/LiquidEther";
 // import LiquidChrome from "@/components/client/LiquidEther";
 
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body style={{ backgroundColor: "black" }} className={`${lemonMilk.variable} antialiased relative`}>
         <ColorProvider>
+          <ParallaxStars />
           <ShopifyAuthProvider>
             <CartProvider>
               <div style={{ position: 'relative', zIndex: 1, pointerEvents: 'none', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>

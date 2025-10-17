@@ -1,6 +1,6 @@
 .hero__wrapper {
   height: 100vh;
-  background: rgb(0, 0, 0);
+
   text-align: center;
 }
 
@@ -25,19 +25,24 @@
 }
 
 @keyframes glitch {
-  0%, 90% {
+
+  0%,
+  90% {
     background-image: url('/images/hendo/3.png');
   }
+
   92.5% {
     background-image: url('/images/hendo/glitch1.png');
     background-size: contain;
     z-index: 1;
   }
+
   95.5% {
     background-image: url('/images/hendo/glitch2.png');
     background-size: contain;
     z-index: 1;
   }
+
   97.5% {
     background-image: url('/images/hendo/glitch3.png');
     background-size: contain;
@@ -45,16 +50,99 @@
   }
 }
 
+/* Glitch trigger animation - triggered by color changes */
+.glitch-trigger {
+  animation: glitchTrigger 1s steps(1);
+}
+
+@keyframes glitchTrigger {
+  0% {
+    background-image: url('/images/hendo/3.png');
+  }
+
+  10% {
+    background-image: url('/images/hendo/glitch1.png');
+    background-size: contain;
+    z-index: 1;
+  }
+
+  20% {
+    background-image: url('/images/hendo/glitch2.png');
+    background-size: contain;
+    z-index: 1;
+  }
+
+  30% {
+    background-image: url('/images/hendo/glitch3.png');
+    background-size: contain;
+    z-index: 1;
+  }
+
+  40% {
+    background-image: url('/images/hendo/glitch1.png');
+    background-size: contain;
+    z-index: 1;
+  }
+
+  50% {
+    background-image: url('/images/hendo/glitch2.png');
+    background-size: contain;
+    z-index: 1;
+  }
+
+  60% {
+    background-image: url('/images/hendo/glitch3.png');
+    background-size: contain;
+    z-index: 1;
+  }
+
+  70% {
+    background-image: url('/images/hendo/glitch1.png');
+    background-size: contain;
+    z-index: 1;
+  }
+
+  80% {
+    background-image: url('/images/hendo/glitch2.png');
+    background-size: contain;
+    z-index: 1;
+  }
+
+  90% {
+    background-image: url('/images/hendo/glitch3.png');
+    background-size: contain;
+    z-index: 1;
+  }
+
+  100% {
+    background-image: url('/images/hendo/3.png');
+  }
+}
+
 .headline {
   position: absolute;
-  top: 5%;
+  top: 10%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 7rem;
+  text-align: left;
   z-index: 10;
 }
 
-.headline span{
+.headline span {
   position: relative;
-  line-height: 0;
+  font-size: 10rem;
+  
+  text-align: left;
+}
+
+  .headline{
+    top: 15%;
+  }
+  .headline span{
+    font-size: 14vh;
+    line-height: 13vh;
+  }
+
+@media (max-width: 1000px){
+
 }

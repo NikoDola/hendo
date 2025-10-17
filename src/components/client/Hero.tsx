@@ -6,33 +6,33 @@ import Image from "next/image";
 export default function Hero() {
   const [opacity, setOpacity] = useState(1)
 
- const [scrollPercent, setScrollPercent] = useState(0);
+  const [scrollPercent, setScrollPercent] = useState(0);
 
-useEffect(() => {
-  const handleScroll = () => {
-    const scrollTop = window.scrollY;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const scrolled = (scrollTop / docHeight) * 100;
-    setScrollPercent(scrolled);
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrolled = (scrollTop / docHeight) * 100;
+      setScrollPercent(scrolled);
 
-    // Fade out gradually between 0% and 20%
-    let newOpacity;
-    if (scrolled <= 0) newOpacity = 1;
-    else if (scrolled >= 30) newOpacity = 0;
-    else newOpacity = 1 - scrolled / 30; // linear fade
+      // Fade out gradually between 0% and 20%
+      let newOpacity;
+      if (scrolled <= 0) newOpacity = 1;
+      else if (scrolled >= 30) newOpacity = 0;
+      else newOpacity = 1 - scrolled / 30; // linear fade
 
-    setOpacity(newOpacity);
-  };
+      setOpacity(newOpacity);
+    };
 
-  window.addEventListener("scroll", handleScroll);
-  handleScroll();
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
 
-  return () => window.removeEventListener("scroll", handleScroll);
-}, [scrollPercent]);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [scrollPercent]);
 
 
 
-    
+
 
   return (
     <div className="heroWrapper">
@@ -45,8 +45,8 @@ useEffect(() => {
           width={400}
           alt="hendo image"
         />
-          <Image
-          style={{zIndex: "100"}}
+        <Image
+          style={{ zIndex: "100" }}
           className="hendoImage"
           src={"/images/hendo/hand.png"}
           height={300}
@@ -54,7 +54,7 @@ useEffect(() => {
           alt="hendo image"
         />
       </div>
-      <div className="textWrapper" style={{opacity: opacity}}>
+      <div className="textWrapper" style={{ opacity: opacity }}>
         <span>L</span>
         <span>E</span>
         <span>V</span>

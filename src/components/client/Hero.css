@@ -1,8 +1,9 @@
-.heroWrapper{
+.heroWrapper {
   height: 100vh;
   width: 50%;
   margin: 0 auto;
 }
+
 .textWrapper {
   display: flex;
   position: fixed;
@@ -19,13 +20,14 @@
     color: var(--theme-color);
     transition: 1s;
   }
- 
+
 }
 
 @keyframes spacing_animation {
   0% {
     letter-spacing: 0;
   }
+
   100% {
     letter-spacing: 1rem;
   }
@@ -37,16 +39,16 @@
   transform: translate(-50%);
 }
 
-.letterL{
+.letterL {
   margin-right: 2rem;
 }
 
-.imageBg{
+.imageBg {
   position: absolute;
   height: 300px;
   width: 300px;
   background: var(--theme-color);
-  transition: 1s ;
+  transition: 1s;
   left: 50%;
   transform: translate(-50%);
   border-radius: 10rem;

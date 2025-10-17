@@ -25,23 +25,44 @@ function ColorSliderInner({
   // const [isDragging, setIsDragging] = useState(false);
   const [currentColor, setCurrentColor] = useState("hsl(317 100% 54%)");
 
-  // Listen for color changes from the ColorProvider
+  // Listen for color changes from the ColorProvider with glitch timing
   useEffect(() => {
+    let lastColor = "";
+    let colorTimeout: NodeJS.Timeout;
+
     const updateColor = () => {
       const root = document.documentElement;
       const color = getComputedStyle(root).getPropertyValue('--theme-color').trim();
-      if (color) {
-        setCurrentColor(color);
+
+      if (color && color !== lastColor) {
+        console.log('ColorSlider: Color change detected, will update in 1.2s for glitch sync');
+        lastColor = color;
+
+        // Clear any existing timeout
+        if (colorTimeout) {
+          clearTimeout(colorTimeout);
+        }
+
+        // Update color 1.2 seconds after color change (when glitch starts)
+        colorTimeout = setTimeout(() => {
+          console.log('ColorSlider: Updating color to:', color);
+          setCurrentColor(color);
+        }, 1200); // Match glitch start timing
       }
     };
 
     // Initial color
     updateColor();
 
-    // Update color every 100ms to catch changes
-    const interval = setInterval(updateColor, 100);
+    // Update every 50ms to catch color changes more precisely
+    const interval = setInterval(updateColor, 50);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (colorTimeout) {
+        clearTimeout(colorTimeout);
+      }
+    };
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

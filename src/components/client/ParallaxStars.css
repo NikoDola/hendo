@@ -1,0 +1,115 @@
+.parallax-stars-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: black;
+}
+
+.stars-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  background: transparent;
+  border-radius: 50%;
+  animation: animStar 50s linear infinite;
+}
+
+.stars-layer::after {
+  content: " ";
+  position: absolute;
+  top: 2000px;
+  width: 1px;
+  height: 1px;
+  background: transparent;
+  border-radius: 50%;
+  box-shadow: inherit;
+}
+
+.stars-medium {
+  width: 2px;
+  height: 2px;
+  animation: animStar 100s linear infinite;
+}
+
+.stars-medium::after {
+  width: 2px;
+  height: 2px;
+}
+
+.stars-big {
+  width: 3px;
+  height: 3px;
+  animation: animStar 150s linear infinite;
+}
+
+.stars-big::after {
+  width: 3px;
+  height: 3px;
+}
+
+/* Overlay stars with higher z-index */
+.stars-overlay {
+  z-index: 100;
+  position: fixed;
+}
+
+/* Meteors */
+.meteor {
+  position: absolute;
+  width: 300px;
+  height: 1px;
+  transform: rotate(-45deg);
+  background-image: linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
+  animation: meteor 3s linear infinite;
+  z-index: 50;
+}
+
+.meteor::before {
+  content: "";
+  position: absolute;
+  width: 4px;
+  height: 5px;
+  border-radius: 50%;
+  margin-top: -2px;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 15px 3px #fff;
+}
+
+@keyframes meteor {
+  0% {
+    opacity: 1;
+    margin-top: -300px;
+    margin-right: -300px;
+  }
+
+  12% {
+    opacity: 0;
+  }
+
+  15% {
+    margin-top: 300px;
+    margin-left: -600px;
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes animStar {
+  from {
+    transform: translateY(0px);
+  }
+
+  to {
+    transform: translateY(-2000px);
+  }
+}
