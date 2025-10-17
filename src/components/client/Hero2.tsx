@@ -53,16 +53,22 @@ export default function Hero2() {
     <div className="hero__wrapper">
       <div className="imageWrapper">
         <div className="headline">
-          <span id="letter_l">L</span>
-          <span id="letter_e">E</span>
-          <span id="letter_v">V</span>
-          <span id="letter_e2">E</span>
-          <span id="letter_l2">L</span>
-          <span style={{ visibility: "hidden" }} >-</span>
+          <div>
+            <span id="letter_l">L</span>
+            <span id="letter_e">E</span>
+            <span id="letter_v">V</span>
+            <span id="letter_e2">E</span>
+            <span id="letter_l2">L</span>
+          </div>
+          <div>
           <span style={{ zIndex: "-2" }}>U</span>
           <span id="letter_p">P</span>
+          </div>
+
+     
         </div>
         <div className={`hendoImageDiv ${isGlitching ? 'glitch-trigger' : ''}`}></div>
+        <div className="void">ee</div>
       </div>
     </div>
   )
