@@ -1,14 +1,15 @@
 // Shopify Admin API client for customer management
 const SHOPIFY_STORE_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || 'thelegendofhendo.com';
-const SHOPIFY_ADMIN_ACCESS_TOKEN = process.env.NEXT_PUBLIC_SHOPIFY;
 
-if (!SHOPIFY_ADMIN_ACCESS_TOKEN) {
-  console.error('Missing Shopify Admin API access token. Please check your .env.local file.');
-  throw new Error('Missing Shopify Admin API access token');
+// Read the Admin token from server-side env only (do NOT use NEXT_PUBLIC_*)
+function getAdminToken(): string {
+  const token = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
+  if (!token) {
+    // Defer the error until a server-side call actually needs the token
+    throw new Error('Missing Shopify Admin API access token');
+  }
+  return token;
 }
-
-// Type assertion to tell TypeScript that this is now guaranteed to be defined
-const ADMIN_TOKEN = SHOPIFY_ADMIN_ACCESS_TOKEN as string;
 
 const ADMIN_API_URL = `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2024-01`;
 
@@ -17,7 +18,8 @@ class ShopifyAdminClient {
   private accessToken: string;
 
   constructor(accessToken?: string) {
-    this.accessToken = accessToken || ADMIN_TOKEN;
+    // Resolve the token lazily at runtime to avoid throws during build/prerender
+    this.accessToken = accessToken || getAdminToken();
   }
 
   async request(endpoint: string, options: RequestInit = {}) {
