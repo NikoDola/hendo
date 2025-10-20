@@ -15,7 +15,7 @@ const colors = [
 export default function ParallaxStars() {
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
   const terCanvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | null>(null);
 
   useEffect(() => {
     const bgCanvas = bgCanvasRef.current;
@@ -27,6 +27,7 @@ export default function ParallaxStars() {
     const terCtx = terCanvas.getContext("2d");
 
     if (!bgCtx || !terCtx) return;
+    const bg: CanvasRenderingContext2D = bgCtx;
 
     const width = window.innerWidth;
     const height = Math.max(document.body.offsetHeight, 400);
@@ -93,20 +94,20 @@ export default function ParallaxStars() {
         if (this.x < 0) {
           this.reset();
         } else {
-          bgCtx.fillRect(this.x, this.y, this.size, this.size);
+          bg.fillRect(this.x, this.y, this.size, this.size);
         }
       }
     }
 
     // Shooting star class
     class ShootingStar {
-      x: number;
-      y: number;
-      len: number;
-      speed: number;
-      size: number;
-      waitTime: number;
-      active: boolean;
+      x!: number;
+      y!: number;
+      len!: number;
+      speed!: number;
+      size!: number;
+      waitTime!: number;
+      active!: boolean;
 
       constructor() {
         this.reset();
@@ -129,11 +130,11 @@ export default function ParallaxStars() {
           if (this.x < 0 || this.y >= height) {
             this.reset();
           } else {
-            bgCtx.lineWidth = this.size;
-            bgCtx.beginPath();
-            bgCtx.moveTo(this.x, this.y);
-            bgCtx.lineTo(this.x + this.len, this.y - this.len);
-            bgCtx.stroke();
+            bg.lineWidth = this.size;
+            bg.beginPath();
+            bg.moveTo(this.x, this.y);
+            bg.lineTo(this.x + this.len, this.y - this.len);
+            bg.stroke();
           }
         } else {
           if (this.waitTime < new Date().getTime()) {
@@ -159,17 +160,17 @@ export default function ParallaxStars() {
     let colorIndex = 0;
     const updateColor = () => {
       const newColor = colors[colorIndex];
-      bgCtx.fillStyle = newColor;
-      bgCtx.strokeStyle = newColor;
+      bg.fillStyle = newColor;
+      bg.strokeStyle = newColor;
       colorIndex = (colorIndex + 1) % colors.length;
     };
 
     // Animation loop
     const animate = () => {
-      bgCtx.fillStyle = '#000000';
-      bgCtx.fillRect(0, 0, width, height);
-      bgCtx.fillStyle = '#ffffff';
-      bgCtx.strokeStyle = '#ffffff';
+      bg.fillStyle = '#000000';
+      bg.fillRect(0, 0, width, height);
+      bg.fillStyle = '#ffffff';
+      bg.strokeStyle = '#ffffff';
 
       // Update color every 3 seconds
       if (Math.floor(Date.now() / 3000) !== Math.floor((Date.now() - 16) / 3000)) {

@@ -1,4 +1,5 @@
 import { getDomainConfig, isHendoDomain, isNebulaDomain } from '@/lib/domain-detection';
+import Link from 'next/link'
 
 export default function DomainAdaptiveHeader() {
   const domainConfig = getDomainConfig();
@@ -15,31 +16,32 @@ export default function DomainAdaptiveHeader() {
     >
       <div className="container">
         <div className="logo">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={domainConfig.logo} alt={domainConfig.displayName} />
           <h1>{domainConfig.displayName}</h1>
         </div>
 
         <nav className="nav">
-          <a href="/">Home</a>
-          <a href="/products">Products</a>
-          <a href="/about">About</a>
+          <Link href="/">Home</Link>
+          <Link href="/products">Products</Link>
+          <Link href="/about">About</Link>
 
           {/* Domain-specific navigation */}
           {isHendo && (
             <>
-              <a href="/hendo-story">Hendo's Story</a>
-              <a href="/legend">The Legend</a>
+              <Link href="/hendo-story">Hendo&apos;s Story</Link>
+              <Link href="/legend">The Legend</Link>
             </>
           )}
 
           {isNebula && (
             <>
-              <a href="/cloud-services">Cloud Services</a>
-              <a href="/technology">Technology</a>
+              <Link href="/cloud-services">Cloud Services</Link>
+              <Link href="/technology">Technology</Link>
             </>
           )}
 
-          <a href="/login">Login</a>
+          <Link href="/login">Login</Link>
         </nav>
       </div>
     </header>

@@ -8,7 +8,7 @@ export default function BitBackground() {
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
   const [dataArray, setDataArray] = useState<Uint8Array | null>(null);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | null>(null);
   const [beatDetected, setBeatDetected] = useState(false);
   const [intensity, setIntensity] = useState(0);
   const [bassIntensity, setBassIntensity] = useState(0);
@@ -78,7 +78,8 @@ export default function BitBackground() {
 
     const initAudioAnalysis = async () => {
       try {
-        const context = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const AudioContextCtor: typeof AudioContext = (window as unknown as { AudioContext?: typeof AudioContext }).AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext as unknown as typeof AudioContext;
+        const context = new AudioContextCtor();
         const source = context.createMediaElementSource(audio);
         const analyserNode = context.createAnalyser();
 
@@ -103,23 +104,25 @@ export default function BitBackground() {
         audioContext.close();
       }
     };
-  }, [audio]);
+  }, [audio, audioContext]);
 
   // Audio analysis
   useEffect(() => {
     if (!analyser || !dataArray || !isPlaying) return;
 
     const analyzeAudio = () => {
-      analyser.getByteFrequencyData(dataArray);
+      // Allocate fresh frequency array matching analyser bin count
+      const freqArray = new Uint8Array(analyser.frequencyBinCount);
+      analyser.getByteFrequencyData(freqArray);
 
       // Calculate intensity values
-      const average = dataArray.reduce((sum, value) => sum + value, 0) / dataArray.length;
+      const average = freqArray.reduce((sum, value) => sum + value, 0) / freqArray.length;
       setIntensity(average);
 
       // Analyze different frequency ranges
-      const bassFreqs = Array.from(dataArray.slice(0, 8));
-      const midFreqs = Array.from(dataArray.slice(8, 32));
-      const trebleFreqs = Array.from(dataArray.slice(32, 64));
+      const bassFreqs = Array.from(freqArray.slice(0, 8));
+      const midFreqs = Array.from(freqArray.slice(8, 32));
+      const trebleFreqs = Array.from(freqArray.slice(32, 64));
 
       const bassAverage = bassFreqs.reduce((sum, value) => sum + value, 0) / bassFreqs.length;
       const midAverage = midFreqs.reduce((sum, value) => sum + value, 0) / midFreqs.length;

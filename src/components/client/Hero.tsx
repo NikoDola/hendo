@@ -1,75 +1,68 @@
-"use client"
+"use client";
 import { useEffect, useState } from "react";
 import "./Hero.css";
-import Image from "next/image";
 
 export default function Hero() {
-  const [opacity, setOpacity] = useState(1)
-
-  const [scrollPercent, setScrollPercent] = useState(0);
+  const [isGlitching, setIsGlitching] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrolled = (scrollTop / docHeight) * 100;
-      setScrollPercent(scrolled);
+    let lastColor = "";
+    let glitchTimeout: NodeJS.Timeout;
 
-      // Fade out gradually between 0% and 20%
-      let newOpacity;
-      if (scrolled <= 0) newOpacity = 1;
-      else if (scrolled >= 30) newOpacity = 0;
-      else newOpacity = 1 - scrolled / 30; // linear fade
+    const updateColor = () => {
+      const root = document.documentElement;
+      const color = getComputedStyle(root).getPropertyValue('--theme-color').trim();
 
-      setOpacity(newOpacity);
+      if (color && color !== lastColor) {
+        console.log('Hero glitch triggered by color change to:', color);
+        lastColor = color;
+
+        if (glitchTimeout) {
+          clearTimeout(glitchTimeout);
+        }
+
+        glitchTimeout = setTimeout(() => {
+          setIsGlitching(true);
+
+          setTimeout(() => {
+            setIsGlitching(false);
+          }, 1000);
+        }, 1200);
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
+    updateColor();
+    const interval = setInterval(updateColor, 50);
 
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [scrollPercent]);
-
-
-
-
+    return () => {
+      clearInterval(interval);
+      if (glitchTimeout) {
+        clearTimeout(glitchTimeout);
+      }
+    };
+  }, []);
 
   return (
-    <div className="heroWrapper">
+    <div className="hero__wrapper">
       <div className="imageWrapper">
-        <div className="imageBg"></div>
-        <Image
-          className="hendoImage"
-          src={"/images/hendo/1.png"}
-          height={300}
-          width={400}
-          alt="hendo image"
-        />
-        <Image
-          style={{ zIndex: "100" }}
-          className="hendoImage"
-          src={"/images/hendo/hand.png"}
-          height={300}
-          width={400}
-          alt="hendo image"
-        />
-      </div>
-      <div className="textWrapper" style={{ opacity: opacity }}>
-        <span>L</span>
-        <span>E</span>
-        <span>V</span>
-        <span>E</span>
-        <span className="letterL">L</span>
-        <span>U</span>
-        <span>P</span>
-      </div>
-      <div className="playButton" style={{ opacity: opacity }}>
-        <div className="playIcon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M8 5v14l11-7z" fill="currentColor" />
-          </svg>
+        <div className="headline">
+          <div>
+            <span id="letter_l">L</span>
+            <span id="letter_e">E</span>
+            <span id="letter_v">V</span>
+            <span id="letter_e2">E</span>
+            <span id="letter_l2">L</span>
+          </div>
+          <div>
+            <span style={{ zIndex: "-2" }}>U</span>
+            <span id="letter_p">P</span>
+          </div>
         </div>
+        <div className={`hendoImageDiv ${isGlitching ? 'glitch-trigger' : ''}`}></div>
+        <div className="void"></div>
       </div>
     </div>
-  );
+  )
 }
+
+

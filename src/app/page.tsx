@@ -1,11 +1,11 @@
 import "./globals.css"
 import Contact from "@/components/pages/Contact";
 import Newsletter from "@/components/pages/Newsletter";
-import Hero2 from "@/components/client/Hero2"
+import Hero from "@/components/client/Hero"
 export default function Home() {
   return (
     <main >
-      <Hero2 />
+      <Hero />
       <Newsletter />
       <Contact />
     </main>

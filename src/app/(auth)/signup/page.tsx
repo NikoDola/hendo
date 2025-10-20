@@ -159,7 +159,7 @@ export default function Signup() {
           }}>
             <h3 style={{ margin: '0 0 0.5rem 0', color: '#0ea5e9' }}>Account Created Successfully! 🎉</h3>
             <p style={{ margin: '0 0 0.5rem 0' }}>
-              We've sent a verification email to <strong>{formData.email}</strong>
+              We&apos;ve sent a verification email to <strong>{formData.email}</strong>
             </p>
             <p style={{ margin: '0 0 0.5rem 0' }}>
               Please check your email and click the verification link to activate your account.

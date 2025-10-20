@@ -12,6 +12,14 @@ import {
   serverTimestamp,
 } from "firebase/firestore"
 import { headers } from "next/headers"
+
+type TimestampLike = Date | number | { toMillis: () => number }
+
+function toMillis(value: TimestampLike): number {
+  if (typeof value === 'number') return value
+  if (value instanceof Date) return value.getTime()
+  return value.toMillis()
+}
 import { registerCustomer } from "@/lib/shopify/storefront"
 import { createCustomer } from "@/lib/shopify/admin"
 import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email"
@@ -45,7 +53,7 @@ export async function newsletter(email: string, token: string) {
     )
 
     const now = Date.now()
-    let attemptData: { attempts: any[], lastAttempt: any } = { attempts: [], lastAttempt: null }
+    let attemptData: { attempts: TimestampLike[], lastAttempt: TimestampLike | null } = { attempts: [], lastAttempt: null }
 
     if (!attemptSnap.empty) {
       const docData = attemptSnap.docs[0].data()
@@ -56,9 +64,9 @@ export async function newsletter(email: string, token: string) {
     }
 
     // Filter out attempts older than 1 minute
-    const recentAttempts = attemptData.attempts?.filter((timestamp: any) => {
-      const attemptTime = timestamp?.toMillis?.() || timestamp
-      return now - attemptTime < COOLDOWN_MS
+    const recentAttempts = attemptData.attempts?.filter((timestamp) => {
+      const attemptMs = toMillis(timestamp)
+      return now - attemptMs < COOLDOWN_MS
     }) || []
 
     // Check if user has exceeded max attempts

@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ColorProvider } from "@/components/client/colorProvider/ColorProvider";
 import "./verify-email.css";
 
-export default function VerifyEmail() {
+function VerifyEmailInner() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('');
   const searchParams = useSearchParams();
@@ -68,8 +69,8 @@ export default function VerifyEmail() {
               <h2>Email Verified!</h2>
               <p>{message}</p>
               <div className="successActions">
-                <a href="/" className="homeButton">Go to Homepage</a>
-                <a href="/newsletter" className="newsletterButton">View Newsletter</a>
+                <Link href="/" className="homeButton">Go to Homepage</Link>
+                <Link href="/newsletter" className="newsletterButton">View Newsletter</Link>
               </div>
             </>
           )}
@@ -80,13 +81,29 @@ export default function VerifyEmail() {
               <h2>Verification Failed</h2>
               <p>{message}</p>
               <div className="errorActions">
-                <a href="/newsletter" className="retryButton">Try Again</a>
-                <a href="/" className="homeButton">Go to Homepage</a>
+                <Link href="/newsletter" className="retryButton">Try Again</Link>
+                <Link href="/" className="homeButton">Go to Homepage</Link>
               </div>
             </>
           )}
         </div>
       </section>
     </ColorProvider>
+  );
+}
+
+export default function VerifyEmail() {
+  return (
+    <Suspense fallback={
+      <section className="section-regular verifyWrapper">
+        <div className="verificationCard">
+          <div className="loadingSpinner"></div>
+          <h2>Loading...</h2>
+          <p>Please wait.</p>
+        </div>
+      </section>
+    }>
+      <VerifyEmailInner />
+    </Suspense>
   );
 }
