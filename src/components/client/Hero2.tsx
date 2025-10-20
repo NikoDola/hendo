@@ -49,6 +49,7 @@ export default function Hero2() {
     };
   }, []);
 
+
   return (
     <div className="hero__wrapper">
       <div className="imageWrapper">
@@ -61,14 +62,12 @@ export default function Hero2() {
             <span id="letter_l2">L</span>
           </div>
           <div>
-          <span style={{ zIndex: "-2" }}>U</span>
-          <span id="letter_p">P</span>
+            <span style={{ zIndex: "-2" }}>U</span>
+            <span id="letter_p">P</span>
           </div>
-
-     
         </div>
         <div className={`hendoImageDiv ${isGlitching ? 'glitch-trigger' : ''}`}></div>
-        <div className="void">ee</div>
+        <div className="void"></div>
       </div>
     </div>
   )

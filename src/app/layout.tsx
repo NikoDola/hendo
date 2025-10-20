@@ -8,6 +8,7 @@ import { ColorProvider } from "@/components/client/ColorProvider";
 import { ShopifyAuthProvider } from "@/context/ShopifyAuthContext";
 import { CartProvider } from "@/context/CartContext";
 import ParallaxStars from "@/components/client/ParallaxStars";
+import BitBackground from "@/components/client/BitBackground";
 // import LiquidEther from "@/components/client/backgrounds/LiquidEther";
 // import LiquidChrome from "@/components/client/LiquidEther";
 
@@ -55,6 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
             </CartProvider>
           </ShopifyAuthProvider>
+          <BitBackground />
         </ColorProvider>
       </body>
     </html>

@@ -63,6 +63,13 @@ export default function Hero() {
         <span>U</span>
         <span>P</span>
       </div>
+      <div className="playButton" style={{ opacity: opacity }}>
+        <div className="playIcon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M8 5v14l11-7z" fill="currentColor" />
+          </svg>
+        </div>
+      </div>
     </div>
   );
 }

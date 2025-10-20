@@ -1,0 +1,221 @@
+.bit-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.bit-background>* {
+  pointer-events: none;
+}
+
+.play-button-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 99999;
+  cursor: pointer;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: 8px;
+}
+
+.song-name {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  font-weight: 300;
+  text-align: center;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.play-button-container:hover .song-name {
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.play-icon {
+  width: 40px;
+  height: 40px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.play-icon:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.play-icon svg {
+  color: var(--theme-color);
+  margin-left: 3px;
+  width: 48px;
+  height: 48px;
+}
+
+.bit-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--theme-color, hsl(317 100% 54%));
+  transition: all 0.1s ease;
+  animation: float 6s ease-in-out infinite;
+}
+
+.bit-1 {
+  width: 20px;
+  height: 20px;
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+  animation-duration: 8s;
+}
+
+.bit-2 {
+  width: 15px;
+  height: 15px;
+  top: 60%;
+  left: 80%;
+  animation-delay: 2s;
+  animation-duration: 6s;
+}
+
+.bit-3 {
+  width: 25px;
+  height: 25px;
+  top: 40%;
+  left: 70%;
+  animation-delay: 4s;
+  animation-duration: 10s;
+}
+
+.bit-4 {
+  width: 12px;
+  height: 12px;
+  top: 80%;
+  left: 20%;
+  animation-delay: 1s;
+  animation-duration: 7s;
+}
+
+.beat-pulse {
+  animation: beatPulse 0.2s ease-out;
+}
+
+.beat-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.beat-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid var(--theme-color, hsl(317 100% 54%));
+  border-radius: 50%;
+  animation: beatRing 0.6s ease-out;
+}
+
+.beat-ring:nth-child(1) {
+  width: 100px;
+  height: 100px;
+  animation-delay: 0s;
+}
+
+.beat-ring:nth-child(2) {
+  width: 150px;
+  height: 150px;
+  animation-delay: 0.1s;
+}
+
+.beat-ring:nth-child(3) {
+  width: 200px;
+  height: 200px;
+  animation-delay: 0.2s;
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  25% {
+    transform: translateY(-20px) rotate(90deg);
+  }
+
+  50% {
+    transform: translateY(-10px) rotate(180deg);
+  }
+
+  75% {
+    transform: translateY(-30px) rotate(270deg);
+  }
+}
+
+@keyframes beatPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+
+  50% {
+    transform: scale(1.5);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+}
+
+@keyframes beatRing {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+
+  100% {
+    width: 300px;
+    height: 300px;
+    opacity: 0;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .bit-particle {
+    width: 15px !important;
+    height: 15px !important;
+  }
+
+  .bit-1,
+  .bit-2,
+  .bit-3,
+  .bit-4 {
+    width: 15px;
+    height: 15px;
+  }
+}
