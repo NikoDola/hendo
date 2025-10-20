@@ -2,19 +2,17 @@
 import { ShopifyStorefrontClient } from './storefront';
 import { syncShopifyCustomerToFirebase } from '@/lib/firebase-shopify-sync';
 
-const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-const SHOPIFY_STORE_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
-
-if (!GOOGLE_CLIENT_ID) {
-  throw new Error('Missing Google OAuth Client ID');
-}
-
-if (!SHOPIFY_STORE_DOMAIN) {
-  throw new Error('Missing Shopify Store Domain');
+// NOTE: Do not validate envs at module import time to avoid prerender errors.
+// We resolve lazily inside functions that actually need them.
+function getGoogleClientId() {
+  const id = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+  if (!id) throw new Error('Missing Google OAuth Client ID');
+  return id;
 }
 
 // Google OAuth configuration
 const getGoogleOAuthConfig = () => {
+  const GOOGLE_CLIENT_ID = getGoogleClientId();
   // Get the current origin, with fallback for development
   const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
 
