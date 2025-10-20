@@ -2,18 +2,16 @@
 import { syncShopifyCustomerToFirebase } from '@/lib/firebase-shopify-sync';
 
 
-const SHOPIFY_STORE_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
-const SHOPIFY_STOREFRONT_ACCESS_TOKEN = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN;
-
-if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
-  throw new Error('Missing Shopify Storefront API configuration');
+// NOTE: Do not validate Storefront envs at module import time to avoid
+// prerender errors on pages that don't need Shopify yet. We resolve lazily.
+function getStorefrontConfig() {
+  const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
+  const token = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN;
+  if (!domain || !token) {
+    throw new Error('Missing Shopify Storefront API configuration');
+  }
+  return { domain, token } as const;
 }
-
-// Type assertions to tell TypeScript that these are now guaranteed to be defined
-const STORE_DOMAIN = SHOPIFY_STORE_DOMAIN as string;
-const STOREFRONT_TOKEN = SHOPIFY_STOREFRONT_ACCESS_TOKEN as string;
-
-const STOREFRONT_API_URL = `https://${STORE_DOMAIN}/api/2024-01/graphql.json`;
 
 // GraphQL client
 class ShopifyStorefrontClient {
@@ -24,11 +22,13 @@ class ShopifyStorefrontClient {
   }
 
   async request(query: string, variables: Record<string, unknown> = {}) {
-    const response = await fetch(STOREFRONT_API_URL, {
+    const { domain, token } = getStorefrontConfig();
+    const apiUrl = `https://${domain}/api/2024-01/graphql.json`;
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Shopify-Storefront-Access-Token': STOREFRONT_TOKEN,
+        'X-Shopify-Storefront-Access-Token': token,
         ...(this.accessToken && { 'Authorization': `Bearer ${this.accessToken}` })
       },
       body: JSON.stringify({ query, variables })
@@ -39,7 +39,7 @@ class ShopifyStorefrontClient {
       console.error('Shopify API Error Details:', {
         status: response.status,
         statusText: response.statusText,
-        url: STOREFRONT_API_URL,
+        url: apiUrl,
         errorBody: errorText
       });
       throw new Error(`Shopify API error: ${response.status} ${response.statusText} - ${errorText}`);
