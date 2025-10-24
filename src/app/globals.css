@@ -195,6 +195,15 @@ textarea::placeholder {
   min-height: fit-content;
 }
 
+/* Safari-specific fix */
+@supports (-webkit-backdrop-filter: blur(12px)) {
+  .formWrapper {
+    background-color: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+}
+
 .formWrapper::before {
   content: '';
   position: absolute;
@@ -202,10 +211,12 @@ textarea::placeholder {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+  border-top: solid rgb(255, 255, 255, 0.5) 0.5px;
   border-radius: 20px;
   z-index: -1;
 }
+
 
 .formWrapper input,
 .formWrapper textarea {
