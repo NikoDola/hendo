@@ -25,17 +25,17 @@ export default function Hero() {
 
         glitchTimeout = setTimeout(() => {
           setIsGlitching(true);
-          
+
           // Glitch sequence
           const glitchImages = [
             "/images/hendo/glitch1.png",
-            "/images/hendo/glitch2.png", 
+            "/images/hendo/glitch2.png",
             "/images/hendo/glitch3.png",
             "/images/hendo/glitch1.png",
             "/images/hendo/glitch2.png",
             "/images/hendo/glitch3.png"
           ];
-          
+
           let glitchIndex = 0;
           const glitchInterval = setInterval(() => {
             if (glitchIndex < glitchImages.length) {
