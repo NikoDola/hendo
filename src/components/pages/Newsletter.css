@@ -1,14 +1,14 @@
-.underWrapper{
+.underWrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-top: 10rem;
 }
 
-.newsletterTitle{
+.newsletterTitle {
   border-radius: 2rem;
   text-align: center;
-  font-size: var(--text-5xl);
+  font-size: var(--text-3xl);
   font-family: var(--lemonmilk);
   background-color: yellow;
   color: black;
@@ -18,45 +18,39 @@
   transition: background-color 1s ease, box-shadow 1s ease;
   box-shadow: 0 0 20px var(--theme-color);
 }
+
 .newsletterWrapper {
-  display: flex;          /* put input + button side by side */
+  display: flex;
+  /* put input + button side by side */
   justify-content: center;
-  gap: 0;                 /* no gap between */
+  gap: 0;
+  /* no gap between */
   width: 40%;
   margin-top: 3rem;
   padding: 1rem;
 }
 
-.inputNewsletter:focus{
-  outline: var(--theme-color);
-  border: none;
-  transition: background-color 0.5s ease, box-shadow 1s ease;
-  box-shadow: 0 0 20px var(--theme-color);
-}
-.inputNewsletter::placeholder{
-  color: gray;
-}
-
 .inputNewsletter {
-  flex: 0 0 80%;          /* lock to 80% width */
-  padding: 1rem;
+  flex: 0 0 80%;
+  /* lock to 80% width */
   border-radius: 20px 0px 0 20px;
 }
 
 .subscribe {
-  flex: 0 0 20%;          /* lock to 20% width */
+  flex: 0 0 20%;
+  /* lock to 20% width */
   padding: 1rem;
   border-radius: 0 20px 20px 0;
   cursor: pointer;
   background-color: yellow;
   border: none;
   font-family: var(--lemonmilk);
-    background: var(--theme-color);
+  background: var(--theme-color);
   transition: background-color 0.3s ease, box-shadow 1s ease;
   box-shadow: 0 0 20px var(--theme-color);
 }
 
-.subscribe:hover{
+.subscribe:hover {
   background-color: lightgray;
   color: black;
 }
@@ -70,15 +64,13 @@
   font-weight: 200;
   text-align: center;
   text-transform: none;
-  font-size: 22px;  
+  font-size: 22px;
 }
 
-.subscribeDescription::selection{
-    margin-top: 1rem;
-    background: var(--theme-color);
+.subscribeDescription::selection {
+  margin-top: 1rem;
+  background: var(--theme-color);
   transition: background-color 1s ease, box-shadow 1s ease;
   box-shadow: 0 0 20px var(--theme-color);
   color: black;
 }
-
-

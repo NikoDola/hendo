@@ -84,7 +84,7 @@ export default function Newsletter() {
       <section className="section-regular underWrapper">
         <span className="newsletterTitle">NEWSLETTER</span>
         <p className="subscribeDescription">
-          Subscribe to our newsletter and be the first to hear about new music,
+          Subscribe to my newsletter and be the first to hear about new music,
           exclusive drops from our clothing brand, and behind-the-scenes content.
           We&apos;ll also send you updates when new features go live.
         </p>
@@ -92,7 +92,7 @@ export default function Newsletter() {
           <input
             onInput={handleEmail}
             value={email}
-            className="inputNewsletter"
+            className="inputNewsletter input"
             placeholder="Your Email"
             type="email"
           />
@@ -124,7 +124,7 @@ export default function Newsletter() {
             </p>
           </div>
         )}
-        <p  className="my-recaptcha-disclaimer ">
+        <p className="my-recaptcha-disclaimer ">
           This site is protected by reCAPTCHA and the Google
           <br></br>
           <a

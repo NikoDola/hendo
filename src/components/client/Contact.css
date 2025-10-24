@@ -1,0 +1,32 @@
+.contactWrapper {
+  display: flex;
+  gap: 4rem;
+
+  /* Text section takes 50% */
+  >div:first-child {
+    flex: 0 0 50%;
+  }
+
+  /* Form section takes 50% */
+  .formWrapper {
+    flex: 0 0 50%;
+  }
+
+  h1 {
+    font-family: var(--font-lemonmilk);
+    font-weight: 700;
+    font-size: 6.5em;
+    line-height: 1em;
+    text-align: right;
+  }
+
+  h3 {
+    text-align: right;
+    letter-spacing: 1rem;
+  }
+
+  h1::selection {
+    background-color: var(--theme-color);
+  }
+}
+

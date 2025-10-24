@@ -92,7 +92,7 @@ export default function Newsletter() {
           <input
             onInput={handleEmail}
             value={email}
-            className="inputNewsletter"
+            className="inputNewsletter input"
             placeholder="Your Email"
             type="email"
           />

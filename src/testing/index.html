@@ -1,45 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body>
-    <script>
-      const lista = [
-        {
-          name: "Nikola",
-          lastName: "Dolovski",
-        },
-        {
-          name: "Igor",
-          lastName: "Dolovski",
-        },
-        {
-          name: "Marijan",
-          lastName: "Spasenovski",
-        },
-        {
-          name: "Monika",
-          lastName: "Spasenovska",
-        },
-        {
-          name: 'Borche',
-          lastName: 'Tnokovski'
-        }
-      ];
-      const reduceLista = lista.reduce((bag, item) => {
-        const lastName = item.lastName.slice(0 , -1 )
-        if(!bag[lastName]){
-          bag[lastName] = []
-
-        }
-        bag[lastName].push(item.name)
-        
-        return bag
-      },{})
-      console.log(reduceLista);
-    </script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <canvas id="myCanvas"></canvas>
+  <script src="./script.js"></script>
+  <style>
+    #myCanvas {
+      background: black;
+    }
+  </style>
+</body>
 </html>

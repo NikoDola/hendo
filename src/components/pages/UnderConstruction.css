@@ -30,21 +30,9 @@
   padding: 1rem;
 }
 
-.inputNewsletter:focus {
-  outline: var(--theme-color);
-  border: none;
-  transition: background-color 0.5s ease, box-shadow 1s ease;
-  box-shadow: 0 0 20px var(--theme-color);
-}
-
-.inputNewsletter::placeholder {
-  color: gray;
-}
-
 .inputNewsletter {
   flex: 0 0 80%;
   /* lock to 80% width */
-  padding: 1rem;
   border-radius: 20px 0px 0 20px;
 }
 

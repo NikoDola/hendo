@@ -4,7 +4,7 @@
   position: relative;
 }
 
-.cardProfileWrapper{
+.cardProfileWrapper {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -22,12 +22,12 @@
   justify-content: space-between;
 }
 
-.navIcons{
+.navIcons {
   color: var(--theme-color);
   transition: 1s;
   font-size: 1.5rem;
   cursor: pointer;
- 
+
 }
 
 .linksWrapperDesktop {
@@ -82,7 +82,7 @@
   .headerWrapperDesktop {
     display: none;
   }
-  
+
   .headerWrapperMobile {
     position: relative;
     padding: 1rem;
@@ -90,15 +90,15 @@
     display: flex;
     align-items: center;
   }
-  
+
   .navWrapperMobile {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
- 
+
   }
-  
+
   /* Burger Button Styles */
   .burgerButton {
     display: flex;
@@ -112,7 +112,7 @@
     padding: 0;
     z-index: 100;
   }
-  
+
   .burgerLine {
     width: 30px;
     height: 3px;
@@ -122,20 +122,20 @@
     position: relative;
     transform-origin: center;
   }
-  
+
   /* Burger Animation when Open */
   .burgerButton.open .burgerLine:nth-child(1) {
     transform: rotate(45deg) translate(7px, 8px);
   }
-  
+
   .burgerButton.open .burgerLine:nth-child(2) {
     opacity: 0;
   }
-  
+
   .burgerButton.open .burgerLine:nth-child(3) {
     transform: rotate(-45deg) translate(5px, -8px);
   }
-  
+
   /* Mobile Menu Overlay */
   .mobileNavOverlay {
     position: fixed;
@@ -152,11 +152,11 @@
     transition: transform 0.3s ease-in-out;
     z-index: 11;
   }
-  
+
   .mobileNavOverlay.open {
     transform: translateX(0);
   }
-  
+
   .mobileNavContent {
     width: 100%;
     height: 100%;
@@ -164,7 +164,7 @@
     justify-content: center;
     align-items: center;
   }
-  
+
   .linksWrapperMobile {
     display: flex;
     flex-direction: column;
@@ -173,7 +173,7 @@
     list-style: none;
     padding: 0;
   }
-  
+
   .linkMobile {
     font-weight: 500;
     position: relative;
@@ -183,11 +183,11 @@
     font-size: 1.5rem;
     padding: 0.5rem 0;
   }
-  
+
   .linkMobile:hover {
     color: var(--theme-color);
   }
-  
+
   .linkMobile:before {
     content: "";
     position: absolute;
@@ -200,18 +200,19 @@
     left: 50%;
     transform: translateX(-50%);
   }
-  
+
   .linkMobile:hover::before {
     width: 100%;
   }
-  
+
   .logoMobile {
     position: absolute;
     left: 50%;
     transform: translate(-50%);
     z-index: 12;
   }
-  .cardProfileWrapperMobile{
+
+  .cardProfileWrapperMobile {
     display: flex;
     z-index: 13;
     gap: 1rem;

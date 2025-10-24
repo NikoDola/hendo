@@ -1,5 +1,4 @@
 import { getShopifyProducts, ShopifyProduct } from "@/lib/shopify";
-import "@/components/pages/Form.css";
 import ProductCard from "./ProductCard";
 
 export default async function ShopPage() {

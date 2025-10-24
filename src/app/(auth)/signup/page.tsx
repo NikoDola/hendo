@@ -138,7 +138,7 @@ export default function Signup() {
               onChange={handleChange}
               style={{ margin: 0 }}
             />
-            <span>Subscribe to our newsletter for updates and special offers</span>
+            <span>Subscribe to my newsletter for updates and special offers</span>
           </label>
         </div>
 

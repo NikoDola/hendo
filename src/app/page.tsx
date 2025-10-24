@@ -1,5 +1,5 @@
 import "./globals.css"
-import Contact from "@/components/pages/Contact";
+import Contact from "@/components/client/Contact";
 import Newsletter from "@/components/pages/Newsletter";
 import Hero from "@/components/client/Hero"
 export default function Home() {

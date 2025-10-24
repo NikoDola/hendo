@@ -56,7 +56,7 @@ export default function NavMenu() {
             <Logo size="40px" />
           </div>
           <ul className="linksWrapperDesktop">
-            <Link className="linkDesktop" href="/shop" onClick={handleLinkClick}>
+            <Link className="linkDesktop" href="https://nebulacloudco.com/" target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
               ✨Store
             </Link>
             {customer ? (
@@ -145,7 +145,9 @@ export default function NavMenu() {
                 <li>
                   <Link
                     className="linkMobile"
-                    href="/shop"
+                    href="https://nebulacloudco.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     onClick={handleLinkClick}
                   >
                     ✨Store

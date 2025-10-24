@@ -89,26 +89,6 @@
   margin: 0;
 }
 
-.contactWrapper {
-  display: flex;
-
-  h1 {
-    font-family: var(--font-lemonmilk);
-    font-weight: 700;
-    font-size: 6.5em;
-    line-height: 1em;
-    text-align: right;
-  }
-
-  h3 {
-    text-align: right;
-    letter-spacing: 1rem;
-  }
-
-  h1::selection {
-    background-color: var(--theme-color);
-  }
-}
 
 
 /* Responsive design */

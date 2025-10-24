@@ -78,6 +78,12 @@ export default function BitBackground() {
 
     const initAudioAnalysis = async () => {
       try {
+        // Check if audio element is already connected to prevent duplicate connections
+        if (audio.dataset.audioConnected === 'true') {
+          console.log('Audio element already connected, skipping...');
+          return;
+        }
+
         const AudioContextCtor: typeof AudioContext = (window as unknown as { AudioContext?: typeof AudioContext }).AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext as unknown as typeof AudioContext;
         const context = new AudioContextCtor();
         const source = context.createMediaElementSource(audio);
@@ -88,6 +94,9 @@ export default function BitBackground() {
 
         source.connect(analyserNode);
         analyserNode.connect(context.destination);
+
+        // Mark audio element as connected
+        audio.dataset.audioConnected = 'true';
 
         setAudioContext(context);
         setAnalyser(analyserNode);
@@ -103,8 +112,12 @@ export default function BitBackground() {
       if (audioContext) {
         audioContext.close();
       }
+      // Reset connection flag when cleaning up
+      if (audio) {
+        audio.dataset.audioConnected = 'false';
+      }
     };
-  }, [audio, audioContext]);
+  }, [audio]);
 
   // Audio analysis
   useEffect(() => {
