@@ -16,109 +16,21 @@
   margin: 0 auto;
   width: 50%;
   height: 100vh;
-  background-image: url("/images/hendo/4.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
   animation: glitch 3.5s infinite steps(1);
   z-index: 9;
   top: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-@keyframes glitch {
-
-  0%,
-  90% {
-    background-image: url('/images/hendo/4.png');
-  }
-
-  92.5% {
-    background-image: url('/images/hendo/glitch1.png');
-    background-size: contain;
-    z-index: 1;
-  }
-
-  95.5% {
-    background-image: url('/images/hendo/glitch2.png');
-    background-size: contain;
-    z-index: 1;
-  }
-
-  97.5% {
-    background-image: url('/images/hendo/glitch3.png');
-    background-size: contain;
-    z-index: 1;
-  }
+.hendo-image {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 
-/* Glitch trigger animation - triggered by color changes */
-.glitch-trigger {
-  animation: glitchTrigger 1s steps(1);
-}
-
-@keyframes glitchTrigger {
-  0% {
-    background-image: url('/images/hendo/4.png');
-  }
-
-  10% {
-    background-image: url('/images/hendo/glitch1.png');
-    background-size: contain;
-    z-index: 1;
-  }
-
-  20% {
-    background-image: url('/images/hendo/glitch2.png');
-    background-size: contain;
-    z-index: 1;
-  }
-
-  30% {
-    background-image: url('/images/hendo/glitch3.png');
-    background-size: contain;
-    z-index: 1;
-  }
-
-  40% {
-    background-image: url('/images/hendo/glitch1.png');
-    background-size: contain;
-    z-index: 1;
-  }
-
-  50% {
-    background-image: url('/images/hendo/glitch2.png');
-    background-size: contain;
-    z-index: 1;
-  }
-
-  60% {
-    background-image: url('/images/hendo/glitch3.png');
-    background-size: contain;
-    z-index: 1;
-  }
-
-  70% {
-    background-image: url('/images/hendo/glitch1.png');
-    background-size: contain;
-    z-index: 1;
-  }
-
-  80% {
-    background-image: url('/images/hendo/glitch2.png');
-    background-size: contain;
-    z-index: 1;
-  }
-
-  90% {
-    background-image: url('/images/hendo/glitch3.png');
-    background-size: contain;
-    z-index: 1;
-  }
-
-  100% {
-    background-image: url('/images/hendo/4.png');
-  }
-}
+/* Glitch animation is now handled by JavaScript */
 
 .headline {
   position: absolute;

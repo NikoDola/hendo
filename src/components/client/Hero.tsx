@@ -1,9 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import "./Hero.css";
 
 export default function Hero() {
   const [isGlitching, setIsGlitching] = useState(false);
+  const [currentImage, setCurrentImage] = useState("/images/hendo/4.png");
 
   useEffect(() => {
     let lastColor = "";
@@ -23,9 +25,32 @@ export default function Hero() {
 
         glitchTimeout = setTimeout(() => {
           setIsGlitching(true);
+          
+          // Glitch sequence
+          const glitchImages = [
+            "/images/hendo/glitch1.png",
+            "/images/hendo/glitch2.png", 
+            "/images/hendo/glitch3.png",
+            "/images/hendo/glitch1.png",
+            "/images/hendo/glitch2.png",
+            "/images/hendo/glitch3.png"
+          ];
+          
+          let glitchIndex = 0;
+          const glitchInterval = setInterval(() => {
+            if (glitchIndex < glitchImages.length) {
+              setCurrentImage(glitchImages[glitchIndex]);
+              glitchIndex++;
+            } else {
+              clearInterval(glitchInterval);
+              setCurrentImage("/images/hendo/4.png");
+              setIsGlitching(false);
+            }
+          }, 100);
 
           setTimeout(() => {
             setIsGlitching(false);
+            setCurrentImage("/images/hendo/4.png");
           }, 1000);
         }, 1200);
       }
@@ -58,7 +83,16 @@ export default function Hero() {
             <span id="letter_p">P</span>
           </div>
         </div>
-        <div className={`hendoImageDiv ${isGlitching ? 'glitch-trigger' : ''}`}></div>
+        <div className={`hendoImageDiv ${isGlitching ? 'glitch-trigger' : ''}`}>
+          <Image
+            src={currentImage}
+            alt="Hendo"
+            width={800}
+            height={600}
+            priority
+            className="hendo-image"
+          />
+        </div>
         <div className="void"></div>
       </div>
     </div>
