@@ -29,7 +29,7 @@ export default function Hero() {
           // Glitch sequence
           const glitchImages = [
             "/images/Hendo/glitch1.png",
-            "/images/Hendo/glitch2.png", 
+            "/images/Hendo/glitch2.png",
             "/images/Hendo/glitch3.png",
             "/images/Hendo/glitch1.png",
             "/images/Hendo/glitch2.png",
