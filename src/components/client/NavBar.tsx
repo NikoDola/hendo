@@ -6,17 +6,26 @@ import Logo from "./Logo";
 import { ColorProvider } from "./ColorProvider";
 import { CiShoppingCart } from "react-icons/ci";
 import { CiUser } from "react-icons/ci";
+import { IoMoonOutline } from "react-icons/io5";
+import { IoShirtOutline } from "react-icons/io5";
 import { useShopifyAuth } from "@/context/ShopifyAuthContext";
+
 
 export default function NavMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const { customer, logout } = useShopifyAuth();
+  const [dropdown, setDropdown] = useState(false);
 
   // Check if we're on mobile to conditionally render
 
   // Close menu when clicking on a link
   const handleLinkClick = () => {
     if (isOpen) setIsOpen(false);
+  };
+
+  const handleDropdown = () => {
+    setDropdown(!dropdown);
+    console.log(dropdown);
   };
 
   // Toggle menu
@@ -56,9 +65,23 @@ export default function NavMenu() {
             <Logo size="40px" />
           </div>
           <ul className="linksWrapperDesktop">
-            <Link className="linkDesktop" href="https://nebulacloudco.com/" target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
+            <div className="linkDesktop" id="dropdownElement" onClick={handleDropdown}>
               ✨Store
-            </Link>
+              {dropdown ?
+                <div className="dropdownWrapper">
+                  <ul className="dropdownLinkWrapper">
+                    <li className="dropdownLink">
+                      <IoMoonOutline className="dropdownIcon" />
+                      Dream Station
+                    </li>
+                    <hr className="hrLine" />
+                    <li className="dropdownLink">
+                      <IoShirtOutline className="dropdownIcon" />
+                      Clothing
+                    </li>
+                  </ul>
+                </div> : ""}
+            </div>
             {customer ? (
               <>
                 <Link className="linkDesktop" href="/dashboard" onClick={handleLinkClick}>
@@ -142,16 +165,23 @@ export default function NavMenu() {
                     Contact
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    className="linkMobile"
-                    href="https://nebulacloudco.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={handleLinkClick}
-                  >
+                <li className="mobileStoreContainer">
+                  <div className="linkMobile mobileStoreButton" onClick={handleDropdown}>
                     ✨Store
-                  </Link>
+                  </div>
+                  {dropdown && (
+                    <ul className="mobileStoreDropdown">
+                      <li className="mobileStoreDropdownItem">
+                        <IoMoonOutline className="mobileDropdownIcon" />
+                        Dream Station
+                      </li>
+                      <hr className="mobileHrLine" />
+                      <li className="mobileStoreDropdownItem">
+                        <IoShirtOutline className="mobileDropdownIcon" />
+                        Clothing
+                      </li>
+                    </ul>
+                  )}
                 </li>
                 {customer ? (
                   <>

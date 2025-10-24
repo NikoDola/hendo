@@ -146,8 +146,8 @@
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px);
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: end;
+    align-items: start;
     transform: translateX(100%);
     transition: transform 0.3s ease-in-out;
     z-index: 11;
@@ -162,7 +162,8 @@
     height: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;
+    margin-top: 5rem;
+    align-items: start;
   }
 
   .linksWrapperMobile {
@@ -218,5 +219,134 @@
     gap: 1rem;
     position: relative;
     width: max-content;
+  }
+}
+
+#dropdownElement {
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.dropdownWrapper {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  pointer-events: auto;
+  margin-top: 0.5rem;
+  min-width: 170px;
+}
+
+.dropdownLinkWrapper {
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dropdownLink {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer !important;
+  color: gainsboro;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  pointer-events: auto;
+  padding: 0.5rem 0;
+  font-family: var(--font-lemonmilk);
+  font-size: 0.8rem;
+}
+
+.dropdownLink:hover {
+  color: var(--theme-color);
+  cursor: pointer !important;
+}
+
+.dropdownIcon {
+  font-size: 1.2rem;
+  color: var(--theme-color, #88D2D5);
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.dropdownLink:hover .dropdownIcon {
+  color: var(--theme-color, #88D2D5);
+  transform: scale(1.1);
+}
+
+.hrLine {
+  color: gray;
+}
+
+/* Mobile Store Dropdown */
+.mobileStoreContainer {
+  position: relative;
+}
+
+.mobileStoreButton {
+  cursor: pointer;
+  position: relative;
+}
+
+.mobileStoreDropdown {
+  position: relative;
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0 0;
+  width: 100%;
+  animation: mobileDropdownSlideDown 0.3s ease-out;
+}
+
+.mobileStoreDropdownItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  color: gainsboro;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  font-size: 1.2rem;
+  font-family: var(--font-lemonmilk);
+}
+
+.mobileStoreDropdownItem:hover {
+  color: var(--theme-color);
+}
+
+.mobileDropdownIcon {
+  font-size: 1.2rem;
+  color: var(--theme-color, #88D2D5);
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.mobileStoreDropdownItem:hover .mobileDropdownIcon {
+  color: var(--theme-color, #88D2D5);
+  transform: scale(1.1);
+}
+
+.mobileHrLine {
+  color: gray;
+  margin: 0.5rem 0;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@keyframes mobileDropdownSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
