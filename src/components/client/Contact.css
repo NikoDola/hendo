@@ -28,5 +28,9 @@
   h1::selection {
     background-color: var(--theme-color);
   }
-}
 
+  .contactHeadline {
+    font-size: 4rem;
+
+  }
+}

@@ -4,7 +4,7 @@ export default function Contact() {
   return (
     <section className="section-regular contactWrapper">
       <div>
-        <h1> Dream Station <br /> hotline<br /> </h1>
+        <h1 className="contactHeadline"> Dream Station <br /> hotline<br /> </h1>
         <h3>straight to T. Hendo HQ</h3>
       </div>
       <form className="formWrapper">
