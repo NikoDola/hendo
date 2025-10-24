@@ -196,11 +196,11 @@ textarea::placeholder {
 }
 
 /* Safari-specific fix */
-@supports (-webkit-backdrop-filter: blur(12px)) {
+@supports (-webkit-backdrop-filter: blur(3px)) {
   .formWrapper {
-    background-color: rgba(255, 255, 255, 0.1);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
+    background-color: rgba(0, 0, 0, 0.01);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
   }
 }
 
