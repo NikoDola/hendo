@@ -5,7 +5,7 @@ import "./Hero.css";
 
 export default function Hero() {
   const [isGlitching, setIsGlitching] = useState(false);
-  const [currentImage, setCurrentImage] = useState("/images/hendo/4.png");
+  const [currentImage, setCurrentImage] = useState("/images/Hendo/4.png");
 
   useEffect(() => {
     let lastColor = "";
@@ -28,12 +28,12 @@ export default function Hero() {
 
           // Glitch sequence
           const glitchImages = [
-            "/images/hendo/glitch1.png",
-            "/images/hendo/glitch2.png",
-            "/images/hendo/glitch3.png",
-            "/images/hendo/glitch1.png",
-            "/images/hendo/glitch2.png",
-            "/images/hendo/glitch3.png"
+            "/images/Hendo/glitch1.png",
+            "/images/Hendo/glitch2.png", 
+            "/images/Hendo/glitch3.png",
+            "/images/Hendo/glitch1.png",
+            "/images/Hendo/glitch2.png",
+            "/images/Hendo/glitch3.png"
           ];
 
           let glitchIndex = 0;
@@ -43,14 +43,14 @@ export default function Hero() {
               glitchIndex++;
             } else {
               clearInterval(glitchInterval);
-              setCurrentImage("/images/hendo/4.png");
+              setCurrentImage("/images/Hendo/4.png");
               setIsGlitching(false);
             }
           }, 100);
 
           setTimeout(() => {
             setIsGlitching(false);
-            setCurrentImage("/images/hendo/4.png");
+            setCurrentImage("/images/Hendo/4.png");
           }, 1000);
         }, 1200);
       }
