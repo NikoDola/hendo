@@ -58,7 +58,7 @@
 
 
 .subscribeDescription {
-  font-family: roboto;
+  font-family: 'Roboto', system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
   margin-top: 2rem;
   max-width: 600px;
   font-weight: 200;
@@ -73,4 +73,36 @@
   transition: background-color 1s ease, box-shadow 1s ease;
   box-shadow: 0 0 20px var(--theme-color);
   color: black;
+}
+
+/* Privacy Policy and Terms of Service links */
+.my-recaptcha-disclaimer a {
+  color: #8B5CF6;
+  /* Purple color */
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.my-recaptcha-disclaimer a:hover {
+  color: #7C3AED;
+  /* Darker purple on hover */
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .newsletterWrapper {
+    width: 100%;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .inputNewsletter {
+    width: 100%;
+    border-radius: 20px;
+  }
+
+  .subscribe {
+    width: 100%;
+    border-radius: 20px;
+  }
 }

@@ -177,6 +177,7 @@
 
   .linkMobile {
     font-weight: 500;
+    font-family: var(--font-lemonmilk), system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     position: relative;
     color: gainsboro;
     text-decoration: none;
@@ -313,7 +314,7 @@
   cursor: pointer;
   transition: color 0.3s ease;
   font-size: 0.8rem !important;
-  font-family: var(--font-lemonmilk);
+  font-family: var(--font-lemonmilk), system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 .mobileStoreDropdownItem:hover {
