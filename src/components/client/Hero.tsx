@@ -8,62 +8,42 @@ export default function Hero() {
   const [currentImage, setCurrentImage] = useState("/images/Hendo/4.png");
 
   useEffect(() => {
-    let lastColor = "";
-    let glitchTimeout: NodeJS.Timeout;
+    const triggerGlitch = () => {
+      setIsGlitching(true);
 
-    const updateColor = () => {
-      const root = document.documentElement;
-      const color = getComputedStyle(root).getPropertyValue('--theme-color').trim();
+      // Glitch sequence
+      const glitchImages = [
+        "/images/Hendo/glitch1.png",
+        "/images/Hendo/glitch2.png",
+        "/images/Hendo/glitch3.png",
+        "/images/Hendo/glitch1.png",
+        "/images/Hendo/glitch2.png",
+        "/images/Hendo/glitch3.png"
+      ];
 
-      if (color && color !== lastColor) {
-        console.log('Hero glitch triggered by color change to:', color);
-        lastColor = color;
-
-        if (glitchTimeout) {
-          clearTimeout(glitchTimeout);
+      let glitchIndex = 0;
+      const glitchInterval = setInterval(() => {
+        if (glitchIndex < glitchImages.length) {
+          setCurrentImage(glitchImages[glitchIndex]);
+          glitchIndex++;
+        } else {
+          clearInterval(glitchInterval);
+          setCurrentImage("/images/Hendo/4.png");
+          setIsGlitching(false);
         }
+      }, 100);
 
-        glitchTimeout = setTimeout(() => {
-          setIsGlitching(true);
-
-          // Glitch sequence
-          const glitchImages = [
-            "/images/Hendo/glitch1.png",
-            "/images/Hendo/glitch2.png",
-            "/images/Hendo/glitch3.png",
-            "/images/Hendo/glitch1.png",
-            "/images/Hendo/glitch2.png",
-            "/images/Hendo/glitch3.png"
-          ];
-
-          let glitchIndex = 0;
-          const glitchInterval = setInterval(() => {
-            if (glitchIndex < glitchImages.length) {
-              setCurrentImage(glitchImages[glitchIndex]);
-              glitchIndex++;
-            } else {
-              clearInterval(glitchInterval);
-              setCurrentImage("/images/Hendo/4.png");
-              setIsGlitching(false);
-            }
-          }, 100);
-
-          setTimeout(() => {
-            setIsGlitching(false);
-            setCurrentImage("/images/Hendo/4.png");
-          }, 1000);
-        }, 1200);
-      }
+      setTimeout(() => {
+        setIsGlitching(false);
+        setCurrentImage("/images/Hendo/4.png");
+      }, 1000);
     };
 
-    updateColor();
-    const interval = setInterval(updateColor, 50);
+    // Trigger glitch every 3 seconds
+    const glitchInterval = setInterval(triggerGlitch, 3000);
 
     return () => {
-      clearInterval(interval);
-      if (glitchTimeout) {
-        clearTimeout(glitchTimeout);
-      }
+      clearInterval(glitchInterval);
     };
   }, []);
 
@@ -93,7 +73,7 @@ export default function Hero() {
             className="hendo-image"
           />
         </div>
-        <div className="void"></div>
+
       </div>
     </div>
   )

@@ -16,6 +16,28 @@ export default function BitBackground() {
   const [trebleIntensity, setTrebleIntensity] = useState(0);
   const [currentSongIndex, setCurrentSongIndex] = useState(1); // Start with second song (index 1)
   const [isAtTop, setIsAtTop] = useState(true);
+  const [progress, setProgress] = useState(0);
+
+  // Handle progress bar click
+  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation(); // Prevent click from reaching play button
+    if (!audio) return;
+
+    const progressBar = e.currentTarget;
+    const rect = progressBar.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const progressBarWidth = rect.width;
+    const clickPercent = (clickX / progressBarWidth) * 100;
+
+    // Calculate the new time position
+    const newTime = (clickPercent / 100) * audio.duration;
+    audio.currentTime = newTime;
+    setProgress(clickPercent);
+
+    // Don't change the playing state - keep it as it was
+    // If it was playing, it continues playing
+    // If it was paused, it stays paused
+  };
 
   // Music files array with cool song names
   const musicFiles = [
@@ -46,6 +68,22 @@ export default function BitBackground() {
       }
     };
   }, [currentSongIndex]);
+
+  // Update progress bar
+  useEffect(() => {
+    if (!audio) return;
+
+    const updateProgress = () => {
+      if (audio.duration) {
+        const progressPercent = (audio.currentTime / audio.duration) * 100;
+        setProgress(progressPercent);
+      }
+    };
+
+    const interval = setInterval(updateProgress, 100); // Update every 100ms
+
+    return () => clearInterval(interval);
+  }, [audio, isPlaying]);
 
   // Handle song end and cycle to next song
   useEffect(() => {
@@ -260,7 +298,7 @@ export default function BitBackground() {
           {musicFiles[currentSongIndex].name}
         </div>
 
-        <div className="play-icon">
+        <div className={`play-icon ${isPlaying ? 'playing' : ''}`}>
           {isPlaying ? (
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" fill="currentColor" />
@@ -270,6 +308,19 @@ export default function BitBackground() {
               <path d="M8 5v14l11-7z" fill="currentColor" />
             </svg>
           )}
+        </div>
+
+        {/* Music progress bar */}
+        <div className="music-progress-container">
+          <div
+            className="music-progress-bar"
+            onClick={handleProgressClick}
+          >
+            <div
+              className="music-progress-fill"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
         </div>
       </div>
     </>

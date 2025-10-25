@@ -1,6 +1,5 @@
 .hero__wrapper {
   height: 100vh;
-
   text-align: center;
 }
 
@@ -9,14 +8,11 @@
   width: 100%;
 }
 
-
-
 .hendoImageDiv {
   position: relative;
   margin: 0 auto;
   width: 50%;
   height: 100vh;
-  animation: glitch 3.5s infinite steps(1);
   z-index: 9;
   top: 40px;
   display: flex;
@@ -30,11 +26,9 @@
   object-fit: contain;
 }
 
-/* Glitch animation is now handled by JavaScript */
-
 .headline {
   position: absolute;
-  top: 10%;
+  top: 15%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: left;
@@ -43,18 +37,10 @@
 
 .headline span {
   position: relative;
-  font-size: 10rem;
-  font-family: var(--lemonmilk);
-  text-align: left;
-}
-
-.headline {
-  top: 15%;
-}
-
-.headline span {
   font-size: 14vh;
   line-height: 13vh;
+  font-family: var(--font-lemonmilk);
+  text-align: left;
 }
 
 @media (max-width: 800px) {
@@ -85,8 +71,8 @@
 }
 
 .playIcon {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   background: white;
   border-radius: 50%;
   display: flex;
@@ -104,8 +90,7 @@
 
 .playIcon svg {
   color: var(--theme-color);
-  margin-left: 3px;
-  /* Slight offset to center the play icon */
-  width: 48px;
-  height: 48px;
+  margin-left: 0;
+  width: 12px;
+  height: 12px;
 }
