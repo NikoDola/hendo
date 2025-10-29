@@ -1,49 +1,51 @@
 "use client";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import "./Hero.css";
 
-export default function Hero() {
+export default function Hero2() {
   const [isGlitching, setIsGlitching] = useState(false);
-  const [currentImage, setCurrentImage] = useState("/images/Hendo/4.png");
 
   useEffect(() => {
-    const triggerGlitch = () => {
-      setIsGlitching(true);
+    let lastColor = "";
+    let glitchTimeout: NodeJS.Timeout;
 
-      // Glitch sequence
-      const glitchImages = [
-        "/images/Hendo/glitch1.png",
-        "/images/Hendo/glitch2.png",
-        "/images/Hendo/glitch3.png",
-        "/images/Hendo/glitch1.png",
-        "/images/Hendo/glitch2.png",
-        "/images/Hendo/glitch3.png"
-      ];
+    // Listen for color changes from the ColorProvider
+    const updateColor = () => {
+      const root = document.documentElement;
+      const color = getComputedStyle(root).getPropertyValue('--theme-color').trim();
 
-      let glitchIndex = 0;
-      const glitchInterval = setInterval(() => {
-        if (glitchIndex < glitchImages.length) {
-          setCurrentImage(glitchImages[glitchIndex]);
-          glitchIndex++;
-        } else {
-          clearInterval(glitchInterval);
-          setCurrentImage("/images/Hendo/4.png");
-          setIsGlitching(false);
+      if (color && color !== lastColor) {
+        console.log('Hero2 glitch triggered by color change to:', color);
+        lastColor = color;
+
+        // Clear any existing glitch timeout
+        if (glitchTimeout) {
+          clearTimeout(glitchTimeout);
         }
-      }, 100);
 
-      setTimeout(() => {
-        setIsGlitching(false);
-        setCurrentImage("/images/Hendo/4.png");
-      }, 1000);
+        // Trigger glitch effect after a short delay (after color transition)
+        glitchTimeout = setTimeout(() => {
+          setIsGlitching(true);
+
+          // Reset glitch state after animation completes
+          setTimeout(() => {
+            setIsGlitching(false);
+          }, 1000); // 1-second glitch animation
+        }, 1200); // Start glitch 1.2 seconds after color change
+      }
     };
 
-    // Trigger glitch every 3 seconds
-    const glitchInterval = setInterval(triggerGlitch, 3000);
+    // Initial check
+    updateColor();
+
+    // Update every 50ms to catch color changes more precisely
+    const interval = setInterval(updateColor, 50);
 
     return () => {
-      clearInterval(glitchInterval);
+      clearInterval(interval);
+      if (glitchTimeout) {
+        clearTimeout(glitchTimeout);
+      }
     };
   }, []);
 
@@ -62,21 +64,10 @@ export default function Hero() {
             <span style={{ zIndex: "-2" }}>U</span>
             <span id="letter_p">P</span>
           </div>
-        </div>
-        <div className={`hendoImageDiv ${isGlitching ? 'glitch-trigger' : ''}`}>
-          <Image
-            src={currentImage}
-            alt="Hendo"
-            width={800}
-            height={600}
-            priority
-            className="hendo-image"
-          />
-        </div>
 
+        </div>
+        <div className={`hendoImageDiv ${isGlitching ? 'glitch-trigger' : ''}`}></div>
       </div>
     </div>
   )
 }
-
-
