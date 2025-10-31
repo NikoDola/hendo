@@ -20,10 +20,7 @@ function toMillis(value: TimestampLike): number {
   if (value instanceof Date) return value.getTime()
   return value.toMillis()
 }
-import { registerCustomer } from "@/lib/shopify/storefront"
-import { createCustomer } from "@/lib/shopify/admin"
 import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email"
-import { syncNewsletterSubscriberToShopify } from "@/lib/firebase-shopify-sync"
 
 const COOLDOWN_MS = 60 * 1000 // 1 minute
 const MAX_ATTEMPTS = 3 // Maximum attempts per IP
@@ -101,22 +98,13 @@ export async function newsletter(email: string, token: string) {
       verificationToken: verificationToken
     })
 
-    // 8. Sync to Shopify (create customer account)
-    try {
-      await syncNewsletterSubscriberToShopify(email, "Newsletter", "Subscriber")
-      console.log('Successfully synced newsletter subscriber to Shopify')
-    } catch (syncError) {
-      console.error('Failed to sync to Shopify, but continuing with newsletter signup:', syncError)
-      // Don't fail the newsletter signup if Shopify sync fails
-    }
-
-    // 9. Try to send verification email using custom service
+    // 8. Try to send verification email using custom service
     try {
       await sendVerificationEmail(email, verificationToken)
       return { success: true }
     } catch (emailError) {
       console.error('Custom email service failed:', emailError)
-      // Even if email service fails, we still saved the subscriber and synced to Shopify
+      // Even if email service fails, we still saved the subscriber
       return { success: true, warning: "Subscription saved, but verification email may not have been sent. Please check your spam folder." }
     }
 

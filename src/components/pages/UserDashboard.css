@@ -1,0 +1,212 @@
+/* User Dashboard Styles */
+
+.userDashboardContainer {
+  min-height: 100vh;
+  background: transparent;
+}
+
+.userHeader {
+  background: transparent;
+  border: none;
+}
+
+.userHeaderContainer {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+  .userHeaderContainer {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .userHeaderContainer {
+    padding: 0 2rem;
+  }
+}
+
+.userHeaderContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 4rem;
+}
+
+.userHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.userTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+}
+
+.userLogoutButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0.5rem;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.userLogoutButton:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.userMain {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .userMain {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .userMain {
+    padding: 2rem;
+  }
+}
+
+.userProfileCard {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.75rem;
+  padding: 2rem;
+}
+
+.userProfileTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 1.5rem;
+}
+
+.userProfileGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .userProfileGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.userProfileSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.userProfileItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.userProfileItemIcon {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.userProfileItemContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.userProfileLabel {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 0.25rem;
+}
+
+.userProfileValue {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: white;
+}
+
+.userStatsCard {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.userStatsTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.userStatsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.userStatsItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.userStatsLabel {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.userStatsValue {
+  font-weight: 500;
+  color: white;
+  text-transform: capitalize;
+}
+
+.userStatsText {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Loading Spinner */
+.userLoadingContainer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.userSpinner {
+  animation: spin 1s linear infinite;
+  border-radius: 50%;
+  height: 2rem;
+  width: 2rem;
+  border-width: 2px;
+  border-bottom-color: white;
+  border-top-color: transparent;
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+

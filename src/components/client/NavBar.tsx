@@ -8,15 +8,16 @@ import { CiShoppingCart } from "react-icons/ci";
 import { CiUser } from "react-icons/ci";
 import { IoMoonOutline } from "react-icons/io5";
 import { IoShirtOutline } from "react-icons/io5";
-import { useShopifyAuth } from "@/context/ShopifyAuthContext";
+import { useUserAuth } from "@/context/UserAuthContext";
+import { useRouter } from "next/navigation";
 
 
 export default function NavMenu() {
   const [isOpen, setIsOpen] = useState(false);
-  const { customer, logout } = useShopifyAuth();
   const [dropdown, setDropdown] = useState(false);
-
-  // Check if we're on mobile to conditionally render
+  const [profileDropdown, setProfileDropdown] = useState(false);
+  const { user, loading: isLoading, signOut } = useUserAuth();
+  const router = useRouter();
 
   // Close menu when clicking on a link
   const handleLinkClick = () => {
@@ -28,6 +29,29 @@ export default function NavMenu() {
     console.log(dropdown);
   };
 
+  const handleProfileDropdown = () => {
+    setProfileDropdown(!profileDropdown);
+  };
+
+  const handleViewProfile = () => {
+    setProfileDropdown(false);
+    if (user?.role === 'admin') {
+      router.push('/admin/dashboard');
+    } else {
+      router.push('/dashboard');
+    }
+  };
+
+  const handleLogout = async () => {
+    setProfileDropdown(false);
+    try {
+      await signOut();
+      router.push('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
   // Toggle menu
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -37,10 +61,6 @@ export default function NavMenu() {
     <ColorProvider>
       {/* Desktop Navigation */}
       <header className="headerWrapperDesktop">
-        <div className="cardProfileWrapper">
-          <CiUser className="navIcons" />
-          <CiShoppingCart className="navIcons" />
-        </div>
         <nav className="navWrapperDesktop">
           <ul className="linksWrapperDesktop">
             <Link className="linkDesktop" href="/" onClick={handleLinkClick}>
@@ -82,31 +102,94 @@ export default function NavMenu() {
                   </ul>
                 </div> : ""}
             </div>
-            {customer ? (
-              <>
-                <Link className="linkDesktop" href="/dashboard" onClick={handleLinkClick}>
-                  Dashboard
-                </Link>
-                <button
-                  className="linkDesktop"
-                  onClick={() => {
-                    logout();
-                    handleLinkClick();
-                  }}
-                  style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
+            {!user && (
               <>
                 <Link className="linkDesktop" href="/login" onClick={handleLinkClick}>
                   Login
                 </Link>
-                <Link className="linkDesktop" href="/signup" onClick={handleLinkClick}>
+                <Link 
+                  className="linkDesktop" 
+                  href="/signup" 
+                  onClick={handleLinkClick}
+                >
                   Signup
                 </Link>
               </>
+            )}
+            {user && (
+              <div className="linkDesktop" style={{ position: 'relative' }}>
+                <div 
+                  onClick={handleProfileDropdown}
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '0.5rem',
+                    cursor: 'pointer',
+                    padding: '0.5rem'
+                  }}
+                >
+                  <CiUser className="navIcons" />
+                  <CiShoppingCart className="navIcons" />
+                </div>
+                {profileDropdown && (
+                  <div 
+                    style={{
+                      position: 'absolute',
+                      top: '100%',
+                      right: '0',
+                      background: 'rgba(0, 0, 0, 0.9)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      padding: '0.5rem 0',
+                      minWidth: '150px',
+                      zIndex: 1000
+                    }}
+                  >
+                    <button
+                      onClick={handleViewProfile}
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem 1rem',
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'white',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        fontSize: '14px'
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = 'transparent';
+                      }}
+                    >
+                      View Profile
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem 1rem',
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'white',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        fontSize: '14px'
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = 'transparent';
+                      }}
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
           </ul>
         </nav>
@@ -115,10 +198,6 @@ export default function NavMenu() {
       {/* Mobile Navigation */}
       <header className="headerWrapperMobile">
         <nav className="navWrapperMobile">
-          <div className="cardProfileWrapperMobile">
-            <CiUser className="navIcons" />
-            <CiShoppingCart className="navIcons" />
-          </div>
           <div className="logoMobile">
             <Logo size="22px" />
           </div>
@@ -183,31 +262,7 @@ export default function NavMenu() {
                     </ul>
                   )}
                 </li>
-                {customer ? (
-                  <>
-                    <li>
-                      <Link
-                        className="linkMobile"
-                        href="/dashboard"
-                        onClick={handleLinkClick}
-                      >
-                        Dashboard
-                      </Link>
-                    </li>
-                    <li>
-                      <button
-                        className="linkMobile"
-                        onClick={() => {
-                          logout();
-                          handleLinkClick();
-                        }}
-                        style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
-                      >
-                        Logout
-                      </button>
-                    </li>
-                  </>
-                ) : (
+                {!user && (
                   <>
                     <li>
                       <Link
@@ -228,6 +283,79 @@ export default function NavMenu() {
                       </Link>
                     </li>
                   </>
+                )}
+                {user && (
+                  <li>
+                    <div 
+                      onClick={handleProfileDropdown}
+                      style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '0.5rem',
+                        cursor: 'pointer',
+                        padding: '0.75rem 1rem',
+                        color: 'white'
+                      }}
+                    >
+                      <CiUser className="navIcons" />
+                      <CiShoppingCart className="navIcons" />
+                      <span>Profile</span>
+                    </div>
+                    {profileDropdown && (
+                      <div 
+                        style={{
+                          background: 'rgba(0, 0, 0, 0.9)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '8px',
+                          margin: '0.5rem 0',
+                          overflow: 'hidden'
+                        }}
+                      >
+                        <button
+                          onClick={handleViewProfile}
+                          style={{
+                            width: '100%',
+                            padding: '0.75rem 1rem',
+                            background: 'transparent',
+                            border: 'none',
+                            color: 'white',
+                            textAlign: 'left',
+                            cursor: 'pointer',
+                            fontSize: '14px'
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.background = 'transparent';
+                          }}
+                        >
+                          View Profile
+                        </button>
+                        <button
+                          onClick={handleLogout}
+                          style={{
+                            width: '100%',
+                            padding: '0.75rem 1rem',
+                            background: 'transparent',
+                            border: 'none',
+                            color: 'white',
+                            textAlign: 'left',
+                            cursor: 'pointer',
+                            fontSize: '14px'
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.background = 'transparent';
+                          }}
+                        >
+                          Logout
+                        </button>
+                      </div>
+                    )}
+                  </li>
                 )}
               </ul>
             </nav>

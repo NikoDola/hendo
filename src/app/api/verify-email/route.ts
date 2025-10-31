@@ -14,9 +14,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify the token with Shopify (you might need to implement this based on your Shopify setup)
-    // For now, we'll assume the token is valid if it exists
-    // In a real implementation, you'd verify the token with Shopify's API
+    // Verify the token (simple validation for now)
+    // In a real implementation, you'd verify the token with your email service
 
     // Update the subscriber record in Firestore to mark as verified
     const subscribersRef = collection(db, 'subscribers');

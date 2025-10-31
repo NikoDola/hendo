@@ -1,228 +1,140 @@
-"use client";
+'use client';
 
-import { useShopifyAuth } from "@/context/ShopifyAuthContext";
-import { useCart } from "@/context/CartContext";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import "@/components/pages/dashboard.css";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Music, User, Mail, Calendar, LogOut } from 'lucide-react';
+import { useUserAuth } from '@/context/UserAuthContext';
+import '@/components/pages/UserDashboard.css';
 
-export default function Dashboard() {
-  const { customer, isLoading, logout } = useShopifyAuth();
-  const { cart, removeFromCart, refreshCart } = useCart();
+interface UserData {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  createdAt: string;
+  lastLoginAt: string;
+  ipAddress?: string;
+  purchases: number;
+}
+
+export default function UserDashboard() {
+  const { user, loading: isLoading, signOut } = useUserAuth();
   const router = useRouter();
-  const [activeSection, setActiveSection] = useState('overview');
 
   useEffect(() => {
-    if (!isLoading && !customer) {
-      router.push("/login");
-    } else if (customer) {
-      refreshCart();
+    if (!isLoading && !user) {
+      router.push('/login');
     }
-  }, [customer, isLoading, router, refreshCart]);
+  }, [user, isLoading, router]);
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      router.push('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   if (isLoading) {
     return (
-      <section className="section-regular">
-        <div className="formWrapper">
-          <h1>Loading...</h1>
-        </div>
-      </section>
+      <div className="userLoadingContainer">
+        <div className="userSpinner"></div>
+      </div>
     );
   }
 
-  if (!customer) {
-    return null; // Will redirect to login
+  if (!user) {
+    return null;
   }
-
-  const renderOverview = () => (
-    <div className="contentSection active">
-      <h2 className="sectionTitle">Account Overview</h2>
-
-      <div className="infoGrid">
-        <div className="infoItem">
-          <div className="infoLabel">Email</div>
-          <div className="infoValue">{customer.email}</div>
-        </div>
-
-        {customer.firstName && (
-          <div className="infoItem">
-            <div className="infoLabel">Name</div>
-            <div className="infoValue">{customer.firstName} {customer.lastName}</div>
-          </div>
-        )}
-
-        {customer.phone && (
-          <div className="infoItem">
-            <div className="infoLabel">Phone</div>
-            <div className="infoValue">{customer.phone}</div>
-          </div>
-        )}
-
-        <div className="infoItem">
-          <div className="infoLabel">Member Since</div>
-          <div className="infoValue">{new Date(customer.createdAt).toLocaleDateString()}</div>
-        </div>
-      </div>
-
-      <div className="infoItem">
-        <h3 className="sectionTitle">Loyalty Points</h3>
-        <div className="pointsDisplay">0</div>
-        <div className="pointsDescription">Earn 1 point for every $10 spent</div>
-      </div>
-    </div>
-  );
-
-  const renderCart = () => {
-    return (
-      <div className={`contentSection ${activeSection === 'cart' ? 'active' : ''}`}>
-        <h2 className="sectionTitle">Shopping Cart</h2>
-
-        {cart && cart.lines.edges.length > 0 ? (
-          <div>
-            <div className="cartSummary">
-              <p><strong>Total Items:</strong> {cart.totalQuantity}</p>
-              <p><strong>Total:</strong> ${(parseFloat(cart.cost.totalAmount.amount) / 100).toFixed(2)} {cart.cost.totalAmount.currencyCode}</p>
-            </div>
-
-            <div className="cartItemsList">
-              {cart.lines.edges.map(({ node: item }) => (
-                <div key={item.id} className="cartItem">
-                  {item.merchandise.product.images.edges[0] && (
-                    <img
-                      src={item.merchandise.product.images.edges[0].node.url}
-                      alt={item.merchandise.product.images.edges[0].node.altText}
-                      className="cartItemImage"
-                    />
-                  )}
-                  <div className="cartItemDetails">
-                    <p className="cartItemTitle">{item.merchandise.product.title}</p>
-                    <p className="cartItemVariant">
-                      {item.merchandise.title} - Qty: {item.quantity}
-                    </p>
-                    <p className="cartItemPrice">
-                      ${(parseFloat(item.cost.totalAmount.amount) / 100).toFixed(2)}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => removeFromCart([item.id])}
-                    className="removeButton"
-                  >
-                    Remove
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            {cart.checkoutUrl && (
-              <button
-                onClick={() => window.open(cart.checkoutUrl, '_blank')}
-                className="checkoutButton"
-              >
-                Proceed to Checkout
-              </button>
-            )}
-          </div>
-        ) : (
-          <div className="emptyState">
-            <p>Your cart is empty</p>
-            <button
-              onClick={() => router.push('/shop')}
-              className="emptyStateButton"
-            >
-              Start Shopping
-            </button>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const renderOrders = () => (
-    <div className={`contentSection ${activeSection === 'orders' ? 'active' : ''}`}>
-      <h2 className="sectionTitle">Recent Orders</h2>
-      <div className="emptyState">
-        <p>No orders yet</p>
-        <button
-          onClick={() => router.push('/shop')}
-          className="emptyStateButton"
-        >
-          Start Shopping
-        </button>
-      </div>
-    </div>
-  );
-
-  const renderFavorites = () => (
-    <div className={`contentSection ${activeSection === 'favorites' ? 'active' : ''}`}>
-      <h2 className="sectionTitle">Favorites</h2>
-      <div className="emptyState">
-        <p>No favorites yet</p>
-        <button
-          onClick={() => router.push('/shop')}
-          className="emptyStateButton"
-        >
-          Browse Products
-        </button>
-      </div>
-    </div>
-  );
 
   return (
-    <section className="section-regular">
-      <div className="formWrapper">
-        <div className="dashboardContainer">
-          <div className="dashboardSidebar">
-            <div className="dashboardHeader">
-              <h1 className="dashboardTitle">Dashboard</h1>
-              <button onClick={logout} className="logoutButton">
-                Logout
-              </button>
+    <div className="userDashboardContainer">
+      {/* Header */}
+      <header className="userHeader">
+        <div className="userHeaderContainer">
+          <div className="userHeaderContent">
+            <div className="userHeaderLeft">
+              <Music size={32} style={{ color: 'white' }} />
+              <h1 className="userTitle">Dashboard</h1>
             </div>
-
-            <ul className="sidebarNav">
-              <li className="sidebarNavItem">
-                <button
-                  className={`sidebarNavButton ${activeSection === 'overview' ? 'active' : ''}`}
-                  onClick={() => setActiveSection('overview')}
-                >
-                  Overview
-                </button>
-              </li>
-              <li className="sidebarNavItem">
-                <button
-                  className={`sidebarNavButton ${activeSection === 'cart' ? 'active' : ''}`}
-                  onClick={() => setActiveSection('cart')}
-                >
-                  Cart ({cart?.totalQuantity || 0})
-                </button>
-              </li>
-              <li className="sidebarNavItem">
-                <button
-                  className={`sidebarNavButton ${activeSection === 'orders' ? 'active' : ''}`}
-                  onClick={() => setActiveSection('orders')}
-                >
-                  Recent Orders
-                </button>
-              </li>
-              <li className="sidebarNavItem">
-                <button
-                  className={`sidebarNavButton ${activeSection === 'favorites' ? 'active' : ''}`}
-                  onClick={() => setActiveSection('favorites')}
-                >
-                  Favorites
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          <div className="dashboardContent">
-            {activeSection === 'overview' && renderOverview()}
-            {activeSection === 'cart' && renderCart()}
-            {activeSection === 'orders' && renderOrders()}
-            {activeSection === 'favorites' && renderFavorites()}
+            
+            <button
+              onClick={handleLogout}
+              className="userLogoutButton"
+            >
+              <LogOut size={16} />
+              Logout
+            </button>
           </div>
         </div>
-      </div>
-    </section>
+      </header>
+
+      {/* Main Content */}
+      <main className="userMain">
+        <div className="userProfileCard">
+          <h2 className="userProfileTitle">Your Profile</h2>
+          
+          <div className="userProfileGrid">
+            <div className="userProfileSection">
+              <div className="userProfileItem">
+                <User className="userProfileItemIcon" size={20} />
+                <div className="userProfileItemContent">
+                  <p className="userProfileLabel">Name</p>
+                  <p className="userProfileValue">{user.name}</p>
+                </div>
+              </div>
+              
+              <div className="userProfileItem">
+                <Mail className="userProfileItemIcon" size={20} />
+                <div className="userProfileItemContent">
+                  <p className="userProfileLabel">Email</p>
+                  <p className="userProfileValue">{user.email}</p>
+                </div>
+              </div>
+              
+              <div className="userProfileItem">
+                <Calendar className="userProfileItemIcon" size={20} />
+                <div className="userProfileItemContent">
+                  <p className="userProfileLabel">Member Since</p>
+                  <p className="userProfileValue">
+                    {new Date(user.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="userProfileSection">
+              <div className="userStatsCard">
+                <h3 className="userStatsTitle">Account Stats</h3>
+                <div className="userStatsList">
+                  <div className="userStatsItem">
+                    <span className="userStatsLabel">Role:</span>
+                    <span className="userStatsValue">{user.role}</span>
+                  </div>
+                  <div className="userStatsItem">
+                    <span className="userStatsLabel">Purchases:</span>
+                    <span className="userStatsValue">{user.purchases}</span>
+                  </div>
+                  <div className="userStatsItem">
+                    <span className="userStatsLabel">Last Login:</span>
+                    <span className="userStatsValue">
+                      {new Date(user.lastLoginAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              {user.ipAddress && (
+                <div className="userStatsCard">
+                  <h3 className="userStatsTitle">Connection Info</h3>
+                  <p className="userStatsText">IP Address: {user.ipAddress}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }

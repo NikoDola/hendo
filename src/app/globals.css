@@ -298,6 +298,36 @@ textarea::placeholder {
   gap: 1rem;
 }
 
+/* Signup Button - separate from nav links */
+.signupButton {
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  font-family: var(--font-lemonmilk) !important;
+  font-size: 16px !important; /* Same as nav links */
+  letter-spacing: 0.5px !important;
+  padding: 1rem !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(255,255,255,0.25) !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+  width: 100% !important;
+  text-decoration: none !important;
+}
+
+.signupButton:hover {
+  background: #000000 !important;
+  box-shadow: 0 0 22px var(--theme-color) !important;
+  border: 1px solid rgba(255,255,255,0.35) !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+.signupButton:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
 .hrLine {
   width: 100%;
   height: 1px;

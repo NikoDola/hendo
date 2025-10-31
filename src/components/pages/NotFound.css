@@ -1,0 +1,66 @@
+/* 404 Not Found Styles */
+
+.notFoundContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: white;
+}
+
+.notFoundContent {
+  text-align: center;
+}
+
+.notFoundTitle {
+  font-size: 72px;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  transition: color 1s;
+}
+
+@media (max-width: 768px) {
+  .notFoundTitle {
+    font-size: 48px;
+  }
+}
+
+.notFoundMessage {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+@media (min-width: 768px) {
+  .notFoundMessage {
+    font-size: 1.5rem;
+  }
+}
+
+.notFoundActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.notFoundButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.notFoundButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
