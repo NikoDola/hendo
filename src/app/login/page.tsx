@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from 'firebase/auth';
+import { signInWithEmailAndPassword, getRedirectResult } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useUserAuth } from '@/context/UserAuthContext';
 
@@ -47,7 +47,7 @@ export default function LoginPage() {
         const data = await me.json();
         if (data?.user?.role === 'admin') router.push('/admin/dashboard');
         else router.push('/dashboard');
-      } catch (_) {}
+      } catch {}
     })();
   }, [router]);
 
@@ -198,7 +198,7 @@ export default function LoginPage() {
 
         <div className="orWrapper">
           <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px', margin: 0 }}>
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <a href="/signup" style={{ color: 'var(--theme-color)', textDecoration: 'none' }}>
               Sign up
             </a>

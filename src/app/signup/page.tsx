@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getRedirectResult, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useUserAuth } from '@/context/UserAuthContext';
 
@@ -51,7 +51,7 @@ export default function SignupPage() {
         const data = await me.json();
         if (data?.user?.role === 'admin') router.push('/admin/dashboard');
         else router.push('/dashboard');
-      } catch (_) {}
+      } catch {}
     })();
   }, [router]);
 

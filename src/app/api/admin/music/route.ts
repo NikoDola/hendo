@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminFromSession } from '@/lib/admin-auth';
-import { getAllMusicTracks, createMusicTrack } from '@/lib/music';
+import { getAllMusicTracks } from '@/lib/music';
 
 export async function GET() {
   try {
@@ -54,12 +54,13 @@ export async function POST(request: NextRequest) {
       const trimmedBody = bodyText.trim();
       body = JSON.parse(trimmedBody);
       console.log('Successfully parsed body:', JSON.stringify(body, null, 2));
-    } catch (jsonError: any) {
+    } catch (jsonError: unknown) {
+      const error = jsonError as Error & { name?: string };
       console.error('Failed to parse JSON:', jsonError);
       console.error('Error details:', {
-        message: jsonError.message,
-        name: jsonError.name,
-        position: jsonError.message.match(/position (\d+)/)?.[1]
+        message: error.message,
+        name: error.name,
+        position: error.message?.match(/position (\d+)/)?.[1]
       });
       
       return NextResponse.json(
@@ -133,9 +134,10 @@ export async function POST(request: NextRequest) {
       };
 
       return NextResponse.json({ track });
-    } catch (createError: any) {
+    } catch (createError: unknown) {
+      const error = createError as Error;
       console.error('Create music track error:', createError);
-      const errorMessage = createError.message || 'Unknown error occurred';
+      const errorMessage = error.message || 'Unknown error occurred';
       
       let statusCode = 500;
       if (errorMessage.includes('permission') || errorMessage.includes('unauthorized')) {
@@ -150,10 +152,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as Error;
     console.error('Create music track error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to create music track. Please try again.' },
+      { error: err.message || 'Failed to create music track. Please try again.' },
       { status: 500 }
     );
   }

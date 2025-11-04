@@ -20,7 +20,7 @@ function toMillis(value: TimestampLike): number {
   if (value instanceof Date) return value.getTime()
   return value.toMillis()
 }
-import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email"
+import { sendVerificationEmail } from "@/lib/email"
 
 const COOLDOWN_MS = 60 * 1000 // 1 minute
 const MAX_ATTEMPTS = 3 // Maximum attempts per IP
@@ -89,7 +89,7 @@ export async function newsletter(email: string, token: string) {
     const verificationToken = Math.random().toString(36).slice(-12) + Date.now().toString(36)
 
     // 7. Save subscriber to Firestore for tracking
-    const subscriberRef = await addDoc(collection(db, "subscribers"), {
+    await addDoc(collection(db, "subscribers"), {
       email,
       createdAt: serverTimestamp(),
       ip,

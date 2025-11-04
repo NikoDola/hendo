@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { MusicTrack, CreateMusicData } from '@/lib/music';
+import { CreateMusicData } from '@/lib/music';
 import HashtagInput from './HashtagInput';
-import { Upload, FileAudio, FileText, DollarSign } from 'lucide-react';
+import { FileAudio, FileText, DollarSign } from 'lucide-react';
 
 interface MusicUploadFormProps {
   onSubmit: (data: CreateMusicData) => Promise<void>;

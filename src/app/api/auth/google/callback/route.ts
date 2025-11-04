@@ -5,7 +5,7 @@ import { headers } from 'next/headers';
 
 export async function POST(request: NextRequest) {
   try {
-    const { code, state } = await request.json();
+    const { code } = await request.json();
 
     if (!code) {
       return NextResponse.json(

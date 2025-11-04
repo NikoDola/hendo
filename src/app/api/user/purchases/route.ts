@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getUserFromSession } from '@/lib/auth';
 import { getUserPurchases } from '@/lib/purchases';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const user = await getUserFromSession();
     if (!user) {
@@ -18,14 +18,15 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json({ purchases });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as Error & { stack?: string };
     console.error('Get purchases error:', error);
     console.error('Error details:', {
-      message: error.message,
-      stack: error.stack
+      message: err.message,
+      stack: err.stack
     });
     return NextResponse.json(
-      { error: error.message || 'Failed to get purchases', purchases: [] },
+      { error: err.message || 'Failed to get purchases', purchases: [] },
       { status: 500 }
     );
   }

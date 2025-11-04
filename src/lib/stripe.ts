@@ -10,9 +10,9 @@ if (!stripeSecretKey) {
 
 export const stripe = stripeSecretKey 
   ? new Stripe(stripeSecretKey, {
-      apiVersion: '2024-12-18.acacia',
+      apiVersion: '2025-10-29.clover',
     })
-  : null as any; // Will throw error if used without key
+  : null as unknown as Stripe; // Will throw error if used without key
 
 // Client-side Stripe instance
 export const getStripe = () => {
@@ -90,7 +90,7 @@ export async function verifyPaymentAndGenerateDownload(paymentIntentId: string) 
     
     if (paymentIntent.status === 'succeeded') {
       // Generate download links and PDF
-      const downloadData = await generateMusicDownload(paymentIntent.metadata);
+      const downloadData = await generateMusicDownload(paymentIntent.metadata as unknown as { musicTrackId: string; musicTitle: string; userId: string });
       return downloadData;
     }
     
@@ -102,7 +102,7 @@ export async function verifyPaymentAndGenerateDownload(paymentIntentId: string) 
 }
 
 // Generate music download package
-async function generateMusicDownload(metadata: any) {
+async function generateMusicDownload(metadata: { musicTrackId: string; musicTitle: string; userId: string }) {
   // This would generate the actual download package
   // For now, return mock data
   return {

@@ -72,14 +72,26 @@ export async function createOrUpdateUser(userData: {
 
     if (querySnapshot.empty) {
       // Create new user (omit undefined fields - Firestore rejects undefined)
-      const payload: any = {
+      const payload: {
+        email: string;
+        name: string;
+        role?: string;
+        displayName?: string;
+        photoURL?: string | null;
+        createdAt: ReturnType<typeof serverTimestamp>;
+        lastLoginAt: ReturnType<typeof serverTimestamp>;
+        authUid?: string;
+        purchases?: number;
+        firstName?: string;
+        lastName?: string;
+        password?: string;
+      } = {
         email,
         name: userData.name ?? email.split('@')[0],
-        authUid: userData.authUid ?? null,
+        authUid: userData.authUid,
         role: isAdmin ? 'admin' : 'user',
         createdAt: serverTimestamp(),
         lastLoginAt: serverTimestamp(),
-        ipAddress: userData.ipAddress ?? null,
         purchases: 0
       };
       if (userData.firstName) payload.firstName = userData.firstName;
@@ -93,10 +105,9 @@ export async function createOrUpdateUser(userData: {
         email,
         name: payload.name,
         authUid: payload.authUid ?? undefined,
-        role: payload.role,
+        role: (payload.role || 'user') as 'admin' | 'user',
         createdAt: new Date(),
         lastLoginAt: new Date(),
-        ipAddress: payload.ipAddress ?? null,
         purchases: 0
       };
     } else {

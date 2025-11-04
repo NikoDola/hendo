@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Music, Home, Search } from 'lucide-react';
+import { Home, Search } from 'lucide-react';
 import '@/components/pages/MusicNotFound.css';
 
 export default function MusicNotFound() {
@@ -37,7 +37,7 @@ export default function MusicNotFound() {
           Bit not found
         </h1>
         <p className="musicNotFoundMessage">
-          The music track you're looking for doesn't exist
+          The music track you&apos;re looking for doesn&apos;t exist
         </p>
         <div className="musicNotFoundActions">
           <Link

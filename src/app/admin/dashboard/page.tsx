@@ -2,12 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { 
-  Music, 
-  Users, 
-  BarChart3, 
-  LogOut, 
-  Menu, 
+import {
+  Music,
+  Users,
+  BarChart3,
+  Menu,
   X,
   Search,
   Filter,
@@ -42,13 +41,15 @@ interface MusicTrack {
   hashtags: string[];
   price: number;
   audioFileUrl: string;
+  audioFileName?: string;
   pdfFileUrl?: string;
+  pdfFileName?: string;
   createdAt: string;
   updatedAt: string;
 }
 
 export default function AdminDashboard() {
-  const { user, loading: isLoading, signOut } = useUserAuth();
+  const { user, loading: isLoading } = useUserAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [tracks, setTracks] = useState<MusicTrack[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -56,7 +57,7 @@ export default function AdminDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  
+
   // Music form state
   const [showForm, setShowForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -73,7 +74,7 @@ export default function AdminDashboard() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  
+
   const router = useRouter();
 
   useEffect(() => {
@@ -96,15 +97,6 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error('Failed to load users:', error);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await signOut();
-      router.push('/');
-    } catch (error) {
-      console.error('Logout error:', error);
     }
   };
 
@@ -266,12 +258,13 @@ export default function AdminDashboard() {
           const audioStorageRef = ref(storage, audioFileName);
           await uploadBytes(audioStorageRef, formData.audioFile);
           audioFileUrl = await getDownloadURL(audioStorageRef);
-        } catch (uploadError: any) {
+        } catch (uploadError: unknown) {
           console.error('Error uploading audio file:', uploadError);
-          if (uploadError.code === 'storage/unauthorized' || uploadError.code === 'storage/permission-denied') {
+          const error = uploadError as { code?: string; message?: string };
+          if (error.code === 'storage/unauthorized' || error.code === 'storage/permission-denied') {
             setError('Permission denied: Firebase Storage rules do not allow uploads. Please check your Storage security rules allow admin uploads.');
           } else {
-            setError(`Failed to upload audio file: ${uploadError.message || uploadError.code || 'Unknown error'}`);
+            setError(`Failed to upload audio file: ${error.message || error.code || 'Unknown error'}`);
           }
           setIsSubmitting(false);
           return;
@@ -290,7 +283,7 @@ export default function AdminDashboard() {
           const pdfStorageRef = ref(storage, pdfFileName);
           await uploadBytes(pdfStorageRef, formData.pdfFile);
           pdfFileUrl = await getDownloadURL(pdfStorageRef);
-        } catch (uploadError: any) {
+        } catch (uploadError: unknown) {
           console.error('Error uploading PDF file:', uploadError);
           // PDF upload failure is non-critical, we can continue without it
           console.warn('PDF upload failed, continuing without PDF');
@@ -309,7 +302,16 @@ export default function AdminDashboard() {
         return;
       }
 
-      const payload: any = {
+      const payload: {
+        title: string;
+        description: string;
+        hashtags: string[];
+        price: number;
+        audioFileUrl?: string;
+        audioFileName?: string;
+        pdfFileUrl?: string | null;
+        pdfFileName?: string | null;
+      } = {
         title: formData.title.trim(),
         description: formData.description.trim(),
         hashtags: Array.isArray(formData.hashtags) ? formData.hashtags : [],
@@ -333,17 +335,18 @@ export default function AdminDashboard() {
         console.log('Payload object:', payload);
         console.log('Payload keys:', Object.keys(payload));
         console.log('Payload values:', Object.values(payload));
-        
+
         payloadString = JSON.stringify(payload);
         console.log('Sending payload string (full):', payloadString);
         console.log('Payload string length:', payloadString.length);
         console.log('Payload string first 50 chars:', payloadString.substring(0, 50));
-        
+
         // Validate the JSON string is valid by parsing it back
         JSON.parse(payloadString);
-      } catch (stringifyError: any) {
+      } catch (stringifyError: unknown) {
+        const error = stringifyError as Error;
         console.error('Failed to stringify/validate payload:', payload, stringifyError);
-        setError(`Failed to prepare request: ${stringifyError.message}. Please check all fields are filled correctly.`);
+        setError(`Failed to prepare request: ${error.message}. Please check all fields are filled correctly.`);
         setIsSubmitting(false);
         return;
       }
@@ -362,26 +365,26 @@ export default function AdminDashboard() {
       let data;
       try {
         const text = await response.text();
-        
+
         // Check if response is empty or invalid
         if (!text || text.trim().length === 0) {
           throw new Error(`Server returned empty response (${response.status})`);
         }
-        
+
         // Trim whitespace before parsing
         const trimmedText = text.trim();
-        
+
         try {
           data = JSON.parse(trimmedText);
-        } catch (parseError: any) {
+        } catch {
           // If not valid JSON, show the raw response as error
           console.error('Failed to parse JSON response:', trimmedText);
           throw new Error(`Server error (${response.status}): ${trimmedText.substring(0, 200) || 'Invalid response format'}`);
         }
-      } catch (parseError: any) {
+      } catch (error: unknown) {
         // If we couldn't read the response at all
-        if (parseError.message) {
-          throw parseError;
+        if (error instanceof Error && error.message) {
+          throw error;
         }
         throw new Error(`Server error (${response.status}): Unable to read response`);
       }
@@ -396,7 +399,7 @@ export default function AdminDashboard() {
       } else {
         // Get error message from response
         const errorMessage = data?.error || data?.message || `Failed to ${isEditing ? 'update' : 'create'} track.`;
-        
+
         // Don't add duplicate context if the error message already contains it
         let fullErrorMessage = errorMessage;
         if (!errorMessage.includes('Please ensure') && !errorMessage.includes('Check your') && !errorMessage.includes('Please check all')) {
@@ -410,9 +413,9 @@ export default function AdminDashboard() {
             fullErrorMessage = errorMessage + ' Your Firebase Storage quota has been exceeded.';
           }
         }
-        
+
         setError(fullErrorMessage);
-        
+
         // Scroll to error after a brief delay to ensure it's rendered
         setTimeout(() => {
           const errorElement = document.querySelector('.adminFormError');
@@ -421,13 +424,14 @@ export default function AdminDashboard() {
           }
         }, 100);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Submit track error:', error);
       // If it's a network error or fetch failed
-      if (error.name === 'TypeError' || error.message?.includes('fetch')) {
+      const err = error as Error & { name?: string };
+      if (err.name === 'TypeError' || err.message?.includes('fetch')) {
         setError('Network error: Unable to connect to server. Please check your internet connection and try again.');
       } else {
-        setError(error.message || 'An unexpected error occurred. Please try again.');
+        setError(err.message || 'An unexpected error occurred. Please try again.');
       }
     } finally {
       setIsSubmitting(false);
@@ -456,30 +460,30 @@ export default function AdminDashboard() {
   };
 
   const filteredUsers = users
-    .filter(user => 
+    .filter(user =>
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => {
       const aValue = a[sortBy as keyof User];
       const bValue = b[sortBy as keyof User];
-      
+
       if (sortBy === 'createdAt' || sortBy === 'lastLoginAt') {
         const aDate = new Date(aValue as string).getTime();
         const bDate = new Date(bValue as string).getTime();
         return sortOrder === 'asc' ? aDate - bDate : bDate - aDate;
       }
-      
+
       if (typeof aValue === 'string' && typeof bValue === 'string') {
-        return sortOrder === 'asc' 
+        return sortOrder === 'asc'
           ? aValue.localeCompare(bValue)
           : bValue.localeCompare(aValue);
       }
-      
+
       if (typeof aValue === 'number' && typeof bValue === 'number') {
         return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
       }
-      
+
       return 0;
     });
 
@@ -511,7 +515,7 @@ export default function AdminDashboard() {
               <Music size={32} style={{ color: 'white' }} />
               <h1 className="adminTitle">Admin Dashboard</h1>
             </div>
-            
+
             <div className="adminHeaderRight">
               <span className="adminWelcomeText">Welcome, {user.displayName || user.email}</span>
             </div>
@@ -618,7 +622,7 @@ export default function AdminDashboard() {
                         <td>
                           <div className="adminActionsCell">
                             <button
-                              onClick={() => {/* View user details */}}
+                              onClick={() => {/* View user details */ }}
                               className="adminActionButton adminActionButtonView"
                             >
                               <Eye size={16} />
@@ -799,7 +803,7 @@ export default function AdminDashboard() {
               <div className="adminTracksList">
                 <h3 className="adminSectionTitle" style={{ marginTop: '2rem', marginBottom: '1rem' }}>All Tracks</h3>
                 {tracks.length === 0 ? (
-                  <p className="adminTabContent">No tracks yet. Click "Add Music" to create one.</p>
+                  <p className="adminTabContent">No tracks yet. Click &quot;Add Music&quot; to create one.</p>
                 ) : (
                   <div className="adminTracksGrid">
                     {tracks.map((track) => (

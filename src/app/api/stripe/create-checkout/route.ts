@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
         try {
           const url = new URL(referer);
           baseUrl = `${url.protocol}//${url.host}`;
-        } catch (e) {
+        } catch {
           // If parsing fails, use default
         }
       } else {

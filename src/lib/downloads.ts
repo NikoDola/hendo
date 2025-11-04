@@ -5,19 +5,16 @@ import pdfMake from 'pdfmake/build/pdfmake';
 import { firebaseAdmin } from '@/lib/firebaseAdmin';
 
 // Initialize pdfMake fonts (lazy initialization inside function to avoid module loading issues)
-function initializePdfMakeFonts() {
-  // @ts-ignore - pdfMake types may not be fully compatible
+async function initializePdfMakeFonts() {
   if (!pdfMake.vfs || Object.keys(pdfMake.vfs).length === 0) {
     try {
-      // @ts-ignore - pdfmake font imports don't have proper TypeScript definitions
-      const pdfFonts = require('pdfmake/build/vfs_fonts');
-      // @ts-ignore
-      pdfMake.vfs = pdfFonts;
-    } catch (e: any) {
-      console.error('Failed to load pdfmake fonts:', e);
+      const pdfFonts = await import('pdfmake/build/vfs_fonts');
+      const fontsModule = pdfFonts as { default?: { vfs?: Record<string, string> }; pdfMake?: { vfs?: Record<string, string> } };
+      pdfMake.vfs = fontsModule.default?.vfs || fontsModule.pdfMake?.vfs || {};
+    } catch (error: unknown) {
+      console.error('Failed to load pdfmake fonts:', error);
       // Create empty vfs as fallback (will use default fonts)
-      // @ts-ignore
-      pdfMake.vfs = pdfMake.vfs || {};
+      pdfMake.vfs = {};
     }
   }
 }
@@ -55,7 +52,7 @@ async function generateZipFile(
     // Decode URL encoding (e.g., %2F becomes /, %2C becomes ,)
     try {
       fileName = decodeURIComponent(fileName);
-    } catch (e) {
+    } catch {
       // If decoding fails, use original
       console.warn('Failed to decode filename, using original:', fileName);
     }

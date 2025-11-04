@@ -7,8 +7,9 @@ import { firebaseAdmin } from '@/lib/firebaseAdmin';
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     // Verify admin via Firebase session cookie
     const cookieStore = await cookies();
@@ -24,10 +25,10 @@ export async function DELETE(
     }
 
     // Fetch Firestore doc to get authUid
-    const userRef = doc(db, 'users', params.id);
+    const userRef = doc(db, 'users', id);
     const snapshot = await getDoc(userRef);
     if (snapshot.exists()) {
-      const data = snapshot.data() as any;
+      const data = snapshot.data() as { authUid?: string; email?: string };
       // Try delete in Firebase Auth first
       try {
         let uidToDelete = data.authUid as string | undefined;

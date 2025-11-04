@@ -104,10 +104,11 @@ export async function POST(request: NextRequest) {
       trackTitle: track.title
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as Error;
     console.error('Payment verification error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to verify payment and generate downloads' },
+      { error: err.message || 'Failed to verify payment and generate downloads' },
       { status: 500 }
     );
   }

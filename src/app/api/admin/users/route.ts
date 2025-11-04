@@ -1,8 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getAllUsers, isAdminEmail } from '@/lib/auth';
+import { NextResponse } from 'next/server';
+import { getAllUsers, isAdminEmail, createOrUpdateUser } from '@/lib/auth';
 import { cookies } from 'next/headers';
 import { firebaseAdmin } from '@/lib/firebaseAdmin';
-import { createOrUpdateUser } from '@/lib/auth';
 
 export async function GET() {
   try {
@@ -21,11 +20,11 @@ export async function GET() {
 
     // Fetch users from Firestore
     const firestoreUsers = await getAllUsers();
-    const emailToUser = new Map<string, any>();
+    const emailToUser = new Map<string, { email: string; name?: string; role?: string; createdAt?: Date; lastLoginAt?: Date; purchases?: number }>();
     firestoreUsers.forEach(u => emailToUser.set(u.email.toLowerCase(), u));
 
     // Also fetch users from Firebase Auth and include any missing
-    const authUsersAccumulator: any[] = [];
+    const authUsersAccumulator: { uid: string; email?: string; displayName?: string }[] = [];
     let nextPageToken: string | undefined = undefined;
     do {
       const page = await firebaseAdmin.auth().listUsers(1000, nextPageToken);

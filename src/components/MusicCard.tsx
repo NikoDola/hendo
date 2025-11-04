@@ -32,7 +32,6 @@ export default function MusicCard({
   
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
-  const [intensity, setIntensity] = useState(0);
   const [bassIntensity, setBassIntensity] = useState(0);
   const [midIntensity, setMidIntensity] = useState(0);
   const [trebleIntensity, setTrebleIntensity] = useState(0);
@@ -60,8 +59,8 @@ export default function MusicCard({
         }
 
         const AudioContextCtor: typeof AudioContext = 
-          (window as any).AudioContext || 
-          (window as any).webkitAudioContext;
+          (window as typeof window & { webkitAudioContext?: typeof AudioContext }).AudioContext || 
+          (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext!;
         const context = new AudioContextCtor();
         
         if (context.state === 'suspended') {
@@ -106,9 +105,6 @@ export default function MusicCard({
     const analyzeAudio = () => {
       const freqArray = new Uint8Array(analyser.frequencyBinCount);
       analyser.getByteFrequencyData(freqArray);
-
-      const average = freqArray.reduce((sum, value) => sum + value, 0) / freqArray.length;
-      setIntensity(average);
 
       const bassFreqs = Array.from(freqArray.slice(0, 8));
       const midFreqs = Array.from(freqArray.slice(8, 32));
@@ -212,7 +208,7 @@ export default function MusicCard({
                 resolve(void 0);
               };
               
-              const handleError = (e: Event) => {
+              const handleError = () => {
                 cleanup();
                 const error = audio.error;
                 console.error('🎵 Audio load error:', {
@@ -248,12 +244,13 @@ export default function MusicCard({
               console.log('🎵 After 500ms - Playing:', !audio.paused, 'CurrentTime:', audio.currentTime);
             }, 500);
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
+          const err = error as Error & { name?: string; code?: string; stack?: string };
           console.error('🎵 Error playing audio:', error);
           console.error('🎵 Error details:', {
-            name: error.name,
-            message: error.message,
-            stack: error.stack
+            name: err.name,
+            message: err.message,
+            stack: err.stack
           });
           
           // Try direct play as fallback
@@ -269,7 +266,6 @@ export default function MusicCard({
       } else {
         console.log('🎵 Pausing audio');
         audio.pause();
-        setIntensity(0);
         setBassIntensity(0);
         setMidIntensity(0);
         setTrebleIntensity(0);

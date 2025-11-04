@@ -81,16 +81,17 @@ export async function createMusicTrack(data: CreateMusicData, adminEmail: string
     try {
       audioFileName = `music/${Date.now()}_${data.audioFile.name}`;
       audioFileUrl = await uploadFile(data.audioFile, audioFileName);
-    } catch (uploadError: any) {
+    } catch (uploadError: unknown) {
+      const error = uploadError as { code?: string; message?: string };
       console.error('Error uploading audio file:', uploadError);
-      if (uploadError.code === 'storage/unauthorized' || uploadError.code === 'storage/permission-denied') {
+      if (error.code === 'storage/unauthorized' || error.code === 'storage/permission-denied') {
         throw new Error('Permission denied: Firebase Storage rules do not allow uploads. Please check your Storage security rules allow admin uploads.');
-      } else if (uploadError.code === 'storage/quota-exceeded') {
+      } else if (error.code === 'storage/quota-exceeded') {
         throw new Error('Storage quota exceeded: Your Firebase Storage has reached its limit.');
-      } else if (uploadError.code === 'storage/unauthenticated') {
+      } else if (error.code === 'storage/unauthenticated') {
         throw new Error('Authentication required: Please ensure you are logged in.');
       } else {
-        throw new Error(`Failed to upload audio file: ${uploadError.message || uploadError.code || 'Unknown error'}`);
+        throw new Error(`Failed to upload audio file: ${error.message || error.code || 'Unknown error'}`);
       }
     }
 
@@ -101,7 +102,7 @@ export async function createMusicTrack(data: CreateMusicData, adminEmail: string
       try {
         pdfFileName = `music/pdfs/${Date.now()}_${data.pdfFile.name}`;
         pdfFileUrl = await uploadFile(data.pdfFile, pdfFileName);
-      } catch (pdfError: any) {
+      } catch (pdfError: unknown) {
         console.error('Error uploading PDF file:', pdfError);
         // If PDF upload fails, we can still continue with the track creation
         console.warn('PDF upload failed, continuing without PDF');
@@ -124,7 +125,8 @@ export async function createMusicTrack(data: CreateMusicData, adminEmail: string
         updatedAt: serverTimestamp(),
         createdBy: adminEmail
       });
-    } catch (firestoreError: any) {
+    } catch (firestoreError: unknown) {
+      const error = firestoreError as Error;
       console.error('Error creating Firestore document:', firestoreError);
       // Try to clean up uploaded files if Firestore creation fails
       try {
@@ -133,7 +135,7 @@ export async function createMusicTrack(data: CreateMusicData, adminEmail: string
       } catch (cleanupError) {
         console.error('Error cleaning up files:', cleanupError);
       }
-      throw new Error(`Failed to save track to database: ${firestoreError.message || 'Database error'}`);
+      throw new Error(`Failed to save track to database: ${error.message || 'Database error'}`);
     }
 
     return {
@@ -150,21 +152,22 @@ export async function createMusicTrack(data: CreateMusicData, adminEmail: string
       updatedAt: new Date(),
       createdBy: adminEmail
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as Error;
     console.error('Error creating music track:', error);
     // If error already has a specific message, throw it as is
-    if (error.message && !error.message.includes('Failed to create music track')) {
+    if (err.message && !err.message.includes('Failed to create music track')) {
       throw error;
     }
     // Otherwise, provide a more helpful generic message
-    throw new Error(`Failed to create music track: ${error.message || 'Unknown error occurred'}`);
+    throw new Error(`Failed to create music track: ${err.message || 'Unknown error occurred'}`);
   }
 }
 
 /**
  * Updates an existing music track
  */
-export async function updateMusicTrack(trackId: string, data: UpdateMusicData, adminEmail: string): Promise<MusicTrack> {
+export async function updateMusicTrack(trackId: string, data: UpdateMusicData): Promise<MusicTrack> {
   try {
     const trackRef = doc(db, 'music', trackId);
     const trackSnap = await getDoc(trackRef);
@@ -174,7 +177,17 @@ export async function updateMusicTrack(trackId: string, data: UpdateMusicData, a
     }
 
     const currentTrack = trackSnap.data() as MusicTrack;
-    const updateData: any = {
+    const updateData: {
+      updatedAt: ReturnType<typeof serverTimestamp>;
+      title?: string;
+      description?: string;
+      hashtags?: string[];
+      price?: number;
+      audioFileUrl?: string;
+      audioFileName?: string;
+      pdfFileUrl?: string;
+      pdfFileName?: string;
+    } = {
       updatedAt: serverTimestamp()
     };
 

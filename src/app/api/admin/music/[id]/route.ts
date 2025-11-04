@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminFromSession } from '@/lib/admin-auth';
-import { updateMusicTrack, deleteMusicTrack, getMusicTrack } from '@/lib/music';
+import { deleteMusicTrack, getMusicTrack } from '@/lib/music';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const admin = await getAdminFromSession();
     if (!admin) {
@@ -15,7 +16,7 @@ export async function GET(
       );
     }
 
-    const track = await getMusicTrack(params.id);
+    const track = await getMusicTrack(id);
     if (!track) {
       return NextResponse.json(
         { error: 'Track not found' },
@@ -36,8 +37,9 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const admin = await getAdminFromSession();
     if (!admin) {
@@ -52,28 +54,29 @@ export async function PUT(
     try {
       body = await request.json();
       console.log('Received body:', JSON.stringify(body, null, 2));
-    } catch (jsonError: any) {
+    } catch (jsonError: unknown) {
+      const err = jsonError as Error;
       console.error('Failed to parse JSON:', jsonError);
       console.error('Error details:', {
-        message: jsonError.message,
-        name: jsonError.name
+        message: err.message,
+        name: err.name
       });
-      
+
       // In Next.js, we can only read the body once, so if json() fails, we can't use text()
       // This usually means the body is empty or malformed
       return NextResponse.json(
-        { 
-          error: `Invalid request format. Expected JSON. ${jsonError.message || 'The request body may be empty or not valid JSON.'}` 
+        {
+          error: `Invalid request format. Expected JSON. ${err.message || 'The request body may be empty or not valid JSON.'}`
         },
         { status: 400 }
       );
     }
-    
+
     const { title, description, hashtags, price, audioFileUrl, audioFileName, pdfFileUrl, pdfFileName } = body;
 
     // Get existing track to preserve existing files if not updated
     const { getMusicTrack } = await import('@/lib/music');
-    const existingTrack = await getMusicTrack(params.id);
+    const existingTrack = await getMusicTrack(id);
     if (!existingTrack) {
       return NextResponse.json(
         { error: 'Track not found' },
@@ -81,11 +84,22 @@ export async function PUT(
       );
     }
 
-    // Update Firestore document
-    const { db } = await import('@/lib/firebase');
+    // Update the track in Firestore
+    const trackRef = (await import('@/lib/firebase')).db;
     const { doc, updateDoc, serverTimestamp } = await import('firebase/firestore');
+    const docRef = doc(trackRef, 'music', id);
 
-    const updateData: any = {
+    const updateData: {
+      updatedAt: ReturnType<typeof serverTimestamp>;
+      title?: string;
+      description?: string;
+      hashtags?: string[];
+      price?: number;
+      audioFileUrl?: string;
+      audioFileName?: string;
+      pdfFileUrl?: string | null;
+      pdfFileName?: string | null;
+    } = {
       updatedAt: serverTimestamp()
     };
 
@@ -108,17 +122,17 @@ export async function PUT(
       updateData.pdfFileName = null;
     }
 
-    const trackRef = doc(db, 'music', params.id);
-    await updateDoc(trackRef, updateData);
+    await updateDoc(docRef, updateData);
 
     // Return updated track
-    const updatedTrack = await getMusicTrack(params.id);
+    const updatedTrack = await getMusicTrack(id);
     return NextResponse.json({ track: updatedTrack });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as Error;
     console.error('Update music track error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to update music track' },
+      { error: err.message || 'Failed to update music track' },
       { status: 500 }
     );
   }
@@ -126,8 +140,9 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const admin = await getAdminFromSession();
     if (!admin) {
@@ -137,7 +152,7 @@ export async function DELETE(
       );
     }
 
-    await deleteMusicTrack(params.id);
+    await deleteMusicTrack(id);
     return NextResponse.json({ success: true });
 
   } catch (error) {

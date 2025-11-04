@@ -17,7 +17,7 @@ export default function NavMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdown, setDropdown] = useState(false);
   const [profileDropdown, setProfileDropdown] = useState(false);
-  const { user, loading: isLoading, signOut } = useUserAuth();
+  const { user, signOut } = useUserAuth();
   const router = useRouter();
 
   // Close menu when clicking on a link

@@ -44,6 +44,13 @@ export async function POST(request: NextRequest) {
     }
 
     const admin = await authenticateAdmin(email, name);
+    
+    if (!admin) {
+      return NextResponse.json(
+        { error: 'Failed to authenticate admin' },
+        { status: 401 }
+      );
+    }
 
     // Set admin session cookie
     const cookieStore = await cookies();

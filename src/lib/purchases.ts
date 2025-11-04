@@ -6,7 +6,6 @@ import {
   query,
   where,
   getDocs,
-  orderBy,
   serverTimestamp,
   getDoc,
   doc
@@ -126,7 +125,7 @@ export async function getUserPurchases(userId: string): Promise<UserPurchase[]> 
 /**
  * Gets purchase details with full track information
  */
-export async function getPurchaseWithTrack(purchaseId: string): Promise<UserPurchase & { track?: any }> {
+export async function getPurchaseWithTrack(purchaseId: string): Promise<UserPurchase & { track?: { id: string; title: string; price: number } }> {
   try {
     const purchaseDoc = await getDoc(doc(db, 'purchases', purchaseId));
     if (!purchaseDoc.exists()) {
@@ -149,7 +148,7 @@ export async function getPurchaseWithTrack(purchaseId: string): Promise<UserPurc
     // Get full track details
     try {
       const track = await getMusicTrack(data.trackId);
-      return { ...purchase, track };
+      return { ...purchase, track: track || undefined };
     } catch (error) {
       console.warn('Could not fetch track details:', error);
       return purchase;

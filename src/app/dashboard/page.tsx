@@ -121,7 +121,7 @@ export default function UserDashboard() {
         }, 100);
         return; // Success, exit early
       }
-    } catch (fetchError) {
+    } catch {
       // Fetch failed - expected with signed URLs, will use fallback (silent)
     }
     
@@ -281,7 +281,7 @@ export default function UserDashboard() {
           ) : purchases.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '2rem', color: 'rgba(255, 255, 255, 0.7)' }}>
               <Music size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-              <p>You haven't purchased any tracks yet.</p>
+              <p>You haven&apos;t purchased any tracks yet.</p>
               <a href="/music" style={{ color: 'rgba(255, 255, 255, 0.9)', textDecoration: 'underline', marginTop: '0.5rem', display: 'inline-block' }}>
                 Browse Music Store
               </a>

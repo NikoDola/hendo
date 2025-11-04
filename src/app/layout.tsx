@@ -8,8 +8,6 @@ import { ColorProvider } from "@/components/client/ColorProvider";
 import ParallaxStars from "@/components/client/ParallaxStars";
 import BitBackground from "@/components/client/BitBackground";
 import { UserAuthProvider } from "@/context/UserAuthContext";
-// import LiquidEther from "@/components/client/backgrounds/LiquidEther";
-// import LiquidChrome from "@/components/client/LiquidEther";
 
 
 const lemonMilk = localFont({

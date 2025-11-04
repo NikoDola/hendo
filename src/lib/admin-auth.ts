@@ -127,7 +127,7 @@ export async function getAdminFromSession(): Promise<AdminUser | null> {
 /**
  * Creates admin session cookie
  */
-export function createAdminSession(admin: AdminUser): void {
+export function createAdminSession(): void {
   // This will be handled by the API route
 }
 

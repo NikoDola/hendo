@@ -48,10 +48,10 @@ export default function MusicList({ tracks, onEdit, onDelete, isLoading = false 
     }).format(price);
   };
 
-  const formatDate = (date: Date | any) => {
+  const formatDate = (date: Date | unknown) => {
     try {
       // Convert to Date if it's not already
-      const dateObj = date instanceof Date ? date : new Date(date);
+      const dateObj = date instanceof Date ? date : new Date(date as string | number);
       
       // Check if date is valid
       if (isNaN(dateObj.getTime())) {

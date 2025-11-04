@@ -26,8 +26,6 @@ class Sprite{
 
 const iron = new Sprite({style: {color: 'blue'}})
 
-const mousePossition = (e) => {''}
-
 function animate(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   iron.update()  

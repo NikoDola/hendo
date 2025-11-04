@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createOrUpdateUser, getUserFromSession } from '@/lib/auth';
+import { getUserFromSession, authenticateUser } from '@/lib/auth';
 import { cookies } from 'next/headers';
 import { headers } from 'next/headers';
 
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   try {
     const user = await getUserFromSession();
-    
+
     if (!user) {
       return NextResponse.json(
         { error: 'Not authenticated' },
