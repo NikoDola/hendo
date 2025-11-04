@@ -21,13 +21,42 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get base URL from the request (for local testing) or env variable
+    // Check multiple headers to determine the correct base URL
+    let baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    
+    // Try to get from origin header first
+    const origin = request.headers.get('origin');
+    if (origin) {
+      baseUrl = origin;
+    } else {
+      // Fall back to referer or host header
+      const referer = request.headers.get('referer');
+      if (referer) {
+        try {
+          const url = new URL(referer);
+          baseUrl = `${url.protocol}//${url.host}`;
+        } catch (e) {
+          // If parsing fails, use default
+        }
+      } else {
+        // Try host header
+        const host = request.headers.get('host');
+        if (host) {
+          baseUrl = `http://${host}`;
+        }
+      }
+    }
+    
+    console.log('Creating checkout session with baseUrl:', baseUrl);
+    
     const session = await createCheckoutSession(
       musicTrackId,
       musicTitle,
       price,
       user.email,
-      `${process.env.NEXT_PUBLIC_BASE_URL}/music/success?session_id={CHECKOUT_SESSION_ID}`,
-      `${process.env.NEXT_PUBLIC_BASE_URL}/music/cancel`
+      `${baseUrl}/music/success?session_id={CHECKOUT_SESSION_ID}`,
+      `${baseUrl}/music/cancel`
     );
 
     return NextResponse.json({ url: session.url });

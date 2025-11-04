@@ -128,33 +128,84 @@ export async function createOrUpdateUser(userData: {
 }
 
 /**
- * Gets user from session cookie
+ * Gets user from session cookie (Firebase Auth)
  */
 export async function getUserFromSession(): Promise<User | null> {
   try {
+    const { firebaseAdmin } = await import('@/lib/firebaseAdmin');
     const cookieStore = await cookies();
-    const userEmail = cookieStore.get('user_email')?.value;
-    
-    if (!userEmail) {
+    const sessionCookie = cookieStore.get('fb_session')?.value;
+
+    if (!sessionCookie) {
       return null;
     }
 
+    const decodedClaims = await firebaseAdmin.auth().verifySessionCookie(sessionCookie, true);
+    const email = decodedClaims.email?.toLowerCase() || '';
+
+    if (!email) {
+      return null;
+    }
+
+    // Get user from Firestore
     const usersRef = collection(db, 'users');
-    const q = query(usersRef, where('email', '==', userEmail.toLowerCase()));
+    const q = query(usersRef, where('email', '==', email));
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
-      return null;
+      // User might not be in Firestore yet - create them
+      try {
+        const newUser = await createOrUpdateUser({
+          email: email,
+          name: decodedClaims.name || email.split('@')[0],
+          authUid: decodedClaims.uid,
+        });
+        return {
+          id: newUser.id,
+          email: newUser.email,
+          name: newUser.name,
+          authUid: decodedClaims.uid, // Include authUid for Storage rules
+          role: newUser.role,
+          createdAt: newUser.createdAt,
+          lastLoginAt: newUser.lastLoginAt,
+          purchases: newUser.purchases || 0
+        };
+      } catch (error) {
+        console.error('Error creating user in Firestore:', error);
+        // Fallback: return with Firestore ID placeholder (will need to match later)
+        return {
+          id: decodedClaims.uid, // Use auth UID as fallback
+          email: email,
+          name: decodedClaims.name || email.split('@')[0],
+          authUid: decodedClaims.uid, // Include authUid for Storage rules
+          role: isAdminEmail(email) ? 'admin' : 'user',
+          createdAt: new Date(),
+          lastLoginAt: new Date(),
+          purchases: 0
+        };
+      }
     }
 
     const userDoc = querySnapshot.docs[0];
     const userData = userDoc.data();
     
+    // Ensure authUid is stored
+    if (!userData.authUid && decodedClaims.uid) {
+      try {
+        await updateDoc(doc(db, 'users', userDoc.id), {
+          authUid: decodedClaims.uid
+        });
+      } catch (error) {
+        console.warn('Failed to update authUid:', error);
+      }
+    }
+    
     return {
-      id: userDoc.id,
+      id: userDoc.id, // Use Firestore document ID for consistency
       email: userData.email,
       name: userData.name,
-      role: userData.role,
+      authUid: userData.authUid || decodedClaims.uid, // Include authUid for Storage rules
+      role: userData.role || (isAdminEmail(email) ? 'admin' : 'user'),
       createdAt: userData.createdAt?.toDate() || new Date(),
       lastLoginAt: userData.lastLoginAt?.toDate() || new Date(),
       ipAddress: userData.ipAddress,

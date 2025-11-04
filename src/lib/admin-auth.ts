@@ -2,6 +2,7 @@
 import { db } from '@/lib/firebase';
 import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 import { cookies } from 'next/headers';
+import { isAdminEmail } from '@/lib/auth';
 
 export interface AdminUser {
   id: string;
@@ -14,10 +15,11 @@ export interface AdminUser {
 
 /**
  * Checks if an email is authorized for admin access
- * Only emails ending with @nikodola.com are allowed
+ * Admin emails from auth.ts or emails ending with @nikodola.com
  */
 export function isAuthorizedAdmin(email: string): boolean {
-  return email.toLowerCase().endsWith('@nikodola.com');
+  const lowerEmail = email.toLowerCase();
+  return isAdminEmail(lowerEmail) || lowerEmail.endsWith('@nikodola.com');
 }
 
 /**
@@ -77,19 +79,36 @@ export async function authenticateAdmin(email: string, name?: string): Promise<A
  */
 export async function getAdminFromSession(): Promise<AdminUser | null> {
   try {
+    const { firebaseAdmin } = await import('@/lib/firebaseAdmin');
     const cookieStore = await cookies();
-    const adminEmail = cookieStore.get('admin_email')?.value;
+    const sessionCookie = cookieStore.get('fb_session')?.value;
 
-    if (!adminEmail || !isAuthorizedAdmin(adminEmail)) {
+    if (!sessionCookie) {
+      return null;
+    }
+
+    const decodedClaims = await firebaseAdmin.auth().verifySessionCookie(sessionCookie, true);
+    const email = decodedClaims.email?.toLowerCase() || '';
+
+    if (!email || !isAuthorizedAdmin(email)) {
       return null;
     }
 
     const adminsRef = collection(db, 'admins');
-    const q = query(adminsRef, where('email', '==', adminEmail.toLowerCase()));
+    const q = query(adminsRef, where('email', '==', email));
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
-      return null;
+      // Admin not in admins collection, but has valid session and @nikodola.com email
+      // Return a basic admin object
+      return {
+        id: decodedClaims.uid,
+        email: email,
+        name: decodedClaims.name || email.split('@')[0],
+        role: 'admin',
+        createdAt: new Date(),
+        lastLoginAt: new Date()
+      };
     }
 
     const adminDoc = querySnapshot.docs[0];

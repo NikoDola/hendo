@@ -3,9 +3,16 @@ import Stripe from 'stripe';
 import { loadStripe } from '@stripe/stripe-js';
 
 // Server-side Stripe instance
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
-});
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+if (!stripeSecretKey) {
+  console.error('STRIPE_SECRET_KEY is not set in environment variables. Please add it to your .env.local file.');
+}
+
+export const stripe = stripeSecretKey 
+  ? new Stripe(stripeSecretKey, {
+      apiVersion: '2024-12-18.acacia',
+    })
+  : null as any; // Will throw error if used without key
 
 // Client-side Stripe instance
 export const getStripe = () => {
@@ -39,6 +46,10 @@ export async function createCheckoutSession(
   successUrl: string,
   cancelUrl: string
 ) {
+  if (!stripe) {
+    throw new Error('Stripe is not configured. Please set STRIPE_SECRET_KEY in your .env.local file.');
+  }
+  
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],

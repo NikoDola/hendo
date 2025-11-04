@@ -76,31 +76,65 @@ async function deleteFile(url: string): Promise<void> {
 export async function createMusicTrack(data: CreateMusicData, adminEmail: string): Promise<MusicTrack> {
   try {
     // Upload audio file
-    const audioFileName = `music/${Date.now()}_${data.audioFile.name}`;
-    const audioFileUrl = await uploadFile(data.audioFile, audioFileName);
+    let audioFileUrl: string;
+    let audioFileName: string;
+    try {
+      audioFileName = `music/${Date.now()}_${data.audioFile.name}`;
+      audioFileUrl = await uploadFile(data.audioFile, audioFileName);
+    } catch (uploadError: any) {
+      console.error('Error uploading audio file:', uploadError);
+      if (uploadError.code === 'storage/unauthorized' || uploadError.code === 'storage/permission-denied') {
+        throw new Error('Permission denied: Firebase Storage rules do not allow uploads. Please check your Storage security rules allow admin uploads.');
+      } else if (uploadError.code === 'storage/quota-exceeded') {
+        throw new Error('Storage quota exceeded: Your Firebase Storage has reached its limit.');
+      } else if (uploadError.code === 'storage/unauthenticated') {
+        throw new Error('Authentication required: Please ensure you are logged in.');
+      } else {
+        throw new Error(`Failed to upload audio file: ${uploadError.message || uploadError.code || 'Unknown error'}`);
+      }
+    }
 
     // Upload PDF file if provided
     let pdfFileUrl: string | undefined;
     let pdfFileName: string | undefined;
     if (data.pdfFile) {
-      pdfFileName = `music/pdfs/${Date.now()}_${data.pdfFile.name}`;
-      pdfFileUrl = await uploadFile(data.pdfFile, pdfFileName);
+      try {
+        pdfFileName = `music/pdfs/${Date.now()}_${data.pdfFile.name}`;
+        pdfFileUrl = await uploadFile(data.pdfFile, pdfFileName);
+      } catch (pdfError: any) {
+        console.error('Error uploading PDF file:', pdfError);
+        // If PDF upload fails, we can still continue with the track creation
+        console.warn('PDF upload failed, continuing without PDF');
+      }
     }
 
     // Create music track document
-    const musicRef = await addDoc(collection(db, 'music'), {
-      title: data.title,
-      description: data.description,
-      hashtags: data.hashtags,
-      price: data.price,
-      audioFileUrl,
-      audioFileName,
-      pdfFileUrl,
-      pdfFileName,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-      createdBy: adminEmail
-    });
+    let musicRef;
+    try {
+      musicRef = await addDoc(collection(db, 'music'), {
+        title: data.title,
+        description: data.description,
+        hashtags: data.hashtags,
+        price: data.price,
+        audioFileUrl,
+        audioFileName,
+        pdfFileUrl,
+        pdfFileName,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        createdBy: adminEmail
+      });
+    } catch (firestoreError: any) {
+      console.error('Error creating Firestore document:', firestoreError);
+      // Try to clean up uploaded files if Firestore creation fails
+      try {
+        await deleteFile(audioFileUrl);
+        if (pdfFileUrl) await deleteFile(pdfFileUrl);
+      } catch (cleanupError) {
+        console.error('Error cleaning up files:', cleanupError);
+      }
+      throw new Error(`Failed to save track to database: ${firestoreError.message || 'Database error'}`);
+    }
 
     return {
       id: musicRef.id,
@@ -116,9 +150,14 @@ export async function createMusicTrack(data: CreateMusicData, adminEmail: string
       updatedAt: new Date(),
       createdBy: adminEmail
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error creating music track:', error);
-    throw new Error('Failed to create music track');
+    // If error already has a specific message, throw it as is
+    if (error.message && !error.message.includes('Failed to create music track')) {
+      throw error;
+    }
+    // Otherwise, provide a more helpful generic message
+    throw new Error(`Failed to create music track: ${error.message || 'Unknown error occurred'}`);
   }
 }
 

@@ -29,44 +29,131 @@ export async function POST(request: NextRequest) {
     const admin = await getAdminFromSession();
     if (!admin) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Unauthorized: You must be logged in as an admin to create tracks.' },
         { status: 401 }
       );
     }
 
-    const formData = await request.formData();
-
-    const title = formData.get('title') as string;
-    const description = formData.get('description') as string;
-    const hashtagsString = formData.get('hashtags') as string;
-    const price = parseFloat(formData.get('price') as string);
-    const audioFile = formData.get('audioFile') as File;
-    const pdfFile = formData.get('pdfFile') as File | null;
-
-    if (!title || !description || !hashtagsString || !price || !audioFile) {
+    // Files are now uploaded client-side, so we receive JSON with file URLs
+    let body;
+    try {
+      // Read body as text first to see what we're actually getting
+      const bodyText = await request.text();
+      console.log('Raw request body (first 500 chars):', bodyText?.substring(0, 500));
+      console.log('Body length:', bodyText?.length);
+      console.log('Body starts with:', bodyText?.substring(0, 10));
+      
+      if (!bodyText || bodyText.trim().length === 0) {
+        return NextResponse.json(
+          { error: 'Request body is empty' },
+          { status: 400 }
+        );
+      }
+      
+      // Try to parse the trimmed body
+      const trimmedBody = bodyText.trim();
+      body = JSON.parse(trimmedBody);
+      console.log('Successfully parsed body:', JSON.stringify(body, null, 2));
+    } catch (jsonError: any) {
+      console.error('Failed to parse JSON:', jsonError);
+      console.error('Error details:', {
+        message: jsonError.message,
+        name: jsonError.name,
+        position: jsonError.message.match(/position (\d+)/)?.[1]
+      });
+      
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { 
+          error: `Invalid request format. The request body is not valid JSON. Please check that all fields are filled correctly.` 
+        },
         { status: 400 }
       );
     }
 
-    const hashtags = hashtagsString.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
+    const { title, description, hashtags, price, audioFileUrl, audioFileName, pdfFileUrl, pdfFileName } = body;
 
-    const track = await createMusicTrack({
-      title,
-      description,
-      hashtags,
-      price,
-      audioFile,
-      pdfFile: pdfFile && pdfFile.size > 0 ? pdfFile : undefined
-    }, admin.email);
+    // Validation
+    if (!title || !title.trim()) {
+      return NextResponse.json(
+        { error: 'Title is required' },
+        { status: 400 }
+      );
+    }
+    if (!description || !description.trim()) {
+      return NextResponse.json(
+        { error: 'Description is required' },
+        { status: 400 }
+      );
+    }
+    if (!audioFileUrl || !audioFileName) {
+      return NextResponse.json(
+        { error: 'Audio file URL is required. Please ensure the file was uploaded successfully.' },
+        { status: 400 }
+      );
+    }
+    if (!price || isNaN(price) || price <= 0) {
+      return NextResponse.json(
+        { error: 'Price must be a valid number greater than 0' },
+        { status: 400 }
+      );
+    }
 
-    return NextResponse.json({ track });
+    // Create track in Firestore with file URLs
+    try {
+      const { db } = await import('@/lib/firebase');
+      const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
 
-  } catch (error) {
+      const musicRef = await addDoc(collection(db, 'music'), {
+        title: title.trim(),
+        description: description.trim(),
+        hashtags: Array.isArray(hashtags) ? hashtags : [],
+        price: parseFloat(price),
+        audioFileUrl,
+        audioFileName,
+        pdfFileUrl: pdfFileUrl || null,
+        pdfFileName: pdfFileName || null,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        createdBy: admin.email
+      });
+
+      const track = {
+        id: musicRef.id,
+        title: title.trim(),
+        description: description.trim(),
+        hashtags: Array.isArray(hashtags) ? hashtags : [],
+        price: parseFloat(price),
+        audioFileUrl,
+        audioFileName,
+        pdfFileUrl: pdfFileUrl || undefined,
+        pdfFileName: pdfFileName || undefined,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: admin.email
+      };
+
+      return NextResponse.json({ track });
+    } catch (createError: any) {
+      console.error('Create music track error:', createError);
+      const errorMessage = createError.message || 'Unknown error occurred';
+      
+      let statusCode = 500;
+      if (errorMessage.includes('permission') || errorMessage.includes('unauthorized')) {
+        statusCode = 403;
+      } else if (errorMessage.includes('quota')) {
+        statusCode = 507;
+      }
+      
+      return NextResponse.json(
+        { error: `Failed to save track: ${errorMessage}` },
+        { status: statusCode }
+      );
+    }
+
+  } catch (error: any) {
     console.error('Create music track error:', error);
     return NextResponse.json(
-      { error: 'Failed to create music track' },
+      { error: error.message || 'Failed to create music track. Please try again.' },
       { status: 500 }
     );
   }

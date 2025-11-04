@@ -1,0 +1,93 @@
+.musicStoreContainer {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  background: transparent;
+}
+
+.musicStoreHeader {
+  background: transparent;
+  padding: 2rem 0;
+  margin-bottom: 2rem;
+}
+
+.musicStoreHeaderContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.musicStoreHeaderTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
+}
+
+.musicStoreHeaderIcon {
+  color: var(--theme-color);
+}
+
+.musicStoreMain {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.musicStoreGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.musicStoreEmpty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.musicStoreEmptyIcon {
+  margin: 0 auto 1rem;
+  opacity: 0.5;
+}
+
+.musicStoreEmptyTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 0.5rem 0;
+  font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
+}
+
+.musicStoreEmptyText {
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+.musicStoreLoading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  background: transparent;
+}
+
+.musicStoreSpinner {
+  width: 3rem;
+  height: 3rem;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--theme-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+

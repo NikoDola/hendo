@@ -8,6 +8,7 @@ import { CiShoppingCart } from "react-icons/ci";
 import { CiUser } from "react-icons/ci";
 import { IoMoonOutline } from "react-icons/io5";
 import { IoShirtOutline } from "react-icons/io5";
+import { Music } from "lucide-react";
 import { useUserAuth } from "@/context/UserAuthContext";
 import { useRouter } from "next/navigation";
 
@@ -99,6 +100,11 @@ export default function NavMenu() {
                       <IoShirtOutline className="dropdownIcon" />
                       Clothing
                     </li>
+                    <hr className="hrLine" />
+                    <Link href="/music" className="dropdownLink" onClick={handleLinkClick}>
+                      <Music className="dropdownIcon" size={20} />
+                      Music
+                    </Link>
                   </ul>
                 </div> : ""}
             </div>
@@ -259,6 +265,16 @@ export default function NavMenu() {
                         <IoShirtOutline className="mobileDropdownIcon" />
                         Clothing
                       </li>
+                      <hr className="mobileHrLine" />
+                      <Link 
+                        href="/music" 
+                        className="mobileStoreDropdownItem" 
+                        onClick={handleLinkClick}
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                      >
+                        <Music className="mobileDropdownIcon" size={18} />
+                        Music
+                      </Link>
                     </ul>
                   )}
                 </li>
