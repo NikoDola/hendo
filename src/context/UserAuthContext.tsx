@@ -52,8 +52,30 @@ async function setServerSessionFromCurrentUser(firebaseUser: FirebaseUser | null
 }
 
 export function UserAuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<SessionUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<SessionUser | null>(() => {
+    // Initialize from localStorage if available
+    if (typeof window !== 'undefined') {
+      try {
+        const cachedUser = localStorage.getItem('hendo_user');
+        return cachedUser ? JSON.parse(cachedUser) : null;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  });
+  // Start with loading=false if we have cached data (show UI immediately)
+  const [loading, setLoading] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const cachedUser = localStorage.getItem('hendo_user');
+        return !cachedUser; // Only loading if no cache
+      } catch {
+        return true;
+      }
+    }
+    return true;
+  });
 
   useEffect(() => {
     // Handle redirect result if present
@@ -85,22 +107,29 @@ export function UserAuthProvider({ children }: { children: React.ReactNode }) {
           console.log('Server response:', data);
           if (data?.authenticated) {
             console.log('User authenticated, setting user state');
-            setUser({
+            const userData = {
               uid: fbUser.uid,
               email: fbUser.email,
               displayName: fbUser.displayName,
               role: data.user.role as Role,
-            });
+            };
+            setUser(userData);
+            // Cache user data in localStorage
+            localStorage.setItem('hendo_user', JSON.stringify(userData));
           } else {
             console.log('User not authenticated on server');
             setUser(null);
+            localStorage.removeItem('hendo_user');
           }
         } else {
           console.log('No Firebase user, clearing state');
           setUser(null);
+          localStorage.removeItem('hendo_user');
         }
       } catch (e) {
         console.error('Auth state change error:', e);
+        setUser(null);
+        localStorage.removeItem('hendo_user');
       } finally {
         setLoading(false);
       }
@@ -142,6 +171,8 @@ export function UserAuthProvider({ children }: { children: React.ReactNode }) {
     await firebaseSignOut(auth);
     await fetch('/api/auth/logout', { method: 'POST' });
     setUser(null);
+    // Clear cached user data
+    localStorage.removeItem('hendo_user');
   };
 
   const value = useMemo(

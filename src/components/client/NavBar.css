@@ -29,6 +29,10 @@
   cursor: pointer;
 
 }
+.navIcons:hover{
+  color: white;
+  box-shadow: white 2px ;
+}
 
 .linksWrapperDesktop {
   display: flex;
@@ -350,4 +354,71 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Profile Dropdown Styles - Desktop */
+.profileContainer {
+  position: relative;
+}
+
+.profileIconsWrapper {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+
+.profileDropdownMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 0.5rem 0;
+  min-width: 150px;
+  z-index: 1000;
+}
+
+.profileDropdownButton {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  color: white;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s ease;
+}
+
+.profileDropdownButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Mobile Store Dropdown Item Link */
+.mobileStoreDropdownItemLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Profile Dropdown Styles - Mobile */
+.mobileProfileIconsWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  color: white;
+}
+
+.mobileProfileDropdownMenu {
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  margin: 0.5rem 0;
+  overflow: hidden;
 }
