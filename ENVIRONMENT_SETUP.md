@@ -19,7 +19,7 @@ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your_measurement_id
 ### Stripe Configuration
 ```env
 # Stripe Configuration
-STRIPE_SECRET_KEY=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
+STRIPE_SECRET_KEY=sk_live_your_stripe_live_secret_key
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_your_publishable_key_here
 ```
 
