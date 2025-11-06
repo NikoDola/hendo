@@ -62,7 +62,7 @@ export default function Hero2() {
           </div>
           <div>
             <span className="heroHiddenU">U</span>
-            <span id="letter_p">P</span>
+            <span id="letter_p ab">P</span>
           </div>
 
         </div>
