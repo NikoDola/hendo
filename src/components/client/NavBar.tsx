@@ -108,6 +108,14 @@ export default function NavMenu() {
                   </ul>
                 </div> : ""}
             </div>
+            {!isHydrated && (
+              <div className="profileContainer">
+                <div className="profileIconsWrapper">
+                  <CiUser className="navIcons navIconsLoading" />
+                  <CiShoppingCart className="navIcons navIconsLoading" />
+                </div>
+              </div>
+            )}
             {isHydrated && !user && (
               <>
                 <Link className="linkDesktop" href="/login" onClick={handleLinkClick}>
@@ -224,6 +232,15 @@ export default function NavMenu() {
                     </ul>
                   )}
                 </li>
+                {!isHydrated && (
+                  <li>
+                    <div className="mobileProfileIconsWrapper">
+                      <CiUser className="navIcons navIconsLoading" />
+                      <CiShoppingCart className="navIcons navIconsLoading" />
+                      <span>Profile</span>
+                    </div>
+                  </li>
+                )}
                 {isHydrated && !user && (
                   <>
                     <li>

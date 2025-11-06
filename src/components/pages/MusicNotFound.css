@@ -1,66 +1,14 @@
-/* Music Not Found Styles */
+/* Music Not Found Page Styles */
 
-.musicNotFoundContainer {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  color: white;
+.musicNotFoundIcon {
+  animation: float 3s ease-in-out infinite;
 }
 
-.musicNotFoundContent {
-  text-align: center;
-}
-
-.musicNotFoundTitle {
-  font-size: 48px;
-  font-weight: bold;
-  margin-bottom: 2rem;
-  transition: color 1s;
-}
-
-@media (min-width: 768px) {
-  .musicNotFoundTitle {
-    font-size: 72px;
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
   }
 }
-
-.musicNotFoundMessage {
-  font-size: 1.125rem;
-  margin-bottom: 2rem;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-@media (min-width: 768px) {
-  .musicNotFoundMessage {
-    font-size: 1.25rem;
-  }
-}
-
-.musicNotFoundActions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-}
-
-.musicNotFoundButton {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
-  text-decoration: none;
-  transition: all 0.2s;
-}
-
-.musicNotFoundButton:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.5);
-}
-

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { signInWithEmailAndPassword, getRedirectResult } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useUserAuth } from '@/context/UserAuthContext';
+import '@/components/pages/Login.css';
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -92,8 +93,8 @@ export default function LoginPage() {
           Access your account
         </p>
         
-        <form onSubmit={handleSubmit} style={{ marginBottom: '2rem' }}>
-          <div className="inputWrapper" style={{ marginBottom: '1.5rem' }}>
+        <form onSubmit={handleSubmit} className="loginForm">
+          <div className="inputWrapper loginInputWrapper">
             <label htmlFor="email">Email Address</label>
             <input
               id="email"
@@ -108,7 +109,7 @@ export default function LoginPage() {
             />
           </div>
 
-          <div className="inputWrapper" style={{ marginBottom: '1.5rem' }}>
+          <div className="inputWrapper loginInputWrapper">
             <label htmlFor="password">Password</label>
             <input
               id="password"
@@ -124,67 +125,29 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div className="inputWrapper" style={{ marginBottom: '1.5rem' }}>
-              <p style={{ color: '#ff6b6b', fontSize: '14px', margin: 0 }}>
+            <div className="inputWrapper loginInputWrapper">
+              <p className="loginErrorText">
                 {error}
               </p>
             </div>
           )}
 
-          <button type="submit" disabled={isLoading} style={{ marginBottom: '2rem' }}>
+          <button type="submit" disabled={isLoading} className="loginSubmitButton">
             {isLoading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 
-        <div className="orWrapper" style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '1rem',
-            margin: '1.5rem 0'
-          }}>
-            <div style={{ 
-              height: '1px', 
-              background: 'rgba(255, 255, 255, 0.3)', 
-              flex: 1 
-            }}></div>
-            <span style={{ 
-              color: 'rgba(255, 255, 255, 0.7)', 
-              fontSize: '14px' 
-            }}>OR</span>
-            <div style={{ 
-              height: '1px', 
-              background: 'rgba(255, 255, 255, 0.3)', 
-              flex: 1 
-            }}></div>
+        <div className="orWrapper loginOrSection">
+          <div className="loginOrDivider">
+            <div className="loginOrLine"></div>
+            <span className="loginOrText">OR</span>
+            <div className="loginOrLine"></div>
           </div>
 
           <button
             type="button"
             onClick={handleGoogleLogin}
-            style={{
-              width: '100%',
-              background: 'white',
-              color: 'black',
-              border: 'none',
-              borderRadius: '20px',
-              padding: '1rem',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.5rem',
-              fontSize: '16px',
-              fontWeight: '600',
-              transition: 'all 0.3s ease',
-              marginBottom: '1.5rem'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = '#f0f0f0';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = 'white';
-            }}
+            className="loginGoogleButton"
           >
             <svg width="20" height="20" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -197,9 +160,9 @@ export default function LoginPage() {
         </div>
 
         <div className="orWrapper">
-          <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px', margin: 0 }}>
+          <p className="loginFooterText">
             Don&apos;t have an account?{' '}
-            <a href="/signup" style={{ color: 'var(--theme-color)', textDecoration: 'none' }}>
+            <a href="/signup" className="loginSignupLink">
               Sign up
             </a>
           </p>

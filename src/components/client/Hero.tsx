@@ -61,7 +61,7 @@ export default function Hero2() {
             <span id="letter_l2">L</span>
           </div>
           <div>
-            <span style={{ zIndex: "-2" }}>U</span>
+            <span className="heroHiddenU">U</span>
             <span id="letter_p">P</span>
           </div>
 

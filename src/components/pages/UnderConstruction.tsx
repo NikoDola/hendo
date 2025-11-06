@@ -104,27 +104,19 @@ export default function Newsletter() {
             {loading ? "Loading..." : "SUBSCRIBE"}
           </button>
         </div>
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p className="newsletterErrorMessage">{error}</p>}
         {success && (
-          <div style={{
-            color: 'green',
-            marginBottom: '1rem',
-            padding: '1rem',
-            backgroundColor: '#f0f9ff',
-            border: '1px solid #0ea5e9',
-            borderRadius: '0.5rem',
-            textAlign: 'center'
-          }}>
-            <h3 style={{ margin: '0 0 0.5rem 0', color: '#0ea5e9' }}>Verification Email Sent! 📧</h3>
-            <p style={{ margin: '0 0 0.5rem 0' }}>
+          <div className="newsletterSuccessBox">
+            <h3 className="newsletterSuccessTitle">Verification Email Sent! 📧</h3>
+            <p className="newsletterSuccessText">
               We&apos;ve sent a verification email to <strong>{email}</strong>
             </p>
-            <p style={{ margin: '0', fontSize: '0.9rem', color: '#64748b' }}>
+            <p className="newsletterSuccessNote">
               Please check your email and click the verification link to complete your subscription.
             </p>
           </div>
         )}
-        <p style={{ fontSize: '11px' }} className="my-recaptcha-disclaimer ">
+        <p className="my-recaptcha-disclaimer ">
           This site is protected by reCAPTCHA and the Google
           <br></br>
           <a

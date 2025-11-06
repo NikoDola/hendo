@@ -1,5 +1,9 @@
 /* User Dashboard Styles */
 
+.userMusicIcon {
+  color: white;
+}
+
 .userDashboardContainer {
   min-height: 100vh;
   background: transparent;

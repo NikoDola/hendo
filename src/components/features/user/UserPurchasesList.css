@@ -1,0 +1,59 @@
+/* User Purchases List Component Styles */
+
+.userPurchasesListContainer {
+  margin-top: 2rem;
+}
+
+.userPurchasesListHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.userPurchasesListTitle {
+  margin: 0;
+}
+
+.userPurchasesRefreshButton {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.userPurchasesRefreshButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.userPurchasesLoading {
+  text-align: center;
+  padding: 2rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.userPurchasesEmpty {
+  text-align: center;
+  padding: 2rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.userPurchasesEmptyIcon {
+  margin: 0 auto 1rem;
+  opacity: 0.5;
+}
+
+.userPurchasesEmptyLink {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: underline;
+  margin-top: 0.5rem;
+  display: inline-block;
+}
+

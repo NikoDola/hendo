@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { CheckCircle, Download, FileText, X } from 'lucide-react';
 import Link from 'next/link';
+import '@/components/pages/PaymentSuccess.css';
 
 function PaymentSuccessContent() {
   const [downloadData, setDownloadData] = useState<{ downloadUrl: string; pdfUrl: string; trackTitle: string; expiresAt?: string } | null>(null);
@@ -133,7 +134,7 @@ function PaymentSuccessContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(to bottom, #0a0a0a, #1a1a1a)' }}>
+      <div className="min-h-screen flex items-center justify-center paymentSuccessContainer">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white mx-auto mb-4"></div>
           <p className="text-white text-lg">Verifying your payment...</p>
@@ -144,7 +145,7 @@ function PaymentSuccessContent() {
 
   if (!downloadData) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(to bottom, #0a0a0a, #1a1a1a)' }}>
+      <div className="min-h-screen flex items-center justify-center paymentSuccessContainer">
         <div className="text-center text-white">
           <X className="w-16 h-16 mx-auto mb-4 text-red-500" />
           <h1 className="text-2xl font-bold mb-2">Payment Verification Failed</h1>
@@ -162,7 +163,7 @@ function PaymentSuccessContent() {
 
   return (
     <>
-      <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'linear-gradient(to bottom, #0a0a0a, #1a1a1a)' }}>
+      <div className="min-h-screen flex items-center justify-center p-4 paymentSuccessContainer">
         <div className="max-w-2xl w-full">
           <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-8 shadow-2xl">
             <div className="flex flex-col items-center text-center mb-8">
@@ -227,7 +228,7 @@ function PaymentSuccessContent() {
 export default function PaymentSuccess() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(to bottom, #0a0a0a, #1a1a1a)' }}>
+      <div className="min-h-screen flex items-center justify-center paymentSuccessContainer">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white mx-auto mb-4"></div>
           <p className="text-white text-lg">Loading...</p>

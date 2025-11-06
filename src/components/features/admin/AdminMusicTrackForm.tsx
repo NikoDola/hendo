@@ -1,0 +1,262 @@
+import { useState } from 'react';
+import { X, Upload, FileText } from 'lucide-react';
+import { storage } from '@/lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import type { MusicTrack } from '@/hooks/useMusicTracks';
+
+interface TrackFormData {
+  title: string;
+  description: string;
+  hashtags: string[];
+  price: string;
+  audioFile: File | null;
+  pdfFile: File | null;
+}
+
+interface AdminMusicTrackFormProps {
+  track?: MusicTrack;
+  onSubmit: (data: Record<string, unknown>) => Promise<void>;
+  onCancel: () => void;
+}
+
+export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: AdminMusicTrackFormProps) {
+  const isEditing = !!track;
+  const [formData, setFormData] = useState<TrackFormData>({
+    title: track?.title || '',
+    description: track?.description || '',
+    hashtags: track?.hashtags || [],
+    price: track?.price.toString() || '',
+    audioFile: null,
+    pdfFile: null,
+  });
+  const [hashtagInput, setHashtagInput] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  const handleHashtagInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setHashtagInput(value);
+
+    if (value.includes(',')) {
+      const tags = value.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
+      setFormData(prev => ({ ...prev, hashtags: [...prev.hashtags, ...tags] }));
+      setHashtagInput('');
+    }
+  };
+
+  const handleRemoveHashtag = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      hashtags: prev.hashtags.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+    setIsSubmitting(true);
+
+    try {
+      // Validation
+      if (!formData.title.trim()) {
+        throw new Error('Title is required');
+      }
+      if (!formData.description.trim()) {
+        throw new Error('Description is required');
+      }
+      if (!formData.price || parseFloat(formData.price) <= 0) {
+        throw new Error('Price must be greater than 0');
+      }
+      if (!isEditing && !formData.audioFile) {
+        throw new Error('Audio file is required');
+      }
+
+      // Upload files if provided
+      let audioFileUrl: string | undefined;
+      let audioFileName: string | undefined;
+      let pdfFileUrl: string | undefined;
+      let pdfFileName: string | undefined;
+
+      if (formData.audioFile) {
+        const timestamp = Date.now();
+        audioFileName = `music/${timestamp}_${formData.audioFile.name}`;
+        const audioStorageRef = ref(storage, audioFileName);
+        await uploadBytes(audioStorageRef, formData.audioFile);
+        audioFileUrl = await getDownloadURL(audioStorageRef);
+      }
+
+      if (formData.pdfFile) {
+        const timestamp = Date.now();
+        pdfFileName = `music/pdfs/${timestamp}_${formData.pdfFile.name}`;
+        const pdfStorageRef = ref(storage, pdfFileName);
+        await uploadBytes(pdfStorageRef, formData.pdfFile);
+        pdfFileUrl = await getDownloadURL(pdfStorageRef);
+      }
+
+      await onSubmit({
+        title: formData.title,
+        description: formData.description,
+        hashtags: formData.hashtags,
+        price: formData.price,
+        audioFileUrl,
+        audioFileName,
+        pdfFileUrl,
+        pdfFileName
+      });
+
+      setSuccess(isEditing ? 'Track updated successfully!' : 'Track created successfully!');
+      setTimeout(() => {
+        onCancel();
+      }, 1500);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="adminProductForm">
+      <h3 className="adminProductFormTitle">{isEditing ? 'Edit Track' : 'Add New Track'}</h3>
+      <form onSubmit={handleSubmit}>
+        <div className="adminFormGroup">
+          <label className="adminFormLabel">Title *</label>
+          <input
+            type="text"
+            value={formData.title}
+            onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+            className="adminFormInput"
+            required
+          />
+        </div>
+
+        <div className="adminFormGroup">
+          <label className="adminFormLabel">Description *</label>
+          <textarea
+            value={formData.description}
+            onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+            className="adminFormTextarea"
+            rows={4}
+            required
+          />
+        </div>
+
+        <div className="adminFormGroup">
+          <label className="adminFormLabel">Hashtags</label>
+          <input
+            type="text"
+            value={hashtagInput}
+            onChange={handleHashtagInput}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                if (hashtagInput.trim()) {
+                  setFormData(prev => ({
+                    ...prev,
+                    hashtags: [...prev.hashtags, hashtagInput.trim()]
+                  }));
+                  setHashtagInput('');
+                }
+              }
+            }}
+            placeholder="Type hashtags separated by commas"
+            className="adminFormInput"
+          />
+          {formData.hashtags.length > 0 && (
+            <div className="adminHashtagsList">
+              {formData.hashtags.map((tag, index) => (
+                <span key={index} className="adminHashtag">
+                  #{tag}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveHashtag(index)}
+                    className="adminHashtagRemove"
+                  >
+                    <X size={14} />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="adminFormGroup">
+          <label className="adminFormLabel">Price ($) *</label>
+          <input
+            type="number"
+            step="0.01"
+            min="0"
+            value={formData.price}
+            onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
+            className="adminFormInput"
+            required
+          />
+        </div>
+
+        <div className="adminFormGroup">
+          <label className="adminFormLabel">
+            Audio File {isEditing ? '(optional, leave empty to keep current)' : '*'}
+          </label>
+          <label className="adminFileInputLabel">
+            <Upload size={16} />
+            <span>{formData.audioFile?.name || 'Choose audio file...'}</span>
+            <input
+              type="file"
+              accept="audio/*"
+              onChange={(e) => setFormData(prev => ({ ...prev, audioFile: e.target.files?.[0] || null }))}
+              className="adminFileInput"
+            />
+          </label>
+        </div>
+
+        <div className="adminFormGroup">
+          <label className="adminFormLabel">
+            PDF Rights File (optional) {isEditing && '(leave empty to keep current)'}
+          </label>
+          <label className="adminFileInputLabel">
+            <FileText size={16} />
+            <span>{formData.pdfFile?.name || 'Choose PDF file...'}</span>
+            <input
+              type="file"
+              accept="application/pdf"
+              onChange={(e) => setFormData(prev => ({ ...prev, pdfFile: e.target.files?.[0] || null }))}
+              className="adminFileInput"
+            />
+          </label>
+        </div>
+
+        {error && (
+          <div className="adminFormError" role="alert">
+            <strong>Error:</strong> {error}
+          </div>
+        )}
+        {success && (
+          <div className="adminFormSuccess" role="status">
+            {success}
+          </div>
+        )}
+
+        <div className="adminFormActions">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="adminFormSubmitButton"
+          >
+            {isSubmitting ? 'Saving...' : isEditing ? 'Update Track' : 'Create Track'}
+          </button>
+          <button
+            type="button"
+            onClick={onCancel}
+            className="adminFormCancelButton"
+            disabled={isSubmitting}
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+

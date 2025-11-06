@@ -52,30 +52,26 @@ async function setServerSessionFromCurrentUser(firebaseUser: FirebaseUser | null
 }
 
 export function UserAuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<SessionUser | null>(() => {
-    // Initialize from localStorage if available
+  // Always start with null on both server and client to avoid hydration mismatch
+  const [user, setUser] = useState<SessionUser | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Hydrate from localStorage after mount (client-side only)
+  useEffect(() => {
+    setIsHydrated(true);
     if (typeof window !== 'undefined') {
       try {
         const cachedUser = localStorage.getItem('hendo_user');
-        return cachedUser ? JSON.parse(cachedUser) : null;
+        if (cachedUser) {
+          setUser(JSON.parse(cachedUser));
+          setLoading(false); // If we have cached data, we're not loading
+        }
       } catch {
-        return null;
+        // Ignore errors
       }
     }
-    return null;
-  });
-  // Start with loading=false if we have cached data (show UI immediately)
-  const [loading, setLoading] = useState(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const cachedUser = localStorage.getItem('hendo_user');
-        return !cachedUser; // Only loading if no cache
-      } catch {
-        return true;
-      }
-    }
-    return true;
-  });
+  }, []);
 
   useEffect(() => {
     // Handle redirect result if present

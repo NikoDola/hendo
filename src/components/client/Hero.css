@@ -1,3 +1,9 @@
+/* Hero Component Styles */
+
+.heroHiddenU {
+  z-index: -2;
+}
+
 .hero__wrapper {
   height: 100vh;
 

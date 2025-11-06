@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { getRedirectResult, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useUserAuth } from '@/context/UserAuthContext';
+import '@/components/pages/Signup.css';
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -124,8 +125,8 @@ export default function SignupPage() {
       <div className="formWrapper">
         <h2 className="newsletterTitle">Create Account</h2>
         
-        <form onSubmit={handleSubmit} style={{ marginBottom: '2rem' }}>
-          <div className="inputWrapper" style={{ marginBottom: '1.5rem' }}>
+        <form onSubmit={handleSubmit} className="signupForm">
+          <div className="inputWrapper signupInputWrapper">
             <label htmlFor="firstName">First Name</label>
             <input
               id="firstName"
@@ -140,7 +141,7 @@ export default function SignupPage() {
             />
           </div>
 
-          <div className="inputWrapper" style={{ marginBottom: '1.5rem' }}>
+          <div className="inputWrapper signupInputWrapper">
             <label htmlFor="lastName">Last Name</label>
             <input
               id="lastName"
@@ -155,7 +156,7 @@ export default function SignupPage() {
             />
           </div>
 
-          <div className="inputWrapper" style={{ marginBottom: '1.5rem' }}>
+          <div className="inputWrapper signupInputWrapper">
             <label htmlFor="email">Email Address</label>
             <input
               id="email"
@@ -170,7 +171,7 @@ export default function SignupPage() {
             />
           </div>
 
-          <div className="inputWrapper" style={{ marginBottom: '1.5rem' }}>
+          <div className="inputWrapper signupInputWrapper">
             <label htmlFor="password">Password</label>
             <input
               id="password"
@@ -185,7 +186,7 @@ export default function SignupPage() {
             />
           </div>
 
-          <div className="inputWrapper" style={{ marginBottom: '1.5rem' }}>
+          <div className="inputWrapper signupInputWrapper">
             <label htmlFor="confirmPassword">Confirm Password</label>
             <input
               id="confirmPassword"
@@ -201,8 +202,8 @@ export default function SignupPage() {
           </div>
 
           {error && (
-            <div className="inputWrapper" style={{ marginBottom: '1.5rem' }}>
-              <p style={{ color: '#ff6b6b', fontSize: '14px', margin: 0 }}>
+            <div className="inputWrapper signupInputWrapper">
+              <p className="signupErrorText">
                 {error}
               </p>
             </div>
@@ -211,76 +212,27 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={isLoading}
-            style={{ 
-              marginBottom: '1rem',
-              background: 'transparent',
-              color: '#ffffff',
-              fontFamily: 'var(--font-lemonmilk)',
-              fontSize: '16px',
-              padding: '1rem',
-              border: '1px solid rgba(255,255,255,0.25)',
-              borderRadius: '20px',
-              cursor: 'pointer',
-              width: '100%'
-            }}
+            className="signupSubmitButton"
           >
             {isLoading ? 'Creating account...' : 'CREATE ACCOUNT'}
           </button>
 
-          <p className="subscribeDescription" style={{ textAlign: 'center', marginBottom: '1rem' }}>
+          <p className="subscribeDescription signupDescription">
             Join our community and get started
           </p>
         </form>
 
-        <div className="orWrapper" style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '1rem',
-            margin: '1.5rem 0'
-          }}>
-            <div style={{ 
-              height: '1px', 
-              background: 'rgba(255, 255, 255, 0.3)', 
-              flex: 1 
-            }}></div>
-            <span style={{ 
-              color: 'rgba(255, 255, 255, 0.7)', 
-              fontSize: '14px' 
-            }}>OR</span>
-            <div style={{ 
-              height: '1px', 
-              background: 'rgba(255, 255, 255, 0.3)', 
-              flex: 1 
-            }}></div>
+        <div className="orWrapper signupOrSection">
+          <div className="signupOrDivider">
+            <div className="signupOrLine"></div>
+            <span className="signupOrText">OR</span>
+            <div className="signupOrLine"></div>
           </div>
 
           <button
             type="button"
             onClick={handleGoogleSignup}
-            style={{
-              width: '100%',
-              background: 'white',
-              color: 'black',
-              border: 'none',
-              borderRadius: '20px',
-              padding: '1rem',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.5rem',
-              fontSize: '16px',
-              fontWeight: '600',
-              transition: 'all 0.3s ease',
-              marginBottom: '1.5rem'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = '#f0f0f0';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = 'white';
-            }}
+            className="signupGoogleButton"
           >
             <svg width="20" height="20" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -293,9 +245,9 @@ export default function SignupPage() {
         </div>
 
         <div className="orWrapper">
-          <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px', margin: 0 }}>
+          <p className="signupFooterText">
             Already have an account?{' '}
-            <a href="/login" style={{ color: 'var(--theme-color)', textDecoration: 'none' }}>
+            <a href="/login" className="signupLoginLink">
               Sign in
             </a>
           </p>
