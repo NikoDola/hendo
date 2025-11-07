@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { MusicTrack } from '@/lib/music';
 import { Music } from 'lucide-react';
 import { useUserAuth } from '@/context/UserAuthContext';
-import MusicCard from '@/components/MusicCard';
+import HorizontalMusicCard from '@/components/HorizontalMusicCard';
+import MusicFilterBar, { FilterOptions } from '@/components/MusicFilterBar';
 import PurchaseWarningPopup from '@/components/PurchaseWarningPopup';
 import '@/components/pages/MusicStore.css';
 
@@ -15,18 +16,29 @@ interface Purchase {
   trackTitle: string;
 }
 
+const ITEMS_PER_PAGE = 5;
+
 export default function MusicStore() {
   const [tracks, setTracks] = useState<MusicTrack[]>([]);
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [displayedCount, setDisplayedCount] = useState(ITEMS_PER_PAGE);
   const [playingTrack, setPlayingTrack] = useState<string | null>(null);
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
   const [warningPopup, setWarningPopup] = useState<{ isOpen: boolean; trackTitle: string }>({
     isOpen: false,
     trackTitle: ''
   });
+  const [filters, setFilters] = useState<FilterOptions>({
+    genre: '',
+    priceOrder: 'none',
+    dateOrder: 'newest',
+    searchQuery: ''
+  });
   const { user, loading: authLoading } = useUserAuth();
   const router = useRouter();
+  const observerTarget = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     loadTracks();
@@ -37,6 +49,97 @@ export default function MusicStore() {
       loadPurchases();
     }
   }, [user, authLoading]);
+
+  // Get available genres from tracks
+  const availableGenres = useMemo(() => {
+    const genres = new Set<string>();
+    tracks.forEach(track => {
+      if (track.genre) {
+        genres.add(track.genre);
+      }
+    });
+    return Array.from(genres).sort();
+  }, [tracks]);
+
+  // Filter and sort tracks
+  const filteredAndSortedTracks = useMemo(() => {
+    let result = [...tracks];
+
+    // Filter by search query (title, description, or hashtags)
+    if (filters.searchQuery) {
+      const searchLower = filters.searchQuery.toLowerCase();
+      result = result.filter(track => {
+        const titleMatch = track.title.toLowerCase().includes(searchLower);
+        const descriptionMatch = track.description.toLowerCase().includes(searchLower);
+        const hashtagMatch = track.hashtags.some(tag => tag.toLowerCase().includes(searchLower));
+        return titleMatch || descriptionMatch || hashtagMatch;
+      });
+    }
+
+    // Filter by genre
+    if (filters.genre) {
+      result = result.filter(track => track.genre === filters.genre);
+    }
+
+    // Apply sorting - price takes priority over date if specified
+    if (filters.priceOrder !== 'none') {
+      // Sort by price
+      if (filters.priceOrder === 'low-high') {
+        result.sort((a, b) => a.price - b.price);
+      } else if (filters.priceOrder === 'high-low') {
+        result.sort((a, b) => b.price - a.price);
+      }
+    } else {
+      // Sort by date only if price sorting is not active
+      if (filters.dateOrder === 'newest') {
+        result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      } else if (filters.dateOrder === 'oldest') {
+        result.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      }
+    }
+
+    return result;
+  }, [tracks, filters]);
+
+  // Reset displayed count when filters change
+  useEffect(() => {
+    setDisplayedCount(ITEMS_PER_PAGE);
+  }, [filters]);
+
+  // Load more items when scrolling
+  const loadMore = useCallback(() => {
+    if (displayedCount >= filteredAndSortedTracks.length) return;
+
+    setIsLoadingMore(true);
+    // Simulate loading delay for better UX
+    setTimeout(() => {
+      setDisplayedCount(prev => Math.min(prev + ITEMS_PER_PAGE, filteredAndSortedTracks.length));
+      setIsLoadingMore(false);
+    }, 500);
+  }, [displayedCount, filteredAndSortedTracks.length]);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isLoadingMore && displayedCount < filteredAndSortedTracks.length) {
+          loadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentTarget = observerTarget.current;
+    if (currentTarget) {
+      observer.observe(currentTarget);
+    }
+
+    return () => {
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
+      }
+    };
+  }, [loadMore, isLoadingMore, displayedCount, filteredAndSortedTracks.length]);
 
   const loadTracks = async () => {
     try {
@@ -150,7 +253,7 @@ export default function MusicStore() {
         onClose={() => setWarningPopup({ isOpen: false, trackTitle: '' })}
         trackTitle={warningPopup.trackTitle}
       />
-      
+
       <div className="musicStoreContainer">
         <header className="musicStoreHeader">
           <div className="musicStoreHeaderContent">
@@ -160,9 +263,16 @@ export default function MusicStore() {
         </header>
 
         <main className="musicStoreMain">
-          <div className="musicStoreGrid">
-            {tracks.map((track) => (
-              <MusicCard
+          {/* Filter Bar */}
+          <MusicFilterBar
+            filters={filters}
+            availableGenres={availableGenres}
+            onFilterChange={setFilters}
+          />
+
+          <div className="musicStoreList">
+            {filteredAndSortedTracks.slice(0, displayedCount).map((track) => (
+              <HorizontalMusicCard
                 key={track.id}
                 track={track}
                 isPlaying={playingTrack === track.id}
@@ -173,7 +283,24 @@ export default function MusicStore() {
             ))}
           </div>
 
-          {tracks.length === 0 && (
+          {/* Loading more indicator */}
+          {displayedCount < filteredAndSortedTracks.length && (
+            <div ref={observerTarget} className="musicStoreLoadingMore">
+              {isLoadingMore && (
+                <div className="musicStoreSpinner"></div>
+              )}
+            </div>
+          )}
+
+          {filteredAndSortedTracks.length === 0 && !isLoading && tracks.length > 0 && (
+            <div className="musicStoreEmpty">
+              <Music className="musicStoreEmptyIcon" size={64} />
+              <h3 className="musicStoreEmptyTitle">No Tracks Found</h3>
+              <p className="musicStoreEmptyText">Try adjusting your filters!</p>
+            </div>
+          )}
+
+          {tracks.length === 0 && !isLoading && (
             <div className="musicStoreEmpty">
               <Music className="musicStoreEmptyIcon" size={64} />
               <h3 className="musicStoreEmptyTitle">No Music Available</h3>

@@ -8,11 +8,36 @@ interface TrackFormData {
   title: string;
   description: string;
   hashtags: string[];
+  genre: string;
   price: string;
   audioFile: File | null;
   pdfFile: File | null;
   imageFile: File | null;
 }
+
+// Predefined genres - can be extended
+const DEFAULT_GENRES = [
+  'Pop',
+  'Rock',
+  'Hip Hop',
+  'R&B',
+  'Jazz',
+  'Electronic',
+  'Classical',
+  'Country',
+  'Folk',
+  'Blues',
+  'Reggae',
+  'Metal',
+  'Punk',
+  'Soul',
+  'Funk',
+  'House',
+  'Techno',
+  'Ambient',
+  'Lo-Fi',
+  'Indie'
+];
 
 interface AdminMusicTrackFormProps {
   track?: MusicTrack;
@@ -26,6 +51,7 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
     title: track?.title || '',
     description: track?.description || '',
     hashtags: track?.hashtags || [],
+    genre: track?.genre || '',
     price: track?.price.toString() || '',
     audioFile: null,
     pdfFile: null,
@@ -35,6 +61,9 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [availableGenres, setAvailableGenres] = useState<string[]>(DEFAULT_GENRES);
+  const [isAddingNewGenre, setIsAddingNewGenre] = useState(false);
+  const [newGenreInput, setNewGenreInput] = useState('');
 
   const handleHashtagInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -54,6 +83,25 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
     }));
   };
 
+  const handleGenreChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    if (value === '__ADD_NEW__') {
+      setIsAddingNewGenre(true);
+    } else {
+      setFormData(prev => ({ ...prev, genre: value }));
+    }
+  };
+
+  const handleAddNewGenre = () => {
+    const trimmedGenre = newGenreInput.trim();
+    if (trimmedGenre && !availableGenres.includes(trimmedGenre)) {
+      setAvailableGenres(prev => [...prev, trimmedGenre].sort());
+      setFormData(prev => ({ ...prev, genre: trimmedGenre }));
+      setNewGenreInput('');
+      setIsAddingNewGenre(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -67,6 +115,9 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
       }
       if (!formData.description.trim()) {
         throw new Error('Description is required');
+      }
+      if (!formData.genre.trim()) {
+        throw new Error('Genre is required');
       }
       if (!formData.price || parseFloat(formData.price) <= 0) {
         throw new Error('Price must be greater than 0');
@@ -111,6 +162,7 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
         title: formData.title,
         description: formData.description,
         hashtags: formData.hashtags,
+        genre: formData.genre,
         price: formData.price,
         audioFileUrl,
         audioFileName,
@@ -193,6 +245,66 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
                 </span>
               ))}
             </div>
+          )}
+        </div>
+
+        <div className="adminFormGroup">
+          <label className="adminFormLabel">Genre *</label>
+          {isAddingNewGenre ? (
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <input
+                type="text"
+                value={newGenreInput}
+                onChange={(e) => setNewGenreInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddNewGenre();
+                  }
+                }}
+                placeholder="Enter new genre..."
+                className="adminFormInput"
+                autoFocus
+                style={{ flex: 1 }}
+              />
+              <button
+                type="button"
+                onClick={handleAddNewGenre}
+                className="adminFormSubmitButton"
+                style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+              >
+                Add
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsAddingNewGenre(false);
+                  setNewGenreInput('');
+                }}
+                className="adminFormCancelButton"
+                style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <select
+              value={formData.genre}
+              onChange={handleGenreChange}
+              className="adminFormInput"
+              required
+              style={{ cursor: 'pointer' }}
+            >
+              <option value="">Select a genre...</option>
+              {availableGenres.map((genre) => (
+                <option key={genre} value={genre}>
+                  {genre}
+                </option>
+              ))}
+              <option value="__ADD_NEW__" style={{ fontWeight: 'bold', color: 'var(--theme-color)' }}>
+                + Add New Genre
+              </option>
+            </select>
           )}
         </div>
 

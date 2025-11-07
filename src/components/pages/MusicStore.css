@@ -44,6 +44,13 @@
   margin-bottom: 2rem;
 }
 
+.musicStoreList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
 .musicStoreEmpty {
   text-align: center;
   padding: 4rem 2rem;
@@ -74,6 +81,23 @@
   justify-content: center;
   min-height: 60vh;
   background: transparent;
+}
+
+.musicStoreLoadingMore {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  gap: 1rem;
+  min-height: 150px;
+}
+
+.musicStoreLoadingText {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  margin: 0;
+  font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
 }
 
 .musicStoreSpinner {

@@ -1,0 +1,131 @@
+.musicFilterBar {
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.musicFilterBarContent {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.musicFilterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.musicFilterLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
+}
+
+.musicFilterLabel svg {
+  color: var(--theme-color);
+}
+
+.musicFilterSelect {
+  padding: 0.75rem 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: white;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.musicFilterSelect:hover {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.musicFilterSelect:focus {
+  outline: none;
+  border-color: var(--theme-color);
+  box-shadow: 0 0 0 2px rgba(255, 20, 147, 0.2);
+}
+
+.musicFilterSelect option {
+  background: #1a1a1a;
+  color: white;
+  padding: 0.5rem;
+}
+
+/* Search Bar - Full Width */
+.musicFilterSearchContainer {
+  position: relative;
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.musicFilterSearchIcon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--theme-color);
+  pointer-events: none;
+}
+
+.musicFilterSearchInput {
+  width: 100%;
+  padding: 0.875rem 1rem 0.875rem 3rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.musicFilterSearchInput::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.musicFilterSearchInput:hover {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.musicFilterSearchInput:focus {
+  outline: none;
+  border-color: var(--theme-color);
+  box-shadow: 0 0 0 2px rgba(255, 20, 147, 0.2);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .musicFilterBar {
+    padding: 1rem;
+  }
+
+  .musicFilterBarContent {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .musicFilterSearchInput {
+    font-size: 0.9rem;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+  }
+
+  .musicFilterSearchIcon {
+    left: 0.875rem;
+  }
+}
+

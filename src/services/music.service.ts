@@ -18,6 +18,7 @@ export interface MusicTrack {
   title: string;
   description: string;
   hashtags: string[];
+  genre: string;
   price: number;
   audioFileUrl: string;
   audioFileName: string;
@@ -34,6 +35,7 @@ export interface CreateMusicData {
   title: string;
   description: string;
   hashtags: string[];
+  genre: string;
   price: number;
   audioFile: File;
   pdfFile?: File;
@@ -44,6 +46,7 @@ export interface UpdateMusicData {
   title?: string;
   description?: string;
   hashtags?: string[];
+  genre?: string;
   price?: number;
   audioFile?: File;
   pdfFile?: File;
@@ -99,6 +102,7 @@ export async function createMusicTrack(data: CreateMusicData, adminEmail: string
       title: data.title,
       description: data.description,
       hashtags: data.hashtags,
+      genre: data.genre,
       price: data.price,
       audioFileUrl,
       audioFileName,
@@ -173,6 +177,7 @@ async function saveMusicToDatabase(data: {
   title: string;
   description: string;
   hashtags: string[];
+  genre: string;
   price: number;
   audioFileUrl: string;
   audioFileName: string;
@@ -187,6 +192,7 @@ async function saveMusicToDatabase(data: {
       title: data.title,
       description: data.description,
       hashtags: data.hashtags,
+      genre: data.genre,
       price: data.price,
       audioFileUrl: data.audioFileUrl,
       audioFileName: data.audioFileName,
@@ -249,6 +255,7 @@ async function prepareUpdateData(currentTrack: MusicTrack, data: UpdateMusicData
   if (data.title !== undefined) updateData.title = data.title;
   if (data.description !== undefined) updateData.description = data.description;
   if (data.hashtags !== undefined) updateData.hashtags = data.hashtags;
+  if (data.genre !== undefined) updateData.genre = data.genre;
   if (data.price !== undefined) updateData.price = data.price;
 
   if (data.audioFile) {

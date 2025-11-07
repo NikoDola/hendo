@@ -5,6 +5,7 @@ export interface MusicTrack {
   title: string;
   description: string;
   hashtags: string[];
+  genre: string;
   price: number;
   audioFileUrl: string;
   audioFileName?: string;

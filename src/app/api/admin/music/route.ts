@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { title, description, hashtags, price, audioFileUrl, audioFileName, pdfFileUrl, pdfFileName, imageFileUrl, imageFileName } = body;
+    const { title, description, hashtags, genre, price, audioFileUrl, audioFileName, pdfFileUrl, pdfFileName, imageFileUrl, imageFileName } = body;
 
     // Validation
     if (!title || !title.trim()) {
@@ -83,6 +83,12 @@ export async function POST(request: NextRequest) {
     if (!description || !description.trim()) {
       return NextResponse.json(
         { error: 'Description is required' },
+        { status: 400 }
+      );
+    }
+    if (!genre || !genre.trim()) {
+      return NextResponse.json(
+        { error: 'Genre is required' },
         { status: 400 }
       );
     }
@@ -108,6 +114,7 @@ export async function POST(request: NextRequest) {
         title: title.trim(),
         description: description.trim(),
         hashtags: Array.isArray(hashtags) ? hashtags : [],
+        genre: genre.trim(),
         price: parseFloat(price),
         audioFileUrl,
         audioFileName,
@@ -125,6 +132,7 @@ export async function POST(request: NextRequest) {
         title: title.trim(),
         description: description.trim(),
         hashtags: Array.isArray(hashtags) ? hashtags : [],
+        genre: genre.trim(),
         price: parseFloat(price),
         audioFileUrl,
         audioFileName,
