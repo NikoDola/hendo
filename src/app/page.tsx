@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import './under-construction.css';
+import Logo from '@/components/client/Logo';
 
 export default function UnderConstruction() {
   const [email, setEmail] = useState('');
@@ -46,9 +47,13 @@ export default function UnderConstruction() {
   };
 
   return (
-    <div className="underConstructionContainer">
+    <div className="underConstructionContainer" style={{ background: 'transparent' }}>
       <div className="underConstructionContent">
         <div className="underConstructionGlow"></div>
+        
+        <div className="underConstructionLogo">
+          <Logo size="3rem" />
+        </div>
         
         <h1 className="underConstructionTitle">
           Coming Soon

@@ -108,6 +108,7 @@ form {
   border-radius: 1rem;
   border-top: solid rgb(225, 225, 225, 0.1);
   box-shadow: 0 0 13px rgb(21, 21, 21, 0.3);
+  width: 100%;
 }
 
 button {
