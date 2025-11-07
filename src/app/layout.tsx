@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "@/app/globals.css";
 import localFont from "next/font/local";
 import { MouseProvider } from "@/context/context";
-import NavBar from "@/components/client/NavBar";
-import Footer from "@/components/client/Footer";
+import ConditionalNavbar from "@/components/client/ConditionalNavbar";
+import ConditionalFooter from "@/components/client/ConditionalFooter";
 import { ColorProvider } from "@/components/client/ColorProvider";
 import ParallaxStars from "@/components/client/ParallaxStars";
 import BitBackground from "@/components/client/BitBackground";
@@ -40,13 +40,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <MouseProvider>
               <UserAuthProvider>
                 <div style={{ pointerEvents: 'auto' }}>
-                  <NavBar />
+                  <ConditionalNavbar />
                 </div>
                 <div style={{ pointerEvents: 'auto', flex: 1 }}>
                   {children}
                 </div>
                 <div style={{ pointerEvents: 'auto' }}>
-                  <Footer />
+                  <ConditionalFooter />
                 </div>
               </UserAuthProvider>
             </MouseProvider>
