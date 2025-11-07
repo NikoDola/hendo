@@ -10,6 +10,8 @@ export interface MusicTrack {
   audioFileName?: string;
   pdfFileUrl?: string;
   pdfFileName?: string;
+  imageFileUrl?: string;
+  imageFileName?: string;
   createdAt: string;
   updatedAt: string;
 }

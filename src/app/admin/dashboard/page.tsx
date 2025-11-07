@@ -70,6 +70,11 @@ export default function AdminDashboard() {
       payload.pdfFileName = formData.pdfFileName ? String(formData.pdfFileName) : null;
     }
 
+    if (formData.imageFileUrl !== undefined) {
+      payload.imageFileUrl = formData.imageFileUrl ? String(formData.imageFileUrl) : null;
+      payload.imageFileName = formData.imageFileName ? String(formData.imageFileName) : null;
+    }
+
     const response = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },

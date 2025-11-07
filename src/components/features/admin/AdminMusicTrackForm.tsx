@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Upload, FileText } from 'lucide-react';
+import { X, Upload, FileText, Image } from 'lucide-react';
 import { storage } from '@/lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import type { MusicTrack } from '@/hooks/useMusicTracks';
@@ -11,6 +11,7 @@ interface TrackFormData {
   price: string;
   audioFile: File | null;
   pdfFile: File | null;
+  imageFile: File | null;
 }
 
 interface AdminMusicTrackFormProps {
@@ -28,6 +29,7 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
     price: track?.price.toString() || '',
     audioFile: null,
     pdfFile: null,
+    imageFile: null,
   });
   const [hashtagInput, setHashtagInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -78,6 +80,8 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
       let audioFileName: string | undefined;
       let pdfFileUrl: string | undefined;
       let pdfFileName: string | undefined;
+      let imageFileUrl: string | undefined;
+      let imageFileName: string | undefined;
 
       if (formData.audioFile) {
         const timestamp = Date.now();
@@ -95,6 +99,14 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
         pdfFileUrl = await getDownloadURL(pdfStorageRef);
       }
 
+      if (formData.imageFile) {
+        const timestamp = Date.now();
+        imageFileName = `music/images/${timestamp}_${formData.imageFile.name}`;
+        const imageStorageRef = ref(storage, imageFileName);
+        await uploadBytes(imageStorageRef, formData.imageFile);
+        imageFileUrl = await getDownloadURL(imageStorageRef);
+      }
+
       await onSubmit({
         title: formData.title,
         description: formData.description,
@@ -103,7 +115,9 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
         audioFileUrl,
         audioFileName,
         pdfFileUrl,
-        pdfFileName
+        pdfFileName,
+        imageFileUrl,
+        imageFileName
       });
 
       setSuccess(isEditing ? 'Track updated successfully!' : 'Track created successfully!');
@@ -222,6 +236,22 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
               type="file"
               accept="application/pdf"
               onChange={(e) => setFormData(prev => ({ ...prev, pdfFile: e.target.files?.[0] || null }))}
+              className="adminFileInput"
+            />
+          </label>
+        </div>
+
+        <div className="adminFormGroup">
+          <label className="adminFormLabel">
+            Cover Image (optional) {isEditing && '(leave empty to keep current)'}
+          </label>
+          <label className="adminFileInputLabel">
+            <Image size={16} />
+            <span>{formData.imageFile?.name || 'Choose image file...'}</span>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setFormData(prev => ({ ...prev, imageFile: e.target.files?.[0] || null }))}
               className="adminFileInput"
             />
           </label>

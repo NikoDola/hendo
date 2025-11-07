@@ -309,6 +309,21 @@ export default function MusicCard({
   return (
     <div className="musicCard">
       <div className="musicCardContent">
+        {/* Cover Image or Placeholder */}
+        <div className="musicCardImageContainer">
+          {track.imageFileUrl ? (
+            <img 
+              src={track.imageFileUrl} 
+              alt={track.title}
+              className="musicCardImage"
+            />
+          ) : (
+            <div className="musicCardImagePlaceholder">
+              <span className="musicCardImagePlaceholderIcon">?</span>
+            </div>
+          )}
+        </div>
+
         <h3 className="musicCardTitle">{track.title}</h3>
         <p className="musicCardDescription">{track.description}</p>
         

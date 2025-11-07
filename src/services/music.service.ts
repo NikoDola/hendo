@@ -23,6 +23,8 @@ export interface MusicTrack {
   audioFileName: string;
   pdfFileUrl?: string;
   pdfFileName?: string;
+  imageFileUrl?: string;
+  imageFileName?: string;
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
@@ -35,6 +37,7 @@ export interface CreateMusicData {
   price: number;
   audioFile: File;
   pdfFile?: File;
+  imageFile?: File;
 }
 
 export interface UpdateMusicData {
@@ -44,6 +47,7 @@ export interface UpdateMusicData {
   price?: number;
   audioFile?: File;
   pdfFile?: File;
+  imageFile?: File;
 }
 
 // ============================================================================
@@ -77,6 +81,7 @@ export async function createMusicTrack(data: CreateMusicData, adminEmail: string
   try {
     const { audioFileUrl, audioFileName } = await uploadAudioFile(data.audioFile);
     const { pdfFileUrl, pdfFileName } = await uploadPdfFile(data.pdfFile);
+    const { imageFileUrl, imageFileName } = await uploadImageFile(data.imageFile);
 
     const musicRef = await saveMusicToDatabase({
       ...data,
@@ -84,6 +89,8 @@ export async function createMusicTrack(data: CreateMusicData, adminEmail: string
       audioFileName,
       pdfFileUrl,
       pdfFileName,
+      imageFileUrl,
+      imageFileName,
       adminEmail
     });
 
@@ -97,6 +104,8 @@ export async function createMusicTrack(data: CreateMusicData, adminEmail: string
       audioFileName,
       pdfFileUrl,
       pdfFileName,
+      imageFileUrl,
+      imageFileName,
       createdAt: new Date(),
       updatedAt: new Date(),
       createdBy: adminEmail
@@ -144,6 +153,22 @@ async function uploadPdfFile(file?: File): Promise<{ pdfFileUrl?: string; pdfFil
   }
 }
 
+async function uploadImageFile(file?: File): Promise<{ imageFileUrl?: string; imageFileName?: string }> {
+  if (!file) {
+    return {};
+  }
+
+  try {
+    const imageFileName = generateFileName('music/images', file.name);
+    const imageFileUrl = await uploadFile(file, imageFileName);
+    return { imageFileUrl, imageFileName };
+  } catch (imageError: unknown) {
+    console.error('Error uploading image file:', imageError);
+    console.warn('Image upload failed, continuing without image');
+    return {};
+  }
+}
+
 async function saveMusicToDatabase(data: {
   title: string;
   description: string;
@@ -153,6 +178,8 @@ async function saveMusicToDatabase(data: {
   audioFileName: string;
   pdfFileUrl?: string;
   pdfFileName?: string;
+  imageFileUrl?: string;
+  imageFileName?: string;
   adminEmail: string;
 }): Promise<{ id: string }> {
   try {
@@ -165,6 +192,8 @@ async function saveMusicToDatabase(data: {
       audioFileName: data.audioFileName,
       pdfFileUrl: data.pdfFileUrl,
       pdfFileName: data.pdfFileName,
+      imageFileUrl: data.imageFileUrl,
+      imageFileName: data.imageFileName,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
       createdBy: data.adminEmail
@@ -176,6 +205,7 @@ async function saveMusicToDatabase(data: {
     try {
       await deleteFile(data.audioFileUrl);
       if (data.pdfFileUrl) await deleteFile(data.pdfFileUrl);
+      if (data.imageFileUrl) await deleteFile(data.imageFileUrl);
     } catch (cleanupError) {
       console.error('Error cleaning up files:', cleanupError);
     }
@@ -237,6 +267,15 @@ async function prepareUpdateData(currentTrack: MusicTrack, data: UpdateMusicData
     updateData.pdfFileName = pdfFileName;
   }
 
+  if (data.imageFile) {
+    if (currentTrack.imageFileUrl) {
+      await deleteFile(currentTrack.imageFileUrl);
+    }
+    const { imageFileUrl, imageFileName } = await uploadImageFile(data.imageFile);
+    updateData.imageFileUrl = imageFileUrl;
+    updateData.imageFileName = imageFileName;
+  }
+
   return updateData;
 }
 
@@ -254,6 +293,9 @@ export async function deleteMusicTrack(trackId: string): Promise<void> {
     await deleteFile(track.audioFileUrl);
     if (track.pdfFileUrl) {
       await deleteFile(track.pdfFileUrl);
+    }
+    if (track.imageFileUrl) {
+      await deleteFile(track.imageFileUrl);
     }
 
     await deleteDoc(trackRef);

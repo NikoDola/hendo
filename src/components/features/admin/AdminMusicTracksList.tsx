@@ -45,6 +45,21 @@ export default function AdminMusicTracksList({
           <div className="adminTracksGrid">
             {tracks.map((track) => (
               <div key={track.id} className="adminTrackCard">
+                {/* Track Image Thumbnail */}
+                <div className="adminTrackImageContainer">
+                  {track.imageFileUrl ? (
+                    <img 
+                      src={track.imageFileUrl} 
+                      alt={track.title}
+                      className="adminTrackImage"
+                    />
+                  ) : (
+                    <div className="adminTrackImagePlaceholder">
+                      <span className="adminTrackImagePlaceholderIcon">?</span>
+                    </div>
+                  )}
+                </div>
+
                 <div className="adminTrackHeader">
                   <h4 className="adminTrackTitle">{track.title}</h4>
                   <div className="adminTrackActions">

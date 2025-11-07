@@ -96,7 +96,7 @@ export default function NavMenu() {
               {dropdown ?
                 <div className="dropdownWrapper">
                   <ul className="dropdownLinkWrapper">
-                    <Link href="/" className="dropdownLink" onClick={handleLinkClick}>
+                    <Link href="/music" className="dropdownLink" onClick={handleLinkClick}>
                       <IoMoonOutline className="dropdownIcon" />
                       Dream Station
                     </Link>
@@ -217,7 +217,7 @@ export default function NavMenu() {
                   {dropdown && (
                     <ul className="mobileStoreDropdown">
                       <Link 
-                        href="/" 
+                        href="/music" 
                         className="mobileStoreDropdownItem mobileStoreDropdownItemLink" 
                         onClick={handleLinkClick}
                       >

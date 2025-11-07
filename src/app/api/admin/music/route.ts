@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { title, description, hashtags, price, audioFileUrl, audioFileName, pdfFileUrl, pdfFileName } = body;
+    const { title, description, hashtags, price, audioFileUrl, audioFileName, pdfFileUrl, pdfFileName, imageFileUrl, imageFileName } = body;
 
     // Validation
     if (!title || !title.trim()) {
@@ -113,6 +113,8 @@ export async function POST(request: NextRequest) {
         audioFileName,
         pdfFileUrl: pdfFileUrl || null,
         pdfFileName: pdfFileName || null,
+        imageFileUrl: imageFileUrl || null,
+        imageFileName: imageFileName || null,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
         createdBy: admin.email
@@ -128,6 +130,8 @@ export async function POST(request: NextRequest) {
         audioFileName,
         pdfFileUrl: pdfFileUrl || undefined,
         pdfFileName: pdfFileName || undefined,
+        imageFileUrl: imageFileUrl || undefined,
+        imageFileName: imageFileName || undefined,
         createdAt: new Date(),
         updatedAt: new Date(),
         createdBy: admin.email

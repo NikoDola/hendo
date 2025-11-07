@@ -72,7 +72,7 @@ export async function PUT(
       );
     }
 
-    const { title, description, hashtags, price, audioFileUrl, audioFileName, pdfFileUrl, pdfFileName } = body;
+    const { title, description, hashtags, price, audioFileUrl, audioFileName, pdfFileUrl, pdfFileName, imageFileUrl, imageFileName } = body;
 
     // Get existing track to preserve existing files if not updated
     const { getMusicTrack } = await import('@/lib/music');
@@ -99,6 +99,8 @@ export async function PUT(
       audioFileName?: string;
       pdfFileUrl?: string | null;
       pdfFileName?: string | null;
+      imageFileUrl?: string | null;
+      imageFileName?: string | null;
     } = {
       updatedAt: serverTimestamp()
     };
@@ -120,6 +122,14 @@ export async function PUT(
       // Explicitly clear PDF if null is sent
       updateData.pdfFileUrl = null;
       updateData.pdfFileName = null;
+    }
+    if (imageFileUrl && imageFileName) {
+      updateData.imageFileUrl = imageFileUrl;
+      updateData.imageFileName = imageFileName;
+    } else if (imageFileUrl === null) {
+      // Explicitly clear image if null is sent
+      updateData.imageFileUrl = null;
+      updateData.imageFileName = null;
     }
 
     await updateDoc(docRef, updateData);
