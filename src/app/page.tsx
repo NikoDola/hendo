@@ -52,7 +52,7 @@ export default function UnderConstruction() {
         <div className="underConstructionGlow"></div>
         
         <div className="underConstructionLogo">
-          <Logo size="3rem" />
+          <Logo size="2rem" />
         </div>
         
         <h1 className="underConstructionTitle">
