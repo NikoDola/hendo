@@ -109,7 +109,7 @@ export async function PUT(
     if (title) updateData.title = title.trim();
     if (description) updateData.description = description.trim();
     if (hashtags !== undefined) updateData.hashtags = Array.isArray(hashtags) ? hashtags : [];
-    if (genre) updateData.genre = genre.trim();
+    if (genre !== undefined) updateData.genre = genre ? genre.trim() : '';
     if (price !== undefined) updateData.price = parseFloat(price);
 
     // Only update file URLs if new ones were provided

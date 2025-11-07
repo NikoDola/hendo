@@ -116,9 +116,6 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
       if (!formData.description.trim()) {
         throw new Error('Description is required');
       }
-      if (!formData.genre.trim()) {
-        throw new Error('Genre is required');
-      }
       if (!formData.price || parseFloat(formData.price) <= 0) {
         throw new Error('Price must be greater than 0');
       }
@@ -249,7 +246,7 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
         </div>
 
         <div className="adminFormGroup">
-          <label className="adminFormLabel">Genre *</label>
+          <label className="adminFormLabel">Genre (optional)</label>
           {isAddingNewGenre ? (
             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
               <input
@@ -292,7 +289,6 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
               value={formData.genre}
               onChange={handleGenreChange}
               className="adminFormInput"
-              required
               style={{ cursor: 'pointer' }}
             >
               <option value="">Select a genre...</option>

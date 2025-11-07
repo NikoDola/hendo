@@ -86,12 +86,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    if (!genre || !genre.trim()) {
-      return NextResponse.json(
-        { error: 'Genre is required' },
-        { status: 400 }
-      );
-    }
     if (!audioFileUrl || !audioFileName) {
       return NextResponse.json(
         { error: 'Audio file URL is required. Please ensure the file was uploaded successfully.' },
@@ -114,7 +108,7 @@ export async function POST(request: NextRequest) {
         title: title.trim(),
         description: description.trim(),
         hashtags: Array.isArray(hashtags) ? hashtags : [],
-        genre: genre.trim(),
+        genre: genre ? genre.trim() : '',
         price: parseFloat(price),
         audioFileUrl,
         audioFileName,
@@ -132,7 +126,7 @@ export async function POST(request: NextRequest) {
         title: title.trim(),
         description: description.trim(),
         hashtags: Array.isArray(hashtags) ? hashtags : [],
-        genre: genre.trim(),
+        genre: genre ? genre.trim() : '',
         price: parseFloat(price),
         audioFileUrl,
         audioFileName,
