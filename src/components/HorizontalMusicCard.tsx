@@ -27,7 +27,7 @@ export default function HorizontalMusicCard({
     audioEl.preload = 'none';
     return audioEl;
   });
-  
+
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
   const [bassIntensity, setBassIntensity] = useState(0);
@@ -52,15 +52,15 @@ export default function HorizontalMusicCard({
           audio.crossOrigin = 'anonymous';
         }
 
-        const AudioContextCtor: typeof AudioContext = 
-          (window as typeof window & { webkitAudioContext?: typeof AudioContext }).AudioContext || 
+        const AudioContextCtor: typeof AudioContext =
+          (window as typeof window & { webkitAudioContext?: typeof AudioContext }).AudioContext ||
           (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext!;
         const context = new AudioContextCtor();
-        
+
         if (context.state === 'suspended') {
           await context.resume();
         }
-        
+
         const source = context.createMediaElementSource(audio);
         const analyserNode = context.createAnalyser();
         analyserNode.fftSize = 256;
@@ -134,7 +134,7 @@ export default function HorizontalMusicCard({
 
     const interval = setInterval(updateProgress, 100);
     audio.addEventListener('timeupdate', updateProgress);
-    
+
     return () => {
       clearInterval(interval);
       audio.removeEventListener('timeupdate', updateProgress);
@@ -144,61 +144,61 @@ export default function HorizontalMusicCard({
   // Sync audio playback with isPlaying prop
   useEffect(() => {
     if (!audio) return;
-    
+
     const playAudio = async () => {
       if (isPlaying) {
         try {
           if (audio.src !== track.audioFileUrl) {
             audio.src = track.audioFileUrl;
             audio.load();
-            
+
             await new Promise((resolve, reject) => {
               const timeout = setTimeout(() => {
                 reject(new Error('Audio load timeout'));
               }, 10000);
-              
+
               const cleanup = () => {
                 clearTimeout(timeout);
                 audio.removeEventListener('canplay', handleCanPlay);
                 audio.removeEventListener('loadedmetadata', handleMetadata);
                 audio.removeEventListener('error', handleError);
               };
-              
+
               const handleMetadata = () => {
                 if (audio.readyState >= 2) {
                   cleanup();
                   resolve(void 0);
                 }
               };
-              
+
               const handleCanPlay = () => {
                 cleanup();
                 resolve(void 0);
               };
-              
+
               const handleError = () => {
                 cleanup();
                 const error = audio.error;
                 reject(new Error(`Audio load failed: ${error?.message || 'Unknown error'}`));
               };
-              
+
               audio.addEventListener('canplay', handleCanPlay, { once: true });
               audio.addEventListener('loadedmetadata', handleMetadata, { once: true });
               audio.addEventListener('error', handleError, { once: true });
             });
           }
-          
+
           audio.volume = 1;
           audio.muted = false;
-          
+
           const playPromise = audio.play();
-          
+
           if (playPromise !== undefined) {
             await playPromise;
           }
         } catch (error) {
           console.error('Error playing audio:', error);
-          
+
           try {
             audio.play().catch((e) => {
               console.error('Direct play also failed:', e);
@@ -255,8 +255,8 @@ export default function HorizontalMusicCard({
         {/* Image on the left */}
         <div className="horizontalMusicCardImageContainer">
           {track.imageFileUrl ? (
-            <img 
-              src={track.imageFileUrl} 
+            <img
+              src={track.imageFileUrl}
               alt={track.title}
               className="horizontalMusicCardImage"
             />
@@ -271,7 +271,7 @@ export default function HorizontalMusicCard({
         <div className="horizontalMusicCardInfo">
           <h3 className="horizontalMusicCardTitle">{track.title}</h3>
           <p className="horizontalMusicCardDescription">{track.description}</p>
-          
+
           {/* Hashtags Toggle */}
           {track.hashtags.length > 0 && (
             <>

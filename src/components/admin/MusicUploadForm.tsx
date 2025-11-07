@@ -24,6 +24,7 @@ export default function MusicUploadForm({
     title: initialData?.title || '',
     description: initialData?.description || '',
     hashtags: initialData?.hashtags || [],
+    genre: initialData?.genre || '',
     price: initialData?.price || 0,
   });
 
@@ -39,6 +40,7 @@ export default function MusicUploadForm({
     const newErrors: Record<string, string> = {};
     if (!formData.title.trim()) newErrors.title = 'Title is required';
     if (!formData.description.trim()) newErrors.description = 'Description is required';
+    if (!formData.genre.trim()) newErrors.genre = 'Genre is required';
     if (formData.hashtags.length === 0) newErrors.hashtags = 'At least one hashtag is required';
     if (formData.price <= 0) newErrors.price = 'Price must be greater than 0';
     if (!audioFile && mode === 'create') newErrors.audioFile = 'Audio file is required';
@@ -100,6 +102,22 @@ export default function MusicUploadForm({
             placeholder="Enter music description"
           />
           {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
+        </div>
+
+        {/* Genre */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Genre *
+          </label>
+          <input
+            type="text"
+            value={formData.genre}
+            onChange={(e) => setFormData(prev => ({ ...prev, genre: e.target.value }))}
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.genre ? 'border-red-500' : 'border-gray-300'
+              }`}
+            placeholder="Enter music genre (e.g., Pop, Rock, Jazz)"
+          />
+          {errors.genre && <p className="text-red-500 text-sm mt-1">{errors.genre}</p>}
         </div>
 
         {/* Hashtags */}
