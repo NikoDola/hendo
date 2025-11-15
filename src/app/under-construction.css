@@ -51,7 +51,7 @@
   font-size: 3.5rem;
   line-height: 3.85rem;
   font-weight: 800;
-  background: linear-gradient(135deg, var(--theme-color), #8a2be2);
+  background: var(--theme-color);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -101,8 +101,8 @@
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
-  box-shadow: 0 0 0 3px rgba(255, 20, 147, 0.1),
-    0 0 20px rgba(255, 20, 147, 0.2);
+  box-shadow: 0 0 0 3px var(--theme-color),
+    0 0 20px var(--theme-color);
 }
 
 .underConstructionInput:disabled {
@@ -115,7 +115,7 @@
   padding: 1rem 2rem;
   font-size: 1rem;
   font-weight: 600;
-  background: linear-gradient(135deg, var(--theme-color), #8a2be2);
+  background: var(--theme-color);
   color: white;
   border: none;
   border-radius: 12px;

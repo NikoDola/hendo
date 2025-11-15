@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { title, description, hashtags, genre, price, audioFileUrl, audioFileName, pdfFileUrl, pdfFileName, imageFileUrl, imageFileName } = body;
+    const { title, description, hashtags, genre, price, audioFileUrl, audioFileName, pdfFileUrl, pdfFileName, imageFileUrl, imageFileName, showToHome } = body;
 
     // Validation
     if (!title || !title.trim()) {
@@ -116,6 +116,7 @@ export async function POST(request: NextRequest) {
         pdfFileName: pdfFileName || null,
         imageFileUrl: imageFileUrl || null,
         imageFileName: imageFileName || null,
+        showToHome: showToHome || false,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
         createdBy: admin.email
@@ -134,6 +135,7 @@ export async function POST(request: NextRequest) {
         pdfFileName: pdfFileName || undefined,
         imageFileUrl: imageFileUrl || undefined,
         imageFileName: imageFileName || undefined,
+        showToHome: showToHome || false,
         createdAt: new Date(),
         updatedAt: new Date(),
         createdBy: admin.email

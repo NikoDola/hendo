@@ -72,7 +72,7 @@ export async function PUT(
       );
     }
 
-    const { title, description, hashtags, genre, price, audioFileUrl, audioFileName, pdfFileUrl, pdfFileName, imageFileUrl, imageFileName } = body;
+    const { title, description, hashtags, genre, price, audioFileUrl, audioFileName, pdfFileUrl, pdfFileName, imageFileUrl, imageFileName, showToHome } = body;
 
     // Get existing track to preserve existing files if not updated
     const { getMusicTrack } = await import('@/lib/music');
@@ -102,6 +102,7 @@ export async function PUT(
       pdfFileName?: string | null;
       imageFileUrl?: string | null;
       imageFileName?: string | null;
+      showToHome?: boolean;
     } = {
       updatedAt: serverTimestamp()
     };
@@ -111,6 +112,7 @@ export async function PUT(
     if (hashtags !== undefined) updateData.hashtags = Array.isArray(hashtags) ? hashtags : [];
     if (genre !== undefined) updateData.genre = genre ? genre.trim() : '';
     if (price !== undefined) updateData.price = parseFloat(price);
+    if (showToHome !== undefined) updateData.showToHome = showToHome;
 
     // Only update file URLs if new ones were provided
     if (audioFileUrl && audioFileName) {

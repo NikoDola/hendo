@@ -8,6 +8,7 @@ import { ColorProvider } from "@/components/client/ColorProvider";
 import ParallaxStars from "@/components/client/ParallaxStars";
 import BitBackground from "@/components/client/BitBackground";
 import { UserAuthProvider } from "@/context/UserAuthContext";
+import { ColorToggleProvider } from "@/context/ColorToggleContext";
 
 
 const lemonMilk = localFont({
@@ -34,25 +35,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body style={{ backgroundColor: "black" }} className={`${lemonMilk.variable} antialiased relative`}>
-        <ColorProvider>
-          <ParallaxStars />
-          <div style={{ position: 'relative', zIndex: 1, pointerEvents: 'none', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-            <MouseProvider>
-              <UserAuthProvider>
-                <div style={{ pointerEvents: 'auto' }}>
-                  <ConditionalNavbar />
-                </div>
-                <div style={{ pointerEvents: 'auto', flex: 1 }}>
-                  {children}
-                </div>
-                <div style={{ pointerEvents: 'auto' }}>
-                  <ConditionalFooter />
-                </div>
-              </UserAuthProvider>
-            </MouseProvider>
-          </div>
-          <BitBackground />
-        </ColorProvider>
+        <ColorToggleProvider>
+          <ColorProvider>
+            <ParallaxStars />
+            <div style={{ position: 'relative', zIndex: 1, pointerEvents: 'none', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+              <MouseProvider>
+                <UserAuthProvider>
+                  <div style={{ pointerEvents: 'auto' }}>
+                    <ConditionalNavbar />
+                  </div>
+                  <div style={{ pointerEvents: 'auto', flex: 1 }}>
+                    {children}
+                  </div>
+                  <div style={{ pointerEvents: 'auto' }}>
+                    <ConditionalFooter />
+                  </div>
+                </UserAuthProvider>
+              </MouseProvider>
+            </div>
+            <BitBackground />
+          </ColorProvider>
+        </ColorToggleProvider>
       </body>
     </html>
   );

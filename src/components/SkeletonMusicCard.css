@@ -1,0 +1,318 @@
+.skeletonMusicCard {
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.3);
+  -webkit-backdrop-filter: blur(1.5px);
+  backdrop-filter: blur(1.5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  isolation: isolate;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.skeletonMusicCardTop {
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.skeletonMusicCardImageContainer {
+  flex-shrink: 0;
+  width: 126px;
+  height: 126px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.skeletonMusicCardImage {
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeletonMusicCardImage::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite;
+}
+
+.skeletonMusicCardInfo {
+  flex: 0 1 49%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.skeletonMusicCardTitle {
+  width: 70%;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeletonMusicCardTitle::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.04) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite;
+}
+
+.skeletonMusicCardDescription {
+  width: 90%;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeletonMusicCardDescription::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite 0.2s;
+}
+
+.skeletonMusicCardDescriptionShort {
+  width: 60%;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeletonMusicCardDescriptionShort::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite 0.4s;
+}
+
+.skeletonMusicCardButton {
+  width: 120px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  margin-top: 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeletonMusicCardButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite 0.6s;
+}
+
+.skeletonMusicCardPurchase {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  justify-content: center;
+  gap: 1rem;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.skeletonMusicCardPrice {
+  width: 80px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeletonMusicCardPrice::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.04) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite 0.3s;
+}
+
+.skeletonMusicCardPurchaseButton {
+  width: 120px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeletonMusicCardPurchaseButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.04) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite 0.5s;
+}
+
+.skeletonMusicCardPlayer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.skeletonMusicCardPlayButton {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeletonMusicCardPlayButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.04) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite 0.7s;
+}
+
+.skeletonMusicCardProgressBar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeletonMusicCardProgressBar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite 0.8s;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .skeletonMusicCardTop {
+    flex-direction: column;
+  }
+
+  .skeletonMusicCardInfo {
+    flex: 1;
+    width: 100%;
+  }
+
+  .skeletonMusicCardPurchase {
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    margin-left: 0;
+  }
+}
+
+
+
+
+
+
+

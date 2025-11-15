@@ -1,0 +1,86 @@
+.homeMusicSection {
+  width: 100%;
+  min-height: 100vh;
+  padding: 2rem 0;
+}
+
+.homeMusicHeader {
+  width: 100%;
+  padding: 2rem 5%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.homeMusicHeaderContent {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.homeMusicHeaderIcon {
+  color: var(--theme-color);
+  transition: color 1s ease;
+}
+
+.homeMusicHeaderTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
+}
+
+.homeMusicMain {
+  width: 100%;
+  padding: 0 5%;
+}
+
+.homeMusicList {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 1200px) {
+  .homeMusicList {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .homeMusicSection {
+    padding: 1rem 0;
+  }
+
+  .homeMusicHeader {
+    padding: 1.5rem 5%;
+  }
+
+  .homeMusicHeaderContent {
+    gap: 1rem;
+  }
+
+  .homeMusicHeaderIcon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .homeMusicHeaderTitle {
+    font-size: 2rem;
+  }
+
+  .homeMusicMain {
+    padding: 0 3%;
+  }
+
+  .homeMusicList {
+    gap: 1.5rem;
+    flex-direction: column;
+  }
+}
+

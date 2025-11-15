@@ -25,6 +25,29 @@ export default function NavMenu() {
     setIsHydrated(true);
   }, []);
 
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isOpen) {
+      // Save current scroll position
+      const scrollY = window.scrollY;
+
+      // Prevent scroll on both body and html
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+
+      return () => {
+        // Restore scroll position
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [isOpen]);
+
   // Close menu when clicking on a link
   const handleLinkClick = () => {
     if (isOpen) setIsOpen(false);
@@ -69,7 +92,7 @@ export default function NavMenu() {
       <header className="headerWrapperDesktop">
         <nav className="navWrapperDesktop">
           <ul className="linksWrapperDesktop">
-            <Link className="linkDesktop" href="/" onClick={handleLinkClick}>
+            <Link className="linkDesktop" href="/home" onClick={handleLinkClick}>
               Home
             </Link>
             <Link
@@ -81,7 +104,7 @@ export default function NavMenu() {
             </Link>
             <Link
               className="linkDesktop"
-              href="/Contact"
+              href="/home#contact"
               onClick={handleLinkClick}
             >
               Contact
@@ -121,9 +144,9 @@ export default function NavMenu() {
                 <Link className="linkDesktop" href="/login" onClick={handleLinkClick}>
                   Login
                 </Link>
-                <Link 
-                  className="linkDesktop" 
-                  href="/signup" 
+                <Link
+                  className="linkDesktop"
+                  href="/signup"
                   onClick={handleLinkClick}
                 >
                   Signup
@@ -132,7 +155,7 @@ export default function NavMenu() {
             )}
             {isHydrated && user && (
               <div className="profileContainer">
-                <div 
+                <div
                   onClick={handleProfileDropdown}
                   className="profileIconsWrapper"
                 >
@@ -204,7 +227,7 @@ export default function NavMenu() {
                 <li>
                   <Link
                     className="linkMobile"
-                    href="/Contact"
+                    href="/home#contact"
                     onClick={handleLinkClick}
                   >
                     Contact
@@ -216,9 +239,9 @@ export default function NavMenu() {
                   </div>
                   {dropdown && (
                     <ul className="mobileStoreDropdown">
-                      <Link 
-                        href="/music" 
-                        className="mobileStoreDropdownItem mobileStoreDropdownItemLink" 
+                      <Link
+                        href="/music"
+                        className="mobileStoreDropdownItem mobileStoreDropdownItemLink"
                         onClick={handleLinkClick}
                       >
                         <IoMoonOutline className="mobileDropdownIcon" />
@@ -265,7 +288,7 @@ export default function NavMenu() {
                 )}
                 {isHydrated && user && (
                   <li>
-                    <div 
+                    <div
                       onClick={handleProfileDropdown}
                       className="mobileProfileIconsWrapper"
                     >

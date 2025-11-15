@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import { MusicTrack } from '@/lib/music';
 import { Music } from 'lucide-react';
 import { useUserAuth } from '@/context/UserAuthContext';
-import HorizontalMusicCard from '@/components/HorizontalMusicCard';
+import MusicCard from '@/components/MusicCard';
+import SkeletonMusicCard from '@/components/SkeletonMusicCard';
 import MusicFilterBar, { FilterOptions } from '@/components/MusicFilterBar';
 import PurchaseWarningPopup from '@/components/PurchaseWarningPopup';
 import '@/components/pages/MusicStore.css';
@@ -240,8 +241,21 @@ export default function MusicStore() {
 
   if (isLoading) {
     return (
-      <div className="musicStoreLoading">
-        <div className="musicStoreSpinner"></div>
+      <div className="musicStoreContainer">
+        <header className="musicStoreHeader">
+          <div className="musicStoreHeaderContent">
+            <Music className="musicStoreHeaderIcon" size={40} />
+            <h1 className="musicStoreHeaderTitle">Music Store</h1>
+          </div>
+        </header>
+
+        <main className="musicStoreMain">
+          <div className="musicStoreList">
+            {Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
+              <SkeletonMusicCard key={index} />
+            ))}
+          </div>
+        </main>
       </div>
     );
   }
@@ -272,7 +286,7 @@ export default function MusicStore() {
 
           <div className="musicStoreList">
             {filteredAndSortedTracks.slice(0, displayedCount).map((track) => (
-              <HorizontalMusicCard
+              <MusicCard
                 key={track.id}
                 track={track}
                 isPlaying={playingTrack === track.id}
@@ -287,7 +301,11 @@ export default function MusicStore() {
           {displayedCount < filteredAndSortedTracks.length && (
             <div ref={observerTarget} className="musicStoreLoadingMore">
               {isLoadingMore && (
-                <div className="musicStoreSpinner"></div>
+                <>
+                  {Array.from({ length: Math.min(ITEMS_PER_PAGE, filteredAndSortedTracks.length - displayedCount) }).map((_, index) => (
+                    <SkeletonMusicCard key={`skeleton-${index}`} />
+                  ))}
+                </>
               )}
             </div>
           )}

@@ -1,40 +1,45 @@
 "use client";
 import { useEffect, useRef } from "react";
-
-// The same colors from ColorProvider
-const colors = [
-  "hsl(317 100% 54%)", // neon pink
-  "hsl(190 100% 50%)", // neon cyan
-  "hsl(120 100% 45%)", // neon green
-  "hsl(50 100% 50%)",  // neon yellow
-  "hsl(280 100% 60%)", // neon purple
-  "hsl(0 100% 60%)",   // neon red
-  "hsl(30 100% 55%)"   // neon orange
-];
+import { useColorToggle } from "@/context/ColorToggleContext";
 
 export default function ParallaxStars() {
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
-  const terCanvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
+
+  // Get color from context
+  const { color } = useColorToggle();
+
+  // Use ref to track color without causing re-renders
+  const colorRef = useRef(color);
+
+  // Update the ref when color changes
+  useEffect(() => {
+    colorRef.current = color;
+  }, [color]);
 
   useEffect(() => {
     const bgCanvas = bgCanvasRef.current;
-    const terCanvas = terCanvasRef.current;
 
-    if (!bgCanvas || !terCanvas) return;
+
+
+    if (!bgCanvas) { return }
+    else {
+      bgCanvas.width = window.innerWidth;
+      bgCanvas.height = window.innerHeight;
+    };
 
     const bgCtx = bgCanvas.getContext("2d");
-    const terCtx = terCanvas.getContext("2d");
 
-    if (!bgCtx || !terCtx) return;
+    if (!bgCtx) return;
+
     const bg: CanvasRenderingContext2D = bgCtx;
 
     const width = window.innerWidth;
-    const height = Math.max(document.body.offsetHeight, 400);
+    const height = window.innerHeight;
 
-    // Set canvas dimensions
-    bgCanvas.width = terCanvas.width = width;
-    bgCanvas.height = terCanvas.height = height;
+    // Track start time for fade-in effect
+    const startTime = Date.now();
+    const FADE_DURATION = 3000; // 3 seconds fade-in
 
     // Terrain generation
     const points: number[] = [];
@@ -55,18 +60,6 @@ export default function ParallaxStars() {
     }
 
     // Draw terrain
-    terCtx.beginPath();
-    for (let i = 0; i <= width; i++) {
-      if (i === 0) {
-        terCtx.moveTo(0, points[0]);
-      } else if (points[i] !== undefined) {
-        terCtx.lineTo(i, points[i]);
-      }
-    }
-    terCtx.lineTo(width, height);
-    terCtx.lineTo(0, height);
-    terCtx.lineTo(0, points[0]);
-    terCtx.fill();
 
     // Star class
     class Star {
@@ -74,12 +67,14 @@ export default function ParallaxStars() {
       speed: number;
       x: number;
       y: number;
+      opacity: number;
 
-      constructor(options: { x: number; y: number }) {
+      constructor(options: { x: number; y: number; opacity: number }) {
         this.size = Math.random() * 2;
         this.speed = Math.random() * 0.1;
         this.x = options.x;
         this.y = options.y;
+        this.opacity = 0;
       }
 
       reset() {
@@ -123,7 +118,7 @@ export default function ParallaxStars() {
         this.active = false;
       }
 
-      update() {
+      update(shootingStarColor: string) {
         if (this.active) {
           this.x -= this.speed;
           this.y += this.speed;
@@ -131,6 +126,7 @@ export default function ParallaxStars() {
             this.reset();
           } else {
             bg.lineWidth = this.size;
+            bg.strokeStyle = shootingStarColor; // Use dynamic color
             bg.beginPath();
             bg.moveTo(this.x, this.y);
             bg.lineTo(this.x + this.len, this.y - this.len);
@@ -149,36 +145,39 @@ export default function ParallaxStars() {
 
     // Add stars
     for (let i = 0; i < height; i++) {
-      entities.push(new Star({ x: Math.random() * width, y: Math.random() * height }));
+      entities.push(new Star({ x: Math.random() * width, y: Math.random() * height, opacity: 0 }));
     }
 
-    // Add shooting stars
-    entities.push(new ShootingStar());
-    entities.push(new ShootingStar());
-
-    // Color cycling
-    let colorIndex = 0;
-    const updateColor = () => {
-      const newColor = colors[colorIndex];
-      bg.fillStyle = newColor;
-      bg.strokeStyle = newColor;
-      colorIndex = (colorIndex + 1) % colors.length;
-    };
+    // Add shooting stars (temporarily increased for testing)
+    for (let i = 0; i < 8; i++) {
+      entities.push(new ShootingStar());
+    }
 
     // Animation loop
     const animate = () => {
+      // Calculate fade-in opacity (0 to 1 over 3 seconds)
+      const elapsed = Date.now() - startTime;
+      const globalOpacity = Math.min(elapsed / FADE_DURATION, 1);
+
       bg.fillStyle = '#000000';
       bg.fillRect(0, 0, width, height);
+
+      // Apply fade-in opacity to all stars
+      bg.globalAlpha = globalOpacity;
       bg.fillStyle = '#ffffff';
       bg.strokeStyle = '#ffffff';
 
-      // Update color every 3 seconds
-      if (Math.floor(Date.now() / 3000) !== Math.floor((Date.now() - 16) / 3000)) {
-        updateColor();
-      }
+      // Update entities with color from context
+      entities.forEach(entity => {
+        if (entity instanceof ShootingStar) {
+          entity.update(colorRef.current); // Pass color to shooting stars
+        } else {
+          entity.update();
+        }
+      });
 
-      // Update entities
-      entities.forEach(entity => entity.update());
+      // Reset alpha for next frame
+      bg.globalAlpha = 1;
 
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -192,12 +191,12 @@ export default function ParallaxStars() {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, []);
+  }, []); // Only run once on mount
 
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 0, pointerEvents: 'none' }}>
       <canvas ref={bgCanvasRef} style={{ position: 'absolute', top: 0, left: 0 }} />
-      <canvas ref={terCanvasRef} style={{ position: 'absolute', top: 0, left: 0 }} />
+
     </div>
   );
 }

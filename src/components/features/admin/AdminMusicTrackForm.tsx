@@ -13,6 +13,7 @@ interface TrackFormData {
   audioFile: File | null;
   pdfFile: File | null;
   imageFile: File | null;
+  showToHome: boolean;
 }
 
 // Predefined genres - can be extended
@@ -56,6 +57,7 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
     audioFile: null,
     pdfFile: null,
     imageFile: null,
+    showToHome: track?.showToHome || false,
   });
   const [hashtagInput, setHashtagInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -166,7 +168,8 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
         pdfFileUrl,
         pdfFileName,
         imageFileUrl,
-        imageFileName
+        imageFileName,
+        showToHome: formData.showToHome
       });
 
       setSuccess(isEditing ? 'Track updated successfully!' : 'Track created successfully!');
@@ -363,6 +366,21 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
               className="adminFileInput"
             />
           </label>
+        </div>
+
+        <div className="adminFormGroup">
+          <label className="adminFormLabel" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+            <input
+              type="checkbox"
+              checked={formData.showToHome}
+              onChange={(e) => setFormData(prev => ({ ...prev, showToHome: e.target.checked }))}
+              style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+            />
+            <span>Show to Home</span>
+          </label>
+          <p style={{ fontSize: '0.875rem', color: '#666', marginTop: '0.25rem' }}>
+            Check this to display this track on the home page
+          </p>
         </div>
 
         {error && (

@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ShoppingCart, Play, Pause } from 'lucide-react';
+import { ShoppingCart, Play, Pause, ChevronRight, ChevronDown } from 'lucide-react';
 import { MusicTrack } from '@/lib/music';
 import './MusicCard.css';
+import Router from 'next/router';
 
 interface MusicCardProps {
   track: MusicTrack;
@@ -11,6 +12,7 @@ interface MusicCardProps {
   onPlayPause: (track: MusicTrack) => void;
   onPurchase: (track: MusicTrack) => void;
   isPurchased?: boolean;
+  variant?: 'default' | 'home';
 }
 
 export default function MusicCard({
@@ -18,18 +20,17 @@ export default function MusicCard({
   isPlaying,
   onPlayPause,
   onPurchase,
-  isPurchased = false
+  isPurchased = false,
+  variant = 'default'
 }: MusicCardProps) {
   const [audio] = useState(() => {
     const audioEl = new Audio();
     audioEl.loop = false;
     audioEl.volume = 1;
-    // Don't set crossOrigin initially - Firebase Storage URLs may not support it
-    // We'll set it only if needed for AudioContext
-    audioEl.preload = 'none'; // Don't preload - load on demand
+    audioEl.preload = 'none';
     return audioEl;
   });
-  
+
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
   const [bassIntensity, setBassIntensity] = useState(0);
@@ -37,60 +38,52 @@ export default function MusicCard({
   const [trebleIntensity, setTrebleIntensity] = useState(0);
   const [beatDetected, setBeatDetected] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [showHashtags, setShowHashtags] = useState(false);
   const animationRef = useRef<number | null>(null);
+  
 
-  // Initialize AudioContext and analyser when playing starts (optional - for visualizations)
-  // NOTE: This must happen AFTER audio starts playing, not before
+  useEffect(() => {
+    console.log(`ee${Router}`)
+  }, [])
+  // Initialize AudioContext and analyser when playing starts
   useEffect(() => {
     if (!isPlaying || !audio.src || audio.paused) return;
 
     const initAudioAnalysis = async () => {
       try {
         if (audio.dataset.audioConnected === 'true') {
-          console.log('🎵 AudioContext already connected');
           return;
         }
 
-        console.log('🎵 Initializing AudioContext for visualizations...');
-        
-        // Set crossOrigin only when needed for AudioContext
         if (!audio.crossOrigin) {
           audio.crossOrigin = 'anonymous';
         }
 
-        const AudioContextCtor: typeof AudioContext = 
-          (window as typeof window & { webkitAudioContext?: typeof AudioContext }).AudioContext || 
+        const AudioContextCtor: typeof AudioContext =
+          (window as typeof window & { webkitAudioContext?: typeof AudioContext }).AudioContext ||
           (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext!;
         const context = new AudioContextCtor();
-        
+
         if (context.state === 'suspended') {
-          console.log('🎵 AudioContext suspended, resuming...');
           await context.resume();
         }
-        
-        // IMPORTANT: createMediaElementSource disconnects audio from default output
-        // We MUST connect: source -> analyser -> destination to hear sound
+
         const source = context.createMediaElementSource(audio);
         const analyserNode = context.createAnalyser();
         analyserNode.fftSize = 256;
         analyserNode.smoothingTimeConstant = 0.8;
 
-        // Connect to destination so audio can be heard
         source.connect(analyserNode);
         analyserNode.connect(context.destination);
-        
-        console.log('🎵 AudioContext connected - audio should still play through destination');
 
         audio.dataset.audioConnected = 'true';
         setAudioContext(context);
         setAnalyser(analyserNode);
       } catch (error) {
-        console.error('🎵 AudioContext initialization failed (will continue without visualizations):', error);
-        // Don't throw - audio can still play without visualizations
+        console.error('AudioContext initialization failed:', error);
       }
     };
 
-    // Wait a bit for audio to start playing first
     const timer = setTimeout(() => {
       initAudioAnalysis();
     }, 100);
@@ -148,7 +141,7 @@ export default function MusicCard({
 
     const interval = setInterval(updateProgress, 100);
     audio.addEventListener('timeupdate', updateProgress);
-    
+
     return () => {
       clearInterval(interval);
       audio.removeEventListener('timeupdate', updateProgress);
@@ -158,113 +151,70 @@ export default function MusicCard({
   // Sync audio playback with isPlaying prop
   useEffect(() => {
     if (!audio) return;
-    
+
     const playAudio = async () => {
       if (isPlaying) {
         try {
-          console.log('🎵 MusicCard: Attempting to play audio');
-          console.log('🎵 URL:', track.audioFileUrl);
-          console.log('🎵 Current audio src:', audio.src);
-          console.log('🎵 Audio volume:', audio.volume);
-          console.log('🎵 Audio muted:', audio.muted);
-          
-          // Always set source fresh when playing
           if (audio.src !== track.audioFileUrl) {
-            console.log('🎵 Setting new audio source');
             audio.src = track.audioFileUrl;
             audio.load();
-            
-            // Wait for audio to be ready
+
             await new Promise((resolve, reject) => {
               const timeout = setTimeout(() => {
-                console.error('🎵 Audio load timeout');
                 reject(new Error('Audio load timeout'));
               }, 10000);
-              
+
               const cleanup = () => {
                 clearTimeout(timeout);
                 audio.removeEventListener('canplay', handleCanPlay);
                 audio.removeEventListener('loadedmetadata', handleMetadata);
                 audio.removeEventListener('error', handleError);
-                audio.removeEventListener('loadstart', handleLoadStart);
               };
-              
-              const handleLoadStart = () => {
-                console.log('🎵 Audio load started');
-              };
-              
+
               const handleMetadata = () => {
-                console.log('🎵 Audio metadata loaded, readyState:', audio.readyState);
-                console.log('🎵 Audio duration:', audio.duration);
                 if (audio.readyState >= 2) {
                   cleanup();
                   resolve(void 0);
                 }
               };
-              
+
               const handleCanPlay = () => {
-                console.log('🎵 Audio can play, readyState:', audio.readyState);
                 cleanup();
                 resolve(void 0);
               };
-              
+
               const handleError = () => {
                 cleanup();
                 const error = audio.error;
-                console.error('🎵 Audio load error:', {
-                  code: error?.code,
-                  message: error?.message,
-                  url: track.audioFileUrl
-                });
                 reject(new Error(`Audio load failed: ${error?.message || 'Unknown error'}`));
               };
-              
-              audio.addEventListener('loadstart', handleLoadStart, { once: true });
+
               audio.addEventListener('canplay', handleCanPlay, { once: true });
               audio.addEventListener('loadedmetadata', handleMetadata, { once: true });
               audio.addEventListener('error', handleError, { once: true });
             });
           }
-          
-          // Ensure volume is set
+
           audio.volume = 1;
           audio.muted = false;
-          
-          console.log('🎵 Calling audio.play()...');
+
           const playPromise = audio.play();
-          
+
           if (playPromise !== undefined) {
             await playPromise;
-            console.log('🎵 Audio playback started successfully!');
-            console.log('🎵 Audio playing:', !audio.paused);
-            console.log('🎵 Audio currentTime:', audio.currentTime);
-            
-            // Verify it's actually playing
-            setTimeout(() => {
-              console.log('🎵 After 500ms - Playing:', !audio.paused, 'CurrentTime:', audio.currentTime);
-            }, 500);
           }
-        } catch (error: unknown) {
-          const err = error as Error & { name?: string; code?: string; stack?: string };
-          console.error('🎵 Error playing audio:', error);
-          console.error('🎵 Error details:', {
-            name: err.name,
-            message: err.message,
-            stack: err.stack
-          });
-          
-          // Try direct play as fallback
+        } catch (error) {
+          console.error('Error playing audio:', error);
+
           try {
-            console.log('🎵 Trying direct play fallback...');
             audio.play().catch((e) => {
-              console.error('🎵 Direct play also failed:', e);
+              console.error('Direct play also failed:', e);
             });
           } catch (fallbackError) {
-            console.error('🎵 Fallback also failed:', fallbackError);
+            console.error('Fallback also failed:', fallbackError);
           }
         }
       } else {
-        console.log('🎵 Pausing audio');
         audio.pause();
         setBassIntensity(0);
         setMidIntensity(0);
@@ -307,97 +257,123 @@ export default function MusicCard({
   }, [audio, audioContext]);
 
   return (
-    <div className="musicCard">
-      <div className="musicCardContent">
-        {/* Cover Image or Placeholder */}
+    <div className={`musicCard ${isPlaying ? 'musicCardPlaying' : ''} ${variant === 'home' ? 'musicCardHome' : ''}`}>
+      <div className="musicCardTop">
+        {/* Image on the left */}
         <div className="musicCardImageContainer">
           {track.imageFileUrl ? (
-            <img 
-              src={track.imageFileUrl} 
+            <img
+              src={track.imageFileUrl}
               alt={track.title}
               className="musicCardImage"
             />
           ) : (
             <div className="musicCardImagePlaceholder">
-              <span className="musicCardImagePlaceholderIcon">?</span>
+              <span className="musicCardImagePlaceholderIcon">♪</span>
             </div>
           )}
         </div>
 
-        <h3 className="musicCardTitle">{track.title}</h3>
-        <p className="musicCardDescription">{track.description}</p>
-        
-        <div className="musicCardTags">
-          {track.hashtags.map((tag, index) => (
-            <span key={index} className="musicCardTag">
-              #{tag}
-            </span>
-          ))}
+        {/* Title, Description, Hashtags */}
+        <div className="musicCardInfo">
+          <h3 className="musicCardTitle">{track.title}</h3>
+          <p className="musicCardDescription">{track.description}</p>
+
+          {/* Hashtags Toggle */}
+          {track.hashtags.length > 0 && (
+            <>
+              <button
+                onClick={() => setShowHashtags(!showHashtags)}
+                className="musicCardHashtagsToggle"
+              >
+                {showHashtags ? (
+                  <>
+                    <ChevronDown size={16} />
+                    <span>Hide Hashtags</span>
+                  </>
+                ) : (
+                  <>
+                    <ChevronRight size={16} />
+                    <span>View Hashtags ({track.hashtags.length})</span>
+                  </>
+                )}
+              </button>
+              {showHashtags && (
+                <div className="musicCardTags">
+                  {track.hashtags.map((tag, index) => (
+                    <span key={index} className="musicCardTag">
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
         </div>
 
-        <div className="musicCardFooter">
+        {/* Price and Purchase section */}
+        <div className="musicCardPurchaseSection">
           <span className="musicCardPrice">{formatPrice(track.price)}</span>
+          <button
+            onClick={() => !isPurchased && onPurchase(track)}
+            className={`musicCardPurchaseButton ${isPurchased ? 'musicCardPurchaseButtonPurchased' : ''}`}
+            disabled={isPurchased}
+          >
+            <ShoppingCart size={20} />
+            {isPurchased ? 'Purchased' : 'Purchase'}
+          </button>
         </div>
+      </div>
 
-        {/* Bit-style player with bouncing particles */}
-        <div className="musicCardPlayer">
-          {/* Bouncing particles */}
-          <div
-            className={`musicCardParticle musicCardParticle1 ${beatDetected ? 'beatPulse' : ''}`}
-            style={{
-              transform: `scale(${1 + bassIntensity / 80}) translate(${bassIntensity / 20}px, ${bassIntensity / 25}px)`,
-              opacity: 0.3 + bassIntensity / 150,
-            }}
-          />
-          <div
-            className={`musicCardParticle musicCardParticle2 ${beatDetected ? 'beatPulse' : ''}`}
-            style={{
-              transform: `scale(${1 + midIntensity / 60}) translate(${-midIntensity / 20}px, ${midIntensity / 30}px)`,
-              opacity: 0.2 + midIntensity / 120,
-            }}
-          />
-          <div
-            className={`musicCardParticle musicCardParticle3 ${beatDetected ? 'beatPulse' : ''}`}
-            style={{
-              transform: `scale(${1 + trebleIntensity / 50}) translate(${trebleIntensity / 15}px, ${-trebleIntensity / 20}px)`,
-              opacity: 0.4 + trebleIntensity / 180,
-            }}
-          />
+      {/* Music Player Controls - Full Width Below */}
+      <div className="musicCardPlayer">
+        {/* Bouncing particles for visualization */}
+        <div
+          className={`musicCardParticle musicCardParticle1 ${beatDetected ? 'beatPulse' : ''}`}
+          style={{
+            transform: `scale(${1 + bassIntensity / 80}) translate(${bassIntensity / 20}px, ${bassIntensity / 25}px)`,
+            opacity: 0.3 + bassIntensity / 150,
+          }}
+        />
+        <div
+          className={`musicCardParticle musicCardParticle2 ${beatDetected ? 'beatPulse' : ''}`}
+          style={{
+            transform: `scale(${1 + midIntensity / 60}) translate(${-midIntensity / 20}px, ${midIntensity / 30}px)`,
+            opacity: 0.2 + midIntensity / 120,
+          }}
+        />
+        <div
+          className={`musicCardParticle musicCardParticle3 ${beatDetected ? 'beatPulse' : ''}`}
+          style={{
+            transform: `scale(${1 + trebleIntensity / 50}) translate(${trebleIntensity / 15}px, ${-trebleIntensity / 20}px)`,
+            opacity: 0.4 + trebleIntensity / 180,
+          }}
+        />
 
-          {/* Controls */}
-          <div className="musicCardPlayerControls">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onPlayPause(track);
-              }}
-              className={`musicCardPlayButton ${isPlaying ? 'playing' : ''}`}
-            >
-              {isPlaying ? <Pause size={18} /> : <Play size={18} />}
-            </button>
+        <div className="musicCardPlayerControls">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onPlayPause(track);
+            }}
+            className={`musicCardPlayButton ${isPlaying ? 'playing' : ''}`}
+          >
+            {isPlaying ? <Pause size={18} /> : <Play size={18} />}
+          </button>
 
+          <div
+            className="musicCardProgressBar"
+            onClick={handleProgressClick}
+          >
             <div
-              className="musicCardProgressBar"
-              onClick={handleProgressClick}
-            >
-              <div
-                className="musicCardProgressFill"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
+              className="musicCardProgressFill"
+              style={{ width: `${progress}%` }}
+            />
           </div>
         </div>
-
-        <button
-          onClick={() => !isPurchased && onPurchase(track)}
-          className={`musicCardPurchaseButton ${isPurchased ? 'musicCardPurchaseButtonPurchased' : ''}`}
-          disabled={isPurchased}
-        >
-          <ShoppingCart size={20} />
-          {isPurchased ? 'Already Purchased' : 'Purchase Track'}
-        </button>
       </div>
     </div>
   );
 }
+
 

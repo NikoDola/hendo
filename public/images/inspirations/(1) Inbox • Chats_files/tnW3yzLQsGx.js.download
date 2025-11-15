@@ -1,3 +1,0 @@
-;/*FB_PKG_DELIM*/
-
-__d("calculateIGDStickerDimensions",[],(function(a,b,c,d,e,f){"use strict";function a(a,b,c){a=a!=null?a:void 0;b=b!=null?b:void 0;if(a==null||b==null)return[a,b];c=b>a?c/b:c/a;return[a*c,b*c]}f["default"]=a}),66);

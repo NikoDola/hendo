@@ -26,6 +26,7 @@ export interface MusicTrack {
   pdfFileName?: string;
   imageFileUrl?: string;
   imageFileName?: string;
+  showToHome?: boolean;
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
@@ -40,6 +41,7 @@ export interface CreateMusicData {
   audioFile: File;
   pdfFile?: File;
   imageFile?: File;
+  showToHome?: boolean;
 }
 
 export interface UpdateMusicData {
@@ -51,6 +53,7 @@ export interface UpdateMusicData {
   audioFile?: File;
   pdfFile?: File;
   imageFile?: File;
+  showToHome?: boolean;
 }
 
 // ============================================================================
@@ -185,6 +188,7 @@ async function saveMusicToDatabase(data: {
   pdfFileName?: string;
   imageFileUrl?: string;
   imageFileName?: string;
+  showToHome?: boolean;
   adminEmail: string;
 }): Promise<{ id: string }> {
   try {
@@ -200,6 +204,7 @@ async function saveMusicToDatabase(data: {
       pdfFileName: data.pdfFileName,
       imageFileUrl: data.imageFileUrl,
       imageFileName: data.imageFileName,
+      showToHome: data.showToHome || false,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
       createdBy: data.adminEmail
@@ -257,6 +262,7 @@ async function prepareUpdateData(currentTrack: MusicTrack, data: UpdateMusicData
   if (data.hashtags !== undefined) updateData.hashtags = data.hashtags;
   if (data.genre !== undefined) updateData.genre = data.genre;
   if (data.price !== undefined) updateData.price = data.price;
+  if (data.showToHome !== undefined) updateData.showToHome = data.showToHome;
 
   if (data.audioFile) {
     await deleteFile(currentTrack.audioFileUrl);

@@ -13,6 +13,7 @@ export interface MusicTrack {
   pdfFileName?: string;
   imageFileUrl?: string;
   imageFileName?: string;
+  showToHome?: boolean;
   createdAt: string;
   updatedAt: string;
 }

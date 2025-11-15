@@ -57,7 +57,9 @@ export default function AdminDashboard() {
       title: String(formData.title || ''),
       description: String(formData.description || ''),
       hashtags: Array.isArray(formData.hashtags) ? formData.hashtags : [],
+      genre: String(formData.genre || ''),
       price: parseFloat(String(formData.price || '0')),
+      showToHome: Boolean(formData.showToHome),
     };
 
     if (formData.audioFileUrl && formData.audioFileName) {
