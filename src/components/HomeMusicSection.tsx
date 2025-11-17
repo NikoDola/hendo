@@ -174,7 +174,7 @@ export default function HomeMusicSection() {
 
       <main className="homeMusicMain">
         <div className="homeMusicList">
-          {tracks.slice(0, 4).map((track) => (
+          {tracks.slice(0, 3).map((track) => (
             <MusicCard
               key={track.id}
               track={track}

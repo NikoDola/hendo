@@ -26,9 +26,11 @@
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  animation: glitch 3.5s infinite steps(1);
+  animation: glitch 3.5s infinite steps(1) 2s both;
   z-index: 11;
   top: 40px;
+  /* Ensure the image is visible immediately */
+  opacity: 1;
 }
 
 @keyframes glitch {
@@ -36,93 +38,99 @@
   0%,
   90% {
     background-image: url('/images/hendo/4.png');
+    background-size: contain;
+    opacity: 1;
   }
 
   92.5% {
     background-image: url('/images/hendo/glitch1.png');
     background-size: contain;
-    z-index: 1;
+    opacity: 1;
   }
 
   95.5% {
     background-image: url('/images/hendo/glitch2.png');
     background-size: contain;
-    z-index: 1;
+    opacity: 1;
   }
 
   97.5% {
     background-image: url('/images/hendo/glitch3.png');
     background-size: contain;
-    z-index: 1;
+    opacity: 1;
   }
 }
 
 /* Glitch trigger animation - triggered by color changes */
 .glitch-trigger {
-  animation: glitchTrigger 1s steps(1);
+  animation: glitchTrigger 1s steps(1) both !important;
 }
 
 @keyframes glitchTrigger {
   0% {
     background-image: url('/images/hendo/4.png');
+    background-size: contain;
+    opacity: 1;
   }
 
   10% {
     background-image: url('/images/hendo/glitch1.png');
     background-size: contain;
-    z-index: 1;
+    opacity: 1;
   }
 
   20% {
     background-image: url('/images/hendo/glitch2.png');
     background-size: contain;
-    z-index: 1;
+    opacity: 1;
   }
 
   30% {
     background-image: url('/images/hendo/glitch3.png');
     background-size: contain;
-    z-index: 1;
+    opacity: 1;
   }
 
   40% {
     background-image: url('/images/hendo/glitch1.png');
     background-size: contain;
-    z-index: 1;
+    opacity: 1;
   }
 
   50% {
     background-image: url('/images/hendo/glitch2.png');
     background-size: contain;
-    z-index: 1;
+    opacity: 1;
   }
 
   60% {
     background-image: url('/images/hendo/glitch3.png');
     background-size: contain;
-    z-index: 1;
+    opacity: 1;
   }
 
   70% {
     background-image: url('/images/hendo/glitch1.png');
     background-size: contain;
-    z-index: 1;
+    opacity: 1;
   }
 
   80% {
     background-image: url('/images/hendo/glitch2.png');
     background-size: contain;
-    z-index: 1;
+    opacity: 1;
   }
 
   90% {
     background-image: url('/images/hendo/glitch3.png');
     background-size: contain;
-    z-index: 1;
+    opacity: 1;
   }
 
   100% {
     background-image: url('/images/hendo/4.png');
+    background-size: contain;
+    opacity: 1;
   }
 }
 

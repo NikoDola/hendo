@@ -37,18 +37,21 @@
 }
 
 .homeMusicList {
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
   max-width: 1400px;
   margin: 0 auto;
-  justify-content: center;
-  flex-wrap: wrap;
+}
+
+.homeMusicList .musicCard {
+  max-width: 100%;
+  width: 100%;
 }
 
 @media (max-width: 1200px) {
   .homeMusicList {
-    flex-direction: column;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -80,7 +83,7 @@
 
   .homeMusicList {
     gap: 1.5rem;
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
 }
 

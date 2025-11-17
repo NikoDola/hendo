@@ -135,6 +135,38 @@ button:hover {
   box-shadow: 0 0 20px var(--theme-color);
 }
 
+.view-more {
+  position: relative;
+  width: max-content;
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+  padding: 0.75rem 0;
+  font-size: 1rem;
+  transition: all 0.5s;
+}
+
+.view-more:hover {
+  color: var(--theme-color);
+}
+
+.view-more::before {
+  position: absolute;
+  content: "";
+  display: block;
+  width: 0%;
+  left: 50%;
+  transform: translate(-50%);
+  bottom: 0;
+  background-color: var(--theme-color);
+  transition: all 0.5s;
+  height: 2px;
+}
+
+.view-more:hover::before {
+  width: 100%;
+}
+
 input,
 textarea {
   outline: 1px solid var(--theme-color);
@@ -309,11 +341,12 @@ textarea::placeholder {
   box-shadow: none !important;
   color: #ffffff !important;
   font-family: var(--font-lemonmilk) !important;
-  font-size: 16px !important; /* Same as nav links */
+  font-size: 16px !important;
+  /* Same as nav links */
   letter-spacing: 0.5px !important;
   padding: 1rem !important;
   border-radius: 20px !important;
-  border: 1px solid rgba(255,255,255,0.25) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
   cursor: pointer !important;
   transition: all 0.25s ease !important;
   width: 100% !important;
@@ -323,7 +356,7 @@ textarea::placeholder {
 .signupButton:hover {
   background: #000000 !important;
   box-shadow: 0 0 22px var(--theme-color) !important;
-  border: 1px solid rgba(255,255,255,0.35) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
   color: #ffffff !important;
   text-decoration: none !important;
 }

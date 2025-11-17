@@ -3,6 +3,7 @@ import Contact from "@/components/client/Contact";
 import Newsletter from "@/components/pages/Newsletter";
 import Hero from "@/components/client/Hero";
 import HomeMusicSection from "@/components/HomeMusicSection";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -11,9 +12,11 @@ export default function Home() {
         <Hero />
       </section>
 
-      <section className="section-full">
+      <section className="section-regular">
         <HomeMusicSection />
-            <button className="flex align-centerr">view more</button>
+        <Link href="/music" className="view-more">
+          view more bits
+        </Link>
       </section>
      
      <section className="section-regular">

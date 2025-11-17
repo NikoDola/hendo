@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { MusicTrack } from '@/lib/music';
 import { Music } from 'lucide-react';
 import { useUserAuth } from '@/context/UserAuthContext';
-import MusicCard from '@/components/MusicCard';
+import MusicListCard from '@/components/MusicListCard';
 import SkeletonMusicCard from '@/components/SkeletonMusicCard';
 import MusicFilterBar, { FilterOptions } from '@/components/MusicFilterBar';
 import PurchaseWarningPopup from '@/components/PurchaseWarningPopup';
@@ -286,7 +286,7 @@ export default function MusicStore() {
 
           <div className="musicStoreList">
             {filteredAndSortedTracks.slice(0, displayedCount).map((track) => (
-              <MusicCard
+              <MusicListCard
                 key={track.id}
                 track={track}
                 isPlaying={playingTrack === track.id}
