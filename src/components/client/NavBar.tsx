@@ -8,6 +8,7 @@ import { CiShoppingCart } from "react-icons/ci";
 import { CiUser } from "react-icons/ci";
 import { IoMoonOutline } from "react-icons/io5";
 import { IoShirtOutline } from "react-icons/io5";
+import { IoLogOutOutline } from "react-icons/io5";
 import { useUserAuth } from "@/context/UserAuthContext";
 import { useRouter } from "next/navigation";
 
@@ -55,11 +56,19 @@ export default function NavMenu() {
 
   const handleDropdown = () => {
     setDropdown(!dropdown);
+    // Close profile dropdown when opening store dropdown
+    if (!dropdown) {
+      setProfileDropdown(false);
+    }
     console.log(dropdown);
   };
 
   const handleProfileDropdown = () => {
     setProfileDropdown(!profileDropdown);
+    // Close store dropdown when opening profile dropdown
+    if (!profileDropdown) {
+      setDropdown(false);
+    }
   };
 
   const handleViewProfile = () => {
@@ -163,19 +172,24 @@ export default function NavMenu() {
                   <CiShoppingCart className="navIcons" />
                 </div>
                 {profileDropdown && (
-                  <div className="profileDropdownMenu">
-                    <button
-                      onClick={handleViewProfile}
-                      className="profileDropdownButton"
-                    >
-                      View Profile
-                    </button>
-                    <button
-                      onClick={handleLogout}
-                      className="profileDropdownButton"
-                    >
-                      Logout
-                    </button>
+                  <div className="dropdownWrapper">
+                    <ul className="dropdownLinkWrapper">
+                      <li
+                        onClick={handleViewProfile}
+                        className="dropdownLink"
+                      >
+                        <CiUser className="dropdownIcon" />
+                        View Profile
+                      </li>
+                      <hr className="hrLine" />
+                      <li
+                        onClick={handleLogout}
+                        className="dropdownLink"
+                      >
+                        <IoLogOutOutline className="dropdownIcon" />
+                        Logout
+                      </li>
+                    </ul>
                   </div>
                 )}
               </div>
@@ -297,20 +311,23 @@ export default function NavMenu() {
                       <span>Profile</span>
                     </div>
                     {profileDropdown && (
-                      <div className="mobileProfileDropdownMenu">
-                        <button
+                      <ul className="mobileStoreDropdown">
+                        <li
                           onClick={handleViewProfile}
-                          className="profileDropdownButton"
+                          className="mobileStoreDropdownItem"
                         >
+                          <CiUser className="mobileDropdownIcon" />
                           View Profile
-                        </button>
-                        <button
+                        </li>
+                        <hr className="mobileHrLine" />
+                        <li
                           onClick={handleLogout}
-                          className="profileDropdownButton"
+                          className="mobileStoreDropdownItem"
                         >
+                          <IoLogOutOutline className="mobileDropdownIcon" />
                           Logout
-                        </button>
-                      </div>
+                        </li>
+                      </ul>
                     )}
                   </li>
                 )}

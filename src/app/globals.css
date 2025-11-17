@@ -116,22 +116,27 @@ form {
 }
 
 button {
-  flex: 0 0 20%;
-  /* lock to 20% width */
-  padding: 1rem;
-  border-radius: 1.2rem;
-  cursor: pointer;
-  background-color: yellow;
-  border: none;
-  font-family: var(--font-lemonmilk);
   background: var(--theme-color);
+  border: none;
+  border-radius: 20px;
+  padding: 1rem 2rem;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 1s ease;
-
+  box-shadow: 0 0 20px var(--theme-color);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  line-height: normal;
+  font-family: var(--font-lemonmilk);
 }
 
 button:hover {
-  background-color: var(--foreground);
-  color: white;
+  background-color: black;
+  color: var(--light-gray);
   box-shadow: 0 0 20px var(--theme-color);
 }
 
@@ -293,21 +298,7 @@ textarea::placeholder {
 }
 
 .formWrapper button {
-  background: var(--theme-color);
-  border: none;
-  border-radius: 20px;
-  padding: 1rem;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 1s ease;
-  min-height: auto;
-  box-shadow: 0 0 20px var(--theme-color);
-}
-
-.formWrapper button:hover {
-  background-color: lightgray;
-  color: black;
+  width: 100%;
 }
 
 .formWrapper button:active {

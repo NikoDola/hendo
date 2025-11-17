@@ -102,8 +102,8 @@
 }
 
 .newsletterButton:hover {
-  background: var(--theme-color);
-  color: black;
+  background: black;
+  color: var(--light-gray);
   box-shadow: 0 0 20px var(--theme-color);
 }
 

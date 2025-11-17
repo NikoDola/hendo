@@ -340,9 +340,9 @@
 }
 
 .musicCardPurchaseButton:hover {
-  background: lightgray;
-  color: black;
-  box-shadow: 0 0 25px var(--theme-color);
+  background: black;
+  color: var(--light-gray);
+  box-shadow: 0 0 20px var(--theme-color);
   transform: translateY(-1px);
 }
 

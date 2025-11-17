@@ -244,8 +244,10 @@
 }
 
 .musicListCardPurchaseBtn:hover:not(:disabled) {
+  background: black;
+  color: var(--light-gray);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px var(--theme-color);
+  box-shadow: 0 0 20px var(--theme-color);
 }
 
 .musicListCardPurchaseBtn:disabled,
