@@ -13,7 +13,7 @@ interface UserProfileProps {
 
 export default function UserProfile({ user, userData }: UserProfileProps) {
   return (
-    <div className="userProfileCard">
+    <div className="userProfileCard glass-effect">
       <h2 className="userProfileTitle">Your Profile</h2>
       
       <div className="userProfileGrid">

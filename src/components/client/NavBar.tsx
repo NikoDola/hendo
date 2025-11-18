@@ -127,7 +127,7 @@ export default function NavMenu() {
               ✨Store
               {dropdown ?
                 <div className="dropdownWrapper">
-                  <ul className="dropdownLinkWrapper">
+                  <ul className="dropdownLinkWrapper glass-effect">
                     <Link href="/music" className="dropdownLink" onClick={handleLinkClick}>
                       <IoMoonOutline className="dropdownIcon" />
                       Dream Station
@@ -173,7 +173,7 @@ export default function NavMenu() {
                 </div>
                 {profileDropdown && (
                   <div className="dropdownWrapper">
-                    <ul className="dropdownLinkWrapper">
+                    <ul className="dropdownLinkWrapper glass-effect">
                       <li
                       onClick={handleViewProfile}
                         className="dropdownLink"
@@ -252,7 +252,7 @@ export default function NavMenu() {
                     ✨Store
                   </div>
                   {dropdown && (
-                    <ul className="mobileStoreDropdown">
+                    <ul className="mobileStoreDropdown glass-effect">
                       <Link
                         href="/music"
                         className="mobileStoreDropdownItem mobileStoreDropdownItemLink"

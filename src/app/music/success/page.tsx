@@ -163,7 +163,7 @@ function PaymentSuccessContent() {
   if (!downloadData) {
     return (
       <div className="paymentSuccessContainer">
-        <div className="paymentSuccessCard">
+        <div className="paymentSuccessCard glass-effect">
           <div className="paymentSuccessError">
             <X className="paymentSuccessErrorIcon" />
             <h1 className="paymentSuccessErrorTitle">Payment Verification Failed</h1>
@@ -179,7 +179,7 @@ function PaymentSuccessContent() {
 
   return (
     <div className="paymentSuccessContainer">
-      <div className="paymentSuccessCard">
+      <div className="paymentSuccessCard glass-effect">
         <div className="paymentSuccessIcon">
           <CheckCircle className="w-12 h-12 text-green-500" />
         </div>
