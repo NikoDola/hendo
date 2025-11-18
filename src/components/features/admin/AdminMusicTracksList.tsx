@@ -1,4 +1,5 @@
 import { Plus, Edit, Trash2 } from 'lucide-react';
+import Image from 'next/image';
 import type { MusicTrack } from '@/hooks/useMusicTracks';
 import './AdminMusicTracksList.css';
 
@@ -48,9 +49,11 @@ export default function AdminMusicTracksList({
                 {/* Track Image Thumbnail */}
                 <div className="adminTrackImageContainer">
                   {track.imageFileUrl ? (
-                    <img 
+                    <Image 
                       src={track.imageFileUrl} 
                       alt={track.title}
+                      width={100}
+                      height={100}
                       className="adminTrackImage"
                     />
                   ) : (

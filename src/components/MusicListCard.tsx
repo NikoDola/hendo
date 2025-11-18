@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { ShoppingCart, Play, Pause, ChevronRight, ChevronDown } from 'lucide-react';
+import Image from 'next/image';
 import { MusicTrack } from '@/lib/music';
 import './MusicListCard.css';
 
@@ -176,9 +177,11 @@ export default function MusicListCard({
       <div className="musicListCardTop">
         {/* Album Cover */}
         <div className="musicListCardImageContainer">
-          <img
+          <Image
             src={track.imageFileUrl || '/images/hendo/4.png'}
             alt={track.title}
+            width={150}
+            height={150}
             className="musicListCardImage"
             style={{
               filter: isPlaying ? `brightness(${1 + glowIntensity * 0.3})` : 'brightness(1)',

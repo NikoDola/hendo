@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { ShoppingCart, Play, Pause, ChevronRight, ChevronDown } from 'lucide-react';
+import Image from 'next/image';
 import { MusicTrack } from '@/lib/music';
 import './MusicCard.css';
 import Router from 'next/router';
@@ -262,9 +263,11 @@ export default function MusicCard({
         {/* Image on the left */}
         <div className="musicCardImageContainer">
           {track.imageFileUrl ? (
-            <img
+            <Image
               src={track.imageFileUrl}
               alt={track.title}
+              width={120}
+              height={120}
               className="musicCardImage"
             />
           ) : (

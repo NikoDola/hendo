@@ -325,13 +325,14 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
             Audio File {isEditing ? '(optional, leave empty to keep current)' : '*'}
           </label>
           <label className="adminFileInputLabel">
-            <Upload size={16} />
+            <Upload size={16} aria-hidden="true" />
             <span>{formData.audioFile?.name || 'Choose audio file...'}</span>
             <input
               type="file"
               accept="audio/*"
               onChange={(e) => setFormData(prev => ({ ...prev, audioFile: e.target.files?.[0] || null }))}
               className="adminFileInput"
+              aria-label="Upload audio file"
             />
           </label>
         </div>
@@ -341,13 +342,14 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
             PDF Rights File (optional) {isEditing && '(leave empty to keep current)'}
           </label>
           <label className="adminFileInputLabel">
-            <FileText size={16} />
+            <FileText size={16} aria-hidden="true" />
             <span>{formData.pdfFile?.name || 'Choose PDF file...'}</span>
             <input
               type="file"
               accept="application/pdf"
               onChange={(e) => setFormData(prev => ({ ...prev, pdfFile: e.target.files?.[0] || null }))}
               className="adminFileInput"
+              aria-label="Upload PDF rights file"
             />
           </label>
         </div>
@@ -357,13 +359,14 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
             Cover Image (optional) {isEditing && '(leave empty to keep current)'}
           </label>
           <label className="adminFileInputLabel">
-            <Image size={16} />
+            <Image size={16} aria-hidden="true" />
             <span>{formData.imageFile?.name || 'Choose image file...'}</span>
             <input
               type="file"
               accept="image/*"
               onChange={(e) => setFormData(prev => ({ ...prev, imageFile: e.target.files?.[0] || null }))}
               className="adminFileInput"
+              aria-label="Upload cover image"
             />
           </label>
         </div>
