@@ -28,37 +28,7 @@ const nextConfig: NextConfig = {
         'firebase-admin': false,
       };
     }
-    
-    // Optimize bundle size
-    config.optimization = {
-      ...config.optimization,
-      moduleIds: 'deterministic',
-      runtimeChunk: 'single',
-      splitChunks: {
-        chunks: 'all',
-        cacheGroups: {
-          default: false,
-          vendors: false,
-          // Vendor chunk for node_modules
-          vendor: {
-            name: 'vendor',
-            chunks: 'all',
-            test: /node_modules/,
-            priority: 20,
-          },
-          // Common chunk for shared components
-          common: {
-            name: 'common',
-            minChunks: 2,
-            chunks: 'async',
-            priority: 10,
-            reuseExistingChunk: true,
-            enforce: true,
-          },
-        },
-      },
-    };
-    
+    // Let Next.js handle code splitting - it's already optimized!
     return config;
   },
 };
