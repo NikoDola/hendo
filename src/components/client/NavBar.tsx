@@ -175,19 +175,19 @@ export default function NavMenu() {
                   <div className="dropdownWrapper">
                     <ul className="dropdownLinkWrapper">
                       <li
-                        onClick={handleViewProfile}
+                      onClick={handleViewProfile}
                         className="dropdownLink"
-                      >
+                    >
                         <CiUser className="dropdownIcon" />
-                        View Profile
+                      View Profile
                       </li>
                       <hr className="hrLine" />
                       <li
-                        onClick={handleLogout}
+                      onClick={handleLogout}
                         className="dropdownLink"
-                      >
+                    >
                         <IoLogOutOutline className="dropdownIcon" />
-                        Logout
+                      Logout
                       </li>
                     </ul>
                   </div>
