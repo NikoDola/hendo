@@ -12,17 +12,14 @@ import { ColorToggleProvider } from "@/context/ColorToggleContext";
 
 const lemonMilk = localFont({
   src: [
-    { path: "../../public/fonts/LEMONMILK-Light.woff2", weight: "300", style: "normal" },
-    { path: "../../public/fonts/LEMONMILK-LightItalic.woff2", weight: "300", style: "italic" },
     { path: "../../public/fonts/LEMONMILK-Medium.woff2", weight: "500", style: "normal" },
-    { path: "../../public/fonts/LEMONMILK-MediumItalic.woff2", weight: "500", style: "italic" },
     { path: "../../public/fonts/LEMONMILK-Bold.woff2", weight: "700", style: "normal" },
-    { path: "../../public/fonts/LEMONMILK-BoldItalic.woff2", weight: "700", style: "italic" },
   ],
   display: "swap",
   preload: true,
   variable: "--font-lemonmilk",
   fallback: ["system-ui", "-apple-system", "Segoe UI", "Roboto", "Helvetica", "Arial", "sans-serif"],
+  adjustFontFallback: "Arial",
 });
 
 export const metadata: Metadata = {

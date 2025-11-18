@@ -1,9 +1,24 @@
 import "../globals.css"
-import Contact from "@/components/client/Contact";
-import Newsletter from "@/components/pages/Newsletter";
+import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import Hero from "@/components/client/Hero";
-import HomeMusicSection from "@/components/HomeMusicSection";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "T.Hendo - Home",
+  description: "Discover premium music beats and exclusive tracks with full rights.",
+};
+
+// Lazy load below-the-fold components
+const HomeMusicSection = dynamic(() => import("@/components/HomeMusicSection"), {
+  loading: () => <div style={{ minHeight: '400px' }} />,
+});
+const Newsletter = dynamic(() => import("@/components/pages/Newsletter"), {
+  loading: () => <div style={{ minHeight: '300px' }} />,
+});
+const Contact = dynamic(() => import("@/components/client/Contact"), {
+  loading: () => <div style={{ minHeight: '400px' }} />,
+});
 
 export default function Home() {
   return (
