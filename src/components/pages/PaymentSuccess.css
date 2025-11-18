@@ -1,6 +1,274 @@
 /* Payment Success Page Styles */
 
 .paymentSuccessContainer {
-  background: linear-gradient(to bottom, #0a0a0a, #1a1a1a);
+  background: transparent;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+.paymentSuccessCard {
+  background: rgb(255, 255, 255, 0.025);
+  -webkit-backdrop-filter: blur(1.5px);
+  backdrop-filter: blur(3px);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  position: relative;
+  isolation: isolate;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 3rem 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.paymentSuccessCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.03) 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.03) 75%,
+      transparent 100%);
+  border-radius: inherit;
+  z-index: -1;
+}
+
+.paymentSuccessCard::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  padding: 0.5px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.5) 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.5) 75%,
+      transparent 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.paymentSuccessIcon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  background: rgba(34, 197, 94, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: successPulse 2s ease-in-out infinite;
+}
+
+@keyframes successPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 15px rgba(34, 197, 94, 0);
+  }
+}
+
+.paymentSuccessTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.paymentSuccessSubtitle {
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.paymentDownloadsSection {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 15px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.paymentDownloadsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+}
+
+.paymentDownloadButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 0.75rem;
+}
+
+.paymentDownloadButton:last-child {
+  margin-bottom: 0;
+}
+
+.paymentDownloadButtonZip {
+  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+  color: white;
+}
+
+.paymentDownloadButtonZip:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #db2777 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+}
+
+.paymentDownloadButtonPdf {
+  background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+  color: white;
+}
+
+.paymentDownloadButtonPdf:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #0891b2 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+.paymentSuccessNote {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.paymentSuccessDashboardLink {
+  display: inline-block;
+  margin-top: 2rem;
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.paymentSuccessDashboardLink:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(5px);
+}
+
+.paymentSuccessLoading {
+  text-align: center;
+}
+
+.paymentSuccessSpinner {
+  width: 4rem;
+  height: 4rem;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.paymentSuccessLoadingText {
+  color: white;
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.paymentSuccessError {
+  text-align: center;
+  color: white;
+}
+
+.paymentSuccessErrorIcon {
+  width: 4rem;
+  height: 4rem;
+  color: #ef4444;
+  margin: 0 auto 1rem;
+}
+
+.paymentSuccessErrorTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.paymentSuccessErrorMessage {
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+}
+
+.paymentSuccessErrorButton {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: white;
+  color: black;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.paymentSuccessErrorButton:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .paymentSuccessCard {
+    padding: 2rem 1.5rem;
+  }
+
+  .paymentSuccessTitle {
+    font-size: 1.5rem;
+  }
+
+  .paymentSuccessSubtitle {
+    font-size: 1rem;
+  }
+
+  .paymentSuccessIcon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .paymentDownloadButton {
+    font-size: 0.9rem;
+    padding: 0.875rem 1.25rem;
+  }
 }
 

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Music } from 'lucide-react';
 import { useUserAuth } from '@/context/UserAuthContext';
 import MusicCard from '@/components/MusicCard';
 import type { MusicTrack } from '@/lib/music';
@@ -39,10 +38,6 @@ export default function HomeMusicSection() {
   const [isLoading, setIsLoading] = useState(true);
   const [playingTrack, setPlayingTrack] = useState<string | null>(null);
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
-  const [warningPopup, setWarningPopup] = useState<{ isOpen: boolean; trackTitle: string }>({
-    isOpen: false,
-    trackTitle: ''
-  });
   const { user, loading: authLoading } = useUserAuth();
   const router = useRouter();
 
@@ -118,10 +113,7 @@ export default function HomeMusicSection() {
     }
 
     if (isTrackPurchased(track.id)) {
-      setWarningPopup({
-        isOpen: true,
-        trackTitle: track.title
-      });
+      alert(`You already own "${track.title}". Check your dashboard to download it.`);
       return;
     }
 

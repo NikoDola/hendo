@@ -1,52 +1,37 @@
 import { useCallback } from 'react';
 
 export function useDownload() {
-  const download = useCallback(async (url: string, filename: string) => {
+  const download = useCallback(async (purchaseId: string, type: 'zip' | 'pdf', filename: string) => {
     try {
-      const response = await fetch(url, {
-        method: 'GET',
-        mode: 'cors',
-        cache: 'no-cache',
-      });
+      // Get fresh download URL from API
+      const response = await fetch(`/api/user/purchases/${purchaseId}/download?type=${type}`);
       
-      if (response.ok) {
-        const blob = await response.blob();
-        const blobUrl = window.URL.createObjectURL(blob);
-        
-        const link = document.createElement('a');
-        link.href = blobUrl;
-        link.download = filename;
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        
-        link.click();
-        
-        setTimeout(() => {
-          if (document.body.contains(link)) {
-            document.body.removeChild(link);
-          }
-          window.URL.revokeObjectURL(blobUrl);
-        }, 100);
-        return;
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to get download URL');
       }
-    } catch {
-      // Fetch failed - fallback to direct link
+
+      const { downloadUrl } = await response.json();
+
+      // Download the file
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = filename;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      
+      setTimeout(() => {
+        if (document.body.contains(link)) {
+          document.body.removeChild(link);
+        }
+      }, 100);
+    } catch (error) {
+      console.error('Download error:', error);
+      alert(`Download failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-    
-    // Fallback: direct link download
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.style.display = 'none';
-    document.body.appendChild(link);
-    link.click();
-    setTimeout(() => {
-      if (document.body.contains(link)) {
-        document.body.removeChild(link);
-      }
-    }, 100);
   }, []);
 
   return { download };

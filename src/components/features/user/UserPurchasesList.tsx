@@ -1,4 +1,4 @@
-import { Music, Download, FileText } from 'lucide-react';
+import { Music, Download } from 'lucide-react';
 import type { Purchase } from '@/hooks/usePurchases';
 import './UserPurchasesList.css';
 
@@ -6,7 +6,7 @@ interface UserPurchasesListProps {
   purchases: Purchase[];
   loading: boolean;
   onRefresh: () => void;
-  onDownload: (url: string, filename: string) => void;
+  onDownload: (purchaseId: string, type: 'zip' | 'pdf', filename: string) => void;
 }
 
 export default function UserPurchasesList({
@@ -27,7 +27,7 @@ export default function UserPurchasesList({
           {loading ? 'Refreshing...' : 'Refresh'}
         </button>
       </div>
-      
+
       {loading ? (
         <div className="userPurchasesLoading">
           Loading your tracks...
@@ -53,21 +53,14 @@ export default function UserPurchasesList({
                   </p>
                 </div>
               </div>
-              
+
               <div className="userPurchaseActions">
                 <button
-                  onClick={() => onDownload(purchase.zipUrl, `${purchase.trackTitle}.zip`)}
+                  onClick={() => onDownload(purchase.id, 'zip', `${purchase.trackTitle}.zip`)}
                   className="userPurchaseButton userPurchaseButtonPrimary"
                 >
                   <Download size={18} />
-                  Download Track
-                </button>
-                <button
-                  onClick={() => onDownload(purchase.pdfUrl, `${purchase.trackTitle}_rights.pdf`)}
-                  className="userPurchaseButton userPurchaseButtonSecondary"
-                >
-                  <FileText size={18} />
-                  Download PDF
+                  Download Package (Track + Rights PDF)
                 </button>
               </div>
             </div>

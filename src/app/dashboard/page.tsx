@@ -107,7 +107,7 @@ export default function UserDashboard() {
           purchases={purchases}
           loading={loadingPurchases}
           onRefresh={loadPurchases}
-          onDownload={download}
+          onDownload={(purchaseId, type, filename) => download(purchaseId, type, filename)}
         />
       </main>
     </div>

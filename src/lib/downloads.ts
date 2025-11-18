@@ -1,23 +1,10 @@
 // Download generation utilities for purchased music tracks
 import JSZip from 'jszip';
 import { getMusicTrack } from './music';
-import pdfMake from 'pdfmake/build/pdfmake';
 import { firebaseAdmin } from '@/lib/firebaseAdmin';
 
-// Initialize pdfMake fonts (lazy initialization inside function to avoid module loading issues)
-async function initializePdfMakeFonts() {
-  if (!pdfMake.vfs || Object.keys(pdfMake.vfs).length === 0) {
-    try {
-      const pdfFonts = await import('pdfmake/build/vfs_fonts');
-      const fontsModule = pdfFonts as { default?: { vfs?: Record<string, string> }; pdfMake?: { vfs?: Record<string, string> } };
-      pdfMake.vfs = fontsModule.default?.vfs || fontsModule.pdfMake?.vfs || {};
-    } catch (error: unknown) {
-      console.error('Failed to load pdfmake fonts:', error);
-      // Create empty vfs as fallback (will use default fonts)
-      pdfMake.vfs = {};
-    }
-  }
-}
+// We'll use a simple approach without pdfmake to avoid font issues
+import { jsPDF } from 'jspdf';
 
 interface DownloadPackage {
   zipUrl: string;
@@ -86,84 +73,74 @@ async function generateRightsPDF(
   userEmail: string,
   purchaseDate: Date
 ): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    try {
-      // Initialize fonts before creating PDF
-      initializePdfMakeFonts();
-      
-      const docDefinition = {
-        pageMargins: [50, 50, 50, 50],
-        content: [
-          {
-            text: 'Music Rights License',
-            fontSize: 24,
-            alignment: 'center',
-            margin: [0, 0, 0, 20]
-          },
-          {
-            text: `Date: ${purchaseDate.toLocaleDateString('en-US', { 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
-            })}`,
-            fontSize: 12,
-            margin: [0, 0, 0, 10]
-          },
-          {
-            text: `Track: ${trackTitle}`,
-            fontSize: 12,
-            margin: [0, 0, 0, 10]
-          },
-          {
-            text: 'Licensed To:',
-            fontSize: 12,
-            bold: true,
-            margin: [0, 10, 0, 5]
-          },
-          {
-            text: `Name: ${userName}`,
-            fontSize: 12,
-            margin: [0, 0, 0, 5]
-          },
-          {
-            text: `Email: ${userEmail}`,
-            fontSize: 12,
-            margin: [0, 0, 0, 20]
-          },
-          {
-            text: 'Client: T.Hendo',
-            fontSize: 12,
-            margin: [0, 0, 0, 20]
-          },
-          {
-            text: 'License Terms',
-            fontSize: 14,
-            bold: true,
-            margin: [0, 10, 0, 10]
-          },
-          {
-            text: 'This license grants the purchaser the right to use this music track in accordance with the terms of purchase. All rights are reserved by T.Hendo.',
-            fontSize: 10,
-            margin: [0, 0, 0, 10],
-            lineHeight: 1.5
-          },
-          {
-            text: 'For questions regarding this license, please contact T.Hendo.',
-            fontSize: 10,
-            margin: [0, 0, 0, 20]
-          }
-        ]
-      };
-
-      const pdfDoc = pdfMake.createPdf(docDefinition);
-      
-      pdfDoc.getBuffer((buffer: Buffer) => {
-        resolve(buffer);
-      });
-    } catch (error) {
-      reject(error);
-    }
-  });
+  try {
+    console.log('Generating PDF with jsPDF...');
+    
+    // Create a new PDF document using jsPDF (no font issues!)
+    const doc = new jsPDF();
+    
+    let yPosition = 20;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    // Title
+    doc.setFontSize(24);
+    doc.text('Music Rights License', pageWidth / 2, yPosition, { align: 'center' });
+    yPosition += 15;
+    
+    // Date
+    doc.setFontSize(12);
+    const dateStr = purchaseDate.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+    doc.text(`Date: ${dateStr}`, 20, yPosition);
+    yPosition += 10;
+    
+    // Track
+    doc.text(`Track: ${trackTitle}`, 20, yPosition);
+    yPosition += 15;
+    
+    // Licensed To section
+    doc.setFont('helvetica', 'bold');
+    doc.text('Licensed To:', 20, yPosition);
+    yPosition += 8;
+    
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Name: ${userName}`, 20, yPosition);
+    yPosition += 8;
+    
+    doc.text(`Email: ${userEmail}`, 20, yPosition);
+    yPosition += 15;
+    
+    doc.text('Client: T.Hendo', 20, yPosition);
+    yPosition += 20;
+    
+    // License Terms section
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('License Terms', 20, yPosition);
+    yPosition += 10;
+    
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    
+    const termsText = 'This license grants the purchaser the right to use this music track in accordance with the terms of purchase. All rights are reserved by T.Hendo.';
+    const splitTerms = doc.splitTextToSize(termsText, pageWidth - 40);
+    doc.text(splitTerms, 20, yPosition);
+    yPosition += splitTerms.length * 6 + 10;
+    
+    doc.text('For questions regarding this license, please contact T.Hendo.', 20, yPosition);
+    
+    // Convert to buffer
+    const pdfBuffer = Buffer.from(doc.output('arraybuffer'));
+    console.log('✅ PDF generated successfully');
+    
+    return pdfBuffer;
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    throw new Error('Failed to generate PDF');
+  }
 }
 
 /**

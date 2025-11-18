@@ -168,15 +168,6 @@ export default function MusicListCard({
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const formatTime = (durationString?: string) => {
-    if (!durationString) return '0:00';
-    const parts = durationString.split(':');
-    if (parts.length === 2) {
-      return `${parts[0]}:${parts[1].padStart(2, '0')}`;
-    }
-    return durationString;
-  };
-
   const glowIntensity = (bassIntensity + midIntensity + trebleIntensity) / 3;
 
   return (

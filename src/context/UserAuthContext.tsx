@@ -55,11 +55,9 @@ export function UserAuthProvider({ children }: { children: React.ReactNode }) {
   // Always start with null on both server and client to avoid hydration mismatch
   const [user, setUser] = useState<SessionUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isHydrated, setIsHydrated] = useState(false);
 
   // Hydrate from localStorage after mount (client-side only)
   useEffect(() => {
-    setIsHydrated(true);
     if (typeof window !== 'undefined') {
       try {
         const cachedUser = localStorage.getItem('hendo_user');

@@ -8,11 +8,15 @@ if (!admin.apps.length) {
   const privateKey = rawKey.includes('\n') ? rawKey : rawKey.replace(/\\n/g, '\n');
 
   try {
+    const storageBucket = process.env.FIREBASE_STORAGE_BUCKET || process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || `${projectId}.appspot.com`;
+
     if (projectId && clientEmail && privateKey) {
       admin.initializeApp({
         credential: admin.credential.cert({ projectId, clientEmail, privateKey }),
         projectId,
+        storageBucket,
       });
+      console.log('Firebase Admin initialized with storage bucket:', storageBucket);
     } else {
       // Fallback: try ADC if a service account json is configured
       const inferredProjectId = projectId || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
@@ -22,8 +26,9 @@ if (!admin.apps.length) {
       admin.initializeApp({
         credential: admin.credential.applicationDefault(),
         projectId: inferredProjectId,
+        storageBucket,
       });
-      console.warn('Firebase Admin: using applicationDefault credentials.');
+      console.warn('Firebase Admin: using applicationDefault credentials with bucket:', storageBucket);
     }
   } catch (e) {
     console.warn('Firebase Admin initialization failed:', e);

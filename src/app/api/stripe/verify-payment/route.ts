@@ -7,18 +7,24 @@ import { recordPurchase } from '@/lib/purchases';
 import { getMusicTrack } from '@/lib/music';
 
 export async function POST(request: NextRequest) {
+  console.log('🔍 [Verify Payment] Starting payment verification...');
   try {
+    console.log('👤 [Verify Payment] Getting user from session...');
     const user = await getUserFromSession();
     if (!user) {
+      console.error('❌ [Verify Payment] No user found in session');
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
       );
     }
+    console.log('✅ [Verify Payment] User authenticated:', user.email);
 
     const { sessionId } = await request.json();
+    console.log('📝 [Verify Payment] Session ID received:', sessionId);
 
     if (!sessionId) {
+      console.error('❌ [Verify Payment] No session ID provided');
       return NextResponse.json(
         { error: 'Session ID is required' },
         { status: 400 }
@@ -26,7 +32,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Retrieve the checkout session
+    console.log('💳 [Verify Payment] Retrieving Stripe session...');
+    console.log('🔑 [Verify Payment] Stripe configured:', !!stripe);
     const session = await stripe.checkout.sessions.retrieve(sessionId);
+    console.log('✅ [Verify Payment] Stripe session retrieved, payment status:', session.payment_status);
 
     if (session.payment_status !== 'paid') {
       return NextResponse.json(

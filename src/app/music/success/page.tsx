@@ -15,22 +15,40 @@ function PaymentSuccessContent() {
   useEffect(() => {
     if (sessionId) {
       verifyPayment(sessionId);
+      
+      // Add a timeout fallback (30 seconds)
+      const timeout = setTimeout(() => {
+        console.warn('⚠️ Payment verification timed out');
+        setIsLoading(false);
+      }, 30000);
+      
+      return () => clearTimeout(timeout);
+    } else {
+      console.error('❌ No session ID found in URL');
+      setIsLoading(false);
     }
   }, [sessionId]);
 
   const verifyPayment = async (sessionId: string) => {
+    console.log('🔍 Verifying payment with session ID:', sessionId);
     try {
+      console.log('📤 Sending verify payment request...');
       const response = await fetch('/api/stripe/verify-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sessionId })
       });
 
+      console.log('📥 Response status:', response.status);
+
       if (!response.ok) {
-        throw new Error('Failed to verify payment');
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        console.error('❌ Payment verification failed:', errorData);
+        throw new Error(errorData.error || 'Failed to verify payment');
       }
 
       const data = await response.json();
+      console.log('✅ Payment verified, data:', data);
       
       if (data.downloadUrl && data.pdfUrl) {
         setDownloadData(data);
@@ -41,12 +59,11 @@ function PaymentSuccessContent() {
           startDownloads(data);
         }, 500);
       } else {
+        console.error('❌ Invalid download data:', data);
         throw new Error('Invalid download data received');
       }
     } catch (error) {
-      console.error('Payment verification error:', error);
-      setIsLoading(false);
-    } finally {
+      console.error('💥 Payment verification error:', error);
       setIsLoading(false);
     }
   };
@@ -134,10 +151,10 @@ function PaymentSuccessContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center paymentSuccessContainer">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-white text-lg">Verifying your payment...</p>
+      <div className="paymentSuccessContainer">
+        <div className="paymentSuccessLoading">
+          <div className="paymentSuccessSpinner"></div>
+          <p className="paymentSuccessLoadingText">Verifying your payment...</p>
         </div>
       </div>
     );
@@ -145,93 +162,80 @@ function PaymentSuccessContent() {
 
   if (!downloadData) {
     return (
-      <div className="min-h-screen flex items-center justify-center paymentSuccessContainer">
-        <div className="text-center text-white">
-          <X className="w-16 h-16 mx-auto mb-4 text-red-500" />
-          <h1 className="text-2xl font-bold mb-2">Payment Verification Failed</h1>
-          <p className="text-gray-400 mb-6">We couldn&apos;t verify your payment. Please contact support.</p>
-          <Link 
-            href="/"
-            className="inline-block px-6 py-3 bg-white text-black rounded-lg hover:bg-gray-200 transition"
-          >
-            Return Home
-          </Link>
+      <div className="paymentSuccessContainer">
+        <div className="paymentSuccessCard">
+          <div className="paymentSuccessError">
+            <X className="paymentSuccessErrorIcon" />
+            <h1 className="paymentSuccessErrorTitle">Payment Verification Failed</h1>
+            <p className="paymentSuccessErrorMessage">We couldn&apos;t verify your payment. Please contact support.</p>
+            <Link href="/" className="paymentSuccessErrorButton">
+              Return Home
+            </Link>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <>
-      <div className="min-h-screen flex items-center justify-center p-4 paymentSuccessContainer">
-        <div className="max-w-2xl w-full">
-          <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-8 shadow-2xl">
-            <div className="flex flex-col items-center text-center mb-8">
-              <div className="bg-green-500/20 rounded-full p-3 mb-4">
-                <CheckCircle className="w-16 h-16 text-green-500" />
-              </div>
-              
-              <h1 className="text-3xl font-bold text-white mb-2">
-                Payment Successful!
-              </h1>
-              
-              <p className="text-gray-400 text-lg">
-                Thank you for your purchase
-              </p>
-            </div>
+    <div className="paymentSuccessContainer">
+      <div className="paymentSuccessCard">
+        <div className="paymentSuccessIcon">
+          <CheckCircle className="w-12 h-12 text-green-500" />
+        </div>
+        
+        <h1 className="paymentSuccessTitle">
+          Payment Successful!
+        </h1>
+        
+        <p className="paymentSuccessSubtitle">
+          Thank you for your purchase
+        </p>
 
-            <div className="bg-gray-900/50 rounded-xl p-6 mb-6">
-              <div className="flex items-center justify-center gap-4 text-white mb-4">
-                <Download className="w-6 h-6" />
-                <h2 className="text-xl font-semibold">Your Downloads</h2>
-              </div>
-              
-              <div className="space-y-3">
-                <button
-                  onClick={() => handleManualDownload(downloadData.downloadUrl, `${downloadData.trackTitle}.zip`)}
-                  className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-4 px-6 rounded-lg transition duration-300 font-medium"
-                >
-                  <Download className="w-5 h-5" />
-                  Download Music Files
-                </button>
-                
-                <button
-                  onClick={() => handleManualDownload(downloadData.pdfUrl, `${downloadData.trackTitle}_rights.pdf`)}
-                  className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white py-4 px-6 rounded-lg transition duration-300 font-medium"
-                >
-                  <FileText className="w-5 h-5" />
-                  Download Rights PDF
-                </button>
-              </div>
-            </div>
-            
-            <div className="text-sm text-gray-500">
-              {downloadData.expiresAt && <p>Downloads expire on: {new Date(downloadData.expiresAt).toLocaleDateString()}</p>}
-              <p className="mt-2">You can also download from your profile anytime!</p>
-            </div>
+        <div className="paymentDownloadsSection">
+          <div className="paymentDownloadsHeader">
+            <Download className="w-6 h-6" />
+            <h2>Your Downloads</h2>
           </div>
           
-          <div className="mt-6 text-center">
-            <Link 
-              href="/dashboard"
-              className="inline-block text-white hover:text-gray-300 transition underline"
-            >
-              Go to Dashboard →
-            </Link>
-          </div>
+          <button
+            onClick={() => handleManualDownload(downloadData.downloadUrl, `${downloadData.trackTitle}.zip`)}
+            className="paymentDownloadButton paymentDownloadButtonZip"
+          >
+            <Download className="w-5 h-5" />
+            Download Music Package
+          </button>
+          
+          <button
+            onClick={() => handleManualDownload(downloadData.pdfUrl, `${downloadData.trackTitle}_rights.pdf`)}
+            className="paymentDownloadButton paymentDownloadButtonPdf"
+          >
+            <FileText className="w-5 h-5" />
+            Download Rights PDF
+          </button>
+        </div>
+        
+        <div className="paymentSuccessNote">
+          <p>You can also download your purchases from your dashboard anytime!</p>
         </div>
       </div>
-    </>
+      
+      <div style={{ textAlign: 'center' }}>
+        <Link href="/dashboard" className="paymentSuccessDashboardLink">
+          Go to Dashboard →
+        </Link>
+      </div>
+    </div>
   );
 }
 
 export default function PaymentSuccess() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center paymentSuccessContainer">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-white text-lg">Loading...</p>
+      <div className="paymentSuccessContainer">
+        <div className="paymentSuccessLoading">
+          <div className="paymentSuccessSpinner"></div>
+          <p className="paymentSuccessLoadingText">Loading...</p>
         </div>
       </div>
     }>
