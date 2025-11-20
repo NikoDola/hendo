@@ -65,7 +65,7 @@ export default function Hero2() {
             <span id="letter_p">P</span>
           </div>
         </div>
-        <div className={`hendoImageDiv ${isGlitching ? 'glitch-trigger' : ''}`}></div>
+       
       </div>
     </div>
   )
