@@ -1,0 +1,287 @@
+/* Admin User Detail Page Styles */
+
+.adminUserDetailContainer {
+  min-height: 100vh;
+  background: transparent;
+  padding: 2rem 1rem;
+}
+
+.adminUserDetailContent {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.adminUserDetailLoadingContainer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.adminUserDetailLoadingContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.adminUserDetailLoadingText {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.adminUserDetailError {
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 2rem;
+}
+
+.adminUserDetailError h2 {
+  color: white;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.adminUserDetailError p {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 1.5rem;
+}
+
+/* Header */
+.adminUserDetailHeader {
+  margin-bottom: 2rem;
+}
+
+.adminUserDetailBackButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(64, 64, 64, 0.8);
+  border: none;
+  box-shadow: none !important;
+  border-radius: 0.5rem;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.adminUserDetailBackButton:hover {
+  background: rgba(96, 96, 96, 0.9);
+  box-shadow: none !important;
+}
+
+.adminUserDetailTitle {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+}
+
+/* Cards */
+.adminUserDetailCard {
+  margin-bottom: 2rem;
+  padding: 2rem;
+  border-radius: 0.75rem;
+}
+
+.adminUserDetailCardTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  margin: 0 0 1.5rem 0;
+}
+
+.adminUserDetailCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* User Info Grid */
+.adminUserDetailGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.adminUserDetailField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.adminUserDetailLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.adminUserDetailValue {
+  font-size: 1rem;
+  color: white;
+  word-break: break-word;
+}
+
+.adminUserDetailId {
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+}
+
+.adminUserDetailRoleBadge {
+  display: inline-flex;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.adminUserDetailRoleBadge.admin {
+  color: rgba(252, 165, 165, 1);
+}
+
+.adminUserDetailRoleBadge.user {
+  color: rgba(134, 239, 172, 1);
+}
+
+/* Stats */
+.adminUserDetailStats {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.adminUserDetailStat {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.adminUserDetailStatLabel {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+.adminUserDetailStatValue {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: white;
+}
+
+/* Purchase List */
+.adminUserDetailEmpty {
+  padding: 3rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1rem;
+}
+
+.adminUserDetailPurchasesList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.adminUserDetailPurchaseItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+
+.adminUserDetailPurchaseItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.adminUserDetailPurchaseInfo {
+  flex: 1;
+}
+
+.adminUserDetailPurchaseTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 0.5rem 0;
+}
+
+.adminUserDetailPurchaseMeta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.adminUserDetailPurchaseDate {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.adminUserDetailPurchasePrice {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--theme-color);
+  white-space: nowrap;
+  margin-left: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .adminUserDetailContainer {
+    padding: 1rem 0.5rem;
+  }
+
+  .adminUserDetailCard {
+    padding: 1.5rem;
+  }
+
+  .adminUserDetailTitle {
+    font-size: 1.5rem;
+  }
+
+  .adminUserDetailGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .adminUserDetailCardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .adminUserDetailPurchaseItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .adminUserDetailPurchasePrice {
+    margin-left: 0;
+  }
+}
+

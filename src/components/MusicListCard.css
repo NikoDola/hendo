@@ -63,10 +63,12 @@
 }
 
 @keyframes playingGlow {
+
   0%,
   100% {
     box-shadow: 0 0 30px var(--theme-color), 0 0 60px var(--theme-color);
   }
+
   50% {
     box-shadow: 0 0 40px var(--theme-color), 0 0 80px var(--theme-color);
   }
@@ -173,6 +175,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  
 }
 
 .musicListCardHashtagsToggle {
@@ -188,6 +191,8 @@
   transition: none;
   width: fit-content;
   margin-top: 0.5rem;
+  box-shadow: none;
+  background: none;
 }
 
 .musicListCardHashtagsToggle:hover {
@@ -244,8 +249,8 @@
 }
 
 .musicListCardPurchaseBtn:hover:not(:disabled) {
-  background: black;
-  color: var(--light-gray);
+  background: var(--light-gray);
+  color: black;
   transform: translateY(-2px);
   box-shadow: 0 0 20px var(--theme-color);
 }
@@ -365,7 +370,6 @@
   }
 
   .musicListCardPlayer {
-    flex-direction: column;
     gap: 1rem;
   }
 
@@ -374,4 +378,3 @@
     height: 56px;
   }
 }
-

@@ -9,6 +9,7 @@ export interface User {
   lastLoginAt: string;
   ipAddress?: string;
   purchases: number;
+  totalSpent?: number;
 }
 
 export function useUsers() {

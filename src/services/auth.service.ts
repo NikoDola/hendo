@@ -16,6 +16,7 @@ export interface User {
   lastLoginAt: Date;
   ipAddress?: string;
   purchases?: number;
+  totalSpent?: number;
 }
 
 const ADMIN_EMAILS = ['thelegendofhend@gmail.com', 'nikodola@gmail.com'];
@@ -132,9 +133,31 @@ export async function getAllUsers(): Promise<User[]> {
   try {
     const usersRef = collection(db, 'users');
     const querySnapshot = await getDocs(usersRef);
+    
+    // Get all purchases to calculate total spent per user
+    const purchasesRef = collection(db, 'purchases');
+    const purchasesSnapshot = await getDocs(purchasesRef);
+    
+    // Group purchases by userId and calculate total spent
+    const userSpending = new Map<string, { count: number; total: number }>();
+    purchasesSnapshot.docs.forEach(purchaseDoc => {
+      const data = purchaseDoc.data();
+      const userId = data.userId;
+      const price = data.price || 0;
+      
+      if (userId) {
+        const current = userSpending.get(userId) || { count: 0, total: 0 };
+        userSpending.set(userId, {
+          count: current.count + 1,
+          total: current.total + price
+        });
+      }
+    });
 
     return querySnapshot.docs.map(doc => {
       const data = doc.data();
+      const spending = userSpending.get(doc.id) || { count: 0, total: 0 };
+      
       return {
         id: doc.id,
         email: data.email,
@@ -143,7 +166,8 @@ export async function getAllUsers(): Promise<User[]> {
         createdAt: data.createdAt?.toDate() || new Date(),
         lastLoginAt: data.lastLoginAt?.toDate() || new Date(),
         ipAddress: data.ipAddress,
-        purchases: data.purchases || 0
+        purchases: spending.count,
+        totalSpent: spending.total
       };
     });
   } catch (error) {

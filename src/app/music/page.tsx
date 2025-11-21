@@ -268,7 +268,7 @@ export default function MusicStore() {
         trackTitle={warningPopup.trackTitle}
       />
 
-      <div className="musicStoreContainer">
+      <section className="section-regular">
         <header className="musicStoreHeader">
           <div className="musicStoreHeaderContent">
             <Music className="musicStoreHeaderIcon" size={40} />
@@ -276,7 +276,7 @@ export default function MusicStore() {
           </div>
         </header>
 
-        <main className="musicStoreMain">
+        <div>
           {/* Filter Bar */}
           <MusicFilterBar
             filters={filters}
@@ -325,8 +325,8 @@ export default function MusicStore() {
               <p className="musicStoreEmptyText">Check back later for new tracks!</p>
             </div>
           )}
-        </main>
-      </div>
+        </div>
+      </section>
     </>
   );
 }

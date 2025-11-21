@@ -44,15 +44,17 @@
 .adminMobileMenuButton {
   padding: 0.5rem;
   border-radius: 0.375rem;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(64, 64, 64, 0.8);
+  border: none;
+  box-shadow: none !important;
   color: white;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: all 0.2s;
 }
 
 .adminMobileMenuButton:hover {
-  color: rgba(255, 255, 255, 0.7);
+  background: rgba(96, 96, 96, 0.9);
+  box-shadow: none !important;
 }
 
 @media (min-width: 768px) {
@@ -122,20 +124,24 @@
   padding: 0.5rem 0.75rem;
   border-radius: 0.375rem;
   text-align: left;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(64, 64, 64, 0.8);
+  border: none;
+  box-shadow: none !important;
   color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .adminSidebarButton:hover {
+  background: rgba(96, 96, 96, 0.9);
   color: white;
+  box-shadow: none !important;
 }
 
 .adminSidebarButtonActive {
   color: white;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(96, 96, 96, 0.9);
+  box-shadow: none !important;
 }
 
 /* Main Content */
@@ -210,15 +216,17 @@
 .adminFilterButton {
   padding: 0.5rem;
   border-radius: 0.375rem;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(64, 64, 64, 0.8);
+  border: none;
+  box-shadow: none !important;
   color: white;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .adminFilterButton:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(96, 96, 96, 0.9);
+  box-shadow: none !important;
 }
 
 /* Users Table */
@@ -322,6 +330,24 @@
   color: rgba(134, 239, 172, 1);
 }
 
+.adminPurchasesCell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.adminPurchasesItem,
+.adminPurchasesSpent {
+  font-size: 0.875rem;
+  color: white;
+}
+
+.adminPurchasesLabel {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.75rem;
+}
+
 .adminActionsCell {
   display: flex;
   align-items: center;
@@ -329,26 +355,49 @@
 }
 
 .adminActionButton {
-  background: transparent;
+  background: rgba(64, 64, 64, 0.8);
   border: none;
+  box-shadow: none !important;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: all 0.2s;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  color: white;
+}
+
+.adminActionButton:hover {
+  background: rgba(96, 96, 96, 0.9);
+  box-shadow: none !important;
+}
+
+.adminActionButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .adminActionButtonView {
-  color: rgba(147, 197, 253, 1);
+  background: rgba(34, 139, 34, 0.8);
 }
 
-.adminActionButtonView:hover {
-  color: rgba(191, 219, 254, 1);
+.adminActionButtonView:hover:not(:disabled) {
+  background: rgba(34, 139, 34, 1);
 }
 
 .adminActionButtonDelete {
-  color: rgba(252, 165, 165, 1);
+  background: rgba(139, 0, 0, 0.8);
 }
 
-.adminActionButtonDelete:hover {
-  color: rgba(254, 202, 202, 1);
+.adminActionButtonDelete:hover:not(:disabled) {
+  background: rgba(139, 0, 0, 1);
+}
+
+.adminButtonSpinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
 }
 
 /* Loading Spinner */
@@ -358,6 +407,21 @@
   align-items: center;
   justify-content: center;
   background: transparent;
+}
+
+.adminTabLoadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  gap: 1rem;
+}
+
+.adminTabLoadingText {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  margin: 0;
 }
 
 .adminSpinner {
@@ -389,8 +453,9 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(64, 64, 64, 0.8);
+  border: none;
+  box-shadow: none !important;
   border-radius: 0.5rem;
   color: white;
   cursor: pointer;
@@ -399,8 +464,8 @@
 }
 
 .adminProductAddButton:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(96, 96, 96, 0.9);
+  box-shadow: none !important;
 }
 
 .adminProductForm {
@@ -551,8 +616,9 @@
 
 .adminFormSubmitButton {
   padding: 0.75rem 2rem;
-  background: var(--theme-color);
+  background: rgba(64, 64, 64, 0.8);
   border: none;
+  box-shadow: none !important;
   border-radius: 0.5rem;
   color: white;
   font-size: 1rem;
@@ -562,19 +628,21 @@
 }
 
 .adminFormSubmitButton:hover:not(:disabled) {
-  opacity: 0.9;
-  transform: translateY(-1px);
+  background: rgba(96, 96, 96, 0.9);
+  box-shadow: none !important;
 }
 
 .adminFormSubmitButton:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  box-shadow: none !important;
 }
 
 .adminFormCancelButton {
   padding: 0.75rem 2rem;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(64, 64, 64, 0.8);
+  border: none;
+  box-shadow: none !important;
   border-radius: 0.5rem;
   color: white;
   font-size: 1rem;
@@ -583,8 +651,8 @@
 }
 
 .adminFormCancelButton:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(96, 96, 96, 0.9);
+  box-shadow: none !important;
 }
 
 .adminTracksList {
@@ -607,7 +675,6 @@
 
 .adminTrackCard:hover {
   border-color: rgba(255, 255, 255, 0.4);
-  transform: translateY(-2px);
 }
 
 .adminTrackHeader {
@@ -631,35 +698,35 @@
 }
 
 .adminTrackActionButton {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(64, 64, 64, 0.8);
+  border: none;
+  box-shadow: none !important;
   border-radius: 0.375rem;
-  padding: 0.375rem;
+  padding: 0.5rem;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: white;
 }
 
 .adminTrackActionEdit {
-  color: rgba(147, 197, 253, 1);
-  border-color: rgba(147, 197, 253, 0.3);
+  color: white;
 }
 
 .adminTrackActionEdit:hover {
-  background: rgba(147, 197, 253, 0.1);
-  border-color: rgba(147, 197, 253, 0.5);
+  background: rgba(96, 96, 96, 0.9);
+  box-shadow: none !important;
 }
 
 .adminTrackActionDelete {
-  color: rgba(252, 165, 165, 1);
-  border-color: rgba(252, 165, 165, 0.3);
+  color: white;
 }
 
 .adminTrackActionDelete:hover {
-  background: rgba(252, 165, 165, 0.1);
-  border-color: rgba(252, 165, 165, 0.5);
+  background: rgba(96, 96, 96, 0.9);
+  box-shadow: none !important;
 }
 
 .adminTrackDescription {
@@ -702,5 +769,73 @@
 .adminTrackDate {
   font-size: 0.875rem;
   color: rgba(255, 255, 255, 0.5);
+}
+
+/* Mobile Responsive Users Table - Card Layout */
+@media (max-width: 767px) {
+  .adminTable thead {
+    display: none;
+  }
+
+  .adminTable,
+  .adminTable tbody,
+  .adminTable tr,
+  .adminTable td {
+    display: block;
+    width: 100%;
+  }
+
+  .adminTable tr {
+    margin-bottom: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.5rem;
+    padding: 1rem;
+  }
+
+  .adminTable tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .adminTable td {
+    padding: 0.75rem 0;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    white-space: normal;
+  }
+
+  .adminTable td:last-child {
+    border-bottom: none;
+  }
+
+  .adminTable td::before {
+    content: attr(data-label);
+    display: block;
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+    letter-spacing: 0.05em;
+  }
+
+  .adminUserCell {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .adminActionsCell {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .adminActionButton {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+  }
 }
 

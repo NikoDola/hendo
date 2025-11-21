@@ -14,7 +14,7 @@ import '@/components/pages/AdminDashboard.css';
 
 export default function AdminDashboard() {
   const { user, loading: isLoading } = useUserAuth();
-  const { users, loadUsers, deleteUser } = useUsers();
+  const { users, loading: usersLoading, loadUsers, deleteUser } = useUsers();
   const { tracks, loadTracks, deleteTrack } = useMusicTracks();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('users');
@@ -137,7 +137,16 @@ export default function AdminDashboard() {
 
         <main className="adminMain">
           {activeTab === 'users' && (
-            <AdminUsersList users={users} onDeleteUser={handleDeleteUser} />
+            <>
+              {usersLoading ? (
+                <div className="adminTabLoadingContainer">
+                  <div className="adminSpinner"></div>
+                  <p className="adminTabLoadingText">Loading users...</p>
+                </div>
+              ) : (
+                <AdminUsersList users={users} onDeleteUser={handleDeleteUser} />
+              )}
+            </>
           )}
 
           {activeTab === 'products' && (

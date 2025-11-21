@@ -2,7 +2,11 @@
 import { useEffect, useState, useRef } from "react";
 import "./BitBackground.css";
 
-export default function BitBackground() {
+interface BitBackgroundProps {
+  showPlayButton?: boolean;
+}
+
+export default function BitBackground({ showPlayButton = true }: BitBackgroundProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
@@ -292,37 +296,39 @@ export default function BitBackground() {
       </div>
 
       {/* Play button fixed on the right - OUTSIDE bit-background */}
-      <div className="play-button-container" onClick={togglePlayPause}>
-        {/* Song name above the button */}
-        <div className="song-name">
-          {musicFiles[currentSongIndex].name}
-        </div>
+      {showPlayButton && (
+        <div className="play-button-container" onClick={togglePlayPause}>
+          {/* Song name above the button */}
+          <div className="song-name">
+            {musicFiles[currentSongIndex].name}
+          </div>
 
-        <div className={`play-icon ${isPlaying ? 'playing' : ''}`}>
-          {isPlaying ? (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" fill="currentColor" />
-            </svg>
-          ) : (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M8 5v14l11-7z" fill="currentColor" />
-            </svg>
-          )}
-        </div>
+          <div className={`play-icon ${isPlaying ? 'playing' : ''}`}>
+            {isPlaying ? (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" fill="currentColor" />
+              </svg>
+            ) : (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M8 5v14l11-7z" fill="currentColor" />
+              </svg>
+            )}
+          </div>
 
-        {/* Music progress bar */}
-        <div className="music-progress-container">
-          <div
-            className="music-progress-bar"
-            onClick={handleProgressClick}
-          >
+          {/* Music progress bar */}
+          <div className="music-progress-container">
             <div
-              className="music-progress-fill"
-              style={{ width: `${progress}%` }}
-            ></div>
+              className="music-progress-bar"
+              onClick={handleProgressClick}
+            >
+              <div
+                className="music-progress-fill"
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 }

@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Search, Filter, Eye, Trash2 } from 'lucide-react';
 import type { User } from '@/hooks/useUsers';
+import DeleteConfirmModal from './DeleteConfirmModal';
 
 interface AdminUsersListProps {
   users: User[];
@@ -8,9 +10,13 @@ interface AdminUsersListProps {
 }
 
 export default function AdminUsersList({ users, onDeleteUser }: AdminUsersListProps) {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [loadingUserId, setLoadingUserId] = useState<string | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
   const filteredUsers = users
     .filter(user =>
@@ -40,11 +46,27 @@ export default function AdminUsersList({ users, onDeleteUser }: AdminUsersListPr
       return 0;
     });
 
-  const handleDelete = async (userId: string) => {
-    if (!confirm('Are you sure you want to delete this user?')) {
-      return;
+  const handleView = (userId: string) => {
+    setLoadingUserId(userId);
+    router.push(`/admin/users/${userId}`);
+  };
+
+  const handleDeleteClick = (user: User) => {
+    setUserToDelete(user);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (userToDelete) {
+      onDeleteUser(userToDelete.id);
     }
-    onDeleteUser(userId);
+    setDeleteModalOpen(false);
+    setUserToDelete(null);
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteModalOpen(false);
+    setUserToDelete(null);
   };
 
   return (
@@ -89,14 +111,13 @@ export default function AdminUsersList({ users, onDeleteUser }: AdminUsersListPr
               <th>Email</th>
               <th>Role</th>
               <th>Purchases</th>
-              <th>Created</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredUsers.map((user) => (
               <tr key={user.id}>
-                <td>
+                <td data-label="User">
                   <div className="adminUserCell">
                     <div className="adminUserAvatar">
                       <span>{user.name.charAt(0).toUpperCase()}</span>
@@ -107,27 +128,41 @@ export default function AdminUsersList({ users, onDeleteUser }: AdminUsersListPr
                     </div>
                   </div>
                 </td>
-                <td>{user.email}</td>
-                <td>
+                <td data-label="Email">{user.email}</td>
+                <td data-label="Role">
                   <span className={`adminRoleBadge ${user.role === 'admin' ? 'adminRoleBadgeAdmin' : 'adminRoleBadgeUser'}`}>
                     {user.role}
                   </span>
                 </td>
-                <td>{user.purchases}</td>
-                <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-                <td>
+                <td data-label="Purchases">
+                  <div className="adminPurchasesCell">
+                    <div className="adminPurchasesItem">
+                      <span className="adminPurchasesLabel">Items:</span> {user.purchases}
+                    </div>
+                    <div className="adminPurchasesSpent">
+                      <span className="adminPurchasesLabel">Spend:</span> ${(user.totalSpent || 0).toFixed(2)}
+                    </div>
+                  </div>
+                </td>
+                <td data-label="Actions">
                   <div className="adminActionsCell">
                     <button
-                      onClick={() => {/* View user details */ }}
+                      onClick={() => handleView(user.id)}
                       className="adminActionButton adminActionButtonView"
-                      aria-label="View user"
+                      aria-label="View user details"
+                      disabled={loadingUserId === user.id}
                     >
-                      <Eye size={16} />
+                      {loadingUserId === user.id ? (
+                        <div className="adminButtonSpinner"></div>
+                      ) : (
+                        <Eye size={16} />
+                      )}
                     </button>
                     <button
-                      onClick={() => handleDelete(user.id)}
+                      onClick={() => handleDeleteClick(user)}
                       className="adminActionButton adminActionButtonDelete"
                       aria-label="Delete user"
+                      disabled={loadingUserId !== null}
                     >
                       <Trash2 size={16} />
                     </button>
@@ -138,6 +173,14 @@ export default function AdminUsersList({ users, onDeleteUser }: AdminUsersListPr
           </tbody>
         </table>
       </div>
+
+      <DeleteConfirmModal
+        isOpen={deleteModalOpen}
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        userName={userToDelete?.name || ''}
+        userEmail={userToDelete?.email || ''}
+      />
     </div>
   );
 }
