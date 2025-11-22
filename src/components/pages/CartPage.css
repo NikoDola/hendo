@@ -1,0 +1,290 @@
+/* Cart Page Styles */
+
+.cartPageContainer {
+  min-height: 100vh;
+  background: transparent;
+  padding: 2rem 1rem;
+}
+
+.cartPageContent {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.cartPageHeader {
+  margin-bottom: 2rem;
+}
+
+.cartPageBackButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(64, 64, 64, 0.8);
+  border: none;
+  box-shadow: none;
+  border-radius: 0.5rem;
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.cartPageBackButton:hover {
+  background: rgba(96, 96, 96, 0.9);
+}
+
+.cartPageTitle {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+  font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
+}
+
+/* Empty State */
+.cartPageEmpty {
+  padding: 4rem 2rem;
+  text-align: center;
+  border-radius: 0.75rem;
+}
+
+.cartPageEmptyIcon {
+  color: rgba(255, 255, 255, 0.3);
+  margin-bottom: 1rem;
+}
+
+.cartPageEmpty h2 {
+  color: white;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.cartPageEmpty p {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 2rem;
+}
+
+.cartPageEmptyButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--theme-color);
+  border: none;
+  border-radius: 0.5rem;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.cartPageEmptyButton:hover {
+  opacity: 0.9;
+}
+
+/* Items List */
+.cartPageItems {
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.cartPageSelectAll {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 1rem;
+}
+
+.cartPageCheckboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cartPageCheckbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.cartPageItemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cartPageItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+
+.cartPageItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.cartPageItemCheckbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.cartPageItemImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.cartPageItemImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cartPageItemImagePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.cartPageItemInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.cartPageItemTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 0.5rem 0;
+  font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
+}
+
+.cartPageItemPrice {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--theme-color);
+  margin: 0;
+}
+
+.cartPageItemRemove {
+  background: rgba(139, 0, 0, 0.8);
+  border: none;
+  box-shadow: none;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cartPageItemRemove:hover {
+  background: rgba(139, 0, 0, 1);
+}
+
+/* Summary */
+.cartPageSummary {
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+}
+
+.cartPageSummaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cartPageSummaryRow:last-of-type {
+  border-bottom: none;
+  margin-bottom: 1.5rem;
+}
+
+.cartPageSummaryTotal {
+  font-weight: 700;
+  font-size: 1.125rem;
+  padding-top: 1rem;
+}
+
+.cartPageSummaryTotalPrice {
+  color: var(--theme-color);
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
+}
+
+.cartPagePurchaseButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  background: var(--theme-color);
+  border: none;
+  border-radius: 0.5rem;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
+}
+
+.cartPagePurchaseButton:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.cartPagePurchaseButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cartPageContainer {
+    padding: 1rem 0.5rem;
+  }
+
+  .cartPageTitle {
+    font-size: 1.5rem;
+  }
+
+  .cartPageItem {
+    flex-wrap: wrap;
+  }
+
+  .cartPageItemImage {
+    width: 60px;
+    height: 60px;
+  }
+
+  .cartPageItemRemove {
+    margin-left: auto;
+  }
+}
+

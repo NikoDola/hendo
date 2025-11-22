@@ -319,6 +319,48 @@
   white-space: nowrap;
 }
 
+.musicCardActionsWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+
+.musicCardIconActions {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  background: red;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.musicCardIconButton {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  padding: 0;
+  margin: 0;
+}
+
+.musicCardIconButton:hover {
+  color: var(--theme-color);
+  background: transparent;
+  box-shadow: none;
+}
+
+.musicCardIconButton.active {
+  color: var(--theme-color);
+  background: transparent;
+  box-shadow: none;
+}
+
 .musicCardPurchaseButton {
   flex: 0 0 auto;
   min-width: 140px;
@@ -391,5 +433,3 @@
     font-size: 1.25rem;
   }
 }
-
-

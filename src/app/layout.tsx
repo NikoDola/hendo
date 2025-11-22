@@ -8,6 +8,7 @@ import { ColorProvider } from "@/components/client/ColorProvider";
 import BackgroundEffects from "@/components/client/BackgroundEffects";
 import { UserAuthProvider } from "@/context/UserAuthContext";
 import { ColorToggleProvider } from "@/context/ColorToggleContext";
+import { CartProvider } from "@/context/CartContext";
 
 
 const lemonMilk = localFont({
@@ -37,15 +38,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div style={{ position: 'relative', zIndex: 1, pointerEvents: 'none', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
               <MouseProvider>
                 <UserAuthProvider>
-                  <div style={{ pointerEvents: 'auto' }}>
-                    <ConditionalNavbar />
-                  </div>
-                  <div style={{ pointerEvents: 'auto', flex: 1 }}>
-                    {children}
-                  </div>
-                  <div style={{ pointerEvents: 'auto' }}>
-                    <ConditionalFooter />
-                  </div>
+                  <CartProvider>
+                    <div style={{ pointerEvents: 'auto' }}>
+                      <ConditionalNavbar />
+                    </div>
+                    <div style={{ pointerEvents: 'auto', flex: 1 }}>
+                      {children}
+                    </div>
+                    <div style={{ pointerEvents: 'auto' }}>
+                      <ConditionalFooter />
+                    </div>
+                  </CartProvider>
                 </UserAuthProvider>
               </MouseProvider>
             </div>

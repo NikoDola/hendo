@@ -11,6 +11,7 @@ import { IoShirtOutline } from "react-icons/io5";
 import { IoLogOutOutline } from "react-icons/io5";
 import { useUserAuth } from "@/context/UserAuthContext";
 import { useRouter } from "next/navigation";
+import { useCart } from "@/context/CartContext";
 
 
 export default function NavMenu() {
@@ -20,6 +21,7 @@ export default function NavMenu() {
   const { user, signOut } = useUserAuth();
   const router = useRouter();
   const [isHydrated, setIsHydrated] = useState(false);
+  const { cartCount } = useCart();
 
   // Ensure component is hydrated on client
   useEffect(() => {
@@ -169,7 +171,12 @@ export default function NavMenu() {
                   className="profileIconsWrapper"
                 >
                   <CiUser className="navIcons" />
-                  <CiShoppingCart className="navIcons" />
+                  <Link href="/dashboard/cart" className="navCartIconWrapper">
+                    <CiShoppingCart className="navIcons" />
+                    {cartCount > 0 && (
+                      <span className="navCartBadge">{cartCount}</span>
+                    )}
+                  </Link>
                 </div>
                 {profileDropdown && (
                   <div className="dropdownWrapper">
@@ -307,7 +314,12 @@ export default function NavMenu() {
                       className="mobileProfileIconsWrapper"
                     >
                       <CiUser className="navIcons" />
-                      <CiShoppingCart className="navIcons" />
+                      <Link href="/dashboard/cart" className="navCartIconWrapper">
+                        <CiShoppingCart className="navIcons" />
+                        {cartCount > 0 && (
+                          <span className="navCartBadge">{cartCount}</span>
+                        )}
+                      </Link>
                       <span>Profile</span>
                     </div>
                     {profileDropdown && (

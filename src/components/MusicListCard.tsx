@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ShoppingCart, Play, Pause, ChevronRight, ChevronDown } from 'lucide-react';
+import { ShoppingCart, Play, Pause, ChevronRight, ChevronDown, Star } from 'lucide-react';
 import Image from 'next/image';
 import { MusicTrack } from '@/lib/music';
+import { useCart } from '@/context/CartContext';
 import './MusicListCard.css';
 
 interface MusicListCardProps {
@@ -21,6 +22,7 @@ export default function MusicListCard({
   onPurchase,
   isPurchased = false
 }: MusicListCardProps) {
+  const { addToCart, toggleFavorite, isInCart, isFavorite } = useCart();
   const [audio] = useState(() => {
     const audioEl = new Audio();
     audioEl.loop = false;
@@ -207,7 +209,6 @@ export default function MusicListCard({
           </div>
 
           <div className="musicListCardDetails">
-            <span className="musicListCardPrice">${track.price.toFixed(2)}</span>
           </div>
 
           {track.description && (
@@ -245,6 +246,32 @@ export default function MusicListCard({
             <ShoppingCart size={20} />
             {isPurchased ? 'Purchased' : `$${track.price.toFixed(2)}`}
           </button>
+          <div className="musicListCardIconActions">
+            <button
+              onClick={() => addToCart({
+                id: track.id,
+                title: track.title,
+                price: track.price,
+                imageFileUrl: track.imageFileUrl
+              })}
+              className={`musicListCardIconButton ${isInCart(track.id) ? 'active' : ''}`}
+              aria-label="Add to cart"
+            >
+              <ShoppingCart size={20} />
+            </button>
+            <button
+              onClick={() => toggleFavorite(track.id, {
+                id: track.id,
+                title: track.title,
+                price: track.price,
+                imageFileUrl: track.imageFileUrl
+              })}
+              className={`musicListCardIconButton ${isFavorite(track.id) ? 'active' : ''}`}
+              aria-label="Add to favorites"
+            >
+              <Star size={20} fill={isFavorite(track.id) ? 'currentColor' : 'none'} />
+            </button>
+          </div>
         </div>
       </div>
 

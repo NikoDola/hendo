@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ShoppingCart, Play, Pause, ChevronRight, ChevronDown } from 'lucide-react';
+import { ShoppingCart, Play, Pause, ChevronRight, ChevronDown, Star } from 'lucide-react';
 import Image from 'next/image';
 import { MusicTrack } from '@/lib/music';
+import { useCart } from '@/context/CartContext';
 import './MusicCard.css';
 import Router from 'next/router';
 
@@ -24,6 +25,7 @@ export default function MusicCard({
   isPurchased = false,
   variant = 'default'
 }: MusicCardProps) {
+  const { addToCart, toggleFavorite, isInCart, isFavorite } = useCart();
   const [audio] = useState(() => {
     const audioEl = new Audio();
     audioEl.loop = false;
@@ -317,14 +319,42 @@ export default function MusicCard({
         {/* Price and Purchase section */}
         <div className="musicCardPurchaseSection">
           <span className="musicCardPrice">{formatPrice(track.price)}</span>
-          <button
-            onClick={() => !isPurchased && onPurchase(track)}
-            className={`musicCardPurchaseButton ${isPurchased ? 'musicCardPurchaseButtonPurchased' : ''}`}
-            disabled={isPurchased}
-          >
-            <ShoppingCart size={20} />
-            {isPurchased ? 'Purchased' : 'Purchase'}
-          </button>
+          <div className="musicCardActionsWrapper">
+            <button
+              onClick={() => !isPurchased && onPurchase(track)}
+              className={`musicCardPurchaseButton ${isPurchased ? 'musicCardPurchaseButtonPurchased' : ''}`}
+              disabled={isPurchased}
+            >
+              <ShoppingCart size={20} />
+              {isPurchased ? 'Purchased' : 'Purchase'}
+            </button>
+            <div className="musicCardIconActions">
+              <button
+                onClick={() => addToCart({
+                  id: track.id,
+                  title: track.title,
+                  price: track.price,
+                  imageFileUrl: track.imageFileUrl
+                })}
+                className={`musicCardIconButton ${isInCart(track.id) ? 'active' : ''}`}
+                aria-label="Add to cart"
+              >
+                <ShoppingCart size={20} />
+              </button>
+              <button
+                onClick={() => toggleFavorite(track.id, {
+                  id: track.id,
+                  title: track.title,
+                  price: track.price,
+                  imageFileUrl: track.imageFileUrl
+                })}
+                className={`musicCardIconButton ${isFavorite(track.id) ? 'active' : ''}`}
+                aria-label="Add to favorites"
+              >
+                <Star size={20} fill={isFavorite(track.id) ? 'currentColor' : 'none'} />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
