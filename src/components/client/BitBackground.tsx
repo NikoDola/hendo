@@ -295,10 +295,9 @@ export default function BitBackground({ showPlayButton = true }: BitBackgroundPr
         )}
       </div>
 
-      {/* Play button fixed on the right - OUTSIDE bit-background */}
-      {showPlayButton && (
+      {/* Play button fixed on the right - COMMENTED OUT */}
+      {/* {showPlayButton && (
         <div className="play-button-container" onClick={togglePlayPause}>
-          {/* Song name above the button */}
           <div className="song-name">
             {musicFiles[currentSongIndex].name}
           </div>
@@ -315,7 +314,6 @@ export default function BitBackground({ showPlayButton = true }: BitBackgroundPr
             )}
           </div>
 
-          {/* Music progress bar */}
           <div className="music-progress-container">
             <div
               className="music-progress-bar"
@@ -328,7 +326,7 @@ export default function BitBackground({ showPlayButton = true }: BitBackgroundPr
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </>
   );
 }
