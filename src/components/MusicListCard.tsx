@@ -24,6 +24,8 @@ export default function MusicListCard({
 }: MusicListCardProps) {
   const { addToCart, toggleFavorite, isInCart, isFavorite } = useCart();
   const [audio] = useState(() => {
+    // Only create Audio in browser environment
+    if (typeof window === 'undefined') return null;
     const audioEl = new Audio();
     audioEl.loop = false;
     audioEl.volume = 1;
@@ -43,7 +45,7 @@ export default function MusicListCard({
 
   // Initialize AudioContext and analyser when playing starts
   useEffect(() => {
-    if (!isPlaying || !audio.src || audio.paused) return;
+    if (!audio || !isPlaying || !audio.src || audio.paused) return;
 
     const initAudioAnalysis = async () => {
       try {
@@ -127,6 +129,8 @@ export default function MusicListCard({
 
   // Audio progress tracking
   useEffect(() => {
+    if (!audio) return;
+    
     const updateProgress = () => {
       if (audio.duration) {
         setProgress((audio.currentTime / audio.duration) * 100);
@@ -139,6 +143,8 @@ export default function MusicListCard({
 
   // Handle play/pause
   useEffect(() => {
+    if (!audio) return;
+    
     if (isPlaying) {
       if (audio.src !== track.audioFileUrl) {
         audio.src = track.audioFileUrl;
@@ -157,8 +163,10 @@ export default function MusicListCard({
   // Cleanup
   useEffect(() => {
     return () => {
-      audio.pause();
-      audio.src = '';
+      if (audio) {
+        audio.pause();
+        audio.src = '';
+      }
       if (audioContext) {
         audioContext.close();
       }
@@ -299,8 +307,8 @@ export default function MusicListCard({
             />
           </div>
           <div className="musicListCardProgressTime">
-            <span>{audio.currentTime ? formatDuration(audio.currentTime) : '0:00'}</span>
-            <span>{audio.duration ? formatDuration(audio.duration) : '--:--'}</span>
+            <span>{audio?.currentTime ? formatDuration(audio.currentTime) : '0:00'}</span>
+            <span>{audio?.duration ? formatDuration(audio.duration) : '--:--'}</span>
           </div>
         </div>
       </div>

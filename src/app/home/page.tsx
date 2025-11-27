@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 
 import Link from "next/link";
+import HomeMusicSectionServer from "@/components/server/HomeMusicSectionServer";
 
 export const metadata: Metadata = {
   title: "T.Hendo - Home",
@@ -10,9 +11,6 @@ export const metadata: Metadata = {
 };
 
 // Lazy load below-the-fold components
-const HomeMusicSection = dynamic(() => import("@/components/HomeMusicSection"), {
-  loading: () => <div style={{ minHeight: '400px' }} />,
-});
 const Newsletter = dynamic(() => import("@/components/pages/Newsletter"), {
   loading: () => <div style={{ minHeight: '300px' }} />,
 });
@@ -28,7 +26,7 @@ export default function Home() {
       </section>
 
       <section className="section-regular">
-        <HomeMusicSection />
+        <HomeMusicSectionServer />
         <Link href="/music" className="view-more">
           view more bits
         </Link>

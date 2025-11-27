@@ -27,6 +27,8 @@ export default function MusicCard({
 }: MusicCardProps) {
   const { addToCart, toggleFavorite, isInCart, isFavorite } = useCart();
   const [audio] = useState(() => {
+    // Only create Audio in browser environment
+    if (typeof window === 'undefined') return null;
     const audioEl = new Audio();
     audioEl.loop = false;
     audioEl.volume = 1;
@@ -50,7 +52,7 @@ export default function MusicCard({
   }, [])
   // Initialize AudioContext and analyser when playing starts
   useEffect(() => {
-    if (!isPlaying || !audio.src || audio.paused) return;
+    if (!audio || !isPlaying || !audio.src || audio.paused) return;
 
     const initAudioAnalysis = async () => {
       try {
@@ -133,7 +135,7 @@ export default function MusicCard({
 
   // Update progress
   useEffect(() => {
-    if (!isPlaying) return;
+    if (!audio || !isPlaying) return;
 
     const updateProgress = () => {
       if (audio.duration) {
@@ -231,7 +233,7 @@ export default function MusicCard({
 
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
-    if (!audio.duration) return;
+    if (!audio || !audio.duration) return;
 
     const progressBar = e.currentTarget;
     const rect = progressBar.getBoundingClientRect();
@@ -251,8 +253,10 @@ export default function MusicCard({
 
   useEffect(() => {
     return () => {
-      audio.pause();
-      audio.src = '';
+      if (audio) {
+        audio.pause();
+        audio.src = '';
+      }
       if (audioContext) {
         audioContext.close();
       }
