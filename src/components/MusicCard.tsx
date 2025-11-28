@@ -266,7 +266,6 @@ export default function MusicCard({
   return (
     <div className={`musicCard ${isPlaying ? 'musicCardPlaying' : ''} ${variant === 'home' ? 'musicCardHome' : ''}`}>
       <div className="musicCardTop">
-        {/* Image on the left */}
         <div className="musicCardImageContainer">
           {track.imageFileUrl ? (
             <Image
@@ -324,7 +323,8 @@ export default function MusicCard({
         <div className="musicCardPurchaseSection">
           <span className="musicCardPrice">{formatPrice(track.price)}</span>
           <div className="musicCardActionsWrapper">
-            <button
+            <div className='userActionWrapper'>
+                <button
               onClick={() => !isPurchased && onPurchase(track)}
               className={`musicCardPurchaseButton ${isPurchased ? 'musicCardPurchaseButtonPurchased' : ''}`}
               disabled={isPurchased}
@@ -332,7 +332,8 @@ export default function MusicCard({
               <ShoppingCart size={20} />
               {isPurchased ? 'Purchased' : 'Purchase'}
             </button>
-            <div className="musicCardIconActions">
+            
+              <div className="musicCardIconActions">
               <button
                 onClick={() => addToCart({
                   id: track.id,
@@ -358,6 +359,8 @@ export default function MusicCard({
                 <Star size={20} fill={isFavorite(track.id) ? 'currentColor' : 'none'} />
               </button>
             </div>
+            </div>
+          
           </div>
         </div>
       </div>

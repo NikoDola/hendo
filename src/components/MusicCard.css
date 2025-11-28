@@ -302,11 +302,12 @@
   flex-shrink: 0;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: start;
   justify-content: space-between;
   gap: 1rem;
   width: 100%;
   margin-left: 0;
+  margin-top: 1rem;
   min-width: auto;
 }
 
@@ -326,11 +327,16 @@
   gap: 1rem;
 }
 
+.userActionWrapper{
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+}
+
 .musicCardIconActions {
   display: flex;
   flex-direction: row;
   gap: 1rem;
-  background: red;
   justify-content: space-between;
   margin-top: 1rem;
 }
