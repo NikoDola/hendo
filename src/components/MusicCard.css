@@ -174,7 +174,7 @@
   font-family: 'Roboto', sans-serif;
   margin-top: 0.5rem;
   width: fit-content;
-
+  box-shadow: none;
 }
 
 .musicCardHashtagsToggle:hover {
