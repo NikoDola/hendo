@@ -39,15 +39,11 @@
 .newsletterTitle {
   border-radius: 2rem;
   text-align: center;
-  font-size: var(--text-3xl);
+  font-size: var(--text-5xl);
   font-family: var(--lemonmilk);
-  background-color: yellow;
-  color: black;
+  color: var(--theme-color);
   padding: 1rem;
   margin-top: 1rem;
-  background: var(--theme-color);
-  transition: background-color 1s ease, box-shadow 1s ease;
-  box-shadow: 0 0 20px var(--theme-color);
 }
 
 .newsletterWrapper {
