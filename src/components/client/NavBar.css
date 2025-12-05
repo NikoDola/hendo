@@ -1,7 +1,7 @@
 /* Desktop */
 .headerWrapperDesktop {
   padding: 3% 10% 3% 10%;
-  position: relative;
+  position: sticky;
 }
 
 .cardProfileWrapper {

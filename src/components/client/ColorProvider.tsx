@@ -4,15 +4,17 @@ import React from "react";
 import { useColorToggle } from "@/context/ColorToggleContext";
 
 export function ColorProvider({ children }: { children: React.ReactNode }) {
-  const { color } = useColorToggle();
+  const { color, color1, color2 } = useColorToggle();
 
   return (
     <div
+      className="colorProviderWrapper"
       style={
         {
           "--theme-color": color,
-          transition: "var(--theme-color) 1s ease"
-        } as React.CSSProperties
+          "--theme-color-1": color1,
+          "--theme-color-2": color2,
+        } as React.CSSProperties & { [key: string]: string }
       }
     >
       {children}

@@ -1,38 +1,35 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
-const colors = [
-  "hsl(317 100% 54%)", // neon pink
-  "hsl(190 100% 50%)", // neon cyan
-  "hsl(120 100% 45%)", // neon green
-  "hsl(50 100% 50%)",  // neon yellow
-  "hsl(280 100% 60%)", // neon purple
-  "hsl(0 100% 60%)",   // neon red
-  "hsl(30 100% 55%)"   // neon orange
+const palette = [
+  ["#0000ff", "#00ff00"], // blue → green
+  ["#ff0000", "#8000ff"], // red → purple
+  ["#ffff00", "#000000"], // yellow → black
+  ["#00ff00", "#ff00ff"], // neon green → magenta
+  ["#ff6600", "#0066ff"], // orange → blue
+  ["#00ffff", "#ff0000"], // cyan → red
+  ["#ffffff", "#ff00ff"]  // white → magenta
 ];
 
 export function ColorProvider({ children }: { children: React.ReactNode }) {
-  const [i, setI] = useState(0);
-  const palRef = useRef(colors);
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    const id = setInterval(() => {
-      setI((prev) => (prev + 1) % palRef.current.length);
-    }, 3000); // change every 3s
-    return () => clearInterval(id);
+    const interval = setInterval(() => {
+      setIndex(prev => (prev + 1) % palette.length);
+    }, 3000);
+    return () => clearInterval(interval);
   }, []);
 
-  const color = palRef.current[i];
+  const [color1, color2] = palette[index];
 
   return (
     <div
-      style={
-        {
-          "--theme-color": color,
-          transition: "var(--theme-color) 1s ease"
-        } as React.CSSProperties
-      }
+      style={{
+        "--theme-color-1": color1,
+        "--theme-color-2": color2
+      } as React.CSSProperties}
     >
       {children}
     </div>

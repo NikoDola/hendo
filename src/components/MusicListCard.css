@@ -58,7 +58,7 @@
 }
 
 .musicListCardPlaying {
-  box-shadow: 0 0 30px var(--theme-color), 0 0 60px var(--theme-color);
+  box-shadow: 0 0 30px var(--theme-color-1), 0 0 60px var(--theme-color-2);
   animation: playingGlow 2s ease-in-out infinite;
 }
 
@@ -66,11 +66,11 @@
 
   0%,
   100% {
-    box-shadow: 0 0 30px var(--theme-color), 0 0 60px var(--theme-color);
+    box-shadow: 0 0 30px var(--theme-color-1), 0 0 60px var(--theme-color-2);
   }
 
   50% {
-    box-shadow: 0 0 40px var(--theme-color), 0 0 80px var(--theme-color);
+    box-shadow: 0 0 40px var(--theme-color-1), 0 0 80px var(--theme-color-2);
   }
 }
 
@@ -271,7 +271,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background: var(--theme-color);
+  background: linear-gradient(to top right, var(--theme-color-1), var(--theme-color-2));
   color: black;
   border: none;
   border-radius: 12px;
@@ -280,13 +280,14 @@
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
+  box-shadow: 0 0 15px var(--theme-color-1), 0 0 30px var(--theme-color-2);
 }
 
 .musicListCardPurchaseBtn:hover:not(:disabled) {
   background: var(--light-gray);
   color: black;
   transform: translateY(-2px);
-  box-shadow: 0 0 20px var(--theme-color);
+  box-shadow: 0 0 20px var(--theme-color-1), 0 0 40px var(--theme-color-2);
 }
 
 .musicListCardPurchaseBtn:disabled,
@@ -319,7 +320,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--theme-color);
+  background: linear-gradient(to top right, var(--theme-color-1), var(--theme-color-2));
   color: black;
   border: none;
   border-radius: 50%;
@@ -327,6 +328,7 @@
   transition: all 0.3s ease;
   aspect-ratio: 1 / 1;
   padding: 0;
+  box-shadow: 0 0 10px var(--theme-color-1), 0 0 20px var(--theme-color-2);
 }
 
 .musicListCardPlayButton svg {
@@ -335,7 +337,7 @@
 
 .musicListCardPlayButton:hover {
   transform: scale(1.1);
-  box-shadow: 0 4px 12px var(--theme-color);
+  box-shadow: 0 0 15px var(--theme-color-1), 0 0 30px var(--theme-color-2);
 }
 
 .musicListCardProgressContainer {
@@ -359,7 +361,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: var(--theme-color);
+  background: linear-gradient(to right, var(--theme-color-1), var(--theme-color-2));
   border-radius: 3px;
   transition: width 0.1s linear;
 }
@@ -369,7 +371,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: var(--theme-color);
+  background: linear-gradient(to right, var(--theme-color-1), var(--theme-color-2));
   filter: blur(8px);
   transition: width 0.1s linear, opacity 0.2s;
 }

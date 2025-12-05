@@ -2,19 +2,39 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
-// 7 neon colors that will cycle through the app
-const colors = [
-  "hsl(317 100% 54%)", // neon pink
-  "hsl(190 100% 50%)", // neon cyan
-  "hsl(120 100% 45%)", // neon green
-  "hsl(50 100% 50%)",  // neon yellow
-  "hsl(280 100% 60%)", // neon purple
-  "hsl(0 100% 60%)",   // neon red
-  "hsl(30 100% 55%)"   // neon orange
+// 5 gradient color pairs for text gradients
+const gradientPairs = [
+  {
+    color1: "hsl(220 100% 50%)", // blue
+    color2: "hsl(120 100% 50%)", // green
+    solid: "hsl(220 100% 50%)"
+  },
+  {
+    color1: "hsl(30 100% 55%)",  // orange
+    color2: "hsl(0 100% 60%)",   // red
+    solid: "hsl(30 100% 55%)"
+  },
+  {
+    color1: "hsl(320 100% 55%)", // pink
+    color2: "hsl(270 100% 60%)", // purple
+    solid: "hsl(320 100% 55%)"
+  },
+  {
+    color1: "hsl(190 100% 50%)", // cyan/turquoise
+    color2: "hsl(140 100% 50%)", // green
+    solid: "hsl(190 100% 50%)"
+  },
+  {
+    color1: "hsl(240 100% 55%)", // royal blue
+    color2: "hsl(320 100% 60%)", // pink
+    solid: "hsl(240 100% 55%)"
+  }
 ];
 
 interface ColorToggleContextType {
   color: string;
+  color1: string;
+  color2: string;
   colorIndex: number;
 }
 
@@ -24,16 +44,18 @@ export function ColorToggleProvider({ children }: { children: ReactNode }) {
   const [colorIndex, setColorIndex] = useState(0);
 
   useEffect(() => {
-    // Cycle through all 7 colors every 3 seconds
+    // Cycle through all 5 gradient pairs every 3 seconds
     const interval = setInterval(() => {
-      setColorIndex((prevIndex) => (prevIndex + 1) % colors.length);
+      setColorIndex((prevIndex) => (prevIndex + 1) % gradientPairs.length);
     }, 3000);
 
     return () => clearInterval(interval);
   }, []);
 
   const value = {
-    color: colors[colorIndex],
+    color: gradientPairs[colorIndex].solid,
+    color1: gradientPairs[colorIndex].color1,
+    color2: gradientPairs[colorIndex].color2,
     colorIndex,
   };
 

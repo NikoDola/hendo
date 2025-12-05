@@ -35,23 +35,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ColorToggleProvider>
           <ColorProvider>
             <BackgroundEffects />
-            <div style={{ position: 'relative', zIndex: 1, pointerEvents: 'none', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-              <MouseProvider>
-                <UserAuthProvider>
-                  <CartProvider>
-                    <div style={{ pointerEvents: 'auto' }}>
-                      <ConditionalNavbar />
-                    </div>
-                    <div style={{ pointerEvents: 'auto', flex: 1 }}>
-                      {children}
-                    </div>
-                    <div style={{ pointerEvents: 'auto' }}>
-                      <ConditionalFooter />
-                    </div>
-                  </CartProvider>
-                </UserAuthProvider>
-              </MouseProvider>
-            </div>
+            <MouseProvider>
+              <UserAuthProvider>
+                <CartProvider>
+                  <ConditionalNavbar />
+                  <div className="mainContent">
+                    {children}
+                  </div>
+                  <ConditionalFooter />
+                </CartProvider>
+              </UserAuthProvider>
+            </MouseProvider>
           </ColorProvider>
         </ColorToggleProvider>
       </body>

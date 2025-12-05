@@ -1,0 +1,130 @@
+/* -------------------------
+   GENERAL WRAPPER & HEADLINE
+-------------------------- */
+.hrsWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.hrsImageWrapper {
+  position: relative;
+  width: 100%;
+  height: auto; /* parent height grows with hendoImage */
+  overflow: hidden; /* hide zoom overflow */
+  margin: 0 auto;
+}
+
+.hrsHeadline {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  text-align: center;
+  font-size: var(--text-9xl);
+  width: 100%;
+  padding: 1rem;
+  color: #ffffff; /* pure white text */
+  background-color: rgba(0, 0, 0, 0.5); /* semi-transparent behind text */
+  text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* -------------------------
+   BODY TEXT
+-------------------------- */
+.bodyTextWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 1rem;
+  margin-bottom: 4rem;
+}
+
+.bodyText {
+  text-align: center;
+  width: 50%;
+}
+
+/* -------------------------
+   HENDO IMAGE
+-------------------------- */
+.hendoImage {
+  position: relative; /* stays in flow */
+  width: 100%;
+  z-index: 3;
+}
+
+/* -------------------------
+   BACKGROUND IMAGE
+-------------------------- */
+.bgWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* hide background overflow */
+  z-index: 0;
+}
+
+.bgWrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,1) 0%,
+    rgba(0,0,0,0) 100%,
+    rgba(0,0,0,0) 80%,
+    rgba(0,0,0,1) 100%
+  );
+  z-index: 1;
+}
+
+.bgImage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+}
+
+/* -------------------------
+   MOBILE VERSION ONLY
+-------------------------- */
+@media (max-width: 1000px){
+  .hrsImageWrapper {
+    position: relative;
+    height: 100vh; /* force full viewport height */
+    background-color: var(--theme-color);
+    transition: 1s background-color;
+  }
+
+  .hendoImage {
+    position: absolute;
+    top: 0;
+    z-index: 11;
+    height: auto;
+    object-fit: cover;
+    transform:  scale(2); /* zoom 2x */
+
+
+  }
+
+  .bgImage {
+    position: absolute;
+    bottom: 0;
+    
+  }
+
+  .hrsHeadline {
+    font-size: 5rem;
+  }
+}

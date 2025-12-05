@@ -1,7 +1,7 @@
 import "../globals.css"
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
-import Hero2 from "@/components/client/Hero2";
+import HeroNiko from "@/components/client/HeroNiko";
 
 import Link from "next/link";
 import HomeMusicSectionServer from "@/components/server/HomeMusicSectionServer";
@@ -22,8 +22,8 @@ const Contact = dynamic(() => import("@/components/client/Contact"), {
 export default function Home() {
   return (
     <main>
-      <section className="section-full">
-      <Hero2 />
+      <section className="section-full mt-0" >
+      <HeroNiko />
       </section>
 
       <section className="section-regular">
@@ -39,7 +39,7 @@ export default function Home() {
 
          
      <section className="section-regular">
-        <Contact />
+        {/* <Contact /> */}
      </section>
       
     

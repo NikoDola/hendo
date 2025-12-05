@@ -1,25 +1,38 @@
-.heroWrapper{
+.heroWrapper {
   position: relative;
   height: 100vh;
-
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
-.bg-image{
+
+.HeroimageWrapper {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  
+  z-index: 0;
 }
 
-.heroTextWrapper{
-  position: relative;
+.bgImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
-.headlineText{
+
+.heroTextWrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
   text-align: center;
-  position: sticky;
-  top: 20px;
 }
 
-.headlineBody{
+
+.headlineBody {
   margin: 0 auto;
   max-width: 80%;
 }
