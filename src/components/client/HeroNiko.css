@@ -12,11 +12,12 @@
   height: auto; /* parent height grows with hendoImage */
   overflow: hidden; /* hide zoom overflow */
   margin: 0 auto;
+   top: -10rem
 }
 
 .hrsHeadline {
   position: sticky;
-  top: 0;
+  top: 10%;
   z-index: 10;
   text-align: center;
   font-size: var(--text-9xl);
@@ -31,6 +32,8 @@
    BODY TEXT
 -------------------------- */
 .bodyTextWrapper {
+  position: relative;
+  z-index: 100;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -51,7 +54,7 @@
 .hendoImage {
   position: relative; /* stays in flow */
   width: 100%;
-  z-index: 3;
+  z-index: 10;
 }
 
 /* -------------------------
@@ -102,29 +105,52 @@
 @media (max-width: 1000px){
   .hrsImageWrapper {
     position: relative;
-    height: 100vh; /* force full viewport height */
-    background-color: var(--theme-color);
-    transition: 1s background-color;
+    height: 100vh;
+    background-color: black;
+    overflow: hidden;
+   
   }
 
-  .hendoImage {
+  /* Background fills the ENTIRE container */
+  .bgWrapper {
     position: absolute;
     top: 0;
-    z-index: 11;
-    height: auto;
-    object-fit: cover;
-    transform:  scale(2); /* zoom 2x */
-
-
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
   }
 
   .bgImage {
     position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: none;
+  }
+
+  /* Hendo image anchored at bottom, no overflow upward */
+  .hendoImage {
+    position: absolute;
     bottom: 0;
-    
+    left: 50%;
+    transform: translateX(-50%) scale(2);
+    transform-origin: bottom center; /* scale from bottom, not center */
+    width: 100%;
+    height: auto;
+    max-height: 70vh;
+    z-index: 10;
+    object-fit: contain;
+    object-position: bottom center;
   }
 
   .hrsHeadline {
     font-size: 5rem;
+  }
+
+  .bodyText {
+    width: 90%;
   }
 }
