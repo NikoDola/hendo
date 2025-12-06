@@ -154,3 +154,45 @@
     width: 90%;
   }
 }
+
+/* -------------------------
+   SMALLER MOBILE (thinner screens)
+-------------------------- */
+@media (max-width: 800px){
+  .hrsImageWrapper {
+    height: 70vh; /* shorter for thin screens */
+  }
+
+  /* Background covers FULL container */
+  .bgWrapper {
+    position: absolute;
+    top: 10rem;
+    left: 0;
+    width: 100%;
+    height: 100%; /* full height */
+   
+  }
+
+  .bgImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%; /* show more of the top/middle of bg */
+  }
+
+  /* Hendo at bottom, scaled but contained */
+  .hendoImage {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) scale(2.1);
+    transform-origin: bottom center;
+    width: 100%;
+    height: auto;
+    max-height: 55vh; /* smaller to stay within bg */
+  }
+
+  .hrsHeadline {
+    font-size: 4rem;
+  }
+}

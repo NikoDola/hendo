@@ -17,6 +17,8 @@ export default function HeroSection() {
             width={1000}
             height={1000}
             alt="hendoImage"
+            priority
+            
           />
         </div>
 
@@ -26,6 +28,8 @@ export default function HeroSection() {
           width={1000}
           height={1000}
           alt="hendoImage"
+          priority
+         
         />
       </div>
     </div>
