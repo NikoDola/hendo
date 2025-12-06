@@ -4,33 +4,36 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'firebasestorage.googleapis.com',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "firebasestorage.googleapis.com",
+        pathname: "/**"
       },
       {
-        protocol: 'https',
-        hostname: 'storage.googleapis.com',
-        pathname: '/**',
-      },
+        protocol: "https",
+        hostname: "storage.googleapis.com",
+        pathname: "/**"
+      }
     ],
-    formats: ['image/avif', 'image/webp'],
-    minimumCacheTTL: 60,
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 60
   },
+
   compress: true,
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
+
+  // Add this so Next.js 16 + Turbopack stops throwing errors
+  turbopack: {},
+
   webpack: (config, { isServer }) => {
-    // Exclude firebase-admin from client-side bundling
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
-        'firebase-admin': false,
+        "firebase-admin": false
       };
     }
-    // Let Next.js handle code splitting - it's already optimized!
     return config;
-  },
+  }
 };
 
 export default nextConfig;
