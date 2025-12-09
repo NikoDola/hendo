@@ -101,7 +101,7 @@ h2 {
     width: max-content;
   -webkit-background-clip:text ;
   color: transparent;
-
+  
 }
 
 h3 {
@@ -117,7 +117,7 @@ li {
   font-size: var(--text-lg);
   font-family: 'Roboto';
   font-weight: 400;
-  line-height: 1.55rem;
+  line-height: 1.5rem;
 }
 
 p::selection {

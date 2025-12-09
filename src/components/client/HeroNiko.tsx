@@ -1,5 +1,5 @@
 import "./HeroNiko.css";
-
+import Link from "next/link";
 import Image from "next/image";
 export default function HeroSection() {
   return (
@@ -7,7 +7,7 @@ export default function HeroSection() {
       <h1 className="hrsHeadline">LEVEL UP</h1>
       <div className="bodyTextWrapper">
       <p className="bodyText">Welcome to the DREAMSTATION. A portal into the mind of T. HENDO—where imagination becomes frequency, and sound becomes a world of its own.</p>
-      <button>Read more</button>
+      <Link href={"/about"}><button>Read more</button></Link>
       </div>
       <div className="hrsImageWrapper">
         <div className="bgWrapper">
