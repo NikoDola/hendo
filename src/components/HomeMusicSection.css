@@ -54,6 +54,26 @@
   }
 }
 
+/* Skeleton loader for featured tracks */
+.homeMusicSkeleton {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  height: 400px;
+  animation: homeMusicPulse 2s ease-in-out infinite;
+}
+
+@keyframes homeMusicPulse {
+
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+}
+
 @media (max-width: 768px) {
   .homeMusicSection {
     padding: 1rem 0;
@@ -84,5 +104,8 @@
     gap: 1.5rem;
     grid-template-columns: 1fr;
   }
-}
 
+  .homeMusicSkeleton {
+    height: 300px;
+  }
+}
