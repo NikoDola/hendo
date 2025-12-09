@@ -2,7 +2,7 @@ import './SkeletonMusicCard.css';
 
 export default function SkeletonMusicCard() {
   return (
-    <div className="skeletonMusicCard section-regular">
+    <div className="skeletonMusicCard">
       <div className="skeletonMusicCardTop">
         {/* Image skeleton */}
         <div className="skeletonMusicCardImageContainer">

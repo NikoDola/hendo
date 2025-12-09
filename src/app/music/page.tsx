@@ -8,6 +8,7 @@ import { useUserAuth } from '@/context/UserAuthContext';
 import MusicListCard from '@/components/MusicListCard';
 import SkeletonMusicCard from '@/components/SkeletonMusicCard';
 import MusicFilterBar, { FilterOptions } from '@/components/MusicFilterBar';
+import SkeletonFilterBar from '@/components/SkeletonFilterBar';
 import PurchaseWarningPopup from '@/components/PurchaseWarningPopup';
 import '@/components/pages/MusicStore.css';
 
@@ -241,7 +242,7 @@ export default function MusicStore() {
 
   if (isLoading) {
     return (
-      <div className="musicStoreContainer">
+      <section className="section-regular">
         <header className="musicStoreHeader">
           <div className="musicStoreHeaderContent">
             <Music className="musicStoreHeaderIcon" size={40} />
@@ -249,14 +250,15 @@ export default function MusicStore() {
           </div>
         </header>
 
-        <main className="musicStoreMain">
+        <div>
+          <SkeletonFilterBar />
           <div className="musicStoreList">
             {Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
               <SkeletonMusicCard key={index} />
             ))}
           </div>
-        </main>
-      </div>
+        </div>
+      </section>
     );
   }
 

@@ -9,6 +9,7 @@ import BackgroundEffects from "@/components/client/BackgroundEffects";
 import { UserAuthProvider } from "@/context/UserAuthContext";
 import { ColorToggleProvider } from "@/context/ColorToggleContext";
 import { CartProvider } from "@/context/CartContext";
+import { Roboto } from "next/font/google";
 
 
 const lemonMilk = localFont({
@@ -21,6 +22,13 @@ const lemonMilk = localFont({
   variable: "--font-lemonmilk",
   fallback: ["system-ui", "-apple-system", "Segoe UI", "Roboto", "Helvetica", "Arial", "sans-serif"],
   adjustFontFallback: "Arial",
+});
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"], // choose the weights you need
+  variable: "--font-roboto",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
