@@ -109,4 +109,10 @@
   }
 }
 
+@media (max-width: 1000px){
+  .musicStoreHeaderTitle{
+    font-size: 2rem;
+  }
+}
+
 /* Mobile styles handled by individual card components */
