@@ -1,7 +1,8 @@
 /* Desktop */
 .headerWrapperDesktop {
   padding: 3% 10% 3% 10%;
-  position: sticky;
+  position: relative;
+  z-index: 1000;
 }
 
 .cardProfileWrapper {
@@ -30,9 +31,10 @@
   width: 2rem;
   height: 2rem;
 }
-.navIcons:hover{
+
+.navIcons:hover {
   color: white;
-  box-shadow: white 2px ;
+  box-shadow: white 2px;
 }
 
 .navIconsLoading {
@@ -43,9 +45,12 @@
 }
 
 @keyframes icon-pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.4;
   }
+
   50% {
     opacity: 0.7;
   }
@@ -55,6 +60,8 @@
   display: flex;
   gap: 3rem;
   align-items: center;
+  position: relative;
+  z-index: 1001;
 }
 
 .logoDesktop {
@@ -248,13 +255,14 @@
   position: relative;
   cursor: pointer;
   display: inline-block;
+  z-index: 1001;
 }
 
 .dropdownWrapper {
   position: absolute;
   top: 100%;
   left: 0;
-  z-index: 1000;
+  z-index: 9999;
   pointer-events: auto;
   margin-top: 0.75rem;
   min-width: 170px;
@@ -269,6 +277,8 @@
   padding: 1rem;
   margin: 0;
   border-radius: 12px;
+  position: relative;
+  z-index: 100;
 }
 
 .dropdownLink {
@@ -284,6 +294,7 @@
   padding: 0.5rem 0;
   font-family: var(--font-lemonmilk);
   font-size: 0.8rem;
+  z-index: 10;
 }
 
 .dropdownLink:hover {
@@ -305,6 +316,7 @@
 
 .hrLine {
   color: gray;
+  pointer-events: none;
 }
 
 /* Mobile Store Dropdown */
@@ -378,6 +390,7 @@
 /* Profile Dropdown Styles - Desktop */
 .profileContainer {
   position: relative;
+  z-index: 1001;
 }
 
 .profileIconsWrapper {
@@ -399,7 +412,7 @@
   position: absolute;
   top: -8px;
   right: -8px;
-  
+
   color: white;
   font-size: 1rem;
   font-weight: 700;

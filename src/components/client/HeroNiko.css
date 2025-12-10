@@ -9,10 +9,12 @@
 .hrsImageWrapper {
   position: relative;
   width: 100%;
-  height: auto; /* parent height grows with hendoImage */
-  overflow: hidden; /* hide zoom overflow */
+  height: auto;
+  /* parent height grows with hendoImage */
+  overflow: hidden;
+  /* hide zoom overflow */
   margin: 0 auto;
-   top: -10rem
+  top: -10rem
 }
 
 .hrsHeadline {
@@ -23,9 +25,11 @@
   font-size: var(--text-9xl);
   width: 100%;
   padding: 1rem;
-  color: #ffffff; /* pure white text */
-  background-color: rgba(0, 0, 0, 0.5); /* semi-transparent behind text */
-  text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  color: #ffffff;
+  /* pure white text */
+  background-color: rgba(0, 0, 0, 0.5);
+  /* semi-transparent behind text */
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 /* -------------------------
@@ -52,7 +56,8 @@
    HENDO IMAGE
 -------------------------- */
 .hendoImage {
-  position: relative; /* stays in flow */
+  position: relative;
+  /* stays in flow */
   width: 100%;
   z-index: 10;
 }
@@ -66,7 +71,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden; /* hide background overflow */
+  overflow: hidden;
+  /* hide background overflow */
   z-index: 0;
 }
 
@@ -78,13 +84,11 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  background: linear-gradient(
-    to bottom,
-    rgba(0,0,0,1) 0%,
-    rgba(0,0,0,0) 100%,
-    rgba(0,0,0,0) 80%,
-    rgba(0,0,0,1) 100%
-  );
+  background: linear-gradient(to bottom,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0) 20%,
+      rgba(0, 0, 0, 0) 80%,
+      rgba(0, 0, 0, 1) 100%);
   z-index: 1;
 }
 
@@ -102,13 +106,13 @@
 /* -------------------------
    MOBILE VERSION ONLY
 -------------------------- */
-@media (max-width: 1000px){
+@media (max-width: 1000px) {
   .hrsImageWrapper {
     position: relative;
     height: 100vh;
     background-color: black;
     overflow: hidden;
-   
+
   }
 
   /* Background fills the ENTIRE container */
@@ -119,6 +123,14 @@
     width: 100%;
     height: 100%;
     z-index: 0;
+  }
+
+  .bgWrapper::before {
+    background: linear-gradient(to bottom,
+        rgba(0, 0, 0, 1) 0%,
+        rgba(0, 0, 0, 0) 15%,
+        rgba(0, 0, 0, 0) 85%,
+        rgba(0, 0, 0, 1) 100%);
   }
 
   .bgImage {
@@ -137,7 +149,8 @@
     bottom: 0;
     left: 50%;
     transform: translateX(-50%) scale(2);
-    transform-origin: bottom center; /* scale from bottom, not center */
+    transform-origin: bottom center;
+    /* scale from bottom, not center */
     width: 100%;
     height: auto;
     max-height: 70vh;
@@ -158,26 +171,36 @@
 /* -------------------------
    SMALLER MOBILE (thinner screens)
 -------------------------- */
-@media (max-width: 800px){
+@media (max-width: 800px) {
   .hrsImageWrapper {
-    height: 70vh; /* shorter for thin screens */
+    height: 70vh;
+    /* shorter for thin screens */
   }
 
   /* Background covers FULL container */
   .bgWrapper {
     position: absolute;
-    top: 10rem;
+    top: 0;
     left: 0;
     width: 100%;
-    height: 100%; /* full height */
-   
+    height: 100%;
+    /* full height */
+  }
+
+  .bgWrapper::before {
+    background: linear-gradient(to bottom,
+        rgba(0, 0, 0, 1) 0%,
+        rgba(0, 0, 0, 0) 10%,
+        rgba(0, 0, 0, 0) 90%,
+        rgba(0, 0, 0, 1) 100%);
   }
 
   .bgImage {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 30%; /* show more of the top/middle of bg */
+    object-position: center 30%;
+    /* show more of the top/middle of bg */
   }
 
   /* Hendo at bottom, scaled but contained */
@@ -189,7 +212,8 @@
     transform-origin: bottom center;
     width: 100%;
     height: auto;
-    max-height: 55vh; /* smaller to stay within bg */
+    max-height: 55vh;
+    /* smaller to stay within bg */
   }
 
   .hrsHeadline {

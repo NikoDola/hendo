@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import { auth } from '@/lib/firebase';
 import {
   onAuthStateChanged,
@@ -132,7 +132,7 @@ export function UserAuthProvider({ children }: { children: React.ReactNode }) {
     return () => unsubscribe();
   }, []);
 
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = useCallback(async () => {
     const provider = new GoogleAuthProvider();
     try {
       console.log('Starting Google sign-in with popup...');
@@ -143,14 +143,14 @@ export function UserAuthProvider({ children }: { children: React.ReactNode }) {
       console.log('Popup failed, trying redirect:', e);
       await signInWithRedirect(auth, provider);
     }
-  };
+  }, []);
 
-  const signInEmail = async (email: string, password: string) => {
+  const signInEmail = useCallback(async (email: string, password: string) => {
     const cred = await signInWithEmailAndPassword(auth, email, password);
     await setServerSessionFromCurrentUser(cred.user);
-  };
+  }, []);
 
-  const signUpEmail = async (firstName: string, lastName: string, email: string, password: string) => {
+  const signUpEmail = useCallback(async (firstName: string, lastName: string, email: string, password: string) => {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     await setServerSessionFromCurrentUser(cred.user);
     // Upsert profile info on server (no password sent)
@@ -159,19 +159,27 @@ export function UserAuthProvider({ children }: { children: React.ReactNode }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ firstName, lastName, email }),
     });
-  };
+  }, []);
 
-  const signOut = async () => {
-    await firebaseSignOut(auth);
-    await fetch('/api/auth/logout', { method: 'POST' });
-    setUser(null);
-    // Clear cached user data
-    localStorage.removeItem('hendo_user');
-  };
+  const signOut = useCallback(async () => {
+    console.log('Signing out...');
+    try {
+      await firebaseSignOut(auth);
+      console.log('Firebase sign out complete');
+      await fetch('/api/auth/logout', { method: 'POST' });
+      console.log('Server logout complete');
+      setUser(null);
+      // Clear cached user data
+      localStorage.removeItem('hendo_user');
+      console.log('Local state cleared');
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
+  }, []);
 
   const value = useMemo(
     () => ({ user, loading, signInWithGoogle, signInEmail, signUpEmail, signOut }),
-    [user, loading]
+    [user, loading, signInWithGoogle, signInEmail, signUpEmail, signOut]
   );
 
   return (

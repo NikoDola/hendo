@@ -72,11 +72,9 @@ h1 {
   line-height: var(--text-8xl);
   margin-bottom: 2rem;
 
-  background-image: linear-gradient(
-    90deg,
-    var(--theme-color-1),
-    var(--theme-color-2)
-  );
+  background-image: linear-gradient(90deg,
+      var(--theme-color-1),
+      var(--theme-color-2));
 
   -webkit-background-clip: text;
   background-clip: text;
@@ -98,10 +96,10 @@ h2 {
   font-weight: 200;
   letter-spacing: var(--space-1);
   margin-bottom: 1rem;
-    width: max-content;
-  -webkit-background-clip:text ;
+  width: max-content;
+  -webkit-background-clip: text;
   color: transparent;
-  
+
 }
 
 h3 {
@@ -136,21 +134,19 @@ h6 {
 form {
   display: flex;
   flex-direction: column;
-  background-color: var(--foreground);
-  padding: 2rem;
-  border-radius: 1rem;
-  border-top: solid rgb(225, 225, 225, 0.1);
-  box-shadow: 0 0 13px rgb(21, 21, 21, 0.3);
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
   width: 100%;
 }
 
 button {
 
-  background-image: linear-gradient(
-    90deg,
-    var(--theme-color-1),
-    var(--theme-color-2)
-  );
+  background-image: linear-gradient(90deg,
+      var(--theme-color-1),
+      var(--theme-color-2));
   border: none;
   border-radius: 0.5rem;
   padding: 0.5rem 1rem;
@@ -208,50 +204,56 @@ button:hover {
 
 input,
 textarea {
-  outline: 1px solid var(--theme-color);
+  outline: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 0.7rem;
-  transform: 1s ease;
   font-family: "Roboto";
   border-radius: 1rem;
   color: rgb(208, 208, 208);
   transition: 0.3s ease;
+  background: rgba(255, 255, 255, 0.05);
 }
 
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--theme-color);
+}
 
 input::placeholder,
 textarea::placeholder {
-  color: gray;
-  font-style: italic;
+  color: rgba(255, 255, 255, 0.4);
+  font-style: normal;
   font-family: 'Roboto', system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
 /* Global input styling for all forms */
 .input {
-  background: transparent;
-  border: none;
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
   padding: 1rem;
   color: white;
-
   font-size: 16px;
   width: 100%;
   box-sizing: border-box;
+  outline: none;
+  transition: all 0.3s ease;
 }
 
 .input:focus {
-  outline: var(--theme-color);
-  border: none;
-
-  box-shadow: 0 0 20px var(--theme-color);
+  outline: none;
+  border: 1px solid var(--theme-color);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .input:focus::placeholder {
-  color: #333;
-
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .input::placeholder {
-  color: gray;
+  color: rgba(255, 255, 255, 0.4);
 }
 
 /* /Form */
@@ -261,24 +263,25 @@ textarea::placeholder {
   gap: 1.5rem;
   width: 40%;
   margin: 0 auto;
-  background: rgb(0, 0, 0, 0.1);
-  backdrop-filter: blur(1.5px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.025);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 20px;
   padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
   min-height: fit-content;
+  isolation: isolate;
 }
 
 /* Safari-specific fix */
-@supports (-webkit-backdrop-filter: blur(3px)) {
+@supports (-webkit-backdrop-filter: blur(8px)) {
   .formWrapper {
-    background-color: rgba(0, 0, 0, 0.01);
-    -webkit-backdrop-filter: blur(3px);
-    backdrop-filter: blur(3px);
+    background-color: rgba(255, 255, 255, 0.02);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
   }
 }
 
@@ -289,30 +292,57 @@ textarea::placeholder {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
-  border-top: solid rgb(255, 255, 255, 0.5) 0.5px;
+  background: linear-gradient(135deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.03) 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.03) 75%,
+      transparent 100%);
   border-radius: 20px;
   z-index: -1;
+}
+
+.formWrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 20px;
+  padding: 0.5px;
+  background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.3) 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -1;
+  pointer-events: none;
 }
 
 
 .formWrapper input,
 .formWrapper textarea {
-  background: transparent;
-  border: none;
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
   padding: 1rem;
   color: white;
   font-size: 16px;
   width: 100%;
   box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 .formWrapper input:focus,
 .formWrapper textarea:focus {
-  outline: var(--theme-color);
-  border: none;
-  box-shadow: 0 0 20px var(--theme-color);
+  outline: none;
+  border: 1px solid var(--theme-color);
+  box-shadow: 0 0 15px rgba(var(--theme-color-rgb), 0.3);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .formWrapper input:focus::placeholder,
@@ -519,7 +549,7 @@ textarea::placeholder {
 
   h1 {
     font-size: var(--text-5xl);
-    
+
   }
 
   h2 {
@@ -656,6 +686,6 @@ label {
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  z-index: 1;
+  z-index: -1;
   pointer-events: none;
 }
