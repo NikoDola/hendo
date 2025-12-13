@@ -44,10 +44,10 @@ export function ColorToggleProvider({ children }: { children: ReactNode }) {
   const [colorIndex, setColorIndex] = useState(0);
 
   useEffect(() => {
-    // Cycle through all 5 gradient pairs every 3 seconds
+    // Cycle through all 5 gradient pairs every 8 seconds (5s transition + 3s display)
     const interval = setInterval(() => {
       setColorIndex((prevIndex) => (prevIndex + 1) % gradientPairs.length);
-    }, 3000);
+    }, 8000);
 
     return () => clearInterval(interval);
   }, []);

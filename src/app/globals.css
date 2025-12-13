@@ -4,6 +4,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 @import './variables.css';
 
+/* Enable CSS custom property transitions by declaring their types */
+@property --theme-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: hsl(220, 100%, 50%);
+}
+
+@property --theme-color-1 {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: hsl(220, 100%, 50%);
+}
+
+@property --theme-color-2 {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: hsl(120, 100%, 50%);
+}
+
 * {
   padding: 0;
   margin: 0;
@@ -40,9 +59,6 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
 }
 
 .colorProviderWrapper {
@@ -80,6 +96,8 @@ h1 {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
+  /* Transition the CSS custom properties for color changes */
+  transition: --theme-color-1 5s ease, --theme-color-2 5s ease;
 
   width: max-content;
 }
@@ -97,9 +115,16 @@ h2 {
   letter-spacing: var(--space-1);
   margin-bottom: 1rem;
   width: max-content;
-  -webkit-background-clip: text;
-  color: transparent;
 
+  background-image: linear-gradient(90deg,
+      var(--theme-color-1),
+      var(--theme-color-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  /* Transition the CSS custom properties for color changes */
+  transition: --theme-color-1 5s ease, --theme-color-2 5s ease;
 }
 
 h3 {
@@ -153,7 +178,7 @@ button {
   color: white;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 1s ease;
+  transition: background-color 0.3s ease, --theme-color 5s ease, --theme-color-1 5s ease, --theme-color-2 5s ease;
   box-shadow: 0 0 20px var(--theme-color);
   font-size: 1rem;
   display: flex;

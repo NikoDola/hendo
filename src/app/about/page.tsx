@@ -10,11 +10,7 @@ export default function About() {
     if (hendoImage?.src) {
       const img = new Image();
       img.src = hendoImage.src;
-
-      img.onload = () => {
-        // Wait a tiny bit to ensure first paint is done before showing
-        setTimeout(() => setLoaded(true), 50);
-      };
+      img.onload = () => setLoaded(true);
     }
   }, []);
 
@@ -22,34 +18,43 @@ export default function About() {
     <section className="section-full aboutSection">
       <div className="aboutTextWrapper">
         <h1 className="aboutHeadline">
-          Waves <br /> Beyond 5D
+          Welcome to the <br/> DREAMSTATION.
         </h1>
-        <p className="aboutBodyText">
-          My beats are more than sound—they’re portals. Born from the limitless
-          depths of the subconscious and the expansive 5D realm, they channel
-          otherworldly inspiration into living, breathing soundscapes. Each
-          rhythm weaves raw imagination with untamed creativity, shattering
-          boundaries and opening doors to entirely new sonic dimensions. This is
-          music as transcendence—crafted with unrivaled sonic mastery—where
-          every pulse lifts you higher, ignites euphoria, and transforms the
-          ordinary into the extraordinary.
-        </p>
+
+        {/* Glass box */}
+        <div className="aboutContentBox">
+          <p>
+            A portal into the mind of T. HENDO where imagination becomes frequency,
+            and sound becomes a world of its own.
+          </p>
+
+          <p>
+            Here, he channels the dream-capsules of virtual energy of his childhood
+            games, music, art, pixels, fantasy and fuses it with modern vibrations
+            of R&amp;B, Rap, Rock, Pop, and any genre he dares to explore.
+            Every beat carries the unmistakable rhythm of Chicago.
+          </p>
+
+          <blockquote className="aboutQuote">
+            It&apos;s my passion to build complex, dreamy soundscapes that make people feel.
+            To sing, rap, groove, and escape. I create to uplift, inspire,
+            and give the world something dope to experience.
+          </blockquote>
+        </div>
+
+        <div className="aboutFooter">
+          <h2>LEVEL UP.</h2>
+        </div>
       </div>
 
-      <div className="imageWrapper">
-        {/** ✅ Only render when loaded = true */}
-        {loaded && (
-          <div
-            className="imageBackground animate"
-            style={{
-              backgroundImage: `url(${hendoImage.src})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-            }}
-          ></div>
-        )}
-      </div>
+      {loaded && (
+        <div
+          className="imageBackground"
+          style={{
+            backgroundImage: `url(${hendoImage.src})`,
+          }}
+        />
+      )}
     </section>
   );
 }

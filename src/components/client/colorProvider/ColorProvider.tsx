@@ -16,9 +16,10 @@ export function ColorProvider({ children }: { children: React.ReactNode }) {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
+    // Cycle every 8 seconds (5s transition + 3s display)
     const interval = setInterval(() => {
       setIndex(prev => (prev + 1) % palette.length);
-    }, 3000);
+    }, 8000);
     return () => clearInterval(interval);
   }, []);
 
@@ -26,10 +27,12 @@ export function ColorProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <div
+      className="colorProviderWrapper"
       style={{
         "--theme-color-1": color1,
-        "--theme-color-2": color2
-      } as React.CSSProperties}
+        "--theme-color-2": color2,
+        "--theme-color": color1,
+      } as React.CSSProperties & { [key: string]: string }}
     >
       {children}
     </div>

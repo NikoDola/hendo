@@ -82,7 +82,7 @@ export default function Newsletter() {
   return (
     <ColorProvider>
       <section className="section-regular underWrapper">
-        <span className="newsletterTitle">NEWSLETTER</span>
+        <h2 >NEWSLETTER</h2>
         <p className="subscribeDescription">
           Subscribe to our newsletter and be the first to hear about new music,
           exclusive drops from our clothing brand, and behind-the-scenes content.

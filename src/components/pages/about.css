@@ -1,103 +1,137 @@
+/* =========================
+   ABOUT SECTION
+========================= */
+
 .aboutSection {
+  position: relative;
   display: flex;
-  background-image: url("/images/test2.png");
-  background-repeat: no-repeat;
-  height: 100vh;
-  background-size: 120%;
-  /* a bit zoomed-in so we can move it */
-  background-position: -200% 0%;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden; /* important */
   margin: 0;
-
-  animation: driveBy 1s ease forwards;
-
 }
+
+/* Background image layer */
+.imageBackground {
+  position: absolute;
+  inset: 0;
+  background-size: 120%; /* slight zoom like before */
+  background-repeat: no-repeat;
+  background-position: -200% -100%;
+  animation: driveBy 1.2s ease-out forwards;
+  will-change: background-position;
+}
+
+/* =========================
+   TEXT WRAPPER
+========================= */
+
+.aboutTextWrapper {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 7% 10%;
+  box-sizing: border-box;
+}
+
+/* =========================
+   HEADLINE
+========================= */
+
+.aboutHeadline {
+  font-size: 5em;
+  line-height: 1.2em;
+  max-width: 50%;
+  min-width: 300px;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
+  white-space: normal;
+}
+
+/* =========================
+   GLASS CONTENT BOX
+========================= */
+
+.aboutContentBox {
+  width: 60%;
+  min-width: 350px;
+  background-color: rgba(27, 27, 27, 0.6);
+  backdrop-filter: blur(5px);
+  padding: 1.5rem;
+  border-radius: 20px;
+  font-family: 'Roboto', system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  text-shadow: 0 0 2px black;
+}
+
+.aboutContentBox p {
+  margin-bottom: 1rem;
+}
+
+/* =========================
+   QUOTE
+========================= */
+
+.aboutQuote {
+  margin-top: 1.2rem;
+  padding-left: 1rem;
+  border-left: 3px solid rgba(255, 255, 255, 0.3);
+  font-style: italic;
+  opacity: 0.9;
+}
+
+/* =========================
+   FOOTER / LEVEL UP
+========================= */
+
+.aboutFooter {
+  width: 100%;
+  margin-top: 1.8rem;
+}
+
+.aboutFooter h2 {
+  width: 100%;
+  margin: 0;
+}
+
+/* =========================
+   ANIMATION
+========================= */
 
 @keyframes driveBy {
   0% {
     background-position: -200% -100%;
   }
-
   100% {
     background-position: center 10%;
   }
 }
-
-
-.aboutTextWrapper {
-  display: flex;
-  flex-direction: column;
-  width: 80%;
-  margin-left: 10%;
-  margin-right: 10%;
-  margin-top: 7%;
-}
-
-
-
-.aboutHeadline {
-  font-size: 5em;
-  white-space: normal;
-  text-shadow: 0px 0px 1rem rgb(0, 0, 0, 0.5);
-  /* 👈 proper syntax */
-  line-height: 1.2em;
-  width: 50%;
-  min-width: 300px;
-}
-
-.aboutBodyText {
-  width: 60%;
-  min-width: 350px;
-  text-shadow: 0px 0px 2px black;
-  /* 👈 proper syntax */
-  background-color: rgb(27, 27, 27, 0.6);
-  backdrop-filter: blur(5px);
-  padding: 1rem;
-  font-family: 'Roboto', system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-  border-radius: 20px;
-}
-
-/* Image */
-.imageWrapper {
-  flex: 1;
-  min-height: 100vh;
-  position: relative;
-}
-
-.imageBackground {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
+/* =========================
+   RESPONSIVE
+========================= */
 
 @media (max-width: 1000px) {
-  .aboutSection {
-    margin-top: 2rem;
+  .aboutTextWrapper {
+    padding: 12% 5%;
   }
 
-  .aboutTextWrapper {
-    margin: 5%;
-    margin-top: 12%;
+  .aboutHeadline {
+    font-size: 3em;
+    max-width: 100%;
+  }
 
-    .aboutHeadline {
-      font-size: 4em;
-    }
-
-    .aboutBodyText {
-      width: 100%;
-    }
+  .aboutContentBox {
+    width: 100%;
+    min-width: unset;
   }
 
   @keyframes driveBy {
     0% {
       background-position: -200% 0%;
     }
-
     100% {
       background-position: center 0%;
     }
   }
-
 }

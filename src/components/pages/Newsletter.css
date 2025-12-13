@@ -38,13 +38,25 @@
 }
 
 .newsletterTitle {
-  border-radius: 2rem;
+  display: block;
   text-align: center;
   font-size: var(--text-5xl);
-  font-family: var(--lemonmilk);
-  color: var(--theme-color);
+  font-family: var(--font-lemonmilk);
   padding: 1rem;
   margin-top: 1rem;
+  margin-bottom: 0;
+  /* Override h2 width:max-content to allow centering */
+  width: 100% !important;
+  /* Gradient text effect */
+  background-image: linear-gradient(90deg,
+      var(--theme-color-1),
+      var(--theme-color-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  /* Transition the CSS custom properties for color changes */
+  transition: --theme-color-1 5s ease, --theme-color-2 5s ease;
 }
 
 .newsletterWrapper {
@@ -74,7 +86,7 @@
   border: none;
   font-family: var(--lemonmilk);
   background: var(--theme-color);
-  transition: background-color 0.3s ease, box-shadow 1s ease;
+  transition: background-color 0.3s ease, --theme-color 5s ease;
   box-shadow: 0 0 20px var(--theme-color);
 }
 
