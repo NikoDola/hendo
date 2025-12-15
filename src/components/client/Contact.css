@@ -15,22 +15,39 @@
   h1 {
     font-family: var(--font-lemonmilk);
     font-weight: 700;
-    font-size: 6.5em;
-    line-height: 1em;
+    font-size: 4rem;
+    line-height: 4rem;
     text-align: right;
+    margin-left:  auto;
   }
 
   h3 {
     text-align: right;
     letter-spacing: 1rem;
+    
   }
 
   h1::selection {
     background-color: var(--theme-color);
   }
 
-  .contactHeadline {
-    font-size: 4rem;
 
+}
+
+@media (max-width: 1000px){
+  .contactWrapper{
+    h1{
+      text-align: center;
+      font-size: 2.5rem;
+      line-height: 3rem;
+      margin: 0;
+    }
+    h3{
+      text-align: center;
+      font-size: 1rem;
+      letter-spacing: 0.3rem;
+      margin-top: 1rem;
+    }
+    
   }
 }

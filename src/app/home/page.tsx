@@ -39,7 +39,7 @@ export default function Home() {
 
          
      <section className="section-regular">
-        {/* <Contact /> */}
+        <Contact />
      </section>
       
     
