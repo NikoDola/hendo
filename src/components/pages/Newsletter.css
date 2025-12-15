@@ -61,7 +61,6 @@
 
 .newsletterWrapper {
   display: flex;
-  /* put input + button side by side */
   justify-content: center;
   gap: 0;
   /* no gap between */
@@ -76,19 +75,7 @@
   border-radius: 20px 0px 0 20px;
 }
 
-.subscribe {
-  flex: 0 0 20%;
-  /* lock to 20% width */
-  padding: 1rem;
-  border-radius: 0 20px 20px 0;
-  cursor: pointer;
-  background-color: yellow;
-  border: none;
-  font-family: var(--lemonmilk);
-  background: var(--theme-color);
-  transition: background-color 0.3s ease, --theme-color 5s ease;
-  box-shadow: 0 0 20px var(--theme-color);
-}
+
 
 .subscribe:hover {
   background-color: black;
@@ -100,12 +87,14 @@
 
 .subscribeDescription {
   font-family: 'Roboto', system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-  margin-top: 2rem;
+  margin-top: 1rem;
   max-width: 600px;
-  font-weight: 200;
   text-align: center;
   text-transform: none;
   font-size: 22px;
+  font-weight: 200;
+  color: var(--light-gray);
+  line-height: 1.5rem;
 }
 
 .subscribeDescription::selection {
