@@ -28,7 +28,7 @@ export default function HeroSection() {
 
         <Image
           className="hendoImage"
-          src={"/images/hendo/2-hendo.webp"}
+          src={"/images/hendo/hendo2025.webp"}
           width={1000}
           height={1000}
           alt="hendoImage"

@@ -1,6 +1,5 @@
 "use client";
 import "./Newsletter.css";
-import { ColorProvider } from "../client/colorProvider/ColorProvider";
 
 import { newsletter } from "@/lib/actions";
 import { useState, useEffect } from "react";
@@ -80,7 +79,7 @@ export default function Newsletter() {
   };
 
   return (
-    <ColorProvider>
+      
       <section className="section-regular underWrapper">
         <h2 className="newsletterTitle">NEWSLETTER</h2>
         <p className="subscribeDescription">
@@ -139,6 +138,6 @@ export default function Newsletter() {
           apply.
         </p>
       </section>
-    </ColorProvider>
+
   );
 }
