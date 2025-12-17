@@ -75,14 +75,19 @@
   border-radius: 20px 0px 0 20px;
 }
 
-.subscribe{
+.subscribe {
   border-radius: 0 1rem 1rem 0;
+  transition: background-color 0.3s ease, 
+              color 0.3s ease, 
+              box-shadow 0.3s ease, 
+              border-radius 0.3s ease;
 }
 
 .subscribe:hover {
-  background-color: black;
+  background: black;
   color: var(--light-gray);
   box-shadow: 0 0 20px var(--theme-color);
+
 }
 
 

@@ -154,10 +154,11 @@ export default function ParallaxStars() {
     }
 
     // Animation loop
+    const MAX_STAR_OPACITY = 0.8; // 20% lower than full opacity
     const animate = () => {
-      // Calculate fade-in opacity (0 to 1 over 3 seconds)
+      // Calculate fade-in opacity (0 to MAX_STAR_OPACITY over 3 seconds)
       const elapsed = Date.now() - startTime;
-      const globalOpacity = Math.min(elapsed / FADE_DURATION, 1);
+      const globalOpacity = Math.min(elapsed / FADE_DURATION, 1) * MAX_STAR_OPACITY;
 
       bg.fillStyle = '#000000';
       bg.fillRect(0, 0, width, height);

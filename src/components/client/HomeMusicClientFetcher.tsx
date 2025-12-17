@@ -130,7 +130,6 @@ export default function HomeMusicClientFetcher() {
         <header className="homeMusicHeader">
           <div className="homeMusicHeaderContent">
             <h2 className="homeMusicHeaderTitle">Featured BITS</h2>
-            <p className="homeMusicLoadingText">Loading Bits...</p>
           </div>
         </header>
         <main className="homeMusicMain">
