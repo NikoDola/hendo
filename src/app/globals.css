@@ -110,7 +110,7 @@ h1::selection {
 
 h2 {
   font-size: var(--text-5xl);
-  font-family: 'Oswald', sans-serif;
+  font-family: 'lemonmilk';
   font-weight: 200;
   letter-spacing: var(--space-1);
   margin-bottom: 1rem;
@@ -578,7 +578,7 @@ textarea::placeholder {
   }
 
   h2 {
-    font-size: var(--text-3xl);
+    font-size: var(--text-xl);
   }
 
   h3 {
