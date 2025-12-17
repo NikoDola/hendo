@@ -40,7 +40,7 @@
 .newsletterTitle {
   display: block;
   text-align: center;
-  font-size: var(--text-5xl);
+  font-size: var(--text-3xl);
   font-family: var(--font-lemonmilk);
   padding: 1rem;
   margin-top: 1rem;

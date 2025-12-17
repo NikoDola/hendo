@@ -23,7 +23,7 @@
 }
 
 .homeMusicHeaderTitle {
-  font-size: 2.5rem;
+  font-size: var(--text-3xl);
   font-weight: 700;
   color: white;
   margin: 0;
