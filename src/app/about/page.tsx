@@ -18,7 +18,7 @@ export default function About() {
     <section className="section-full aboutSection">
       <div className="aboutTextWrapper">
         <h1 className="aboutHeadline">
-          Welcome to the <br/> DREAMSTATION.
+          Welcome to the<br/>DREAMSTATION.
         </h1>
 
         {/* Glass box */}
