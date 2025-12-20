@@ -43,11 +43,11 @@
 .aboutHeadline {
   font-size: 5em;
   line-height: 1.2em;
-  max-width: 50%;
-  min-width: 300px;
   margin-bottom: 1.5rem;
   text-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
-  white-space: normal;
+  white-space: pre;
+  width: fit-content;
+  display: block;
 }
 
 /* =========================
@@ -117,8 +117,8 @@
   }
 
   .aboutHeadline {
-    font-size: 3em;
-    max-width: 100%;
+    font-size: 2em;
+    white-space: pre-line;
   }
 
   .aboutContentBox {

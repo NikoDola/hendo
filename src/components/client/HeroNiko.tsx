@@ -10,7 +10,7 @@ export default function HeroSection() {
       </div>
 
       <div className="bodyTextWrapper">
-      <p className="bodyText">Welcome to the <br/> Dreamstation. A portal into the mind of T. HENDO—where imagination becomes frequency, and sound becomes a world of its own.</p>
+      <p className="bodyText">Welcome to the Dreamstation. A portal into the mind of T. HENDO—where imagination becomes frequency, and sound becomes a world of its own.</p>
       <Link href={"/about"}><button>Read more</button></Link>
       </div>
       <div className="hrsImageWrapper">
