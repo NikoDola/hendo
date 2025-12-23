@@ -4,11 +4,11 @@ import localFont from "next/font/local";
 import { MouseProvider } from "@/context/context";
 import ConditionalNavbar from "@/components/client/ConditionalNavbar";
 import ConditionalFooter from "@/components/client/ConditionalFooter";
-import { ColorProvider } from "@/components/client/ColorProvider";
 import BackgroundEffects from "@/components/client/BackgroundEffects";
 import { UserAuthProvider } from "@/context/UserAuthContext";
 import { ColorToggleProvider } from "@/context/ColorToggleContext";
 import { CartProvider } from "@/context/CartContext";
+import ThemeCSSVariablesUpdater from "@/components/client/ThemeCSSVariablesUpdater";
 import { Roboto } from "next/font/google";
 
 
@@ -41,20 +41,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body style={{ backgroundColor: "black" }} className={`${lemonMilk.variable} antialiased relative`}>
         <ColorToggleProvider>
-          <ColorProvider>
-            <BackgroundEffects />
-            <MouseProvider>
-              <UserAuthProvider>
-                <CartProvider>
-                  <ConditionalNavbar />
-                  <div className="mainContent">
-                    {children}
-                  </div>
-                  <ConditionalFooter />
-                </CartProvider>
-              </UserAuthProvider>
-            </MouseProvider>
-          </ColorProvider>
+          <ThemeCSSVariablesUpdater />
+          <BackgroundEffects />
+          <MouseProvider>
+            <UserAuthProvider>
+              <CartProvider>
+                <ConditionalNavbar />
+                <div className="mainContent">
+                  {children}
+                </div>
+                <ConditionalFooter />
+              </CartProvider>
+            </UserAuthProvider>
+          </MouseProvider>
         </ColorToggleProvider>
       </body>
     </html>

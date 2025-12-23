@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import "./NavBar.css";
 import Logo from "./Logo";
-import { ColorProvider } from "./ColorProvider";
 import { CiShoppingCart } from "react-icons/ci";
 import { CiUser } from "react-icons/ci";
 import { IoMoonOutline } from "react-icons/io5";
@@ -98,7 +97,7 @@ export default function NavMenu() {
   };
 
   return (
-    <ColorProvider>
+    <>
       {/* Desktop Navigation */}
       <header className="headerWrapperDesktop">
         <nav className="navWrapperDesktop">
@@ -350,6 +349,6 @@ export default function NavMenu() {
         </nav>
 
       </header>
-    </ColorProvider>
+    </>
   );
 }

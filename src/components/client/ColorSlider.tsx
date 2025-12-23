@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { ColorProvider } from "./ColorProvider";
+import { useColorToggle } from "@/context/ColorToggleContext";
 import "./ColorSlider.css";
 
 interface ColorSliderProps {
@@ -108,9 +108,5 @@ function ColorSliderInner({
 }
 
 export default function ColorSlider(props: ColorSliderProps) {
-  return (
-    <ColorProvider>
-      <ColorSliderInner {...props} />
-    </ColorProvider>
-  );
+  return <ColorSliderInner {...props} />;
 }

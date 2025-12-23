@@ -3,7 +3,6 @@
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ColorProvider } from "@/components/client/colorProvider/ColorProvider";
 import "./verify-email.css";
 
 function VerifyEmailInner() {
@@ -52,7 +51,6 @@ function VerifyEmailInner() {
   }, [searchParams]);
 
   return (
-    <ColorProvider>
       <section className="section-regular verifyWrapper">
         <div className="verificationCard">
           {status === 'loading' && (
@@ -87,9 +85,7 @@ function VerifyEmailInner() {
             </>
           )}
         </div>
-      </section>
-    </ColorProvider>
-  );
+      </section>  );
 }
 
 export default function VerifyEmail() {
