@@ -49,6 +49,9 @@
   width: max-content;
   margin: 0 auto;
   border-radius: 2rem;
+  font-weight: 600;
+  
+  backdrop-filter:  red blur(5px);
   
 }
 /* -------------------------

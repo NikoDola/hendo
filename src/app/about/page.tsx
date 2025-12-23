@@ -22,7 +22,7 @@ export default function About() {
         </h1>
 
         {/* Glass box */}
-        <div className="aboutContentBox">
+        <div className="glass-effect aboutContentBox">
           <p>
             A portal into the mind of T. HENDO where imagination becomes frequency,
             and sound becomes a world of its own.
