@@ -12,7 +12,7 @@ const Footer: React.FC = () => {
                 href="https://youtube.com/@thelegendofhendo?si=MN-C7VJ4arj8MHO7"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="social-link"
+                className="social-link glass-effect"
                 aria-label="YouTube"
               >
                 <svg className="social-icon" viewBox="0 0 24 24" fill="currentColor">
@@ -23,7 +23,7 @@ const Footer: React.FC = () => {
                 href="https://tiktok.com/@official_t.hendo"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="social-link"
+                className="social-link glass-effect"
                 aria-label="TikTok"
               >
                 <svg className="social-icon" viewBox="0 0 24 24" fill="currentColor">
@@ -34,7 +34,7 @@ const Footer: React.FC = () => {
                 href="https://instagram.com/thelegendofhendo"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="social-link"
+                className="social-link glass-effect"
                 aria-label="Instagram"
               >
                 <svg className="social-icon" viewBox="0 0 24 24" fill="currentColor">
@@ -51,7 +51,7 @@ const Footer: React.FC = () => {
                 href="https://instagram.com/nebulacloudcompany"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="social-link"
+                className="social-link glass-effect"
                 aria-label="Instagram"
               >
                 <svg className="social-icon" viewBox="0 0 24 24" fill="currentColor">
