@@ -443,3 +443,25 @@
     font-size: 1.25rem;
   }
 }
+
+/* ===============================
+   SAFARI FIXES (Swipe / Touch)
+   =============================== */
+@supports (-webkit-touch-callout: none) {
+  .musicCard {
+    /* Safari breaks swipe when contain + transform are used */
+    contain: unset;
+
+    /* Disable GPU forcing only on Safari */
+    transform: none;
+    -webkit-transform: none;
+
+    /* Allow horizontal swipe gestures */
+    touch-action: pan-x;
+  }
+}
+
+.musicCard {
+  -webkit-user-select: none;
+  user-select: none;
+}
