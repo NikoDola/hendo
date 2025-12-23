@@ -34,7 +34,6 @@
 
 html {
   scroll-behavior: smooth;
-  overflow-x: clip; /* Prevent horizontal scroll on Safari */
 }
 
 html,
@@ -60,7 +59,6 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  overflow-x: clip; /* Prevent horizontal scroll on Safari without breaking sticky */
 }
 
 .colorProviderWrapper {

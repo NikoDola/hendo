@@ -230,7 +230,7 @@ export default function NavMenu() {
                 <li>
                   <Link
                     className="linkMobile"
-                    href="/"
+                    href="/home"
                     onClick={handleLinkClick}
                   >
                     Home
