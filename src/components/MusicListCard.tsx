@@ -42,6 +42,9 @@ export default function MusicListCard({
   const [progress, setProgress] = useState(0);
   const [showHashtags, setShowHashtags] = useState(false);
   const animationRef = useRef<number | null>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const seekProgressRef = useRef(0);
 
   // Initialize AudioContext and analyser when playing starts
   useEffect(() => {
@@ -129,7 +132,7 @@ export default function MusicListCard({
 
   // Audio progress tracking
   useEffect(() => {
-    if (!audio) return;
+    if (!audio || !isPlaying || isDragging) return;
     
     const updateProgress = () => {
       if (audio.duration) {
@@ -139,7 +142,7 @@ export default function MusicListCard({
 
     audio.addEventListener('timeupdate', updateProgress);
     return () => audio.removeEventListener('timeupdate', updateProgress);
-  }, [audio]);
+  }, [audio, isPlaying, isDragging]);
 
   // Handle play/pause
   useEffect(() => {
@@ -172,6 +175,79 @@ export default function MusicListCard({
       }
     };
   }, [audio, audioContext]);
+
+  const handleSeek = (clientX: number) => {
+    if (!audio || !audio.duration || !progressBarRef.current) return;
+
+    const progressBar = progressBarRef.current;
+    const rect = progressBar.getBoundingClientRect();
+    const seekX = Math.max(0, Math.min(clientX - rect.left, rect.width));
+    const seekPercent = (seekX / rect.width) * 100;
+    seekProgressRef.current = (seekPercent / 100) * audio.duration; // Store the seek time
+    setProgress(seekPercent); // Update visual progress immediately
+  };
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    if (e.button !== 0) return; // Only left click
+    setIsDragging(true);
+    handleSeek(e.clientX);
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (isDragging) {
+      handleSeek(e.clientX);
+    }
+  };
+
+  const handleMouseUp = () => {
+    if (audio) {
+      audio.currentTime = seekProgressRef.current;
+    }
+    setIsDragging(false);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    if (e.touches.length === 1) {
+      setIsDragging(true);
+      handleSeek(e.touches[0].clientX);
+    }
+  };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    if (isDragging && e.touches.length === 1) {
+      handleSeek(e.touches[0].clientX);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (audio) {
+      audio.currentTime = seekProgressRef.current;
+    }
+    setIsDragging(false);
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener('touchend', handleTouchEnd);
+    } else {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isDragging, audio]);
 
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -293,7 +369,12 @@ export default function MusicListCard({
         </button>
 
         <div className="musicListCardProgressContainer">
-          <div className="musicListCardProgressBar">
+          <div
+            className="musicListCardProgressBar"
+            ref={progressBarRef}
+            onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
+          >
             <div
               className="musicListCardProgressFill"
               style={{ width: `${progress}%` }}
@@ -314,5 +395,4 @@ export default function MusicListCard({
       </div>
     </div>
   );
-}
 
