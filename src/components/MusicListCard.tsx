@@ -215,6 +215,10 @@ export default function MusicListCard({
       initialTouchX.current = e.touches[0].clientX;
       initialTouchY.current = e.touches[0].clientY;
       touchDirectionDetermined.current = false;
+      // Immediately seek to touch position (works for tap)
+      handleSeek(e.touches[0].clientX);
+      // Set dragging state optimistically - we'll cancel if vertical movement detected
+      setIsDragging(true);
     }
   };
 
@@ -226,32 +230,41 @@ export default function MusicListCard({
       const deltaX = Math.abs(touchX - initialTouchX.current);
       const deltaY = Math.abs(touchY - initialTouchY.current);
 
-      const MIN_DRAG_DISTANCE = 10;
+      const MIN_DRAG_DISTANCE = 5; // Lower threshold for faster detection
 
       // Determine direction on first significant movement
       if (!touchDirectionDetermined.current && (deltaX > MIN_DRAG_DISTANCE || deltaY > MIN_DRAG_DISTANCE)) {
         touchDirectionDetermined.current = true;
 
         if (deltaX > deltaY) {
-          // Horizontal drag - enable seeking
-          setIsDragging(true);
+          // Horizontal drag - keep seeking enabled
+          handleSeek(touchX);
+          if (e.cancelable) {
+            e.preventDefault();
+          }
+        } else {
+          // Vertical movement detected - cancel dragging to allow scrolling
+          setIsDragging(false);
+          // Don't prevent default - allow scrolling
+        }
+      } else if (touchDirectionDetermined.current) {
+        if (isDragging) {
+          // Continue horizontal drag
           handleSeek(touchX);
           if (e.cancelable) {
             e.preventDefault();
           }
         }
-        // If vertical, don't set isDragging - allow scrolling
-      } else if (touchDirectionDetermined.current && isDragging) {
-        // Continue horizontal drag
+        // If not dragging (vertical), allow default scrolling behavior
+      } else {
+        // Small movement, still seeking to follow touch
         handleSeek(touchX);
-        if (e.cancelable) {
-          e.preventDefault();
-        }
       }
     }
   };
 
   const handleTouchEnd = () => {
+    // Always update audio position if we were dragging
     if (audio && isDragging) {
       audio.currentTime = seekProgressRef.current;
     }

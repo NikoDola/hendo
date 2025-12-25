@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { firebaseAdmin } from '@/lib/firebaseAdmin';
 
 const ADMIN_EMAILS = new Set([
-  'thelegendofhend@gmail.com',
+  'thelegendofhendo@gmail.com',
   'nikodola@gmail.com',
 ]);
 
