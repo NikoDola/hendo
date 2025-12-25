@@ -48,6 +48,9 @@ export default function MusicCard({
   const progressBarRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const seekProgressRef = useRef(0);
+  const initialTouchX = useRef(0);
+  const initialTouchY = useRef(0);
+  const touchDirectionDetermined = useRef(false);
 
 
   useEffect(() => {
@@ -267,22 +270,51 @@ export default function MusicCard({
 
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     if (e.touches.length === 1) {
-      setIsDragging(true);
-      handleSeek(e.touches[0].clientX);
+      initialTouchX.current = e.touches[0].clientX;
+      initialTouchY.current = e.touches[0].clientY;
+      touchDirectionDetermined.current = false;
     }
   };
 
   const handleTouchMove = (e: TouchEvent) => {
-    if (isDragging && e.touches.length === 1) {
-      handleSeek(e.touches[0].clientX);
+    if (e.touches.length === 1) {
+      const touchX = e.touches[0].clientX;
+      const touchY = e.touches[0].clientY;
+
+      const deltaX = Math.abs(touchX - initialTouchX.current);
+      const deltaY = Math.abs(touchY - initialTouchY.current);
+
+      const MIN_DRAG_DISTANCE = 10;
+
+      // Determine direction on first significant movement
+      if (!touchDirectionDetermined.current && (deltaX > MIN_DRAG_DISTANCE || deltaY > MIN_DRAG_DISTANCE)) {
+        touchDirectionDetermined.current = true;
+
+        if (deltaX > deltaY) {
+          // Horizontal drag - enable seeking
+          setIsDragging(true);
+          handleSeek(touchX);
+          if (e.cancelable) {
+            e.preventDefault();
+          }
+        }
+        // If vertical, don't set isDragging - allow scrolling
+      } else if (touchDirectionDetermined.current && isDragging) {
+        // Continue horizontal drag
+        handleSeek(touchX);
+        if (e.cancelable) {
+          e.preventDefault();
+        }
+      }
     }
   };
 
   const handleTouchEnd = () => {
-    if (audio) {
+    if (audio && isDragging) {
       audio.currentTime = seekProgressRef.current;
     }
     setIsDragging(false);
+    touchDirectionDetermined.current = false;
   };
 
   useEffect(() => {

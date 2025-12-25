@@ -414,3 +414,13 @@
   }
 }
 
+/* ===============================
+   SAFARI FIXES (Swipe / Touch)
+   =============================== */
+@supports (-webkit-touch-callout: none) {
+  .musicListCard {
+    /* Allow both horizontal and vertical gestures for Safari */
+    touch-action: pan-x pan-y;
+  }
+}
+
