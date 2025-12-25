@@ -24,7 +24,7 @@ match /music/{allPaths=**} {
   allow read: if true;
   allow write: if request.auth != null && 
     (request.auth.token.email.matches('.*@nikodola\\.com$') ||
-     request.auth.token.email.matches('.*thelegendofhend@gmail\\.com$') ||
+     request.auth.token.email.matches('.*thelegendofhendo@gmail\\.com$') ||
      request.auth.token.email.matches('.*nikodola@gmail\\.com$'));
 }
 ```
