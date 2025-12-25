@@ -133,7 +133,7 @@ export default function MusicListCard({
   // Audio progress tracking
   useEffect(() => {
     if (!audio || !isPlaying || isDragging) return;
-    
+
     const updateProgress = () => {
       if (audio.duration) {
         setProgress((audio.currentTime / audio.duration) * 100);
@@ -147,7 +147,7 @@ export default function MusicListCard({
   // Handle play/pause
   useEffect(() => {
     if (!audio) return;
-    
+
     if (isPlaying) {
       if (audio.src !== track.audioFileUrl) {
         audio.src = track.audioFileUrl;
@@ -208,7 +208,6 @@ export default function MusicListCard({
   };
 
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    e.stopPropagation();
     if (e.touches.length === 1) {
       setIsDragging(true);
       handleSeek(e.touches[0].clientX);
@@ -395,4 +394,4 @@ export default function MusicListCard({
       </div>
     </div>
   );
-
+}

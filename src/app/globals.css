@@ -84,8 +84,8 @@ h1 {
   font-size: var(--text-8xl);
   font-family: var(--font-lemonmilk);
   font-weight: 200;
-  letter-spacing: var(--space-2);
-  line-height: var(--text-8xl);
+
+ 
   margin-bottom: 2rem;
 
   background-image: linear-gradient(90deg,

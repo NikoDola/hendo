@@ -3,7 +3,7 @@ import './Footer.css';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="footer">
+    <footer className="footer glass-effect">
       <div className="footer-content">
         <div className="social-links">
           <div className="social-section">

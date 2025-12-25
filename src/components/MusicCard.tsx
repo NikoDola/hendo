@@ -48,7 +48,7 @@ export default function MusicCard({
   const progressBarRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const seekProgressRef = useRef(0);
-  
+
 
   useEffect(() => {
     console.log(`ee${Router}`)
@@ -266,7 +266,6 @@ export default function MusicCard({
   };
 
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    e.stopPropagation();
     if (e.touches.length === 1) {
       setIsDragging(true);
       handleSeek(e.touches[0].clientX);
@@ -387,43 +386,43 @@ export default function MusicCard({
           <span className="musicCardPrice">{formatPrice(track.price)}</span>
           <div className="musicCardActionsWrapper">
             <div className='userActionWrapper'>
-                <button
-              onClick={() => !isPurchased && onPurchase(track)}
-              className={`musicCardPurchaseButton ${isPurchased ? 'musicCardPurchaseButtonPurchased' : ''}`}
-              disabled={isPurchased}
-            >
-              <ShoppingCart size={20} />
-              {isPurchased ? 'Purchased' : 'Purchase'}
-            </button>
-            
-              <div className="musicCardIconActions">
               <button
-                onClick={() => addToCart({
-                  id: track.id,
-                  title: track.title,
-                  price: track.price,
-                  imageFileUrl: track.imageFileUrl
-                })}
-                className={`musicCardIconButton ${isInCart(track.id) ? 'active' : ''}`}
-                aria-label="Add to cart"
+                onClick={() => !isPurchased && onPurchase(track)}
+                className={`musicCardPurchaseButton ${isPurchased ? 'musicCardPurchaseButtonPurchased' : ''}`}
+                disabled={isPurchased}
               >
                 <ShoppingCart size={20} />
+                {isPurchased ? 'Purchased' : 'Purchase'}
               </button>
-              <button
-                onClick={() => toggleFavorite(track.id, {
-                  id: track.id,
-                  title: track.title,
-                  price: track.price,
-                  imageFileUrl: track.imageFileUrl
-                })}
-                className={`musicCardIconButton ${isFavorite(track.id) ? 'active' : ''}`}
-                aria-label="Add to favorites"
-              >
-                <Star size={20} fill={isFavorite(track.id) ? 'currentColor' : 'none'} />
-              </button>
+
+              <div className="musicCardIconActions">
+                <button
+                  onClick={() => addToCart({
+                    id: track.id,
+                    title: track.title,
+                    price: track.price,
+                    imageFileUrl: track.imageFileUrl
+                  })}
+                  className={`musicCardIconButton ${isInCart(track.id) ? 'active' : ''}`}
+                  aria-label="Add to cart"
+                >
+                  <ShoppingCart size={20} />
+                </button>
+                <button
+                  onClick={() => toggleFavorite(track.id, {
+                    id: track.id,
+                    title: track.title,
+                    price: track.price,
+                    imageFileUrl: track.imageFileUrl
+                  })}
+                  className={`musicCardIconButton ${isFavorite(track.id) ? 'active' : ''}`}
+                  aria-label="Add to favorites"
+                >
+                  <Star size={20} fill={isFavorite(track.id) ? 'currentColor' : 'none'} />
+                </button>
+              </div>
             </div>
-            </div>
-          
+
           </div>
         </div>
       </div>
