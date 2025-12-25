@@ -3,7 +3,7 @@
 ## Current Rules
 The rules allow:
 - **Public read access** to `music/` folder (for music previews)
-- **Admin write access** to `music/` folder (only `@nikodola.com`, `thelegendofhend@gmail.com`, or `nikodola@gmail.com`)
+- **Admin write access** to `music/` folder (only `@nikodola.com`, `thelegendofhendo@gmail.com`, or `nikodola@gmail.com`)
 - **Authenticated users** can read their own files in `purchases/{userId}/` folder
 - **Server-only writes** to `purchases/` folder (users cannot write directly)
 

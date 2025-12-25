@@ -353,7 +353,8 @@
   height: 6px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 3px;
-  overflow: hidden;
+  overflow: visible;
+  cursor: pointer;
 }
 
 .musicListCardProgressFill {
@@ -363,6 +364,21 @@
   height: 100%;
   background: linear-gradient(to right, var(--theme-color-1), var(--theme-color-2));
   border-radius: 3px;
+}
+
+.musicListCardProgressFill::after {
+  content: '';
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--theme-color-1), 0 0 20px var(--theme-color-2), 0 0 4px rgba(0, 0, 0, 0.3);
+  border: 3px solid var(--theme-color-2);
+  z-index: 10;
 }
 
 .musicListCardProgressGlow {

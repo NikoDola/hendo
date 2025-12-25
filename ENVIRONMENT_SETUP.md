@@ -77,7 +77,7 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_test_publishable_key
 ## Testing the Setup
 
 1. Start the development server: `npm run dev`
-2. Go to `/signup` and create an account with `thelegendofhend@gmail.com` or `nikodola@gmail.com`
+2. Go to `/signup` and create an account with `thelegendofhendo@gmail.com` or `nikodola@gmail.com`
 3. You should be redirected to the admin dashboard
 4. Create accounts with other emails to test user functionality
 5. Test the music store and Stripe integration

@@ -19,7 +19,7 @@ export interface User {
   totalSpent?: number;
 }
 
-const ADMIN_EMAILS = ['thelegendofhend@gmail.com', 'nikodola@gmail.com'];
+const ADMIN_EMAILS = ['thelegendofhendo@gmail.com', 'nikodola@gmail.com'];
 const SALT_ROUNDS = 12;
 
 // ============================================================================
