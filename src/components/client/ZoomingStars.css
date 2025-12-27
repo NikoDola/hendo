@@ -1,0 +1,69 @@
+.zooming-stars-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  color: white;
+}
+
+.zooming-star {
+  position: absolute;
+  transform-origin: center;
+  filter: drop-shadow(0 0 4px currentColor);
+  will-change: transform, opacity;
+  /* Initial state - invisible and scaled down */
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0);
+  /* We'll use transform: scale() to animate size */
+}
+
+/* Combined animation: appear, stay, disappear */
+@keyframes starLifecycle {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  /* Appear phase - scale up from 0.5px equivalent */
+  15% {
+    opacity: 0.3;
+    transform: translate(-50%, -50%) scale(calc(var(--initial-scale) * 2));
+  }
+  30% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(calc(var(--initial-scale) * 5));
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(var(--final-scale, 1));
+  }
+  /* Stay at full size */
+  70% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(var(--final-scale, 1));
+  }
+  80% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(calc(var(--final-scale, 1) * 0.9));
+  }
+  /* Disappear phase - scale down to 0 */
+  90% {
+    opacity: 0.3;
+    transform: translate(-50%, -50%) scale(calc(var(--final-scale, 1) * 0.3));
+  }
+  95% {
+    opacity: 0.1;
+    transform: translate(-50%, -50%) scale(calc(var(--final-scale, 1) * 0.1));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+}

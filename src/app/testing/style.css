@@ -1,0 +1,7 @@
+.inverted_star{
+  width: 100px;
+  height: 100px;
+  background-color: blue;
+  margin: 0 auto;
+  --r: 60px
+}

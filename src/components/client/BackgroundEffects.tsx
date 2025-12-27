@@ -14,6 +14,11 @@ const BitBackground = dynamic(() => import("@/components/client/BitBackground"),
   loading: () => null,
 });
 
+const ZoomingStars = dynamic(() => import("@/components/client/ZoomingStars"), {
+  ssr: false,
+  loading: () => null,
+});
+
 export default function BackgroundEffects() {
   const pathname = usePathname();
   
@@ -32,6 +37,7 @@ export default function BackgroundEffects() {
     <>
       <ParallaxStars />
       <BitBackground showPlayButton={showPlayButton} />
+      <ZoomingStars />
     </>
   );
 }

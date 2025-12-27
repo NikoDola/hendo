@@ -378,8 +378,8 @@ export default function MusicCard({
             <Image
               src={track.imageFileUrl}
               alt={track.title}
-              width={400}
-              height={400}
+              width={600}
+              height={600}
 
               className="musicCardImage"
             />
