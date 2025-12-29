@@ -36,9 +36,15 @@ GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 ```
 
-### Email Configuration (Optional)
+### Email Configuration
 ```env
-# Email Service (if using custom email service)
+# EmailJS Configuration (for contact form)
+NEXT_PUBLIC_EMAILJS_SERVICE_ID=your_emailjs_service_id
+NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=your_emailjs_template_id
+NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=your_emailjs_public_key
+NEXT_PUBLIC_CONTACT_EMAIL=your-email@example.com
+
+# Resend API (for newsletter verification emails - optional)
 RESEND_API_KEY=your_resend_api_key
 RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key
 ```
@@ -66,6 +72,20 @@ For testing, use these test keys instead:
 STRIPE_SECRET_KEY=sk_test_your_test_secret_key
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_test_publishable_key
 ```
+
+### EmailJS Setup
+1. Go to [EmailJS Dashboard](https://dashboard.emailjs.com/)
+2. Sign up or log in to your account
+3. Create a new service (Gmail, Outlook, etc.) or use an existing one
+4. Go to Email Templates and create a new template with these variables:
+   - `{{from_name}}` - Sender's name
+   - `{{from_email}}` - Sender's email
+   - `{{message}}` - Message content
+   - `{{to_email}}` - Your email address (recipient)
+5. Copy your **Service ID** from the service settings
+6. Copy your **Template ID** from the template settings
+7. Copy your **Public Key** from Account > General > API Keys
+8. Add these values to your `.env.local` file
 
 ## Security Notes
 

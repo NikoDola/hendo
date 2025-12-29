@@ -4,7 +4,27 @@ import { db } from '@/lib/firebase';
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, message } = await request.json();
+    const { name, email, message, recaptchaToken } = await request.json();
+
+    // Verify reCAPTCHA token
+    if (recaptchaToken) {
+      const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
+      if (recaptchaSecret) {
+        const verifyResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `secret=${recaptchaSecret}&response=${recaptchaToken}`,
+        });
+
+        const verifyData = await verifyResponse.json();
+        if (!verifyData.success || verifyData.score < 0.5) {
+          return NextResponse.json(
+            { error: 'reCAPTCHA verification failed. Please try again.' },
+            { status: 400 }
+          );
+        }
+      }
+    }
 
     // Validate required fields
     if (!name || !name.trim()) {
@@ -60,4 +80,7 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+
+
 

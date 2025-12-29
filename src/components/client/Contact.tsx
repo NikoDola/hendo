@@ -1,7 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import emailjs from "@emailjs/browser";
 import "@/components/client/Contact.css"
+
+declare global {
+  interface Window {
+    grecaptcha: {
+      execute: (
+        siteKey: string,
+        options: { action: string }
+      ) => Promise<string>;
+    };
+  }
+}
 
 export default function Contact() {
   const [name, setName] = useState("");
@@ -10,10 +22,21 @@ export default function Contact() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [statusMessage, setStatusMessage] = useState("");
 
+  // Load reCAPTCHA script on mount
+  useEffect(() => {
+    if (!document.querySelector("#recaptcha-script")) {
+      const script = document.createElement("script");
+      script.id = "recaptcha-script";
+      script.src = `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent page refresh
     e.stopPropagation(); // Stop event bubbling
-    
+
     // Reset status
     setStatus('loading');
     setStatusMessage("");
@@ -25,18 +48,52 @@ export default function Contact() {
       return;
     }
 
+    // Validate EmailJS environment variables
+    const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+
+    if (!serviceId || !templateId || !publicKey) {
+      console.error('EmailJS configuration missing. Please set NEXT_PUBLIC_EMAILJS_SERVICE_ID, NEXT_PUBLIC_EMAILJS_TEMPLATE_ID, and NEXT_PUBLIC_EMAILJS_PUBLIC_KEY in your environment variables.');
+      setStatus('error');
+      setStatusMessage('Email service is not configured. Please contact the administrator.');
+      return;
+    }
+
     try {
+      // Get reCAPTCHA token
+      const recaptchaToken = await window.grecaptcha.execute(
+        process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string,
+        { action: "contact" }
+      );
+
+      // Send email via EmailJS
+      // Template variables must match EmailJS template: {{name}}, {{email}}, {{title}}, {{message}}, {{time}}
+      const emailResult = await emailjs.send(
+        serviceId,
+        templateId,
+        {
+          name: name.trim(),
+          email: email.trim(),
+          title: name.trim(), // Using name as title, or you can use a default like "Contact Form Submission"
+          message: message.trim(),
+          time: new Date().toLocaleString(), // Current timestamp
+        },
+        publicKey
+      );
+
+      // Also save to Firestore for record keeping (with reCAPTCHA token for verification)
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, email, message }),
+        body: JSON.stringify({ name, email, message, recaptchaToken }),
       });
 
       const data = await response.json();
 
-      if (response.ok) {
+      if (emailResult.status === 200 && response.ok) {
         setStatus('success');
         setStatusMessage(data.message || 'Thank you for your message! We will get back to you soon.');
         // Clear form
@@ -63,10 +120,10 @@ export default function Contact() {
       <form className="formWrapper" onSubmit={handleSubmit}>
         <div className="inputWrapper">
           <label>Name *</label>
-          <input 
-            className="input" 
-            placeholder="Enter your name" 
-            required 
+          <input
+            className="input"
+            placeholder="Enter your name"
+            required
             value={name}
             onChange={(e) => setName(e.target.value)}
             disabled={status === 'loading'}
@@ -74,11 +131,11 @@ export default function Contact() {
         </div>
         <div className="inputWrapper">
           <label>Email *</label>
-          <input 
-            className="input" 
-            placeholder="Enter your email" 
-            type="email" 
-            required 
+          <input
+            className="input"
+            placeholder="Enter your email"
+            type="email"
+            required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={status === 'loading'}
@@ -86,29 +143,49 @@ export default function Contact() {
         </div>
         <div className="inputWrapper">
           <label>Message *</label>
-          <textarea 
-            className="input" 
-            placeholder="Enter your message" 
-            rows={6} 
+          <textarea
+            className="input"
+            placeholder="Enter your message"
+            rows={6}
             required
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             disabled={status === 'loading'}
           ></textarea>
         </div>
-        
+
         {statusMessage && (
           <div className={`contactStatusMessage ${status === 'success' ? 'contactStatusSuccess' : 'contactStatusError'}`}>
             {statusMessage}
           </div>
         )}
-        
-        <button 
-          type="submit" 
+
+        <button
+          type="submit"
           disabled={status === 'loading'}
         >
           {status === 'loading' ? 'Sending...' : 'Submit'}
         </button>
+        <p className="my-recaptcha-disclaimer">
+          This site is protected by reCAPTCHA and the Google
+          <br />
+          <a
+            href="https://policies.google.com/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Privacy Policy
+          </a>
+          {" and "}
+          <a
+            href="https://policies.google.com/terms"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Terms of Service
+          </a>
+          {" apply."}
+        </p>
       </form>
     </section>
   );
