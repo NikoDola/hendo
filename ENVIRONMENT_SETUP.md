@@ -38,14 +38,12 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 
 ### Email Configuration
 ```env
-# EmailJS Configuration (for contact form)
-NEXT_PUBLIC_EMAILJS_SERVICE_ID=your_emailjs_service_id
-NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=your_emailjs_template_id
-NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=your_emailjs_public_key
-NEXT_PUBLIC_CONTACT_EMAIL=your-email@example.com
-
-# Resend API (for newsletter verification emails - optional)
-RESEND_API_KEY=your_resend_api_key
+# Proton Mail SMTP (for contact form and newsletter verification emails)
+PROTON_SMTP_HOST=smtp.protonmail.ch
+PROTON_SMTP_PORT=587
+PROTON_SMTP_USER=levelup@thelegendofhendo.com
+PROTON_SMTP_TOKEN=your_proton_smtp_token_here
+CONTACT_EMAIL=thanzoproject@gmail.com  # Or NEXT_PUBLIC_CONTACT_EMAIL - where contact form emails are sent
 RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key
 ```
 
@@ -73,19 +71,23 @@ STRIPE_SECRET_KEY=sk_test_your_test_secret_key
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_test_publishable_key
 ```
 
-### EmailJS Setup
-1. Go to [EmailJS Dashboard](https://dashboard.emailjs.com/)
-2. Sign up or log in to your account
-3. Create a new service (Gmail, Outlook, etc.) or use an existing one
-4. Go to Email Templates and create a new template with these variables:
-   - `{{from_name}}` - Sender's name
-   - `{{from_email}}` - Sender's email
-   - `{{message}}` - Message content
-   - `{{to_email}}` - Your email address (recipient)
-5. Copy your **Service ID** from the service settings
-6. Copy your **Template ID** from the template settings
-7. Copy your **Public Key** from Account > General > API Keys
-8. Add these values to your `.env.local` file
+### Proton Mail SMTP Setup (Contact Form & Newsletter)
+1. **Requirements**: You need a paid Proton Mail plan with a custom domain
+2. **Get SMTP Token**:
+   - Log in to your Proton Mail account
+   - Go to: Settings → All settings → Proton Mail → IMAP/SMTP → SMTP tokens
+   - Click "Generate token"
+   - Name it (e.g., "Contact Form")
+   - Select your email address
+   - Click "Generate" and confirm with your password
+   - **Copy the token immediately** (shown only once)
+3. **Add to `.env.local`**:
+   - `PROTON_SMTP_USER`: Your Proton email address (e.g., `levelup@thelegendofhendo.com`)
+   - `PROTON_SMTP_TOKEN`: The SMTP token you generated
+   - `PROTON_SMTP_HOST`: `smtp.protonmail.ch` (default, can be omitted)
+   - `PROTON_SMTP_PORT`: `587` (default, can be omitted)
+4. **For Contact Form**: Set `CONTACT_EMAIL` or `NEXT_PUBLIC_CONTACT_EMAIL` to the email address where you want to receive contact form submissions
+5. **Note**: Contact form emails are sent server-side via Firebase API route using Proton Mail SMTP, so all email sending is secure and handled on the backend
 
 ## Security Notes
 

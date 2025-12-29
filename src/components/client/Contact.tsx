@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import emailjs from "@emailjs/browser";
 import "@/components/client/Contact.css"
 
 declare global {
@@ -48,18 +47,6 @@ export default function Contact() {
       return;
     }
 
-    // Validate EmailJS environment variables
-    const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
-    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
-
-    if (!serviceId || !templateId || !publicKey) {
-      console.error('EmailJS configuration missing. Please set NEXT_PUBLIC_EMAILJS_SERVICE_ID, NEXT_PUBLIC_EMAILJS_TEMPLATE_ID, and NEXT_PUBLIC_EMAILJS_PUBLIC_KEY in your environment variables.');
-      setStatus('error');
-      setStatusMessage('Email service is not configured. Please contact the administrator.');
-      return;
-    }
-
     try {
       // Get reCAPTCHA token
       const recaptchaToken = await window.grecaptcha.execute(
@@ -67,33 +54,23 @@ export default function Contact() {
         { action: "contact" }
       );
 
-      // Send email via EmailJS
-      // Template variables must match EmailJS template: {{name}}, {{email}}, {{title}}, {{message}}, {{time}}
-      const emailResult = await emailjs.send(
-        serviceId,
-        templateId,
-        {
-          name: name.trim(),
-          email: email.trim(),
-          title: name.trim(), // Using name as title, or you can use a default like "Contact Form Submission"
-          message: message.trim(),
-          time: new Date().toLocaleString(), // Current timestamp
-        },
-        publicKey
-      );
-
-      // Also save to Firestore for record keeping (with reCAPTCHA token for verification)
+      // Send to API route which handles email sending via Firebase/Resend and saves to Firestore
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, email, message, recaptchaToken }),
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim(),
+          message: message.trim(),
+          recaptchaToken
+        }),
       });
 
       const data = await response.json();
 
-      if (emailResult.status === 200 && response.ok) {
+      if (response.ok) {
         setStatus('success');
         setStatusMessage(data.message || 'Thank you for your message! We will get back to you soon.');
         // Clear form

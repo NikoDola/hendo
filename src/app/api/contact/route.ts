@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { sendContactEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -67,6 +68,15 @@ export async function POST(request: NextRequest) {
       status: 'new',
       read: false
     });
+
+    // Send email notification via Resend (Firebase + Resend integration)
+    try {
+      await sendContactEmail(name.trim(), email.trim(), message.trim());
+    } catch (emailError) {
+      // Log error but don't fail the request - message is already saved to Firestore
+      console.error('Failed to send contact email notification:', emailError);
+      // Continue anyway since the message is saved
+    }
 
     return NextResponse.json(
       { message: 'Thank you for your message! We will get back to you soon.' },

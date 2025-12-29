@@ -1,18 +1,34 @@
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+// Create Proton Mail SMTP transporter
+const createTransporter = () => {
+  if (!process.env.PROTON_SMTP_USER || !process.env.PROTON_SMTP_TOKEN) {
+    return null;
+  }
+
+  return nodemailer.createTransport({
+    host: process.env.PROTON_SMTP_HOST || 'smtp.protonmail.ch',
+    port: parseInt(process.env.PROTON_SMTP_PORT || '587'),
+    secure: false, // false for port 587 (uses STARTTLS), true for port 465
+    auth: {
+      user: process.env.PROTON_SMTP_USER,
+      pass: process.env.PROTON_SMTP_TOKEN,
+    },
+  });
+};
 
 export async function sendVerificationEmail(email: string, verificationToken: string) {
   try {
-    if (!resend) {
-      throw new Error('Resend API key not configured');
+    const transporter = createTransporter();
+    if (!transporter) {
+      throw new Error('Proton Mail SMTP not configured');
     }
 
     const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}&email=${encodeURIComponent(email)}`;
 
-    const { data, error } = await resend.emails.send({
-      from: 'HENDO <noreply@hendo.com>', // You'll need to configure this domain
-      to: [email],
+    const info = await transporter.sendMail({
+      from: `HENDO <${process.env.PROTON_SMTP_USER}>`,
+      to: email,
       subject: 'Verify your email - HENDO Newsletter',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #000; color: #fff;">
@@ -49,12 +65,7 @@ export async function sendVerificationEmail(email: string, verificationToken: st
       `,
     });
 
-    if (error) {
-      console.error('Resend email error:', error);
-      throw new Error('Failed to send verification email');
-    }
-
-    return { success: true, messageId: data?.id };
+    return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error('Email sending error:', error);
     throw error;
@@ -63,13 +74,14 @@ export async function sendVerificationEmail(email: string, verificationToken: st
 
 export async function sendWelcomeEmail(email: string) {
   try {
-    if (!resend) {
-      throw new Error('Resend API key not configured');
+    const transporter = createTransporter();
+    if (!transporter) {
+      throw new Error('Proton Mail SMTP not configured');
     }
 
-    const { data, error } = await resend.emails.send({
-      from: 'HENDO <noreply@hendo.com>',
-      to: [email],
+    const info = await transporter.sendMail({
+      from: `HENDO <${process.env.PROTON_SMTP_USER}>`,
+      to: email,
       subject: 'Welcome to HENDO Newsletter! 🎉',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #000; color: #fff;">
@@ -108,14 +120,70 @@ export async function sendWelcomeEmail(email: string) {
       `,
     });
 
-    if (error) {
-      console.error('Resend welcome email error:', error);
-      throw new Error('Failed to send welcome email');
-    }
-
-    return { success: true, messageId: data?.id };
+    return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error('Welcome email sending error:', error);
+    throw error;
+  }
+}
+
+export async function sendContactEmail(name: string, email: string, message: string) {
+  try {
+    const transporter = createTransporter();
+    if (!transporter) {
+      throw new Error('Proton Mail SMTP not configured');
+    }
+
+    const recipientEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || process.env.CONTACT_EMAIL || 'thanzoproject@gmail.com';
+    const currentTime = new Date().toLocaleString();
+
+    const info = await transporter.sendMail({
+      from: `HENDO Contact Form <${process.env.PROTON_SMTP_USER}>`,
+      to: recipientEmail,
+      replyTo: email,
+      subject: `Contact Us: ${name}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+          <div style="background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h2 style="color: #333; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px;">
+              New Contact Form Submission
+            </h2>
+            
+            <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+              A message by <strong>${name}</strong> has been received. Kindly respond at your earliest convenience.
+            </p>
+            
+            <hr style="border: none; border-top: 1px dashed #ddd; margin: 25px 0;">
+            
+            <div style="background-color: #f9f9f9; padding: 20px; border-radius: 6px; margin: 20px 0;">
+              <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                <div style="width: 40px; height: 40px; background-color: #4a90e2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                  <span style="color: #fff; font-weight: bold; font-size: 18px;">${name.charAt(0).toUpperCase()}</span>
+                </div>
+                <div>
+                  <div style="font-weight: bold; color: #333; font-size: 16px;">${name}</div>
+                  <div style="color: #999; font-size: 12px; margin-top: 2px;">${currentTime}</div>
+                </div>
+              </div>
+              
+              <div style="color: #333; line-height: 1.8; white-space: pre-wrap;">${message}</div>
+            </div>
+            
+            <hr style="border: none; border-top: 1px dashed #ddd; margin: 25px 0;">
+            
+            <div style="background-color: #f0f7ff; padding: 15px; border-radius: 6px; border-left: 4px solid #4a90e2;">
+              <p style="margin: 0; color: #666; font-size: 14px;">
+                <strong>Reply to:</strong> <a href="mailto:${email}" style="color: #4a90e2; text-decoration: none;">${email}</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      `,
+    });
+
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('Contact email sending error:', error);
     throw error;
   }
 }
