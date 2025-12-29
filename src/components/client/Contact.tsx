@@ -107,7 +107,7 @@ export default function Contact() {
     } catch (error) {
       console.error('Contact form error:', error);
       setStatus('error');
-      setStatusMessage('Failed to send message. Please try again later.');
+      setStatusMessage('Failed to send message. Please try again later!');
     }
   };
 
