@@ -6,7 +6,7 @@ export default function HeroSection() {
     <div className="hrsWrapper">
       <div className="hrsHeadlineWrapper">
       <h1 className="hrsHeadline">LEVEL UP</h1>
-      <p className="japanLetters">レベルアップ</p>
+      <p className="japanLetters"><b className="outlineEffect">レベルアップ</b></p>
       </div>
 
       <div className="bodyTextWrapper">

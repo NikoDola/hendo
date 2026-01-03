@@ -9,7 +9,7 @@ import { IoMoonOutline } from "react-icons/io5";
 import { IoShirtOutline } from "react-icons/io5";
 import { IoLogOutOutline } from "react-icons/io5";
 import { useUserAuth } from "@/context/UserAuthContext";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 
 
@@ -19,6 +19,7 @@ export default function NavMenu() {
   const [profileDropdown, setProfileDropdown] = useState(false);
   const { user, signOut } = useUserAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const [isHydrated, setIsHydrated] = useState(false);
   const { cartCount } = useCart();
 
@@ -49,6 +50,13 @@ export default function NavMenu() {
       };
     }
   }, [isOpen]);
+
+  // Close menus after navigation (covers router.push + links without an onClick handler)
+  useEffect(() => {
+    setIsOpen(false);
+    setDropdown(false);
+    setProfileDropdown(false);
+  }, [pathname]);
 
   // Close menu when clicking on a link
   const handleLinkClick = () => {
@@ -313,7 +321,11 @@ export default function NavMenu() {
                       className="mobileProfileIconsWrapper"
                     >
                       <CiUser className="navIcons" />
-                      <Link href="/dashboard/cart" className="navCartIconWrapper">
+                      <Link
+                        href="/dashboard/cart"
+                        className="navCartIconWrapper"
+                        onClick={handleLinkClick}
+                      >
                         <CiShoppingCart className="navIcons" />
                         {cartCount > 0 && (
                           <span className="navCartBadge">{cartCount}</span>

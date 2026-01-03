@@ -39,6 +39,8 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  /* Allow children (like the title) to shrink/wrap inside this flex row */
+  min-width: 0;
 }
 
 .adminMobileMenuButton {
@@ -68,6 +70,20 @@
   font-weight: bold;
   color: white;
   margin: 0;
+  /* Allow wrapping in flex layouts */
+  min-width: 0;
+}
+
+/* Mobile: prevent "Admin Dashboard" from overflowing; wrap nicely into 2 lines */
+@media (max-width: 480px) {
+  .adminTitle {
+    font-size: 1.15rem;
+    line-height: 1.15;
+    white-space: normal;
+    overflow-wrap: break-word;
+    text-wrap: balance;
+    max-width: 12ch;
+  }
 }
 
 .adminHeaderRight {

@@ -30,11 +30,10 @@
   width: 100%;
   padding: 0.5rem 0;
 
- 
   /* pure white text */
   background-color: rgba(0, 0, 0, 0.5);
-  margin-bottom: 2rem;
-  /* semi-transparent behind text */
+
+  line-height: 6rem;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 .japanLetters{
@@ -50,8 +49,9 @@
   margin: 0 auto;
   border-radius: 2rem;
   font-weight: 600;
-  
   backdrop-filter:  red blur(5px);
+}
+.outlineEffect{
   
 }
 /* -------------------------
