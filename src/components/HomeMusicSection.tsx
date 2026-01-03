@@ -160,7 +160,7 @@ export default function HomeMusicSection() {
       <header className="homeMusicHeader">
         <div className="homeMusicHeaderContent">
       
-          <h2 className="homeMusicHeaderTitle">Featured BITS</h2>
+          <h2 className="homeMusicHeaderTitle">Featured Beats</h2>
         </div>
       </header>
 
