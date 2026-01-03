@@ -134,12 +134,22 @@ export async function sendContactEmail(name: string, email: string, message: str
       throw new Error('Proton Mail SMTP not configured');
     }
 
-    const recipientEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || process.env.CONTACT_EMAIL || 'thanzoproject@gmail.com';
+    // Where contact form notifications should be delivered.
+    // Prefer a private server-side env var, then fall back to the authenticated Proton inbox.
+    // (NEXT_PUBLIC_* is optional but not recommended for "owner" emails.)
+    const ownerEmail = process.env.PROTON_SMTP_USER;
+    const recipientEmail =
+      process.env.CONTACT_EMAIL ||
+      ownerEmail ||
+      process.env.NEXT_PUBLIC_CONTACT_EMAIL ||
+      'thanzoproject@gmail.com';
     const currentTime = new Date().toLocaleString();
 
     const info = await transporter.sendMail({
       from: `HENDO Contact Form <${process.env.PROTON_SMTP_USER}>`,
       to: recipientEmail,
+      // If the main recipient is not the Proton inbox, still send a private copy there.
+      ...(ownerEmail && ownerEmail !== recipientEmail ? { bcc: ownerEmail } : {}),
       replyTo: email,
       subject: `Contact Us: ${name}`,
       html: `
