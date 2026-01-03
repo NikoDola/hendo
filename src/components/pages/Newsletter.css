@@ -1,4 +1,4 @@
-/* Newsletter Component Styles */
+Newsletter Component Styles
 
 .newsletterErrorMessage {
   color: red;
@@ -37,33 +37,11 @@
   margin-bottom: 8rem;
 }
 
-.newsletterTitle {
-  display: block;
-  text-align: center;
-  font-size: var(--text-3xl);
-  font-family: var(--font-lemonmilk);
-  padding: 1rem;
-  margin-top: 1rem;
-  margin-bottom: 0;
-  /* Override h2 width:max-content to allow centering */
-  width: 100% !important;
-  /* Gradient text effect */
-  background-image: linear-gradient(90deg,
-      var(--theme-color-1),
-      var(--theme-color-2));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  /* Transition the CSS custom properties for color changes */
-  transition: --theme-color-1 5s ease, --theme-color-2 5s ease;
-}
 
 .newsletterWrapper {
   display: flex;
   justify-content: center;
   gap: 0;
-  /* no gap between */
   width: 40%;
   margin-top: 3rem;
   padding: 1rem;
@@ -71,17 +49,9 @@
 
 .inputNewsletter {
   flex: 0 0 80%;
-  /* lock to 80% width */
   border-radius: 20px 0px 0 20px;
 }
 
-.subscribe {
-  border-radius: 0 1rem 1rem 0;
-  transition: background-color 0.3s ease, 
-              color 0.3s ease, 
-              box-shadow 0.3s ease, 
-              border-radius 0.3s ease;
-}
 
 .subscribe:hover {
   background: black;
@@ -112,20 +82,18 @@
   color: black;
 }
 
-/* Privacy Policy and Terms of Service links */
 .my-recaptcha-disclaimer a {
   color: #8B5CF6;
-  /* Purple color */
+
   text-decoration: underline;
   transition: color 0.3s ease;
 }
 
 .my-recaptcha-disclaimer a:hover {
   color: #7C3AED;
-  /* Darker purple on hover */
 }
 
-/* Mobile responsive */
+
 @media (max-width: 768px) {
   .newsletterWrapper {
     width: 100%;

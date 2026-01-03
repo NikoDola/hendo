@@ -81,6 +81,10 @@
   margin: 0;
 }
 
+.submitButton {
+  padding: 0.75rem;
+}
+
 .footer-bottom {
   text-align: center;
   padding-top: 1rem;

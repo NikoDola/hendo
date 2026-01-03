@@ -30,6 +30,12 @@
 
 :root {
   font-family: var(--font-lemonmilk), system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  /* Centralized theme color blending (edit this one value) */
+  --theme-color-transition: 5s ease;
+  transition:
+    --theme-color var(--theme-color-transition),
+    --theme-color-1 var(--theme-color-transition),
+    --theme-color-2 var(--theme-color-transition);
 }
 
 html {
@@ -96,9 +102,6 @@ h1 {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  /* Transition the CSS custom properties for color changes */
-  transition: --theme-color-1 5s ease, --theme-color-2 5s ease;
-
   width: max-content;
 }
 
@@ -123,8 +126,6 @@ h2 {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  /* Transition the CSS custom properties for color changes */
-  transition: --theme-color-1 5s ease, --theme-color-2 5s ease;
 }
 
 h3 {
@@ -178,7 +179,7 @@ button {
   color: white;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease, --theme-color 5s ease, --theme-color-1 5s ease, --theme-color-2 5s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 0 20px var(--theme-color);
   font-size: 1rem;
   display: flex;
@@ -187,6 +188,7 @@ button {
   height: auto;
   line-height: normal;
   font-family: var(--font-lemonmilk);
+  padding: 0.75rem;
 }
 
 button:hover {

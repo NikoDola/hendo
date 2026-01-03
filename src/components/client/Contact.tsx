@@ -140,6 +140,7 @@ export default function Contact() {
         <button
           type="submit"
           disabled={status === 'loading'}
+          className="submitButton "
         >
           {status === 'loading' ? 'Sending...' : 'Submit'}
         </button>
