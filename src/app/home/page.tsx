@@ -32,7 +32,7 @@ export default function Home() {
       <section className="section-regular secondSection">
         <HomeMusicSectionServer />
         <Link href="/music" className="view-more">
-          view more bits
+          view more beats
         </Link>
       </section>
 
