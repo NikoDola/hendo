@@ -33,13 +33,19 @@
   margin: 0 auto;
   flex-direction: column;
   padding: 2rem;
-  margin-top: 14rem;
+  margin-top: 15rem;
   z-index: 1;
 }
 .hrsCtaWrapper *{
   margin: 0 auto;
   margin-top: 2rem;
   text-align: center;
+}
+
+.hrsDescription{
+  font-size: 1.5rem;
+  width: 40%;
+  line-height: 2rem;
 }
 
 .hrsImgWrapper{
@@ -96,6 +102,9 @@
 }
 }
 
+.hrsDescription{
+  width: 90%;
+}
 
 @media (max-width: 1000px) and (orientation: landscape) {
   .hrsImgWrapper{
