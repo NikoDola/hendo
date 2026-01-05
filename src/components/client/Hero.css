@@ -1,166 +1,100 @@
-/* Hero Component Styles */
-
-.heroHiddenU {
-  z-index: -2;
+.hrsWrapper {
+  position: relative;
+  min-height: 150vh;
+  margin: 0;
+ 
 }
 
-.hero__wrapper {
-  height: 100vh;
+.hrsHeadlineWrapper{
+  position: fixed;
+  top: 10rem;   /* 👈 initial position on first paint */
+  left: 0;
+  width: 100%;
+}
+.hrsHeadline {
+  text-align: center;
+  width: 100%;
+  text-align: center;
+  font-size: 10rem;
+  line-height: 9rem;
+}
+.hrsJapan{
+  text-align: center;
+  font-weight: 400;
+  font-size: 4rem;
+}
 
+.hrsCtaWrapper{
+  width: 100%;
+  margin: 0 auto;
+  flex-direction: column;
+  padding: 2rem;
+  margin-top: 10rem;
+  z-index: 1;
+}
+.hrsCtaWrapper *{
+  margin: 0 auto;
+  margin-top: 2rem;
   text-align: center;
 }
 
-.imageWrapper {
+.hrsImgWrapper{
   position: relative;
-  width: 100%;
+
 }
 
-
-
-.hendoImageDiv {
-  position: relative;
-  margin: 0 auto;
-  width: 100%;
-  height: 100vh;
-  background-image: url("/images/hendo/4.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  animation: glitch 3.5s infinite steps(1) 2s both;
-  z-index: 11;
-  top: 40px;
-  /* Ensure the image is visible immediately */
-  opacity: 1;
-}
-
-@keyframes glitch {
-
-  0%,
-  90% {
-    background-image: url('/images/hendo/4.png');
-    background-size: contain;
-    opacity: 1;
-  }
-
-  92.5% {
-    background-image: url('/images/hendo/glitch1.png');
-    background-size: contain;
-    opacity: 1;
-  }
-
-  95.5% {
-    background-image: url('/images/hendo/glitch2.png');
-    background-size: contain;
-    opacity: 1;
-  }
-
-  97.5% {
-    background-image: url('/images/hendo/glitch3.png');
-    background-size: contain;
-    opacity: 1;
-  }
-}
-
-/* Glitch trigger animation - triggered by color changes */
-.glitch-trigger {
-  animation: glitchTrigger 1s steps(1) both !important;
-}
-
-@keyframes glitchTrigger {
-  0% {
-    background-image: url('/images/hendo/4.png');
-    background-size: contain;
-    opacity: 1;
-  }
-
-  10% {
-    background-image: url('/images/hendo/glitch1.png');
-    background-size: contain;
-    opacity: 1;
-  }
-
-  20% {
-    background-image: url('/images/hendo/glitch2.png');
-    background-size: contain;
-    opacity: 1;
-  }
-
-  30% {
-    background-image: url('/images/hendo/glitch3.png');
-    background-size: contain;
-    opacity: 1;
-  }
-
-  40% {
-    background-image: url('/images/hendo/glitch1.png');
-    background-size: contain;
-    opacity: 1;
-  }
-
-  50% {
-    background-image: url('/images/hendo/glitch2.png');
-    background-size: contain;
-    opacity: 1;
-  }
-
-  60% {
-    background-image: url('/images/hendo/glitch3.png');
-    background-size: contain;
-    opacity: 1;
-  }
-
-  70% {
-    background-image: url('/images/hendo/glitch1.png');
-    background-size: contain;
-    opacity: 1;
-  }
-
-  80% {
-    background-image: url('/images/hendo/glitch2.png');
-    background-size: contain;
-    opacity: 1;
-  }
-
-  90% {
-    background-image: url('/images/hendo/glitch3.png');
-    background-size: contain;
-    opacity: 1;
-  }
-
-  100% {
-    background-image: url('/images/hendo/4.png');
-    background-size: contain;
-    opacity: 1;
-  }
-}
-
-.headline {
+.bgImg, .hendoImage{
   position: absolute;
-  top: 10%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: left;
-  z-index: 10;
+  margin: 0 auto;
+  z-index: -1;
+  width: 100%;
+  height: auto;
+}
+.hendoImage{
+  z-index: 2;
 }
 
-.headline span {
+@media (max-width: 1000px){
+.hrsWrapper{
+  min-height: 100svh
+  
+}
+  .hrsHeadline{
+    font-size: 4rem;
+    line-height: 4rem;
+  }
+  .hrsCtaWrapper{
+    margin-top: 5rem;
+  }
+  .hrsJapan{
+    font-size: 2rem;
+  }
+  .bgImg, .hendoImage{
+   scale: 2;
+    
+  }
+
+    .hrsHeadlineWrapper {
+    top: 5rem;
+  }
+  .hrsImgWrapper{
+  min-width: fit-content;
+  min-height: 100vh;
   position: relative;
-  font-size: 10rem;
-
-  text-align: left;
+  overflow-x: hidden;
+}
 }
 
-.headline {
-  top: 15%;
-}
 
-.headline span {
-  font-size: 14vh;
-  line-height: 13vh;
-}
+@media (max-width: 1000px) and (orientation: landscape) {
+  .hrsWrapper {
+    min-height: 200vh;
+  }
 
-@media (max-width: 800px) {
-  .hendoImageDiv {
-    top: 0;
+  .bgImg,
+  .hendoImage {
+
+    scale: 1;
+    
   }
 }

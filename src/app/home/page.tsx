@@ -1,7 +1,9 @@
+"use effect"
 import "../globals.css"
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
-import HeroNiko from "@/components/client/HeroNiko";
+import Hero from "@/components/client/Hero.jsx"
+
 
 import Link from "next/link";
 import HomeMusicSectionServer from "@/components/server/HomeMusicSectionServer";
@@ -20,29 +22,30 @@ const Contact = dynamic(() => import("@/components/client/Contact"), {
 });
 
 export default function Home() {
+  
   return (
     <main>
-      <section className="section-full mt-0" >
-      <HeroNiko />
+      <section className="section-full hrsWrapper" >
+    <Hero />
       </section>
 
-      <section className="section-regular">
+      <section className="section-regular secondSection">
         <HomeMusicSectionServer />
         <Link href="/music" className="view-more">
           view more bits
         </Link>
       </section>
-     
-     <section className="section-regular">
-        <Newsletter />
-     </section>
 
-         
-     <section className="section-regular">
+      <section className="section-regular">
+        <Newsletter />
+      </section>
+
+
+      <section className="section-regular">
         <Contact />
-     </section>
-      
-    
+      </section>
+
+
     </main>
   );
 }

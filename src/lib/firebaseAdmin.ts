@@ -24,11 +24,6 @@ if (!admin.apps.length) {
   }
 
   // Debug logging (remove in production if sensitive)
-  console.log('Firebase Admin Config Check:');
-  console.log('- Project ID:', projectId ? '✓ Set' : '✗ Missing');
-  console.log('- Client Email:', clientEmail ? '✓ Set' : '✗ Missing');
-  console.log('- Private Key:', privateKey ? `✓ Set (${privateKey.length} chars)` : '✗ Missing');
-  console.log('- Private Key starts with BEGIN:', privateKey?.includes('-----BEGIN PRIVATE KEY-----') ? '✓ Yes' : '✗ No');
 
   try {
     const storageBucket = process.env.FIREBASE_STORAGE_BUCKET || process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || `${projectId}.appspot.com`;
@@ -39,7 +34,6 @@ if (!admin.apps.length) {
         projectId,
         storageBucket,
       });
-      console.log('Firebase Admin initialized successfully with storage bucket:', storageBucket);
     } else {
       console.error('Firebase Admin: Missing or invalid credentials');
       // Fallback: try ADC if a service account json is configured

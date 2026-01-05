@@ -37,7 +37,6 @@ export async function recordPurchase(
   expiresAt: Date
 ): Promise<UserPurchase> {
   try {
-    console.log('recordPurchase called with userId:', userId);
     const purchasesRef = collection(db, 'purchases');
     const purchaseData = {
       userId,
@@ -50,10 +49,8 @@ export async function recordPurchase(
       expiresAt,
       createdAt: serverTimestamp()
     };
-    console.log('Saving purchase data:', { ...purchaseData, zipUrl: zipUrl.substring(0, 50) + '...', pdfUrl: pdfUrl.substring(0, 50) + '...' });
     
     const purchaseRef = await addDoc(purchasesRef, purchaseData);
-    console.log('Purchase saved with ID:', purchaseRef.id);
 
     return {
       id: purchaseRef.id,
@@ -77,7 +74,6 @@ export async function recordPurchase(
  */
 export async function getUserPurchases(userId: string): Promise<UserPurchase[]> {
   try {
-    console.log('getUserPurchases called with userId:', userId);
     const purchasesRef = collection(db, 'purchases');
     
     // Query without orderBy first to avoid index issues
@@ -88,7 +84,6 @@ export async function getUserPurchases(userId: string): Promise<UserPurchase[]> 
     );
     
     const querySnapshot = await getDocs(q);
-    console.log('Found purchase documents:', querySnapshot.docs.length);
     
     const purchases = querySnapshot.docs.map(doc => {
       const data = doc.data();
@@ -103,7 +98,6 @@ export async function getUserPurchases(userId: string): Promise<UserPurchase[]> 
         purchasedAt: data.purchasedAt?.toDate() || data.createdAt?.toDate() || new Date(),
         expiresAt: data.expiresAt?.toDate() || new Date()
       };
-      console.log('Purchase found:', { id: purchase.id, userId: purchase.userId, trackTitle: purchase.trackTitle });
       return purchase;
     });
     
@@ -114,7 +108,6 @@ export async function getUserPurchases(userId: string): Promise<UserPurchase[]> 
       return dateB - dateA; // Descending
     });
     
-    console.log('Returning purchases:', purchases.length);
     return purchases;
   } catch (error) {
     console.error('Error getting user purchases:', error);

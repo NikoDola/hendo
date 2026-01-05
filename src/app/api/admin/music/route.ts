@@ -39,9 +39,7 @@ export async function POST(request: NextRequest) {
     try {
       // Read body as text first to see what we're actually getting
       const bodyText = await request.text();
-      console.log('Raw request body (first 500 chars):', bodyText?.substring(0, 500));
-      console.log('Body length:', bodyText?.length);
-      console.log('Body starts with:', bodyText?.substring(0, 10));
+
       
       if (!bodyText || bodyText.trim().length === 0) {
         return NextResponse.json(
@@ -53,7 +51,7 @@ export async function POST(request: NextRequest) {
       // Try to parse the trimmed body
       const trimmedBody = bodyText.trim();
       body = JSON.parse(trimmedBody);
-      console.log('Successfully parsed body:', JSON.stringify(body, null, 2));
+
     } catch (jsonError: unknown) {
       const error = jsonError as Error & { name?: string };
       console.error('Failed to parse JSON:', jsonError);

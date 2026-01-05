@@ -38,7 +38,7 @@
     "src/context/context.tsx",
     "src/components/client/ColorBackground.jsx",
     ".next/dev/types/**/*.ts"
-  ],
+, "src/components/client/Hero.jsx"  ],
   "exclude": [
     "node_modules"
   ]

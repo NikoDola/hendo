@@ -53,7 +53,7 @@ export async function PUT(
     let body;
     try {
       body = await request.json();
-      console.log('Received body:', JSON.stringify(body, null, 2));
+
     } catch (jsonError: unknown) {
       const err = jsonError as Error;
       console.error('Failed to parse JSON:', jsonError);

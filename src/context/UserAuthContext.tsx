@@ -36,15 +36,12 @@ const UserAuthContext = createContext<UserAuthContextValue | undefined>(undefine
 
 async function setServerSessionFromCurrentUser(firebaseUser: FirebaseUser | null): Promise<void> {
   if (!firebaseUser) return;
-  console.log('Getting ID token...');
   const idToken = await firebaseUser.getIdToken();
-  console.log('Setting server session...');
   const response = await fetch('/api/auth/session', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ idToken }),
   });
-  console.log('Session response:', response.status, response.ok);
   if (!response.ok) {
     const error = await response.text();
     console.error('Session error:', error);
@@ -75,13 +72,10 @@ export function UserAuthProvider({ children }: { children: React.ReactNode }) {
     // Handle redirect result if present
     (async () => {
       try {
-        console.log('Checking for redirect result...');
         const result = await getRedirectResult(auth);
         if (result?.user) {
-          console.log('Redirect result found, setting session...');
           await setServerSessionFromCurrentUser(result.user);
         } else {
-          console.log('No redirect result');
         }
       } catch (e) {
         console.error('Redirect result error:', e);
@@ -90,17 +84,12 @@ export function UserAuthProvider({ children }: { children: React.ReactNode }) {
 
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
       try {
-        console.log('Auth state changed:', fbUser ? 'User logged in' : 'User logged out');
         if (fbUser) {
-          console.log('Setting server session...');
           await setServerSessionFromCurrentUser(fbUser);
           // Ask server for role and normalized user
-          console.log('Fetching user role...');
           const res = await fetch('/api/auth/me');
           const data = await res.json();
-          console.log('Server response:', data);
           if (data?.authenticated) {
-            console.log('User authenticated, setting user state');
             const userData = {
               uid: fbUser.uid,
               email: fbUser.email,
@@ -111,12 +100,10 @@ export function UserAuthProvider({ children }: { children: React.ReactNode }) {
             // Cache user data in localStorage
             localStorage.setItem('hendo_user', JSON.stringify(userData));
           } else {
-            console.log('User not authenticated on server');
             setUser(null);
             localStorage.removeItem('hendo_user');
           }
         } else {
-          console.log('No Firebase user, clearing state');
           setUser(null);
           localStorage.removeItem('hendo_user');
         }
@@ -135,12 +122,9 @@ export function UserAuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithGoogle = useCallback(async () => {
     const provider = new GoogleAuthProvider();
     try {
-      console.log('Starting Google sign-in with popup...');
       const result = await signInWithPopup(auth, provider);
-      console.log('Popup sign-in successful, setting session...');
       await setServerSessionFromCurrentUser(result.user);
     } catch (e) {
-      console.log('Popup failed, trying redirect:', e);
       await signInWithRedirect(auth, provider);
     }
   }, []);
@@ -162,16 +146,12 @@ export function UserAuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signOut = useCallback(async () => {
-    console.log('Signing out...');
     try {
       await firebaseSignOut(auth);
-      console.log('Firebase sign out complete');
       await fetch('/api/auth/logout', { method: 'POST' });
-      console.log('Server logout complete');
       setUser(null);
       // Clear cached user data
       localStorage.removeItem('hendo_user');
-      console.log('Local state cleared');
     } catch (error) {
       console.error('Sign out error:', error);
     }

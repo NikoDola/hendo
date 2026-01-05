@@ -35,7 +35,6 @@ function ColorSliderInner({
       const color = getComputedStyle(root).getPropertyValue('--theme-color').trim();
 
       if (color && color !== lastColor) {
-        console.log('ColorSlider: Color change detected, will update in 1.2s for glitch sync');
         lastColor = color;
 
         // Clear any existing timeout
@@ -45,7 +44,6 @@ function ColorSliderInner({
 
         // Update color 1.2 seconds after color change (when glitch starts)
         colorTimeout = setTimeout(() => {
-          console.log('ColorSlider: Updating color to:', color);
           setCurrentColor(color);
         }, 1200); // Match glitch start timing
       }

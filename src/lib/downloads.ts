@@ -74,7 +74,6 @@ async function generateRightsPDF(
   purchaseDate: Date
 ): Promise<Buffer> {
   try {
-    console.log('Generating PDF with jsPDF...');
     
     // Create a new PDF document using jsPDF (no font issues!)
     const doc = new jsPDF();
@@ -134,7 +133,6 @@ async function generateRightsPDF(
     
     // Convert to buffer
     const pdfBuffer = Buffer.from(doc.output('arraybuffer'));
-    console.log('✅ PDF generated successfully');
     
     return pdfBuffer;
   } catch (error) {
@@ -163,7 +161,6 @@ export async function generateDownloadPackage(
     const timestamp = Date.now();
     
     // Generate PDF first (needed for ZIP)
-    console.log('Generating PDF...');
     const pdfBuffer = await generateRightsPDF(
       track.title,
       userName,
@@ -172,7 +169,6 @@ export async function generateDownloadPackage(
     );
     
     // Generate ZIP file (includes both audio and PDF)
-    console.log('Generating ZIP file...');
     const zipBuffer = await generateZipFile(track.audioFileUrl, track.title, pdfBuffer);
 
     // Upload ZIP to Firebase Storage using Admin SDK (bypasses security rules for upload)
@@ -196,7 +192,6 @@ export async function generateDownloadPackage(
       action: 'read',
       expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
     });
-    console.log('ZIP uploaded:', zipUrl);
 
     // Upload PDF to Firebase Storage using Admin SDK
     const pdfFileName = `purchases/${userId}/${timestamp}_${track.id}_rights.pdf`;
@@ -212,7 +207,6 @@ export async function generateDownloadPackage(
       action: 'read',
       expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
     });
-    console.log('PDF uploaded:', pdfUrl);
 
     // Set expiration to 7 days from now
     const expiresAt = new Date();

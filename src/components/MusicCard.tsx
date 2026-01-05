@@ -52,19 +52,14 @@ export default function MusicCard({
   const initialTouchY = useRef(0);
   const touchDirectionDetermined = useRef(false);
 
-
-  useEffect(() => {
-    console.log(`ee${Router}`)
-  }, [])
   // Initialize AudioContext and analyser when playing starts
   useEffect(() => {
     if (!audio || !isPlaying || !audio.src || audio.paused) return;
 
     const initAudioAnalysis = async () => {
       try {
-        if (audio.dataset.audioConnected === 'true') {
-          return;
-        }
+        // Prevent duplicate connections
+        if (audio.dataset.audioConnected === 'true') return;
 
         if (!audio.crossOrigin) {
           audio.crossOrigin = 'anonymous';
@@ -73,6 +68,7 @@ export default function MusicCard({
         const AudioContextCtor: typeof AudioContext =
           (window as typeof window & { webkitAudioContext?: typeof AudioContext }).AudioContext ||
           (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext!;
+
         const context = new AudioContextCtor();
 
         if (context.state === 'suspended') {
@@ -96,7 +92,7 @@ export default function MusicCard({
     };
 
     const timer = setTimeout(() => {
-      initAudioAnalysis();
+      void initAudioAnalysis();
     }, 100);
 
     return () => clearTimeout(timer);

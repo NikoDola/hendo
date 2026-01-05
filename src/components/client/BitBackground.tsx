@@ -94,7 +94,6 @@ export default function BitBackground({ showPlayButton = true }: BitBackgroundPr
     if (!audio) return;
 
     const handleSongEnd = () => {
-      console.log('Song ended, cycling to next song...');
       const nextIndex = (currentSongIndex + 1) % musicFiles.length;
       setCurrentSongIndex(nextIndex);
     };
@@ -122,7 +121,6 @@ export default function BitBackground({ showPlayButton = true }: BitBackgroundPr
       try {
         // Check if audio element is already connected to prevent duplicate connections
         if (audio.dataset.audioConnected === 'true') {
-          console.log('Audio element already connected, skipping...');
           return;
         }
 
@@ -217,12 +215,10 @@ export default function BitBackground({ showPlayButton = true }: BitBackgroundPr
   }, []);
 
   const togglePlayPause = async () => {
-    console.log('BitBackground togglePlayPause clicked!', { audio, isPlaying, currentSong: musicFiles[currentSongIndex].name });
 
     if (audio) {
       try {
         if (isPlaying) {
-          console.log('Pausing audio...');
           audio.pause();
           setIsPlaying(false);
           setIntensity(0);
@@ -231,7 +227,6 @@ export default function BitBackground({ showPlayButton = true }: BitBackgroundPr
           setTrebleIntensity(0);
           setBeatDetected(false);
         } else {
-          console.log('Playing audio...', musicFiles[currentSongIndex].name);
           await audio.play();
           setIsPlaying(true);
 

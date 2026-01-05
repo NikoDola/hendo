@@ -540,17 +540,16 @@ textarea::placeholder {
 
 }
 
-.section-regular,
-.heroSection {
+.section-regular {
   width: 80%;
   margin: 0 auto;
   margin-top: var(--space-10);
   margin-bottom: var(--space-25);
 }
-
+/* .heroSection
 .heroSection {
   margin-top: var(--space-14)
-}
+} */
 
 .colorBox {
   width: 100%;
@@ -569,10 +568,10 @@ textarea::placeholder {
   }
 
   .section-regular,
-  .heroSection {
+  /* .heroSection {
     width: 90%;
 
-  }
+  } */
 
   h1 {
     font-size: var(--text-5xl);
@@ -716,3 +715,6 @@ label {
   z-index: -1;
   pointer-events: none;
 }
+
+
+/* hero section */

@@ -58,7 +58,6 @@ export default function SignupPage() {
 
   const { signInWithGoogle } = useUserAuth();
   const handleGoogleSignup = async () => {
-    console.log('Signup page: initiating Google sign-in');
     try {
       await signInWithGoogle();
     } catch (e) {

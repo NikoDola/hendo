@@ -69,7 +69,6 @@ export default function NavMenu() {
     if (!dropdown) {
       setProfileDropdown(false);
     }
-    console.log(dropdown);
   };
 
   const handleProfileDropdown = () => {

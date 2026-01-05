@@ -48,8 +48,6 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    console.log('Creating checkout session with baseUrl:', baseUrl);
-    
     const session = await createCheckoutSession(
       musicTrackId,
       musicTitle,

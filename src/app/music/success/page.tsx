@@ -30,16 +30,13 @@ function PaymentSuccessContent() {
   }, [sessionId]);
 
   const verifyPayment = async (sessionId: string) => {
-    console.log('🔍 Verifying payment with session ID:', sessionId);
     try {
-      console.log('📤 Sending verify payment request...');
       const response = await fetch('/api/stripe/verify-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sessionId })
       });
 
-      console.log('📥 Response status:', response.status);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
@@ -48,7 +45,6 @@ function PaymentSuccessContent() {
       }
 
       const data = await response.json();
-      console.log('✅ Payment verified, data:', data);
       
       if (data.downloadUrl && data.pdfUrl) {
         setDownloadData(data);

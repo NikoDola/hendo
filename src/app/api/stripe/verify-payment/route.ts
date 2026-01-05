@@ -7,9 +7,7 @@ import { recordPurchase } from '@/lib/purchases';
 import { getMusicTrack } from '@/lib/music';
 
 export async function POST(request: NextRequest) {
-  console.log('🔍 [Verify Payment] Starting payment verification...');
   try {
-    console.log('👤 [Verify Payment] Getting user from session...');
     const user = await getUserFromSession();
     if (!user) {
       console.error('❌ [Verify Payment] No user found in session');
@@ -18,10 +16,8 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
-    console.log('✅ [Verify Payment] User authenticated:', user.email);
 
     const { sessionId } = await request.json();
-    console.log('📝 [Verify Payment] Session ID received:', sessionId);
 
     if (!sessionId) {
       console.error('❌ [Verify Payment] No session ID provided');
@@ -32,10 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Retrieve the checkout session
-    console.log('💳 [Verify Payment] Retrieving Stripe session...');
-    console.log('🔑 [Verify Payment] Stripe configured:', !!stripe);
     const session = await stripe.checkout.sessions.retrieve(sessionId);
-    console.log('✅ [Verify Payment] Stripe session retrieved, payment status:', session.payment_status);
 
     if (session.payment_status !== 'paid') {
       return NextResponse.json(
@@ -72,8 +65,6 @@ export async function POST(request: NextRequest) {
     // Generate download package (ZIP + PDF)
     // Use authUid for storage path (Firebase Auth UID) to match Storage security rules
     const userIdForStorage = user.authUid || user.id;
-    console.log('Generating download package for track:', musicTrackId);
-    console.log('Using userId for storage:', userIdForStorage);
     const downloadData = await generateDownloadPackage(
       musicTrackId,
       userIdForStorage,
@@ -82,12 +73,6 @@ export async function POST(request: NextRequest) {
     );
 
     // Record purchase in database
-    console.log('Recording purchase for user:', {
-      userId: user.id,
-      email: user.email,
-      trackId: musicTrackId,
-      trackTitle: track.title
-    });
     
     // Use Firestore document ID for purchase record, but authUid for storage
     const purchase = await recordPurchase(
@@ -100,7 +85,6 @@ export async function POST(request: NextRequest) {
       downloadData.expiresAt
     );
     
-    console.log('Purchase recorded successfully:', purchase.id);
 
     // Update user purchase count (use Firestore document ID)
     await updateUserPurchases(user.id, 1);

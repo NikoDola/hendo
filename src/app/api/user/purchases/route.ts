@@ -12,9 +12,7 @@ export async function GET() {
       );
     }
 
-    console.log('Fetching purchases for user:', user.id, user.email);
     const purchases = await getUserPurchases(user.id);
-    console.log('Found purchases:', purchases.length);
     
     return NextResponse.json({ purchases });
 
