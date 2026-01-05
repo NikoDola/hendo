@@ -52,6 +52,7 @@
 }
 .hendoImage{
   z-index: 2;
+  top: 0.5rem;
 }
 
 @media (max-width: 1000px){
