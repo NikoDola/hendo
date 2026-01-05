@@ -46,57 +46,64 @@ export default function MusicCard({
   const [showHashtags, setShowHashtags] = useState(false);
   const animationRef = useRef<number | null>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
+  const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
+  const analyserNodeRef = useRef<AnalyserNode | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const seekProgressRef = useRef(0);
   const initialTouchX = useRef(0);
   const initialTouchY = useRef(0);
   const touchDirectionDetermined = useRef(false);
 
-  // Initialize AudioContext and analyser when playing starts
+
   useEffect(() => {
-    if (!audio || !isPlaying || !audio.src || audio.paused) return;
+    if (!audio || !isPlaying) return;
+
+    let cancelled = false;
 
     const initAudioAnalysis = async () => {
       try {
-        // Prevent duplicate connections
-        if (audio.dataset.audioConnected === 'true') return;
-
-        if (!audio.crossOrigin) {
-          audio.crossOrigin = 'anonymous';
-        }
-
-        const AudioContextCtor: typeof AudioContext =
-          (window as typeof window & { webkitAudioContext?: typeof AudioContext }).AudioContext ||
-          (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext!;
-
-        const context = new AudioContextCtor();
+        // Create/reuse AudioContext
+        const context = audioContext ?? new AudioContext();
 
         if (context.state === 'suspended') {
           await context.resume();
         }
 
-        const source = context.createMediaElementSource(audio);
-        const analyserNode = context.createAnalyser();
-        analyserNode.fftSize = 256;
-        analyserNode.smoothingTimeConstant = 0.8;
+        // Only create these once per <audio> element
+        if (!sourceNodeRef.current) {
+          sourceNodeRef.current = context.createMediaElementSource(audio);
+        }
 
-        source.connect(analyserNode);
-        analyserNode.connect(context.destination);
+        if (!analyserNodeRef.current) {
+          const analyserNode = context.createAnalyser();
+          analyserNode.fftSize = 256;
+          analyserNode.smoothingTimeConstant = 0.8;
 
-        audio.dataset.audioConnected = 'true';
-        setAudioContext(context);
-        setAnalyser(analyserNode);
+          sourceNodeRef.current.connect(analyserNode);
+          analyserNode.connect(context.destination);
+
+          analyserNodeRef.current = analyserNode;
+          audio.dataset.audioConnected = 'true';
+        }
+
+        if (!cancelled) {
+          setAudioContext(context);
+          setAnalyser(analyserNodeRef.current);
+        }
       } catch (error) {
         console.error('AudioContext initialization failed:', error);
       }
     };
 
-    const timer = setTimeout(() => {
+    const timer = window.setTimeout(() => {
       void initAudioAnalysis();
     }, 100);
 
-    return () => clearTimeout(timer);
-  }, [isPlaying, audio]);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [isPlaying, audio, audioContext]);
 
   // Audio analysis for visualizations
   useEffect(() => {

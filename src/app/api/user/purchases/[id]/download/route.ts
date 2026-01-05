@@ -41,6 +41,12 @@ export async function GET(
       );
     }
 
+    console.log('Purchase data:', {
+      trackTitle: purchaseData.trackTitle,
+      zipUrl: purchaseData.zipUrl?.substring(0, 100),
+      pdfUrl: purchaseData.pdfUrl?.substring(0, 100)
+    });
+
     // Get the original URL to extract the file path
     let originalUrl: string;
     
@@ -55,6 +61,8 @@ export async function GET(
       );
     }
 
+    console.log('Download URL type:', type);
+    
     // Extract the file path from the URL
     let filePath: string;
     try {
@@ -71,6 +79,7 @@ export async function GET(
         filePath = urlObj.pathname.substring(1);
       }
       
+      console.log('Extracted file path:', filePath);
     } catch (error) {
       console.error('Failed to parse URL:', error);
       return NextResponse.json(
@@ -85,12 +94,16 @@ export async function GET(
       const bucket = firebaseAdmin.storage().bucket();
       const file = bucket.file(filePath);
       
+      console.log('Generating fresh signed URL for:', filePath);
+      
       // Create a signed URL that expires in 7 days
       const [signedUrl] = await file.getSignedUrl({
         action: 'read',
         expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days from now
       });
       
+      console.log('✅ Fresh signed URL generated');
+
       return NextResponse.json({
         downloadUrl: signedUrl,
         expiresIn: 7 * 24 * 60 * 60 // 7 days in seconds
