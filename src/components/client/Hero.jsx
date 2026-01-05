@@ -2,6 +2,7 @@
 import { useRef, useEffect } from "react";
 import "./Hero.css";
 import Image from "next/image";
+import Link from "next/link";
 
 const getOffsetRem = () => {
   if (typeof window !== "undefined") {
@@ -76,7 +77,7 @@ export default function Hero() {
           Welcome to the Dreamstation. A portal into the mind of T. HENDO where
           imagination becomes frequency, and sound becomes a world of its own.
         </p>
-        <button>Read More</button>
+        <Link href="/about"><button>Read More</button></Link>
       </div>
 
       <div className="hrsImgWrapper">
