@@ -98,6 +98,9 @@
 
 
 @media (max-width: 1000px) and (orientation: landscape) {
+  .hrsImgWrapper{
+    overflow: hidden;
+  }
   .hrsWrapper {
     min-height: 200vh;
   }
@@ -108,6 +111,8 @@
     scale: 1;
     
   }
+
+  
 }
 
 /* GRADIENT MASK ON IMAGES */
