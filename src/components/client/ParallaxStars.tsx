@@ -4,24 +4,25 @@ import { useColorToggle } from "@/context/ColorToggleContext";
 
 export default function ParallaxStars() {
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | null>(null);
   
-  // Track dimensions
-  const lastWidthRef = useRef<number>(0);
-  const lastHeightRef = useRef<number>(0);
+  // Track previous container width
+  const prevWidthRef = useRef<number>(0);
 
   // Get color from context
   const { color } = useColorToggle();
   const colorRef = useRef(color);
 
-  // Update the ref when color changes
   useEffect(() => {
     colorRef.current = color;
   }, [color]);
 
   useEffect(() => {
     const bgCanvas = bgCanvasRef.current;
-    if (!bgCanvas) return;
+    const container = containerRef.current;
+    
+    if (!bgCanvas || !container) return;
 
     const bgCtx = bgCanvas.getContext("2d");
     if (!bgCtx) return;
@@ -31,39 +32,10 @@ export default function ParallaxStars() {
     let width = 0;
     let height = 0;
     let startTime = Date.now();
-    let resizeTimeout: NodeJS.Timeout | null = null;
+    let isInitialized = false;
 
     const clamp = (n: number, min: number, max: number) =>
       Math.max(min, Math.min(max, n));
-
-    const resizeCanvas = () => {
-      // Use window dimensions
-      const newWidth = window.innerWidth;
-      const newHeight = window.innerHeight;
-      
-      // Store previous dimensions for comparison
-      const prevWidth = lastWidthRef.current;
-      const prevHeight = lastHeightRef.current;
-      
-      // Update current dimensions
-      width = newWidth;
-      height = newHeight;
-      lastWidthRef.current = width;
-      lastHeightRef.current = height;
-
-      const dpr = Math.max(1, window.devicePixelRatio || 1);
-      bgCanvas.width = Math.floor(width * dpr);
-      bgCanvas.height = Math.floor(height * dpr);
-      bgCanvas.style.width = `${width}px`;
-      bgCanvas.style.height = `${height}px`;
-
-      bg.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      // Return previous dimensions for star redistribution
-      return { prevWidth, prevHeight };
-    };
-
-    const FADE_DURATION = 3000;
 
     // Star class
     class Star {
@@ -73,18 +45,18 @@ export default function ParallaxStars() {
       y: number;
       opacity: number;
 
-      constructor(options: { x?: number; y?: number; opacity?: number } = {}) {
+      constructor(options: { x: number; y: number; opacity: number }) {
         this.size = Math.random() * 2;
         this.speed = Math.random() * 0.1;
-        this.x = options.x !== undefined ? options.x : Math.random() * width;
-        this.y = options.y !== undefined ? options.y : Math.random() * height;
-        this.opacity = options.opacity || 0;
+        this.x = options.x;
+        this.y = options.y;
+        this.opacity = 0;
       }
 
       reset() {
         this.size = Math.random() * 2;
         this.speed = Math.random() * 0.1;
-        this.x = Math.random() * width;
+        this.x = width;
         this.y = Math.random() * height;
       }
 
@@ -95,19 +67,6 @@ export default function ParallaxStars() {
         } else {
           bg.fillRect(this.x, this.y, this.size, this.size);
         }
-      }
-      
-      // Method to redistribute star when canvas resizes
-      redistribute(oldWidth: number, oldHeight: number, newWidth: number, newHeight: number) {
-        // Scale x position proportionally to new width
-        this.x = (this.x / oldWidth) * newWidth;
-        
-        // Scale y position proportionally to new height
-        this.y = (this.y / oldHeight) * newHeight;
-        
-        // Ensure star is within new bounds
-        if (this.x > newWidth) this.x = newWidth * Math.random();
-        if (this.y > newHeight) this.y = newHeight * Math.random();
       }
     }
 
@@ -155,83 +114,53 @@ export default function ParallaxStars() {
           }
         }
       }
-      
-      // Reset shooting star completely on resize
-      redistribute() {
-        this.reset();
-      }
     }
 
-    // Initialize entities
-    let entities: (Star | ShootingStar)[] = [];
+    // Initialize entities array
+    const entities: (Star | ShootingStar)[] = [];
     
-    const createEntities = () => {
-      const newEntities: (Star | ShootingStar)[] = [];
+    // Function to create new stars
+    const reseedEntities = () => {
+      // Clear existing entities
+      entities.length = 0;
 
-      // Scale star count with viewport area
+      // Scale star count with viewport area, but keep it bounded
       const starCount = clamp(Math.floor((width * height) / 1500), 200, 1200);
       
+      // Create regular stars
       for (let i = 0; i < starCount; i++) {
-        newEntities.push(new Star());
+        entities.push(new Star({ 
+          x: Math.random() * width, 
+          y: Math.random() * height, 
+          opacity: 0 
+        }));
       }
 
-      // Shooting stars
+      // Create shooting stars
       for (let i = 0; i < 8; i++) {
-        newEntities.push(new ShootingStar());
-      }
-      
-      return newEntities;
-    };
-
-    // Redistribute all entities based on new dimensions
-    const redistributeEntities = (oldWidth: number, oldHeight: number) => {
-      entities.forEach(entity => {
-        if (entity instanceof Star) {
-          // Scale star positions proportionally
-          entity.redistribute(oldWidth, oldHeight, width, height);
-        } else if (entity instanceof ShootingStar) {
-          // Reset shooting stars completely
-          entity.redistribute();
-        }
-      });
-    };
-
-    // Adjust star count based on new viewport area
-    const adjustStarCount = () => {
-      const targetStarCount = clamp(Math.floor((width * height) / 1500), 200, 1200);
-      const currentStars = entities.filter(e => e instanceof Star);
-      const currentShootingStars = entities.filter(e => e instanceof ShootingStar);
-      const currentStarCount = currentStars.length;
-      
-      if (targetStarCount > currentStarCount) {
-        // Add more stars
-        const starsToAdd = targetStarCount - currentStarCount;
-        for (let i = 0; i < starsToAdd; i++) {
-          entities.push(new Star());
-        }
-      } else if (targetStarCount < currentStarCount) {
-        // Remove excess stars
-        const starsToRemove = currentStarCount - targetStarCount;
-        entities = [...currentStars.slice(0, targetStarCount), ...currentShootingStars];
+        entities.push(new ShootingStar());
       }
     };
+
+    const FADE_DURATION = 3000;
+    const MAX_STAR_OPACITY = 0.8;
 
     // Animation loop
-    const MAX_STAR_OPACITY = 0.8;
     const animate = () => {
+      // Calculate fade-in opacity
       const elapsed = Date.now() - startTime;
       const globalOpacity = Math.min(elapsed / FADE_DURATION, 1) * MAX_STAR_OPACITY;
 
-      // Clear canvas
+      // Clear canvas with black background
       bg.fillStyle = '#000000';
       bg.fillRect(0, 0, width, height);
 
-      // Set opacity for stars
+      // Apply fade-in opacity to all stars
       bg.globalAlpha = globalOpacity;
       bg.fillStyle = '#ffffff';
       bg.strokeStyle = '#ffffff';
 
-      // Update and draw entities
+      // Update entities
       entities.forEach(entity => {
         if (entity instanceof ShootingStar) {
           entity.update(colorRef.current);
@@ -240,70 +169,73 @@ export default function ParallaxStars() {
         }
       });
 
+      // Reset alpha for next frame
       bg.globalAlpha = 1;
+
       animationRef.current = requestAnimationFrame(animate);
     };
 
-    // Handle resize with debouncing
-    const handleResize = () => {
-      if (resizeTimeout) {
-        clearTimeout(resizeTimeout);
+    const updateCanvasSize = () => {
+      // Get container dimensions - this is stable and doesn't change on scroll
+      const containerRect = container.getBoundingClientRect();
+      const newWidth = Math.max(1, Math.floor(containerRect.width));
+      const newHeight = Math.max(1, Math.floor(containerRect.height));
+
+      // Only update if dimensions actually changed
+      if (newWidth === width && newHeight === height && isInitialized) {
+        return;
       }
 
-      resizeTimeout = setTimeout(() => {
-        const { prevWidth, prevHeight } = resizeCanvas();
-        
-        // Always redistribute entities on resize to account for dimension changes
-        if (prevWidth > 0 && prevHeight > 0) {
-          redistributeEntities(prevWidth, prevHeight);
-          adjustStarCount();
-        }
-        
-        startTime = Date.now(); // Reset fade animation
-        resizeTimeout = null;
-      }, 200);
-    };
+      width = newWidth;
+      height = newHeight;
 
-    // Handle orientation change - more aggressive reset
-    const handleOrientationChange = () => {
-      // Clear any pending resize timeout
-      if (resizeTimeout) {
-        clearTimeout(resizeTimeout);
-      }
+      // Set canvas size
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
+      bgCanvas.width = Math.floor(width * dpr);
+      bgCanvas.height = Math.floor(height * dpr);
+      bgCanvas.style.width = `${width}px`;
+      bgCanvas.style.height = `${height}px`;
+
+      // Scale context for high DPI displays
+      bg.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      // Reseed entities on significant width change OR initial load
+      const widthChangedSignificantly = Math.abs(prevWidthRef.current - width) > 50;
       
-      // Wait a bit longer for orientation to fully complete
-      resizeTimeout = setTimeout(() => {
-        const { prevWidth, prevHeight } = resizeCanvas();
-        
-        if (prevWidth > 0 && prevHeight > 0) {
-          // On orientation change, completely recreate entities for better distribution
-          entities = createEntities();
-        }
-        
-        startTime = Date.now();
-        resizeTimeout = null;
-      }, 350); // Longer delay for orientation
+      if (widthChangedSignificantly || !isInitialized) {
+        reseedEntities();
+        prevWidthRef.current = width;
+        startTime = Date.now(); // Reset fade on reseed
+      }
+
+      if (!isInitialized) {
+        isInitialized = true;
+      }
     };
 
     // Initial setup
-    resizeCanvas(); // Set initial dimensions
-    entities = createEntities(); // Create initial entities
-    
-    // Start animation
+    updateCanvasSize();
     animate();
 
-    // Event listeners
-    window.addEventListener("resize", handleResize, { passive: true });
-    window.addEventListener("orientationchange", handleOrientationChange, { passive: true });
+    // Use ResizeObserver on the CONTAINER (parent div)
+    // This only fires when the actual layout changes, not on scroll
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.target === container) {
+          // Use requestAnimationFrame to batch updates
+          requestAnimationFrame(() => {
+            updateCanvasSize();
+          });
+        }
+      }
+    });
+
+    // Observe the container div
+    resizeObserver.observe(container);
 
     // Cleanup
     return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("orientationchange", handleOrientationChange);
-
-      if (resizeTimeout) {
-        clearTimeout(resizeTimeout);
-      }
+      resizeObserver.disconnect();
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
@@ -311,16 +243,18 @@ export default function ParallaxStars() {
   }, []);
 
   return (
-    <div style={{ 
-      position: 'fixed', 
-      top: 0, 
-      left: 0, 
-      width: '100vw', 
-      height: '100vh', 
-      zIndex: 0, 
-      pointerEvents: 'none',
-      overflow: 'hidden'
-    }}>
+    <div 
+      ref={containerRef}
+      style={{ 
+        position: 'fixed', 
+        top: 0, 
+        left: 0, 
+        width: '100vw', 
+        height: '100vh', 
+        zIndex: 0, 
+        pointerEvents: 'none' 
+      }}
+    >
       <canvas 
         ref={bgCanvasRef} 
         style={{ 
