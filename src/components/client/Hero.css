@@ -1,6 +1,6 @@
 .hrsWrapper {
   position: relative;
-  min-height: 150vh;
+  min-height: 160vh;
   margin: 0;
  
 }
@@ -16,15 +16,15 @@
   text-align: center;
   width: 100%;
   text-align: center;
-  font-size: 10rem;
-  line-height: 9rem;
+  font-size: 8rem;
+  line-height: 8rem;
   margin-bottom: 3rem;
 }
 .hrsJapan{
   text-align: center;
   font-weight: 900;
   color: rgb(255, 24, 24);
-  font-size: 5rem;
+  font-size: 4rem;
   
 }
 
@@ -43,7 +43,7 @@
 }
 
 .hrsDescription{
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   width: 40%;
   line-height: 2rem;
 }
