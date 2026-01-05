@@ -6,14 +6,13 @@ export default function ParallaxStars() {
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
   
-  // Use refs to track dimensions and prevent unnecessary re-seeding
+  // Track dimensions and orientation
   const lastWidthRef = useRef<number>(0);
   const lastHeightRef = useRef<number>(0);
+  const lastOrientationRef = useRef<number>(window.orientation || 0);
 
   // Get color from context
   const { color } = useColorToggle();
-
-  // Use ref to track color without causing re-renders
   const colorRef = useRef(color);
 
   // Update the ref when color changes
@@ -34,26 +33,34 @@ export default function ParallaxStars() {
     let height = 0;
     let startTime = Date.now();
     let resizeRaf: number | null = null;
+    let resizeTimeout: NodeJS.Timeout | null = null;
 
     const clamp = (n: number, min: number, max: number) =>
       Math.max(min, Math.min(max, n));
 
-    const resizeCanvas = (resetFade: boolean = false) => {
-      // Get actual rendered size
-      const rect = bgCanvas.getBoundingClientRect();
-      const newWidth = Math.max(1, Math.floor(rect.width || window.innerWidth));
-      const newHeight = Math.max(1, Math.floor(rect.height || window.innerHeight));
+    const getCanvasDimensions = () => {
+      // Use window dimensions for mobile orientation changes
+      const newWidth = window.innerWidth;
+      const newHeight = window.innerHeight;
+      return { width: newWidth, height: newHeight };
+    };
 
-      // Check if dimensions have actually changed
-      const dimensionsChanged = 
-        newWidth !== lastWidthRef.current || 
-        newHeight !== lastHeightRef.current;
+    const resizeCanvas = () => {
+      const { width: newWidth, height: newHeight } = getCanvasDimensions();
+      
+      // Check if dimensions have significantly changed (more than 10 pixels)
+      const widthChanged = Math.abs(newWidth - lastWidthRef.current) > 10;
+      const heightChanged = Math.abs(newHeight - lastHeightRef.current) > 10;
+      const orientationChanged = window.orientation !== lastOrientationRef.current;
+      
+      const shouldReseed = widthChanged || heightChanged || orientationChanged;
 
       // Update dimensions
       width = newWidth;
       height = newHeight;
       lastWidthRef.current = width;
       lastHeightRef.current = height;
+      lastOrientationRef.current = window.orientation || 0;
 
       const dpr = Math.max(1, window.devicePixelRatio || 1);
       bgCanvas.width = Math.floor(width * dpr);
@@ -64,12 +71,10 @@ export default function ParallaxStars() {
       // Draw in CSS pixels; backing store is scaled by DPR
       bg.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      if (resetFade) startTime = Date.now();
-      
-      return dimensionsChanged;
+      return shouldReseed;
     };
 
-    const FADE_DURATION = 3000; // 3 seconds fade-in
+    const FADE_DURATION = 3000;
 
     // Star class
     class Star {
@@ -136,7 +141,7 @@ export default function ParallaxStars() {
             this.reset();
           } else {
             bg.lineWidth = this.size;
-            bg.strokeStyle = shootingStarColor; // Use dynamic color
+            bg.strokeStyle = shootingStarColor;
             bg.beginPath();
             bg.moveTo(this.x, this.y);
             bg.lineTo(this.x + this.len, this.y - this.len);
@@ -154,10 +159,9 @@ export default function ParallaxStars() {
     let entities: (Star | ShootingStar)[] = [];
     
     const reseedEntities = () => {
-      // Clear existing entities
       entities = [];
 
-      // Scale star count with viewport area, but keep it bounded
+      // Scale star count with viewport area
       const starCount = clamp(Math.floor((width * height) / 1500), 200, 1200);
       for (let i = 0; i < starCount; i++) {
         entities.push(new Star({ 
@@ -173,104 +177,106 @@ export default function ParallaxStars() {
       }
     };
 
-    // Reinitialize stars based on new dimensions
-    const reinitializeStars = () => {
-      // Scale star count with viewport area, but keep it bounded
-      const starCount = clamp(Math.floor((width * height) / 1500), 200, 1200);
-      
-      // Update existing stars or create new ones
-      const newEntities: (Star | ShootingStar)[] = [];
-      
-      // Regular stars
-      for (let i = 0; i < starCount; i++) {
-        newEntities.push(new Star({ 
-          x: Math.random() * width, 
-          y: Math.random() * height, 
-          opacity: 0 
-        }));
-      }
-
-      // Shooting stars
-      for (let i = 0; i < 8; i++) {
-        newEntities.push(new ShootingStar());
-      }
-      
-      return newEntities;
-    };
-
     // Animation loop
-    const MAX_STAR_OPACITY = 0.8; // 20% lower than full opacity
+    const MAX_STAR_OPACITY = 0.8;
     const animate = () => {
-      // Calculate fade-in opacity (0 to MAX_STAR_OPACITY over 3 seconds)
       const elapsed = Date.now() - startTime;
       const globalOpacity = Math.min(elapsed / FADE_DURATION, 1) * MAX_STAR_OPACITY;
 
       bg.fillStyle = '#000000';
       bg.fillRect(0, 0, width, height);
 
-      // Apply fade-in opacity to all stars
       bg.globalAlpha = globalOpacity;
       bg.fillStyle = '#ffffff';
       bg.strokeStyle = '#ffffff';
 
-      // Update entities with color from context
       entities.forEach(entity => {
         if (entity instanceof ShootingStar) {
-          entity.update(colorRef.current); // Pass color to shooting stars
+          entity.update(colorRef.current);
         } else {
           entity.update();
         }
       });
 
-      // Reset alpha for next frame
       bg.globalAlpha = 1;
-
       animationRef.current = requestAnimationFrame(animate);
     };
 
-    const scheduleResize = () => {
-      if (resizeRaf) return;
+    // Handle resize with debouncing
+    const handleResize = () => {
+      if (resizeRaf) {
+        cancelAnimationFrame(resizeRaf);
+      }
+      
+      if (resizeTimeout) {
+        clearTimeout(resizeTimeout);
+      }
+
+      // Use both RAF and timeout for mobile compatibility
       resizeRaf = requestAnimationFrame(() => {
         resizeRaf = null;
-        const dimensionsChanged = resizeCanvas(true);
         
-        // Only re-seed entities if dimensions actually changed
-        if (dimensionsChanged) {
-          entities = reinitializeStars();
+        const shouldReseed = resizeCanvas();
+        
+        if (shouldReseed) {
+          // Small delay to ensure dimensions are stable on mobile
+          resizeTimeout = setTimeout(() => {
+            resizeCanvas(); // Check dimensions again
+            reseedEntities();
+            startTime = Date.now(); // Reset fade animation
+            resizeTimeout = null;
+          }, 100);
         }
       });
     };
 
+    // Handle orientation change specifically
+    const handleOrientationChange = () => {
+      // Force reseed on orientation change
+      setTimeout(() => {
+        resizeCanvas();
+        reseedEntities();
+        startTime = Date.now();
+      }, 150); // Longer delay for orientation changes
+    };
+
     // Initial setup
-    resizeCanvas(true);
-    reseedEntities();
+    const shouldReseed = resizeCanvas();
+    if (shouldReseed) {
+      reseedEntities();
+    }
 
     // Start animation
     animate();
 
-    // Keep canvas in sync with viewport changes
+    // Event listeners
+    window.addEventListener("resize", handleResize, { passive: true });
+    window.addEventListener("orientationchange", handleOrientationChange, { passive: true });
+    
+    // Also use ResizeObserver for container changes
     const resizeObserver = new ResizeObserver(() => {
-      scheduleResize();
+      handleResize();
     });
     
     resizeObserver.observe(bgCanvas);
-    window.addEventListener("resize", scheduleResize, { passive: true });
-    window.addEventListener("orientationchange", scheduleResize, { passive: true });
 
     // Cleanup
     return () => {
       resizeObserver.disconnect();
-      window.removeEventListener("resize", scheduleResize);
-      window.removeEventListener("orientationchange", scheduleResize);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleOrientationChange);
 
       if (resizeRaf) {
         cancelAnimationFrame(resizeRaf);
+      }
+      if (resizeTimeout) {
+        clearTimeout(resizeTimeout);
       }
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, []); // Only run once on mount
+  }, []);
 
   return (
     <div style={{ 
@@ -280,7 +286,8 @@ export default function ParallaxStars() {
       width: '100vw', 
       height: '100vh', 
       zIndex: 0, 
-      pointerEvents: 'none' 
+      pointerEvents: 'none',
+      overflow: 'hidden'
     }}>
       <canvas 
         ref={bgCanvasRef} 
@@ -290,7 +297,7 @@ export default function ParallaxStars() {
           left: 0, 
           width: '100%', 
           height: '100%',
-          display: 'block' 
+          display: 'block'
         }} 
       />
     </div>
