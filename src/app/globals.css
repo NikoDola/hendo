@@ -568,10 +568,10 @@ textarea::placeholder {
   }
 
   .section-regular,
-  /* .heroSection {
+  .heroSection {
     width: 90%;
 
-  } */
+  }
 
   h1 {
     font-size: var(--text-5xl);
