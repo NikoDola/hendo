@@ -2,6 +2,7 @@ import { db } from '@/lib/firebase';
 import { collection, addDoc, query, where, getDocs, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { cookies } from 'next/headers';
 import bcrypt from 'bcryptjs';
+import { firebaseAdmin } from '@/lib/firebaseAdmin';
 
 export interface User {
   id: string;
@@ -244,7 +245,6 @@ export async function authenticateUser(credentials: {
 
 export async function getUserFromSession(): Promise<User | null> {
   try {
-    const { firebaseAdmin } = await import('@/lib/firebaseAdmin');
     const cookieStore = await cookies();
     const sessionCookie = cookieStore.get('fb_session')?.value;
 
@@ -254,64 +254,73 @@ export async function getUserFromSession(): Promise<User | null> {
 
     const decodedClaims = await firebaseAdmin.auth().verifySessionCookie(sessionCookie, true);
     const email = decodedClaims.email?.toLowerCase() || '';
+    const uid = decodedClaims.uid || '';
 
-    if (!email) {
+    if (!email || !uid) {
       return null;
     }
 
-    const usersRef = collection(db, 'users');
-    const q = query(usersRef, where('email', '==', email));
-    const querySnapshot = await getDocs(q);
+    // IMPORTANT: use Admin SDK Firestore here (client SDK is blocked by your Firestore rules on server)
+    const adminDb = firebaseAdmin.firestore();
 
-    if (querySnapshot.empty) {
+    // Prefer authUid match (stable) and fall back to email.
+    let userSnap = await adminDb.collection('users').where('authUid', '==', uid).limit(1).get();
+    if (userSnap.empty) {
+      userSnap = await adminDb.collection('users').where('email', '==', email).limit(1).get();
+    }
+
+    if (userSnap.empty) {
+      // Create minimal profile (needed for engagement tracking, purchases, etc.)
+      const name = decodedClaims.name || email.split('@')[0];
+      const role = isAdminEmail(email) ? 'admin' : 'user';
+      const ref = await adminDb.collection('users').add({
+        email,
+        name,
+        authUid: uid,
+        role,
+        purchases: 0,
+        createdAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
+        lastLoginAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
+        ipAddress: 'firebase',
+      });
+
+      return {
+        id: ref.id,
+        email,
+        name,
+        authUid: uid,
+        role,
+        createdAt: new Date(),
+        lastLoginAt: new Date(),
+        purchases: 0,
+      };
+    }
+
+    const docSnap = userSnap.docs[0];
+    const data = docSnap.data() as Record<string, unknown>;
+    const createdAt = (data.createdAt as { toDate?: () => Date } | undefined)?.toDate?.() || new Date();
+    const lastLoginAt = (data.lastLoginAt as { toDate?: () => Date } | undefined)?.toDate?.() || new Date();
+
+    // Ensure authUid is stored for future lookups
+    if (!data.authUid && uid) {
       try {
-        const newUser = await createOrUpdateUser({
-          email: email,
-          name: decodedClaims.name || email.split('@')[0],
-          authUid: decodedClaims.uid,
-        });
-        return {
-          ...newUser,
-          authUid: decodedClaims.uid,
-        };
-      } catch (error) {
-        console.error('Error creating user in Firestore:', error);
-        return {
-          id: decodedClaims.uid,
-          email: email,
-          name: decodedClaims.name || email.split('@')[0],
-          authUid: decodedClaims.uid,
-          role: isAdminEmail(email) ? 'admin' : 'user',
-          createdAt: new Date(),
-          lastLoginAt: new Date(),
-          purchases: 0
-        };
+        await adminDb.collection('users').doc(docSnap.id).set({ authUid: uid }, { merge: true });
+      } catch (e) {
+        console.warn('Failed to backfill authUid:', e);
       }
     }
 
-    const userDoc = querySnapshot.docs[0];
-    const userData = userDoc.data();
-    
-    if (!userData.authUid && decodedClaims.uid) {
-      try {
-        await updateDoc(doc(db, 'users', userDoc.id), {
-          authUid: decodedClaims.uid
-        });
-      } catch (error) {
-        console.warn('Failed to update authUid:', error);
-      }
-    }
-    
     return {
-      id: userDoc.id,
-      email: userData.email,
-      name: userData.name,
-      authUid: userData.authUid || decodedClaims.uid,
-      role: userData.role || (isAdminEmail(email) ? 'admin' : 'user'),
-      createdAt: userData.createdAt?.toDate() || new Date(),
-      lastLoginAt: userData.lastLoginAt?.toDate() || new Date(),
-      ipAddress: userData.ipAddress,
-      purchases: userData.purchases || 0
+      id: docSnap.id,
+      email: String(data.email || email),
+      name: String(data.name || decodedClaims.name || email.split('@')[0]),
+      authUid: String(data.authUid || uid),
+      role: (data.role as 'admin' | 'user') || (isAdminEmail(email) ? 'admin' : 'user'),
+      createdAt,
+      lastLoginAt,
+      ipAddress: data.ipAddress as string | undefined,
+      purchases: Number(data.purchases) || 0,
+      totalSpent: Number(data.totalSpent) || undefined,
     };
   } catch (error) {
     console.error('Error getting user from session:', error);
@@ -321,15 +330,14 @@ export async function getUserFromSession(): Promise<User | null> {
 
 export async function updateUserPurchases(userId: string, increment: number = 1): Promise<void> {
   try {
-    const userRef = doc(db, 'users', userId);
-    const userDoc = await getDocs(query(collection(db, 'users'), where('__name__', '==', userId)));
-    
-    if (!userDoc.empty) {
-      const currentPurchases = userDoc.docs[0].data().purchases || 0;
-      await updateDoc(userRef, {
-        purchases: currentPurchases + increment
-      });
-    }
+    const adminDb = firebaseAdmin.firestore();
+    const ref = adminDb.collection('users').doc(userId);
+    const snap = await ref.get();
+    if (!snap.exists) return;
+
+    const data = snap.data() as Record<string, unknown>;
+    const currentPurchases = typeof data.purchases === 'number' ? data.purchases : Number(data.purchases || 0);
+    await ref.set({ purchases: currentPurchases + increment }, { merge: true });
   } catch (error) {
     console.error('Error updating user purchases:', error);
     throw new Error('Failed to update user purchases');

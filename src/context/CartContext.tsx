@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
 
 interface CartItem {
   id: string;
@@ -39,6 +39,77 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [favoriteItems, setFavoriteItems] = useState<CartItem[]>([]);
+
+  const hasShownLoginPromptRef = useRef(false);
+  const hasShownCooldownPromptRef = useRef(false);
+
+  const trackEngagement = async (
+    action: 'favorite_add' | 'favorite_remove' | 'cart_add' | 'cart_remove',
+    trackId: string
+  ) => {
+    try {
+      const debug =
+        typeof window !== 'undefined' &&
+        (window.location.search.includes('debugEngagement=1') ||
+          window.localStorage.getItem('debug_engagement') === '1');
+
+      if (debug) {
+        console.debug('[engagement] sending', { action, trackId });
+      }
+
+      const res = await fetch('/api/user/engagement', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(debug ? { 'x-debug-engagement': '1' } : {}),
+        },
+        body: JSON.stringify({ action, trackId }),
+      });
+
+      const contentType = res.headers.get('content-type') || '';
+      const body = contentType.includes('application/json')
+        ? await res.json().catch(() => ({}))
+        : await res.text().catch(() => '');
+
+      if (debug) {
+        console.debug('[engagement] response', { status: res.status, body });
+      }
+
+      if (res.status === 401) {
+        // User is not logged in (or server session not established), so we can't track "who" did the action.
+        // Prompt once per session to avoid spam.
+        if (!hasShownLoginPromptRef.current && typeof window !== 'undefined') {
+          hasShownLoginPromptRef.current = true;
+          const goLogin = confirm('Please log in to save favorites/cart and update stats. Go to login now?');
+          if (goLogin) {
+            window.location.href = '/login';
+          }
+        }
+        return;
+      }
+
+      if (res.status === 429) {
+        if (!hasShownCooldownPromptRef.current && typeof window !== 'undefined') {
+          hasShownCooldownPromptRef.current = true;
+          const until =
+            typeof (body as { cooldownUntilMs?: unknown })?.cooldownUntilMs === 'number'
+              ? new Date((body as { cooldownUntilMs: number }).cooldownUntilMs)
+              : null;
+          alert(
+            until
+              ? `Too many actions in a short time. Please try again after: ${until.toLocaleString()}`
+              : 'Too many actions in a short time. Please try again later.'
+          );
+        }
+      }
+
+      if (!res.ok && res.status !== 401 && res.status !== 429) {
+        console.error('[engagement] failed', { action, trackId, status: res.status, body });
+      }
+    } catch {
+      // Ignore tracking failures - never block UX
+    }
+  };
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -101,10 +172,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (exists) return prev;
       return [...prev, item];
     });
+    trackEngagement('cart_add', item.id);
   };
 
   const removeFromCart = (itemId: string) => {
     setCartItems((prev) => prev.filter((item) => item.id !== itemId));
+    trackEngagement('cart_remove', itemId);
   };
 
   const clearCart = () => {
@@ -116,11 +189,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setFavorites((prev) => {
       if (prev.includes(itemId)) {
         setFavoriteItems((favItems) => favItems.filter((i) => i.id !== itemId));
+        trackEngagement('favorite_remove', itemId);
         return prev.filter((id) => id !== itemId);
       }
       if (item) {
         setFavoriteItems((favItems) => [...favItems, item]);
       }
+      trackEngagement('favorite_add', itemId);
       return [...prev, itemId];
     });
   };
@@ -128,6 +203,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const removeFavorite = (itemId: string) => {
     setFavorites((prev) => prev.filter((id) => id !== itemId));
     setFavoriteItems((prev) => prev.filter((item) => item.id !== itemId));
+    trackEngagement('favorite_remove', itemId);
   };
 
   const isInCart = (itemId: string) => {

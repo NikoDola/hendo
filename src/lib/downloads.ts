@@ -1,7 +1,7 @@
 // Download generation utilities for purchased music tracks
 import JSZip from 'jszip';
-import { getMusicTrack } from './music';
 import { firebaseAdmin } from '@/lib/firebaseAdmin';
+import { getMusicTrackServer } from '@/lib/music-server';
 
 // We'll use a simple approach without pdfmake to avoid font issues
 import { jsPDF } from 'jspdf';
@@ -152,7 +152,7 @@ export async function generateDownloadPackage(
 ): Promise<DownloadPackage> {
   try {
     // Get track information
-    const track = await getMusicTrack(trackId);
+    const track = await getMusicTrackServer(trackId);
     if (!track) {
       throw new Error('Track not found');
     }

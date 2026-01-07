@@ -25,7 +25,7 @@ export default function MusicCard({
   isPurchased = false,
   variant = 'default'
 }: MusicCardProps) {
-  const { addToCart, toggleFavorite, isInCart, isFavorite } = useCart();
+  const { addToCart, removeFromCart, toggleFavorite, isInCart, isFavorite } = useCart();
   const [audio] = useState(() => {
     // Only create Audio in browser environment
     if (typeof window === 'undefined') return null;
@@ -440,12 +440,18 @@ export default function MusicCard({
 
               <div className="musicCardIconActions">
                 <button
-                  onClick={() => addToCart({
-                    id: track.id,
-                    title: track.title,
-                    price: track.price,
-                    imageFileUrl: track.imageFileUrl
-                  })}
+                  onClick={() => {
+                    if (isInCart(track.id)) {
+                      removeFromCart(track.id);
+                      return;
+                    }
+                    addToCart({
+                      id: track.id,
+                      title: track.title,
+                      price: track.price,
+                      imageFileUrl: track.imageFileUrl
+                    });
+                  }}
                   className={`musicCardIconButton ${isInCart(track.id) ? 'active' : ''}`}
                   aria-label="Add to cart"
                 >

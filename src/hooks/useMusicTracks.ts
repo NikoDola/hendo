@@ -18,7 +18,7 @@ export interface MusicTrack {
   updatedAt: string;
 }
 
-export function useMusicTracks() {
+export function useMusicTracks(enabled: boolean = true) {
   const [tracks, setTracks] = useState<MusicTrack[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -63,8 +63,13 @@ export function useMusicTracks() {
   }, []);
 
   useEffect(() => {
+    if (!enabled) {
+      // Avoid spamming admin endpoints (and avoid console noise) when not on the admin music tab.
+      setLoading(false);
+      return;
+    }
     loadTracks();
-  }, [loadTracks]);
+  }, [enabled, loadTracks]);
 
   return {
     tracks,

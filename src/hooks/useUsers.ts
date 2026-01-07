@@ -12,7 +12,7 @@ export interface User {
   totalSpent?: number;
 }
 
-export function useUsers() {
+export function useUsers(enabled: boolean = true) {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,12 +21,26 @@ export function useUsers() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('/api/admin/users');
-      
+
+      // If the session cookie is still being created, the admin endpoint can briefly 401.
+      // In that case, retry once and then fail silently to avoid console spam.
+      const fetchUsers = async () => fetch('/api/admin/users');
+
+      let response = await fetchUsers();
+      if (response.status === 401) {
+        await new Promise((r) => setTimeout(r, 600));
+        response = await fetchUsers();
+      }
+
       if (!response.ok) {
+        if (response.status === 401) {
+          // Not authenticated as admin (or cookie not present). Don't treat as an error here.
+          setUsers([]);
+          return;
+        }
         throw new Error('Failed to fetch users');
       }
-      
+
       const data = await response.json();
       setUsers(data.users || []);
     } catch (err) {
@@ -57,8 +71,13 @@ export function useUsers() {
   }, []);
 
   useEffect(() => {
+    if (!enabled) {
+      // Avoid calling admin-only endpoints when not on the admin users tab.
+      setLoading(false);
+      return;
+    }
     loadUsers();
-  }, [loadUsers]);
+  }, [enabled, loadUsers]);
 
   return {
     users,

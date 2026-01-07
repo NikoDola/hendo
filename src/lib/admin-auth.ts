@@ -1,8 +1,7 @@
 // Admin authentication system
-import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 import { cookies } from 'next/headers';
 import { isAdminEmail } from '@/lib/auth';
+import { firebaseAdmin } from '@/lib/firebaseAdmin';
 
 export interface AdminUser {
   id: string;
@@ -31,21 +30,23 @@ export async function authenticateAdmin(email: string, name?: string): Promise<A
   }
 
   try {
-    // Check if admin already exists
-    const adminsRef = collection(db, 'admins');
-    const q = query(adminsRef, where('email', '==', email.toLowerCase()));
-    const querySnapshot = await getDocs(q);
+    const db = firebaseAdmin.firestore();
+    const querySnapshot = await db
+      .collection('admins')
+      .where('email', '==', email.toLowerCase())
+      .limit(1)
+      .get();
 
     let adminUser: AdminUser;
 
     if (querySnapshot.empty) {
       // Create new admin user
-      const newAdminRef = await addDoc(collection(db, 'admins'), {
+      const newAdminRef = await db.collection('admins').add({
         email: email.toLowerCase(),
         name: name || email.split('@')[0],
         role: 'admin',
-        createdAt: serverTimestamp(),
-        lastLoginAt: serverTimestamp()
+        createdAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
+        lastLoginAt: firebaseAdmin.firestore.FieldValue.serverTimestamp()
       });
 
       adminUser = {
@@ -59,12 +60,15 @@ export async function authenticateAdmin(email: string, name?: string): Promise<A
     } else {
       // Update last login time
       const adminDoc = querySnapshot.docs[0];
+      const data = adminDoc.data() as Record<string, unknown>;
       adminUser = {
         id: adminDoc.id,
-        ...adminDoc.data(),
-        createdAt: adminDoc.data().createdAt?.toDate() || new Date(),
+        email: String(data.email || email.toLowerCase()),
+        name: String(data.name || name || email.split('@')[0]),
+        role: (data.role as 'admin' | 'super_admin') || 'admin',
+        createdAt: (data.createdAt as { toDate?: () => Date })?.toDate?.() || new Date(),
         lastLoginAt: new Date()
-      } as AdminUser;
+      };
     }
 
     return adminUser;
@@ -79,7 +83,6 @@ export async function authenticateAdmin(email: string, name?: string): Promise<A
  */
 export async function getAdminFromSession(): Promise<AdminUser | null> {
   try {
-    const { firebaseAdmin } = await import('@/lib/firebaseAdmin');
     const cookieStore = await cookies();
     const sessionCookie = cookieStore.get('fb_session')?.value;
 
@@ -94,9 +97,12 @@ export async function getAdminFromSession(): Promise<AdminUser | null> {
       return null;
     }
 
-    const adminsRef = collection(db, 'admins');
-    const q = query(adminsRef, where('email', '==', email));
-    const querySnapshot = await getDocs(q);
+    const db = firebaseAdmin.firestore();
+    const querySnapshot = await db
+      .collection('admins')
+      .where('email', '==', email)
+      .limit(1)
+      .get();
 
     if (querySnapshot.empty) {
       // Admin not in admins collection, but has valid session and @nikodola.com email
@@ -112,12 +118,15 @@ export async function getAdminFromSession(): Promise<AdminUser | null> {
     }
 
     const adminDoc = querySnapshot.docs[0];
+    const data = adminDoc.data() as Record<string, unknown>;
     return {
       id: adminDoc.id,
-      ...adminDoc.data(),
-      createdAt: adminDoc.data().createdAt?.toDate() || new Date(),
-      lastLoginAt: adminDoc.data().lastLoginAt?.toDate() || new Date()
-    } as AdminUser;
+      email: String(data.email || email),
+      name: String(data.name || decodedClaims.name || email.split('@')[0]),
+      role: (data.role as 'admin' | 'super_admin') || 'admin',
+      createdAt: (data.createdAt as { toDate?: () => Date })?.toDate?.() || new Date(),
+      lastLoginAt: (data.lastLoginAt as { toDate?: () => Date })?.toDate?.() || new Date()
+    };
   } catch (error) {
     console.error('Error getting admin from session:', error);
     return null;

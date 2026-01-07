@@ -1,16 +1,6 @@
 // Purchase management system
-import { db } from '@/lib/firebase';
-import {
-  collection,
-  addDoc,
-  query,
-  where,
-  getDocs,
-  serverTimestamp,
-  getDoc,
-  doc
-} from 'firebase/firestore';
-import { getMusicTrack } from './music';
+import { firebaseAdmin } from '@/lib/firebaseAdmin';
+import { getMusicTrackServer } from '@/lib/music-server';
 
 export interface UserPurchase {
   id: string;
@@ -37,7 +27,8 @@ export async function recordPurchase(
   expiresAt: Date
 ): Promise<UserPurchase> {
   try {
-    const purchasesRef = collection(db, 'purchases');
+    const db = firebaseAdmin.firestore();
+    const purchasesRef = db.collection('purchases');
     const purchaseData = {
       userId,
       trackId,
@@ -45,12 +36,12 @@ export async function recordPurchase(
       price,
       zipUrl,
       pdfUrl,
-      purchasedAt: serverTimestamp(),
+      purchasedAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
       expiresAt,
-      createdAt: serverTimestamp()
+      createdAt: firebaseAdmin.firestore.FieldValue.serverTimestamp()
     };
     
-    const purchaseRef = await addDoc(purchasesRef, purchaseData);
+    const purchaseRef = await purchasesRef.add(purchaseData);
 
     return {
       id: purchaseRef.id,
@@ -74,29 +65,26 @@ export async function recordPurchase(
  */
 export async function getUserPurchases(userId: string): Promise<UserPurchase[]> {
   try {
-    const purchasesRef = collection(db, 'purchases');
-    
-    // Query without orderBy first to avoid index issues
-    // We'll sort manually after fetching
-    const q = query(
-      purchasesRef,
-      where('userId', '==', userId)
-    );
-    
-    const querySnapshot = await getDocs(q);
-    
-    const purchases = querySnapshot.docs.map(doc => {
-      const data = doc.data();
+    const db = firebaseAdmin.firestore();
+    const querySnapshot = await db
+      .collection('purchases')
+      .where('userId', '==', userId)
+      .get();
+
+    const purchases = querySnapshot.docs.map(d => {
+      const data = d.data() as Record<string, unknown>;
       const purchase = {
-        id: doc.id,
-        userId: data.userId,
-        trackId: data.trackId,
-        trackTitle: data.trackTitle,
-        price: data.price,
-        zipUrl: data.zipUrl,
-        pdfUrl: data.pdfUrl,
-        purchasedAt: data.purchasedAt?.toDate() || data.createdAt?.toDate() || new Date(),
-        expiresAt: data.expiresAt?.toDate() || new Date()
+        id: d.id,
+        userId: String(data.userId || ''),
+        trackId: String(data.trackId || ''),
+        trackTitle: String(data.trackTitle || ''),
+        price: typeof data.price === 'number' ? data.price : Number(data.price || 0),
+        zipUrl: String(data.zipUrl || ''),
+        pdfUrl: String(data.pdfUrl || ''),
+        purchasedAt: (data.purchasedAt as { toDate?: () => Date } | undefined)?.toDate?.()
+          || (data.createdAt as { toDate?: () => Date } | undefined)?.toDate?.()
+          || new Date(),
+        expiresAt: (data.expiresAt as { toDate?: () => Date } | undefined)?.toDate?.() || new Date()
       };
       return purchase;
     });
@@ -120,27 +108,28 @@ export async function getUserPurchases(userId: string): Promise<UserPurchase[]> 
  */
 export async function getPurchaseWithTrack(purchaseId: string): Promise<UserPurchase & { track?: { id: string; title: string; price: number } }> {
   try {
-    const purchaseDoc = await getDoc(doc(db, 'purchases', purchaseId));
-    if (!purchaseDoc.exists()) {
+    const db = firebaseAdmin.firestore();
+    const purchaseDoc = await db.collection('purchases').doc(purchaseId).get();
+    if (!purchaseDoc.exists) {
       throw new Error('Purchase not found');
     }
 
-    const data = purchaseDoc.data();
+    const data = purchaseDoc.data() as Record<string, unknown>;
     const purchase: UserPurchase = {
       id: purchaseDoc.id,
-      userId: data.userId,
-      trackId: data.trackId,
-      trackTitle: data.trackTitle,
-      price: data.price,
-      zipUrl: data.zipUrl,
-      pdfUrl: data.pdfUrl,
-      purchasedAt: data.purchasedAt?.toDate() || new Date(),
-      expiresAt: data.expiresAt?.toDate() || new Date()
+      userId: String(data.userId || ''),
+      trackId: String(data.trackId || ''),
+      trackTitle: String(data.trackTitle || ''),
+      price: typeof data.price === 'number' ? data.price : Number(data.price || 0),
+      zipUrl: String(data.zipUrl || ''),
+      pdfUrl: String(data.pdfUrl || ''),
+      purchasedAt: (data.purchasedAt as { toDate?: () => Date } | undefined)?.toDate?.() || new Date(),
+      expiresAt: (data.expiresAt as { toDate?: () => Date } | undefined)?.toDate?.() || new Date()
     };
 
     // Get full track details
     try {
-      const track = await getMusicTrack(data.trackId);
+      const track = await getMusicTrackServer(String(data.trackId || ''));
       return { ...purchase, track: track || undefined };
     } catch (error) {
       console.warn('Could not fetch track details:', error);
@@ -157,14 +146,13 @@ export async function getPurchaseWithTrack(purchaseId: string): Promise<UserPurc
  */
 export async function userOwnsTrack(userId: string, trackId: string): Promise<boolean> {
   try {
-    const purchasesRef = collection(db, 'purchases');
-    const q = query(
-      purchasesRef,
-      where('userId', '==', userId),
-      where('trackId', '==', trackId)
-    );
-    
-    const querySnapshot = await getDocs(q);
+    const db = firebaseAdmin.firestore();
+    const querySnapshot = await db
+      .collection('purchases')
+      .where('userId', '==', userId)
+      .where('trackId', '==', trackId)
+      .limit(1)
+      .get();
     return !querySnapshot.empty;
   } catch (error) {
     console.error('Error checking track ownership:', error);

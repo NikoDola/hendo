@@ -1,4 +1,4 @@
-import { Users, Music, BarChart3 } from 'lucide-react';
+import { Users, Music } from 'lucide-react';
 
 interface AdminSidebarProps {
   isOpen: boolean;
@@ -8,8 +8,7 @@ interface AdminSidebarProps {
 
 const tabs = [
   { id: 'users', label: 'Users', icon: Users },
-  { id: 'products', label: 'Products', icon: Music },
-  { id: 'statistics', label: 'Statistics', icon: BarChart3 }
+  { id: 'products', label: 'Music', icon: Music },
 ];
 
 export default function AdminSidebar({ isOpen, activeTab, onTabChange }: AdminSidebarProps) {

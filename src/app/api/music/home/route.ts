@@ -1,26 +1,30 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/firebase';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { firebaseAdmin } from '@/lib/firebaseAdmin';
 
 export async function GET() {
   try {
-    const musicRef = collection(db, 'music');
-    const q = query(
-      musicRef,
-      where('showToHome', '==', true)
-    );
-    
-    const querySnapshot = await getDocs(q);
-    
-    const tracks = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-      createdAt: doc.data().createdAt?.toDate().toISOString() || new Date().toISOString(),
-      updatedAt: doc.data().updatedAt?.toDate().toISOString() || new Date().toISOString()
-    })).sort((a, b) => {
-      // Sort by createdAt descending (newest first) on client side
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    });
+    const db = firebaseAdmin.firestore();
+    const snap = await db
+      .collection('music')
+      .where('showToHome', '==', true)
+      .get();
+
+    const tracks = snap.docs
+      .map((d) => {
+        const data = d.data() as Record<string, unknown>;
+        const createdAt = (data.createdAt as { toDate?: () => Date } | undefined)?.toDate?.();
+        const updatedAt = (data.updatedAt as { toDate?: () => Date } | undefined)?.toDate?.();
+        return {
+          id: d.id,
+          ...data,
+          createdAt: createdAt ? createdAt.toISOString() : new Date().toISOString(),
+          updatedAt: updatedAt ? updatedAt.toISOString() : new Date().toISOString(),
+        };
+      })
+      .sort((a, b) => {
+        // Sort by createdAt descending (newest first) on server side
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
 
     return NextResponse.json({ tracks });
 

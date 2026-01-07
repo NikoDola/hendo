@@ -14,10 +14,12 @@ import '@/components/pages/AdminDashboard.css';
 
 export default function AdminDashboard() {
   const { user, loading: isLoading } = useUserAuth();
-  const { users, loading: usersLoading, loadUsers, deleteUser } = useUsers();
-  const { tracks, loadTracks, deleteTrack } = useMusicTracks();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('users');
+  const shouldLoadUsers = !isLoading && !!user && user.role === 'admin' && activeTab === 'users';
+  const { users, loading: usersLoading, loadUsers, deleteUser } = useUsers(shouldLoadUsers);
+  const shouldLoadTracks = !isLoading && !!user && user.role === 'admin' && activeTab === 'products';
+  const { tracks, loadTracks, deleteTrack } = useMusicTracks(shouldLoadTracks);
   const [showForm, setShowForm] = useState(false);
   const [editingTrack, setEditingTrack] = useState<MusicTrack | undefined>(undefined);
   const router = useRouter();
@@ -168,12 +170,7 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {activeTab === 'statistics' && (
-            <div>
-              <h2 className="adminSectionTitle">Statistics</h2>
-              <p className="adminTabContent">Analytics and statistics will be available here.</p>
-            </div>
-          )}
+          {/* Statistics tab removed */}
         </main>
       </div>
     </div>

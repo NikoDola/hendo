@@ -4,7 +4,7 @@ import { getUserFromSession } from '@/lib/auth';
 import { updateUserPurchases } from '@/lib/auth';
 import { generateDownloadPackage } from '@/lib/downloads';
 import { recordPurchase } from '@/lib/purchases';
-import { getMusicTrack } from '@/lib/music';
+import { getMusicTrackServer } from '@/lib/music-server';
 
 export async function POST(request: NextRequest) {
   try {
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
     }> = [];
 
     for (const trackId of trackIds) {
-      const track = await getMusicTrack(trackId);
+      const track = await getMusicTrackServer(trackId);
       if (!track) {
         return NextResponse.json(
           { error: `Track not found: ${trackId}` },
