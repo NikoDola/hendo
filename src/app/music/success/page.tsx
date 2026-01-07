@@ -4,13 +4,28 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { CheckCircle, Download, FileText, X } from 'lucide-react';
 import Link from 'next/link';
+import { useCart } from '@/context/CartContext';
 import '@/components/pages/PaymentSuccess.css';
 
 function PaymentSuccessContent() {
-  const [downloadData, setDownloadData] = useState<{ downloadUrl: string; pdfUrl: string; trackTitle: string; expiresAt?: string } | null>(null);
+  const [downloadData, setDownloadData] = useState<{
+    downloadUrl?: string;
+    pdfUrl?: string;
+    trackTitle?: string;
+    expiresAt?: string;
+    purchasedTrackIds?: string[];
+    items?: Array<{
+      trackId: string;
+      trackTitle: string;
+      downloadUrl: string;
+      pdfUrl: string;
+      expiresAt: string;
+    }>;
+  } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
+  const { removeFromCart } = useCart();
 
   useEffect(() => {
     if (sessionId) {
@@ -46,9 +61,15 @@ function PaymentSuccessContent() {
 
       const data = await response.json();
       
-      if (data.downloadUrl && data.pdfUrl) {
+      if ((data.downloadUrl && data.pdfUrl) || (Array.isArray(data.items) && data.items.length > 0)) {
         setDownloadData(data);
         setIsLoading(false);
+
+        // Remove purchased items from cart (safe even if they're not in the cart)
+        const purchasedIds: string[] = Array.isArray(data.purchasedTrackIds)
+          ? data.purchasedTrackIds
+          : (data.trackId ? [data.trackId] : []);
+        purchasedIds.forEach((id) => removeFromCart(id));
         
         // Auto-start download after a short delay
         setTimeout(() => {
@@ -64,8 +85,12 @@ function PaymentSuccessContent() {
     }
   };
 
-  const startDownloads = async (data: { downloadUrl: string; pdfUrl: string; trackTitle?: string }) => {
-    if (!data.downloadUrl || !data.pdfUrl) return;
+  const startDownloads = async (data: {
+    downloadUrl?: string;
+    pdfUrl?: string;
+    trackTitle?: string;
+    items?: Array<{ trackTitle: string; downloadUrl: string; pdfUrl: string }>;
+  }) => {
     
     try {
       // Download ZIP file - try fetch first, fallback to direct link
@@ -115,19 +140,21 @@ function PaymentSuccessContent() {
         return true;
       };
 
-      // Download ZIP
-      await downloadFile(
-        data.downloadUrl,
-        `${data.trackTitle || 'music-track'}.zip`
-      );
+      const items = Array.isArray(data.items) && data.items.length > 0
+        ? data.items
+        : (data.downloadUrl && data.pdfUrl
+          ? [{ trackTitle: data.trackTitle || 'music-track', downloadUrl: data.downloadUrl, pdfUrl: data.pdfUrl }]
+          : []);
 
-      // Download PDF after a short delay
-      setTimeout(async () => {
-        await downloadFile(
-          data.pdfUrl,
-          `${data.trackTitle || 'rights'}_rights.pdf`
-        );
-      }, 800);
+      for (const item of items) {
+        await downloadFile(item.downloadUrl, `${item.trackTitle || 'music-track'}.zip`);
+        // Small delay between downloads to reduce browser blocking
+        // eslint-disable-next-line no-await-in-loop
+        await new Promise((r) => setTimeout(r, 400));
+        await downloadFile(item.pdfUrl, `${item.trackTitle || 'rights'}_rights.pdf`);
+        // eslint-disable-next-line no-await-in-loop
+        await new Promise((r) => setTimeout(r, 500));
+      }
     } catch {
       // Silent error - downloads will still work via fallback
       console.warn('Download initiated (using direct links)');
@@ -194,21 +221,47 @@ function PaymentSuccessContent() {
             <h2>Your Downloads</h2>
           </div>
           
-          <button
-            onClick={() => handleManualDownload(downloadData.downloadUrl, `${downloadData.trackTitle}.zip`)}
-            className="paymentDownloadButton paymentDownloadButtonZip"
-          >
-            <Download className="w-5 h-5" />
-            Download Music Package
-          </button>
-          
-          <button
-            onClick={() => handleManualDownload(downloadData.pdfUrl, `${downloadData.trackTitle}_rights.pdf`)}
-            className="paymentDownloadButton paymentDownloadButtonPdf"
-          >
-            <FileText className="w-5 h-5" />
-            Download Rights PDF
-          </button>
+          {Array.isArray(downloadData.items) && downloadData.items.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {downloadData.items.map((item) => (
+                <div key={item.trackId} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <div style={{ fontWeight: 600 }}>{item.trackTitle}</div>
+                  <button
+                    onClick={() => handleManualDownload(item.downloadUrl, `${item.trackTitle}.zip`)}
+                    className="paymentDownloadButton paymentDownloadButtonZip"
+                  >
+                    <Download className="w-5 h-5" />
+                    Download Music Package
+                  </button>
+                  <button
+                    onClick={() => handleManualDownload(item.pdfUrl, `${item.trackTitle}_rights.pdf`)}
+                    className="paymentDownloadButton paymentDownloadButtonPdf"
+                  >
+                    <FileText className="w-5 h-5" />
+                    Download Rights PDF
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <>
+              <button
+                onClick={() => handleManualDownload(downloadData.downloadUrl!, `${downloadData.trackTitle}.zip`)}
+                className="paymentDownloadButton paymentDownloadButtonZip"
+              >
+                <Download className="w-5 h-5" />
+                Download Music Package
+              </button>
+              
+              <button
+                onClick={() => handleManualDownload(downloadData.pdfUrl!, `${downloadData.trackTitle}_rights.pdf`)}
+                className="paymentDownloadButton paymentDownloadButtonPdf"
+              >
+                <FileText className="w-5 h-5" />
+                Download Rights PDF
+              </button>
+            </>
+          )}
         </div>
         
         <div className="paymentSuccessNote">

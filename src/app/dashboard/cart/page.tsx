@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { Trash2, ShoppingBag, ArrowLeft } from 'lucide-react';
@@ -12,6 +12,26 @@ export default function CartPage() {
   const router = useRouter();
   const { cartItems, removeFromCart, cartTotal } = useCart();
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [isPurchasing, setIsPurchasing] = useState(false);
+  const hasInitializedSelection = useRef(false);
+
+  // Select all items by default on first load (after cartItems hydrate from localStorage)
+  useEffect(() => {
+    if (!hasInitializedSelection.current && cartItems.length > 0) {
+      setSelectedItems(cartItems.map(item => item.id));
+      hasInitializedSelection.current = true;
+    }
+
+    if (cartItems.length === 0) {
+      hasInitializedSelection.current = false;
+      setSelectedItems([]);
+    }
+  }, [cartItems]);
+
+  // Keep selectedItems in sync if items are removed from the cart
+  useEffect(() => {
+    setSelectedItems(prev => prev.filter(id => cartItems.some(item => item.id === id)));
+  }, [cartItems]);
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -23,7 +43,7 @@ export default function CartPage() {
 
   const handleSelectItem = (itemId: string, checked: boolean) => {
     if (checked) {
-      setSelectedItems(prev => [...prev, itemId]);
+      setSelectedItems(prev => (prev.includes(itemId) ? prev : [...prev, itemId]));
     } else {
       setSelectedItems(prev => prev.filter(id => id !== itemId));
     }
@@ -33,14 +53,58 @@ export default function CartPage() {
     .filter(item => selectedItems.includes(item.id))
     .reduce((sum, item) => sum + item.price, 0);
 
-  const handleContinueToPurchase = () => {
+  const handleContinueToPurchase = async () => {
     if (selectedItems.length === 0) {
       alert('Please select items to purchase');
       return;
     }
-    // Navigate to checkout or trigger purchase flow
-    // For now, let's navigate to music page with selected items
-    router.push('/music');
+
+    const selected = cartItems.filter(item => selectedItems.includes(item.id));
+    if (selected.length === 0) {
+      alert('Please select items to purchase');
+      return;
+    }
+
+    setIsPurchasing(true);
+    try {
+      const response = await fetch('/api/stripe/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: selected.map(item => ({
+            id: item.id,
+            title: item.title,
+            price: item.price
+          }))
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.url) {
+          window.location.href = data.url;
+          return;
+        }
+        alert('Failed to get checkout URL');
+        return;
+      }
+
+      if (response.status === 401) {
+        const confirmLogin = confirm('You need to be logged in to purchase music. Would you like to go to the login page?');
+        if (confirmLogin) {
+          router.push('/login');
+        }
+        return;
+      }
+
+      const errorData = await response.json().catch(() => ({}));
+      alert(errorData.error || 'Failed to start checkout process. Please try again.');
+    } catch (error) {
+      console.error('Cart checkout error:', error);
+      alert('Purchase failed. Please try again.');
+    } finally {
+      setIsPurchasing(false);
+    }
   };
 
   return (
@@ -70,7 +134,7 @@ export default function CartPage() {
                 <label className="cartPageCheckboxLabel">
                   <input
                     type="checkbox"
-                    checked={selectedItems.length === cartItems.length}
+                    checked={cartItems.length > 0 && selectedItems.length === cartItems.length}
                     onChange={(e) => handleSelectAll(e.target.checked)}
                     className="cartPageCheckbox"
                   />
@@ -141,10 +205,12 @@ export default function CartPage() {
               <button
                 onClick={handleContinueToPurchase}
                 className="cartPagePurchaseButton"
-                disabled={selectedItems.length === 0}
+                disabled={selectedItems.length === 0 || isPurchasing}
               >
                 <ShoppingBag size={20} />
-                Continue to Purchase ({selectedItems.length} items)
+                {isPurchasing
+                  ? 'Starting checkout...'
+                  : `Continue to Purchase (${selectedItems.length} items)`}
               </button>
             </div>
           </>

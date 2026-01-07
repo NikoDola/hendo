@@ -45,56 +45,103 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const musicTrackId = session.metadata?.musicTrackId;
-    if (!musicTrackId) {
+    const metadata = session.metadata || {};
+
+    // Support both single-track purchases and cart purchases (multiple tracks)
+    let trackIds: string[] = [];
+
+    const rawIds = metadata.musicTrackIds;
+    if (rawIds) {
+      try {
+        const parsed = JSON.parse(rawIds);
+        if (Array.isArray(parsed)) {
+          trackIds = parsed.filter((id) => typeof id === 'string' && id.trim().length > 0);
+        }
+      } catch {
+        // ignore parse errors and fall back to single id
+      }
+    }
+
+    if (trackIds.length === 0 && metadata.musicTrackId) {
+      trackIds = [metadata.musicTrackId];
+    }
+
+    if (trackIds.length === 0) {
       return NextResponse.json(
-        { error: 'Music track ID not found in payment metadata' },
+        { error: 'Music track ID(s) not found in payment metadata' },
         { status: 400 }
       );
     }
 
-    // Get track details
-    const track = await getMusicTrack(musicTrackId);
-    if (!track) {
-      return NextResponse.json(
-        { error: 'Track not found' },
-        { status: 404 }
-      );
-    }
-
-    // Generate download package (ZIP + PDF)
     // Use authUid for storage path (Firebase Auth UID) to match Storage security rules
     const userIdForStorage = user.authUid || user.id;
-    const downloadData = await generateDownloadPackage(
-      musicTrackId,
-      userIdForStorage,
-      user.name,
-      user.email
-    );
 
-    // Record purchase in database
-    
-    // Use Firestore document ID for purchase record, but authUid for storage
-    const purchase = await recordPurchase(
-      user.id, // Firestore document ID for purchase record
-      musicTrackId,
-      track.title,
-      track.price,
-      downloadData.zipUrl,
-      downloadData.pdfUrl,
-      downloadData.expiresAt
-    );
-    
+    const results: Array<{
+      trackId: string;
+      trackTitle: string;
+      price: number;
+      downloadUrl: string;
+      pdfUrl: string;
+      expiresAt: string;
+    }> = [];
+
+    for (const trackId of trackIds) {
+      const track = await getMusicTrack(trackId);
+      if (!track) {
+        return NextResponse.json(
+          { error: `Track not found: ${trackId}` },
+          { status: 404 }
+        );
+      }
+
+      const downloadData = await generateDownloadPackage(
+        trackId,
+        userIdForStorage,
+        user.name,
+        user.email
+      );
+
+      // Use Firestore document ID for purchase record, but authUid for storage
+      await recordPurchase(
+        user.id, // Firestore document ID for purchase record
+        trackId,
+        track.title,
+        track.price,
+        downloadData.zipUrl,
+        downloadData.pdfUrl,
+        downloadData.expiresAt
+      );
+
+      results.push({
+        trackId,
+        trackTitle: track.title,
+        price: track.price,
+        downloadUrl: downloadData.zipUrl,
+        pdfUrl: downloadData.pdfUrl,
+        expiresAt: downloadData.expiresAt.toISOString(),
+      });
+    }
 
     // Update user purchase count (use Firestore document ID)
-    await updateUserPurchases(user.id, 1);
+    await updateUserPurchases(user.id, results.length);
+
+    // Backward-compatible response for single purchases
+    if (results.length === 1) {
+      const r = results[0];
+      return NextResponse.json({
+        downloadUrl: r.downloadUrl,
+        pdfUrl: r.pdfUrl,
+        expiresAt: r.expiresAt,
+        trackId: r.trackId,
+        trackTitle: r.trackTitle,
+        purchasedTrackIds: [r.trackId],
+        items: results
+      });
+    }
 
     return NextResponse.json({
-      downloadUrl: downloadData.zipUrl,
-      pdfUrl: downloadData.pdfUrl,
-      expiresAt: downloadData.expiresAt.toISOString(),
-      trackId: musicTrackId,
-      trackTitle: track.title
+      purchasedTrackIds: results.map(r => r.trackId),
+      items: results
     });
 
   } catch (error: unknown) {

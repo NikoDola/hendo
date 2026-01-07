@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createCheckoutSession } from '@/lib/stripe';
+import { createCheckoutSession, createCheckoutSessionForItems } from '@/lib/stripe';
 import { getUserFromSession } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
@@ -12,14 +12,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { musicTrackId, musicTitle, price } = await request.json();
-
-    if (!musicTrackId || !musicTitle || !price) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
-    }
+    const body = await request.json().catch(() => ({}));
+    const { items, musicTrackId, musicTitle, price } = body as {
+      items?: Array<{ id: string; title: string; price: number }>;
+      musicTrackId?: string;
+      musicTitle?: string;
+      price?: number;
+    };
 
     // Get base URL from the request (for local testing) or env variable
     // Check multiple headers to determine the correct base URL
@@ -48,14 +47,21 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    const session = await createCheckoutSession(
-      musicTrackId,
-      musicTitle,
-      price,
-      user.email,
-      `${baseUrl}/music/success?session_id={CHECKOUT_SESSION_ID}`,
-      `${baseUrl}/music/cancel`
-    );
+    const successUrl = `${baseUrl}/music/success?session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = `${baseUrl}/music/cancel`;
+
+    let session;
+    if (Array.isArray(items) && items.length > 0) {
+      session = await createCheckoutSessionForItems(items, user.email, successUrl, cancelUrl);
+    } else {
+      if (!musicTrackId || !musicTitle || !price) {
+        return NextResponse.json(
+          { error: 'Missing required fields' },
+          { status: 400 }
+        );
+      }
+      session = await createCheckoutSession(musicTrackId, musicTitle, price, user.email, successUrl, cancelUrl);
+    }
 
     return NextResponse.json({ url: session.url });
 

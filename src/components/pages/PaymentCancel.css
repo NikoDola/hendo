@@ -1,0 +1,146 @@
+/* Payment Cancel Page Styles (matches Payment Success look & feel) */
+
+.paymentCancelContainer {
+  background: transparent;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+.paymentCancelCard {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 3rem 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.paymentCancelIcon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  background: rgba(239, 68, 68, 0.12);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: cancelPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes cancelPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
+  }
+}
+
+.paymentCancelTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.paymentCancelSubtitle {
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.paymentCancelActions {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.paymentCancelButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.paymentCancelButtonPrimary {
+  background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+  color: white;
+}
+
+.paymentCancelButtonPrimary:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #ea580c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.35);
+}
+
+.paymentCancelButtonSecondary {
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.paymentCancelButtonSecondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.paymentCancelNote {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.paymentCancelLinkRow {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.paymentCancelHomeLink {
+  display: inline-block;
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.paymentCancelHomeLink:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(5px);
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .paymentCancelCard {
+    padding: 2rem 1.5rem;
+  }
+
+  .paymentCancelTitle {
+    font-size: 1.5rem;
+  }
+
+  .paymentCancelSubtitle {
+    font-size: 1rem;
+  }
+
+  .paymentCancelIcon {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+

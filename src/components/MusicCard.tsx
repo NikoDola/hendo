@@ -46,8 +46,6 @@ export default function MusicCard({
   const [showHashtags, setShowHashtags] = useState(false);
   const animationRef = useRef<number | null>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
-  const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
-  const analyserNodeRef = useRef<AnalyserNode | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const seekProgressRef = useRef(0);
   const initialTouchX = useRef(0);
@@ -56,54 +54,50 @@ export default function MusicCard({
 
 
   useEffect(() => {
-    if (!audio || !isPlaying) return;
-
-    let cancelled = false;
+    // Initialize AudioContext and analyser when playing starts
+    if (!audio || !isPlaying || !audio.src || audio.paused) return;
 
     const initAudioAnalysis = async () => {
       try {
-        // Create/reuse AudioContext
-        const context = audioContext ?? new AudioContext();
+        if (audio.dataset.audioConnected === 'true') {
+          return;
+        }
+
+        if (!audio.crossOrigin) {
+          audio.crossOrigin = 'anonymous';
+        }
+
+        const AudioContextCtor: typeof AudioContext =
+          (window as typeof window & { webkitAudioContext?: typeof AudioContext }).AudioContext ||
+          (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext!;
+        const context = new AudioContextCtor();
 
         if (context.state === 'suspended') {
           await context.resume();
         }
 
-        // Only create these once per <audio> element
-        if (!sourceNodeRef.current) {
-          sourceNodeRef.current = context.createMediaElementSource(audio);
-        }
+        const source = context.createMediaElementSource(audio);
+        const analyserNode = context.createAnalyser();
+        analyserNode.fftSize = 256;
+        analyserNode.smoothingTimeConstant = 0.8;
 
-        if (!analyserNodeRef.current) {
-          const analyserNode = context.createAnalyser();
-          analyserNode.fftSize = 256;
-          analyserNode.smoothingTimeConstant = 0.8;
+        source.connect(analyserNode);
+        analyserNode.connect(context.destination);
 
-          sourceNodeRef.current.connect(analyserNode);
-          analyserNode.connect(context.destination);
-
-          analyserNodeRef.current = analyserNode;
-          audio.dataset.audioConnected = 'true';
-        }
-
-        if (!cancelled) {
-          setAudioContext(context);
-          setAnalyser(analyserNodeRef.current);
-        }
+        audio.dataset.audioConnected = 'true';
+        setAudioContext(context);
+        setAnalyser(analyserNode);
       } catch (error) {
         console.error('AudioContext initialization failed:', error);
       }
     };
 
-    const timer = window.setTimeout(() => {
-      void initAudioAnalysis();
+    const timer = setTimeout(() => {
+      initAudioAnalysis();
     }, 100);
 
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timer);
-    };
-  }, [isPlaying, audio, audioContext]);
+    return () => clearTimeout(timer);
+  }, [isPlaying, audio]);
 
   // Audio analysis for visualizations
   useEffect(() => {

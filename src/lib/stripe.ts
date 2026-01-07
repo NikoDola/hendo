@@ -2,6 +2,12 @@
 import Stripe from 'stripe';
 import { loadStripe } from '@stripe/stripe-js';
 
+export interface CheckoutItem {
+  id: string;
+  title: string;
+  price: number;
+}
+
 // Server-side Stripe instance
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 if (!stripeSecretKey) {
@@ -79,6 +85,56 @@ export async function createCheckoutSession(
     return session;
   } catch (error) {
     console.error('Error creating checkout session:', error);
+    throw new Error('Failed to create checkout session');
+  }
+}
+
+// Create a checkout session for multiple music purchases (cart)
+export async function createCheckoutSessionForItems(
+  items: CheckoutItem[],
+  customerEmail: string,
+  successUrl: string,
+  cancelUrl: string
+) {
+  if (!stripe) {
+    throw new Error('Stripe is not configured. Please set STRIPE_SECRET_KEY in your .env.local file.');
+  }
+
+  const cleaned = items
+    .filter(i => i && typeof i.id === 'string' && typeof i.title === 'string' && typeof i.price === 'number')
+    .filter(i => i.id.trim().length > 0 && i.title.trim().length > 0 && Number.isFinite(i.price) && i.price > 0);
+
+  if (cleaned.length === 0) {
+    throw new Error('No valid items provided for checkout');
+  }
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: cleaned.map(item => ({
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: item.title,
+            description: `Music track: ${item.title}`,
+          },
+          unit_amount: Math.round(item.price * 100),
+        },
+        quantity: 1,
+      })),
+      mode: 'payment',
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      customer_email: customerEmail,
+      metadata: {
+        musicTrackIds: JSON.stringify(cleaned.map(i => i.id)),
+        type: 'music_cart_purchase'
+      }
+    });
+
+    return session;
+  } catch (error) {
+    console.error('Error creating cart checkout session:', error);
     throw new Error('Failed to create checkout session');
   }
 }
