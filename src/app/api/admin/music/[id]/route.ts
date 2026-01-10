@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminFromSession } from '@/lib/admin-auth';
-import { deleteMusicTrack, getMusicTrack } from '@/lib/music';
+import { firebaseAdmin } from '@/lib/firebaseAdmin';
+import { getMusicTrackServer } from '@/lib/music-server';
 
 export async function GET(
   request: NextRequest,
@@ -16,7 +17,7 @@ export async function GET(
       );
     }
 
-    const track = await getMusicTrack(id);
+    const track = await getMusicTrackServer(id);
     if (!track) {
       return NextResponse.json(
         { error: 'Track not found' },
@@ -75,8 +76,7 @@ export async function PUT(
     const { title, description, hashtags, genre, price, audioFileUrl, audioFileName, pdfFileUrl, pdfFileName, imageFileUrl, imageFileName, showToHome } = body;
 
     // Get existing track to preserve existing files if not updated
-    const { getMusicTrack } = await import('@/lib/music');
-    const existingTrack = await getMusicTrack(id);
+    const existingTrack = await getMusicTrackServer(id);
     if (!existingTrack) {
       return NextResponse.json(
         { error: 'Track not found' },
@@ -84,27 +84,12 @@ export async function PUT(
       );
     }
 
-    // Update the track in Firestore
-    const trackRef = (await import('@/lib/firebase')).db;
-    const { doc, updateDoc, serverTimestamp } = await import('firebase/firestore');
-    const docRef = doc(trackRef, 'music', id);
+    // Update the track in Firestore (Admin SDK bypasses Firestore security rules)
+    const adminDb = firebaseAdmin.firestore();
+    const docRef = adminDb.collection('music').doc(id);
 
-    const updateData: {
-      updatedAt: ReturnType<typeof serverTimestamp>;
-      title?: string;
-      description?: string;
-      hashtags?: string[];
-      genre?: string;
-      price?: number;
-      audioFileUrl?: string;
-      audioFileName?: string;
-      pdfFileUrl?: string | null;
-      pdfFileName?: string | null;
-      imageFileUrl?: string | null;
-      imageFileName?: string | null;
-      showToHome?: boolean;
-    } = {
-      updatedAt: serverTimestamp()
+    const updateData: Record<string, unknown> = {
+      updatedAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
     };
 
     if (title) updateData.title = title.trim();
@@ -136,10 +121,10 @@ export async function PUT(
       updateData.imageFileName = null;
     }
 
-    await updateDoc(docRef, updateData);
+    await docRef.set(updateData, { merge: true });
 
     // Return updated track
-    const updatedTrack = await getMusicTrack(id);
+    const updatedTrack = await getMusicTrackServer(id);
     return NextResponse.json({ track: updatedTrack });
 
   } catch (error: unknown) {
@@ -166,7 +151,30 @@ export async function DELETE(
       );
     }
 
-    await deleteMusicTrack(id);
+    const adminDb = firebaseAdmin.firestore();
+    const docRef = adminDb.collection('music').doc(id);
+    const snap = await docRef.get();
+    if (!snap.exists) {
+      return NextResponse.json({ error: 'Track not found' }, { status: 404 });
+    }
+
+    const data = snap.data() as Record<string, unknown>;
+    const audioFileName = typeof data.audioFileName === 'string' ? data.audioFileName : null;
+    const pdfFileName = typeof data.pdfFileName === 'string' ? data.pdfFileName : null;
+    const imageFileName = typeof data.imageFileName === 'string' ? data.imageFileName : null;
+
+    // Best-effort delete from Storage using Admin SDK (bypasses Storage rules)
+    try {
+      const bucket = firebaseAdmin.storage().bucket();
+      const deletes = [audioFileName, pdfFileName, imageFileName]
+        .filter((p): p is string => Boolean(p && p.trim().length > 0))
+        .map((path) => bucket.file(path).delete().catch(() => undefined));
+      await Promise.all(deletes);
+    } catch (e) {
+      console.warn('Failed to delete some storage files:', e);
+    }
+
+    await docRef.delete();
     return NextResponse.json({ success: true });
 
   } catch (error) {
