@@ -18,7 +18,11 @@ export default function UserPurchasesList({
   return (
     <div className="userProfileCard userPurchasesListContainer">
       <div className="userPurchasesListHeader">
+        <div>
         <h2 className="userProfileTitle userPurchasesListTitle">My Purchased Tracks</h2>
+        <p className='bold'>total {purchases.length} tracks </p>
+        </div>
+
         <button
           onClick={onRefresh}
           className="userPurchasesRefreshButton"

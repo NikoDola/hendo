@@ -6,6 +6,7 @@
 
 .userDashboardContainer {
   min-height: 100vh;
+  width: 100%;
   background: transparent;
 }
 
@@ -302,6 +303,13 @@
   background: rgba(64, 64, 64, 0.8);
   color: white;
   box-shadow: none;
+  text-align: left;
+}
+
+.lucide-download{
+  width: 2rem;
+  height: 3rem;
+  color: var(--theme-color);
 }
 
 .userPurchaseButton:hover {
