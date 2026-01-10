@@ -215,7 +215,7 @@ function PaymentSuccessContent() {
 
         <div className="paymentDownloadsSection">
           <div className="paymentDownloadsHeader">
-            <Download className="w-6 h-6" />
+            <Download className="w-10 h-10" />
             <h2>Your Downloads</h2>
           </div>
 

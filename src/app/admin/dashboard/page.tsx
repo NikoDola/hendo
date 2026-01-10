@@ -165,6 +165,7 @@ export default function AdminDashboard() {
                   onAddTrack={handleAddTrack}
                   onEditTrack={handleEditTrack}
                   onDeleteTrack={handleDeleteTrack}
+                  onRefreshTracks={loadTracks}
                 />
               )}
             </div>

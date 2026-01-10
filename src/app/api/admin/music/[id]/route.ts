@@ -84,6 +84,19 @@ export async function PUT(
       );
     }
 
+    // Enforce max 3 home tracks
+    if (showToHome === true && !existingTrack.showToHome) {
+      const adminDb = firebaseAdmin.firestore();
+      const homeSnap = await adminDb.collection('music').where('showToHome', '==', true).get();
+      const homeCount = homeSnap.size;
+      if (homeCount >= 3) {
+        return NextResponse.json(
+          { error: 'You cannot add more than 3 tracks to the home page. Please remove one first.' },
+          { status: 400 }
+        );
+      }
+    }
+
     // Update the track in Firestore (Admin SDK bypasses Firestore security rules)
     const adminDb = firebaseAdmin.firestore();
     const docRef = adminDb.collection('music').doc(id);

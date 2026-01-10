@@ -53,6 +53,148 @@
   user-select: none;
 }
 
+/* Title row + home badge */
+.adminTrackTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.adminTrackHomeBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Clickable home toggle icon */
+.adminTrackHomeToggle {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: none;
+  background: none;
+  background-image: none;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.adminTrackHomeToggle:hover {
+  background: none;
+  background-image: none;
+  background-color: transparent;
+  box-shadow: none;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.adminTrackHomeToggle.active {
+  color: #22c55e; /* green */
+}
+
+.adminTrackHomeToggle:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  
+}
+
+.adminTrackFeaturedRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+  cursor: pointer;
+
+}
+
+.adminTrackFeaturedLabel {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.adminTrackFeaturedLabel.active {
+  color: #22c55e;
+}
+
+/* Inline preview player */
+.adminTrackPlayer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.75rem 0 0.25rem;
+}
+
+.adminTrackPlayButton {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 50%;
+  background: transparent;
+  border: 2px solid var(--theme-color-1);
+  color: var(--theme-color-1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: none;
+}
+
+.adminTrackPlayButton:hover {
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.adminTrackPlayButton.playing {
+  background: linear-gradient(to top right, var(--theme-color-1), var(--theme-color-2));
+  border: none;
+  color: white;
+  box-shadow: 0 0 14px var(--theme-color-1), 0 0 28px var(--theme-color-2);
+}
+
+.adminTrackProgressBar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  overflow: visible;
+  cursor: pointer;
+  position: relative;
+}
+
+.adminTrackProgressBar:hover {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.adminTrackProgressFill {
+  height: 100%;
+  background: linear-gradient(to right, var(--theme-color-1), var(--theme-color-2));
+  border-radius: 3px;
+}
+
+.adminTrackFilePath {
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  word-break: break-all;
+}
+
 /* Stats row (favorites / carts) */
 .adminTrackStatsRow {
   display: flex;
