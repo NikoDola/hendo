@@ -441,6 +441,7 @@ export default function MusicCard({
               <div className="musicCardIconActions">
                 <button
                   onClick={() => {
+                    if (isPurchased) return;
                     if (isInCart(track.id)) {
                       removeFromCart(track.id);
                       return;
@@ -452,8 +453,9 @@ export default function MusicCard({
                       imageFileUrl: track.imageFileUrl
                     });
                   }}
-                  className={`musicCardIconButton ${isInCart(track.id) ? 'active' : ''}`}
+                  className={`musicCardIconButton ${isInCart(track.id) ? 'active' : ''} ${isPurchased ? 'disabled' : ''}`}
                   aria-label="Add to cart"
+                  disabled={isPurchased}
                 >
                   <ShoppingCart size={20} />
                 </button>

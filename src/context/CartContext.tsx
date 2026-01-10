@@ -124,6 +124,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
           } else {
             localStorage.removeItem(CART_STORAGE_KEY);
           }
+        } else {
+          // Fallback: restore cart from sessionStorage backup (useful after Stripe redirects/back navigation)
+          try {
+            const backup = sessionStorage.getItem('hendo_cart_backup');
+            if (backup) {
+              const items = JSON.parse(backup) as CartItem[];
+              if (Array.isArray(items) && items.length > 0) {
+                setCartItems(items);
+                const restored: CartData = { items, expiry: Date.now() + TWO_WEEKS_MS };
+                localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(restored));
+              }
+            }
+          } catch {
+            // ignore
+          }
         }
 
         // Load favorites (no expiry)

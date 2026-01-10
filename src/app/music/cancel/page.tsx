@@ -1,10 +1,20 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { Frown, Home, Music, ShoppingBag } from 'lucide-react';
 import '@/components/pages/PaymentCancel.css';
 
 export default function PaymentCancel() {
+  useEffect(() => {
+    // Replace history entry so Back doesn't bounce into Stripe URLs
+    try {
+      window.history.replaceState({}, '', '/music/cancel');
+    } catch {
+      // ignore
+    }
+  }, []);
+
   return (
     <div className="paymentCancelContainer">
       <div className="paymentCancelCard glass-effect">

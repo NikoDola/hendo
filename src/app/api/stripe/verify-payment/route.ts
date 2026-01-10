@@ -2,20 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { getUserFromSession } from '@/lib/auth';
 import { updateUserPurchases } from '@/lib/auth';
-import { generateDownloadPackage } from '@/lib/downloads';
+import { generateCollectionDownloadPackage } from '@/lib/downloads';
 import { recordPurchase } from '@/lib/purchases';
 import { getMusicTrackServer } from '@/lib/music-server';
 
 export async function POST(request: NextRequest) {
   try {
     const user = await getUserFromSession();
-    if (!user) {
-      console.error('❌ [Verify Payment] No user found in session');
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
-    }
 
     const { sessionId } = await request.json();
 
@@ -37,12 +30,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify the user email matches the session customer email
-    if (session.customer_email && session.customer_email.toLowerCase() !== user.email.toLowerCase()) {
-      return NextResponse.json(
-        { error: 'Payment session does not match current user' },
-        { status: 403 }
-      );
+    // If the user is logged in, make sure the session matches them.
+    if (user?.email && session.customer_email && session.customer_email.toLowerCase() !== user.email.toLowerCase()) {
+      return NextResponse.json({ error: 'Payment session does not match current user' }, { status: 403 });
     }
 
     const metadata = session.metadata || {};
@@ -73,75 +63,49 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Use authUid for storage path (Firebase Auth UID) to match Storage security rules
-    const userIdForStorage = user.authUid || user.id;
+    const customerEmail =
+      (session.customer_details?.email || session.customer_email || '').toString();
+    const customerName =
+      (session.customer_details?.name || '').toString();
 
-    const results: Array<{
-      trackId: string;
-      trackTitle: string;
-      price: number;
-      downloadUrl: string;
-      pdfUrl: string;
-      expiresAt: string;
-    }> = [];
+    // Use authUid for storage path if logged in; otherwise use a guest scoped to the Stripe session ID.
+    const userIdForStorage = user?.authUid || user?.id || `guest_${session.id}`;
 
-    for (const trackId of trackIds) {
-      const track = await getMusicTrackServer(trackId);
+    const collection = await generateCollectionDownloadPackage(
+      trackIds,
+      userIdForStorage,
+      user?.name || customerName || 'Guest',
+      user?.email || customerEmail || 'guest@checkout.stripe'
+    );
+
+    // Record a purchase per track (for ownership / dashboard history)
+    for (const item of collection.items) {
+      const track = await getMusicTrackServer(item.trackId);
       if (!track) {
-        return NextResponse.json(
-          { error: `Track not found: ${trackId}` },
-          { status: 404 }
-        );
+        return NextResponse.json({ error: `Track not found: ${item.trackId}` }, { status: 404 });
       }
 
-      const downloadData = await generateDownloadPackage(
-        trackId,
-        userIdForStorage,
-        user.name,
-        user.email
-      );
-
-      // Use Firestore document ID for purchase record, but authUid for storage
       await recordPurchase(
-        user.id, // Firestore document ID for purchase record
-        trackId,
+        user?.id || `guest_${session.id}`,
+        item.trackId,
         track.title,
         track.price,
-        downloadData.zipUrl,
-        downloadData.pdfUrl,
-        downloadData.expiresAt
+        collection.zipUrl,
+        '', // PDF is included inside the ZIP now (no separate PDF download)
+        collection.expiresAt
       );
-
-      results.push({
-        trackId,
-        trackTitle: track.title,
-        price: track.price,
-        downloadUrl: downloadData.zipUrl,
-        pdfUrl: downloadData.pdfUrl,
-        expiresAt: downloadData.expiresAt.toISOString(),
-      });
     }
 
     // Update user purchase count (use Firestore document ID)
-    await updateUserPurchases(user.id, results.length);
-
-    // Backward-compatible response for single purchases
-    if (results.length === 1) {
-      const r = results[0];
-      return NextResponse.json({
-        downloadUrl: r.downloadUrl,
-        pdfUrl: r.pdfUrl,
-        expiresAt: r.expiresAt,
-        trackId: r.trackId,
-        trackTitle: r.trackTitle,
-        purchasedTrackIds: [r.trackId],
-        items: results
-      });
+    if (user?.id) {
+      await updateUserPurchases(user.id, collection.items.length);
     }
 
     return NextResponse.json({
-      purchasedTrackIds: results.map(r => r.trackId),
-      items: results
+      collectionZipUrl: collection.zipUrl,
+      expiresAt: collection.expiresAt.toISOString(),
+      purchasedTrackIds: collection.items.map((i) => i.trackId),
+      items: collection.items,
     });
 
   } catch (error: unknown) {

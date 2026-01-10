@@ -56,11 +56,19 @@ export default function UserPurchasesList({
 
               <div className="userPurchaseActions">
                 <button
-                  onClick={() => onDownload(purchase.id, 'zip', `${purchase.trackTitle}.zip`)}
+                  onClick={() =>
+                    onDownload(
+                      purchase.id,
+                      'zip',
+                      purchase.zipUrl?.includes('Hendo-Beats-Collection')
+                        ? 'Hendo-Beats-Collection.zip'
+                        : `${purchase.trackTitle}.zip`
+                    )
+                  }
                   className="userPurchaseButton userPurchaseButtonPrimary"
                 >
                   <Download size={18} />
-                  Download Package (Track + Rights PDF)
+                  Download ZIP (Includes Rights PDFs)
                 </button>
               </div>
             </div>

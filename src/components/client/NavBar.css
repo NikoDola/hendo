@@ -397,8 +397,40 @@
   display: flex;
   align-items: center;
   gap: 2rem;
-  cursor: pointer;
   padding: 0.5rem;
+}
+
+.profileToggleButton {
+  appearance: none;
+  -webkit-appearance: none;
+
+  background: none;
+  box-shadow: none;
+  border: none;
+  border-radius: 0;
+
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  line-height: 0;
+  color: inherit;
+  font: inherit;
+}
+
+.profileToggleButton:focus,
+.profileToggleButton:focus-visible {
+  outline: none;
+}
+
+.profileToggleButton:hover,
+.profileToggleButton:active {
+  background: none;
+  background-color: transparent;
+  background-image: none;
+  box-shadow: none;
 }
 
 .navCartIconWrapper {

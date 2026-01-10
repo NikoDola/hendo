@@ -9,7 +9,7 @@ export interface CheckoutItem {
 }
 
 // Server-side Stripe instance
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+const stripeSecretKey = process.env.STRIPE_TEST_KEY;
 if (!stripeSecretKey) {
   console.error('STRIPE_SECRET_KEY is not set in environment variables. Please add it to your .env.local file.');
 }
@@ -22,7 +22,7 @@ export const stripe = stripeSecretKey
 
 // Client-side Stripe instance
 export const getStripe = () => {
-  return loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+  return loadStripe(process.env.NEXT_PUBLIC_TEST_STRIPE_PUBLISHABLE_KEY!);
 };
 
 // Create a payment intent for music purchase
@@ -48,7 +48,7 @@ export async function createCheckoutSession(
   musicTrackId: string,
   musicTitle: string,
   price: number,
-  customerEmail: string,
+  customerEmail: string | undefined,
   successUrl: string,
   cancelUrl: string
 ) {
@@ -75,7 +75,7 @@ export async function createCheckoutSession(
       mode: 'payment',
       success_url: successUrl,
       cancel_url: cancelUrl,
-      customer_email: customerEmail,
+      ...(customerEmail ? { customer_email: customerEmail } : {}),
       metadata: {
         musicTrackId,
         type: 'music_purchase'
@@ -92,7 +92,7 @@ export async function createCheckoutSession(
 // Create a checkout session for multiple music purchases (cart)
 export async function createCheckoutSessionForItems(
   items: CheckoutItem[],
-  customerEmail: string,
+  customerEmail: string | undefined,
   successUrl: string,
   cancelUrl: string
 ) {
@@ -125,7 +125,7 @@ export async function createCheckoutSessionForItems(
       mode: 'payment',
       success_url: successUrl,
       cancel_url: cancelUrl,
-      customer_email: customerEmail,
+      ...(customerEmail ? { customer_email: customerEmail } : {}),
       metadata: {
         musicTrackIds: JSON.stringify(cleaned.map(i => i.id)),
         type: 'music_cart_purchase'

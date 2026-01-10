@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { MusicTrack } from '@/lib/music';
 import { Music } from 'lucide-react';
 import { useUserAuth } from '@/context/UserAuthContext';
+import { useCart } from '@/context/CartContext';
 import MusicListCard from '@/components/MusicListCard';
 import SkeletonMusicCard from '@/components/SkeletonMusicCard';
 import MusicFilterBar, { FilterOptions } from '@/components/MusicFilterBar';
@@ -39,6 +40,7 @@ export default function MusicStore() {
     searchQuery: ''
   });
   const { user, loading: authLoading } = useUserAuth();
+  const { addToCart } = useCart();
   const router = useRouter();
   const observerTarget = useRef<HTMLDivElement>(null);
 
@@ -192,15 +194,6 @@ export default function MusicStore() {
   };
 
   const handlePurchase = async (track: MusicTrack) => {
-    // Check if user is logged in
-    if (!user) {
-      const confirmLogin = confirm('You need to be logged in to purchase music. Would you like to go to the login page?');
-      if (confirmLogin) {
-        router.push('/login');
-      }
-      return;
-    }
-
     // Check if track is already purchased
     if (isTrackPurchased(track.id)) {
       setWarningPopup({
@@ -210,34 +203,14 @@ export default function MusicStore() {
       return;
     }
 
-    try {
-      const response = await fetch('/api/stripe/create-checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          musicTrackId: track.id,
-          musicTitle: track.title,
-          price: track.price
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.url) {
-          window.location.href = data.url;
-        } else {
-          alert('Failed to get checkout URL');
-        }
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        alert(errorData.error || 'Failed to start checkout process. Please try again.');
-      }
-    } catch (error) {
-      console.error('Purchase error:', error);
-      alert('Purchase failed. Please try again.');
-    }
+    // Add to cart first, then take user to cart to checkout with everything selected
+    addToCart({
+      id: track.id,
+      title: track.title,
+      price: track.price,
+      imageFileUrl: track.imageFileUrl
+    });
+    router.push('/dashboard/cart');
   };
 
   if (isLoading) {

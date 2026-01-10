@@ -74,7 +74,7 @@ export default function Hero() {
 
       <div className="hrsCtaWrapper">
         <p className="hrsDescription">
-          Welcome to the Dreamstation. A portal into the mind of T. HENDO where
+          Welcome to the Dreamstation. <br></br>A portal into the mind of T. HENDO where
           imagination becomes frequency, and sound becomes a world of its own.
         </p>
         <Link href="/about"><button>Read More</button></Link>

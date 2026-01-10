@@ -172,12 +172,26 @@ export default function NavMenu() {
             )}
             {isHydrated && user && (
               <div className="profileContainer">
-                <div
-                  onClick={handleProfileDropdown}
-                  className="profileIconsWrapper"
-                >
-                  <CiUser className="navIcons" />
-                  <Link href="/dashboard/cart" className="navCartIconWrapper">
+                <div className="profileIconsWrapper">
+                  <button
+                    type="button"
+                    className="profileToggleButton"
+                    onClick={handleProfileDropdown}
+                    aria-label="Open profile menu"
+                    aria-expanded={profileDropdown}
+                  >
+                    <CiUser className="navIcons" />
+                  </button>
+                  <Link
+                    href="/dashboard/cart"
+                    className="navCartIconWrapper"
+                    onClick={(e) => {
+                      // Prevent bubbling to the profile toggle click handler
+                      e.stopPropagation();
+                      setProfileDropdown(false);
+                    }}
+                    aria-label="Open cart"
+                  >
                     <CiShoppingCart className="navIcons" />
                     {cartCount > 0 && (
                       <span className="navCartBadge">{cartCount}</span>
@@ -315,15 +329,25 @@ export default function NavMenu() {
                 )}
                 {isHydrated && user && (
                   <li>
-                    <div
-                      onClick={handleProfileDropdown}
-                      className="mobileProfileIconsWrapper"
-                    >
-                      <CiUser className="navIcons" />
+                    <div className="mobileProfileIconsWrapper">
+                      <button
+                        type="button"
+                        className="profileToggleButton"
+                        onClick={handleProfileDropdown}
+                        aria-label="Open profile menu"
+                        aria-expanded={profileDropdown}
+                      >
+                        <CiUser className="navIcons" />
+                      </button>
                       <Link
                         href="/dashboard/cart"
                         className="navCartIconWrapper"
-                        onClick={handleLinkClick}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setProfileDropdown(false);
+                          handleLinkClick();
+                        }}
+                        aria-label="Open cart"
                       >
                         <CiShoppingCart className="navIcons" />
                         {cartCount > 0 && (

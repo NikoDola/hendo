@@ -369,6 +369,13 @@
   box-shadow: none;
 }
 
+.musicCardIconButton:disabled,
+.musicCardIconButton.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .musicCardPurchaseButton {
   flex: 0 0 auto;
   min-width: 140px;

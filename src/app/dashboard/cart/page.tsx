@@ -82,18 +82,17 @@ export default function CartPage() {
       if (response.ok) {
         const data = await response.json();
         if (data.url) {
+          // Backup cart in sessionStorage so Browser Back / Stripe Cancel won't "lose" it in this tab.
+          // (localStorage should persist, but some browsers can behave oddly across Stripe redirects)
+          try {
+            window.sessionStorage.setItem('hendo_cart_backup', JSON.stringify(cartItems));
+          } catch {
+            // ignore
+          }
           window.location.href = data.url;
           return;
         }
         alert('Failed to get checkout URL');
-        return;
-      }
-
-      if (response.status === 401) {
-        const confirmLogin = confirm('You need to be logged in to purchase music. Would you like to go to the login page?');
-        if (confirmLogin) {
-          router.push('/login');
-        }
         return;
       }
 

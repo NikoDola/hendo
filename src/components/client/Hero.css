@@ -46,6 +46,7 @@
   font-size: 1.3rem;
   width: 40%;
   line-height: 2rem;
+  color: rgb(192, 192, 192);
 }
 
 .hrsImgWrapper{
@@ -71,6 +72,10 @@
 }
 
 @media (max-width: 1000px){
+  .hrsDescription{
+  width: 90%;
+}
+
 .hrsWrapper{
   min-height: 100svh
   
@@ -102,9 +107,6 @@
 }
 }
 
-.hrsDescription{
-  width: 90%;
-}
 
 @media (max-width: 1000px) and (orientation: landscape) {
   .hrsImgWrapper{

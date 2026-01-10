@@ -2,24 +2,20 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { CheckCircle, Download, FileText, X } from 'lucide-react';
+import { CheckCircle, Download, X } from 'lucide-react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import '@/components/pages/PaymentSuccess.css';
 
 function PaymentSuccessContent() {
   const [downloadData, setDownloadData] = useState<{
-    downloadUrl?: string;
-    pdfUrl?: string;
-    trackTitle?: string;
+    collectionZipUrl?: string;
     expiresAt?: string;
     purchasedTrackIds?: string[];
     items?: Array<{
       trackId: string;
       trackTitle: string;
-      downloadUrl: string;
-      pdfUrl: string;
-      expiresAt: string;
+      price: number;
     }>;
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -39,8 +35,20 @@ function PaymentSuccessContent() {
       
       return () => clearTimeout(timeout);
     } else {
-      console.error('❌ No session ID found in URL');
-      setIsLoading(false);
+      // If we already verified in this tab, allow the success page to show without re-verifying.
+      try {
+        const cached = typeof window !== 'undefined'
+          ? window.sessionStorage.getItem('hendo_last_purchase')
+          : null;
+        if (cached) {
+          const parsed = JSON.parse(cached) as unknown;
+          setDownloadData(parsed as typeof downloadData);
+        }
+      } catch {
+        // ignore
+      } finally {
+        setIsLoading(false);
+      }
     }
   }, [sessionId]);
 
@@ -61,19 +69,37 @@ function PaymentSuccessContent() {
 
       const data = await response.json();
       
-      if ((data.downloadUrl && data.pdfUrl) || (Array.isArray(data.items) && data.items.length > 0)) {
+      if (data.collectionZipUrl) {
         setDownloadData(data);
         setIsLoading(false);
 
         // Remove purchased items from cart (safe even if they're not in the cart)
         const purchasedIds: string[] = Array.isArray(data.purchasedTrackIds)
           ? data.purchasedTrackIds
-          : (data.trackId ? [data.trackId] : []);
+          : [];
         purchasedIds.forEach((id) => removeFromCart(id));
+
+        // Clear any cart backup after a successful purchase
+        try {
+          window.sessionStorage.removeItem('hendo_cart_backup');
+        } catch {
+          // ignore
+        }
+
+        // Store the verified purchase data for this tab so Back/Forward doesn't re-trigger verification
+        try {
+          window.sessionStorage.setItem('hendo_last_purchase', JSON.stringify(data));
+          // Remove the session_id param from history to avoid confusing back navigation
+          window.history.replaceState({}, '', '/music/success');
+        } catch {
+          // ignore
+        }
         
-        // Auto-start download after a short delay
+        // Auto-start ZIP download after a short delay (no PDFs)
         setTimeout(() => {
-          startDownloads(data);
+          if (data.collectionZipUrl) {
+            startDownloads(data.collectionZipUrl);
+          }
         }, 500);
       } else {
         console.error('❌ Invalid download data:', data);
@@ -82,81 +108,52 @@ function PaymentSuccessContent() {
     } catch (error) {
       console.error('💥 Payment verification error:', error);
       setIsLoading(false);
+    } finally {
+      // Always remove the session_id param after an attempt to prevent confusing Back navigation loops.
+      try {
+        window.history.replaceState({}, '', '/music/success');
+      } catch {
+        // ignore
+      }
     }
   };
 
-  const startDownloads = async (data: {
-    downloadUrl?: string;
-    pdfUrl?: string;
-    trackTitle?: string;
-    items?: Array<{ trackTitle: string; downloadUrl: string; pdfUrl: string }>;
-  }) => {
-    
+  const startDownloads = async (zipUrl: string) => {
     try {
-      // Download ZIP file - try fetch first, fallback to direct link
-      const downloadFile = async (url: string, filename: string) => {
-        try {
-          const response = await fetch(url, {
-            method: 'GET',
-            mode: 'cors',
-            cache: 'no-cache',
-          });
-          
-          if (response.ok) {
-            const blob = await response.blob();
-            const blobUrl = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = blobUrl;
-            link.download = filename;
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            link.click();
-            setTimeout(() => {
-              if (document.body.contains(link)) {
-                document.body.removeChild(link);
-              }
-              window.URL.revokeObjectURL(blobUrl);
-            }, 100);
-            return true;
-          }
-        } catch {
-          // Fetch failed - will use direct link fallback (silent, expected behavior)
+      // Try fetch -> blob download first, fallback to direct link.
+      const filename = 'Hendo-Beats-Collection.zip';
+      try {
+        const response = await fetch(zipUrl, { method: 'GET', mode: 'cors', cache: 'no-cache' });
+        if (response.ok) {
+          const blob = await response.blob();
+          const blobUrl = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = blobUrl;
+          link.download = filename;
+          link.style.display = 'none';
+          document.body.appendChild(link);
+          link.click();
+          setTimeout(() => {
+            if (document.body.contains(link)) document.body.removeChild(link);
+            window.URL.revokeObjectURL(blobUrl);
+          }, 100);
+          return;
         }
-        
-        // Fallback to direct link (signed URLs work directly)
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = filename;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        setTimeout(() => {
-          if (document.body.contains(link)) {
-            document.body.removeChild(link);
-          }
-        }, 100);
-        return true;
-      };
-
-      const items = Array.isArray(data.items) && data.items.length > 0
-        ? data.items
-        : (data.downloadUrl && data.pdfUrl
-          ? [{ trackTitle: data.trackTitle || 'music-track', downloadUrl: data.downloadUrl, pdfUrl: data.pdfUrl }]
-          : []);
-
-      for (const item of items) {
-        await downloadFile(item.downloadUrl, `${item.trackTitle || 'music-track'}.zip`);
-        // Small delay between downloads to reduce browser blocking
-        // eslint-disable-next-line no-await-in-loop
-        await new Promise((r) => setTimeout(r, 400));
-        await downloadFile(item.pdfUrl, `${item.trackTitle || 'rights'}_rights.pdf`);
-        // eslint-disable-next-line no-await-in-loop
-        await new Promise((r) => setTimeout(r, 500));
+      } catch {
+        // ignore and fallback
       }
+
+      const link = document.createElement('a');
+      link.href = zipUrl;
+      link.download = filename;
+      link.rel = 'noopener noreferrer';
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        if (document.body.contains(link)) document.body.removeChild(link);
+      }, 100);
     } catch {
-      // Silent error - downloads will still work via fallback
       console.warn('Download initiated (using direct links)');
     }
   };
@@ -165,7 +162,6 @@ function PaymentSuccessContent() {
     const link = document.createElement('a');
     link.href = url;
     link.download = filename;
-    link.target = '_blank';
     link.rel = 'noopener noreferrer';
     document.body.appendChild(link);
     link.click();
@@ -190,7 +186,9 @@ function PaymentSuccessContent() {
           <div className="paymentSuccessError">
             <X className="paymentSuccessErrorIcon" />
             <h1 className="paymentSuccessErrorTitle">Payment Verification Failed</h1>
-            <p className="paymentSuccessErrorMessage">We couldn&apos;t verify your payment. Please contact support.</p>
+            <p className="paymentSuccessErrorMessage">
+              We couldn&apos;t verify your payment. If you completed checkout, please contact support.
+            </p>
             <Link href="/" className="paymentSuccessErrorButton">
               Return Home
             </Link>
@@ -220,48 +218,27 @@ function PaymentSuccessContent() {
             <Download className="w-6 h-6" />
             <h2>Your Downloads</h2>
           </div>
-          
-          {Array.isArray(downloadData.items) && downloadData.items.length > 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {downloadData.items.map((item) => (
-                <div key={item.trackId} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <div style={{ fontWeight: 600 }}>{item.trackTitle}</div>
-                  <button
-                    onClick={() => handleManualDownload(item.downloadUrl, `${item.trackTitle}.zip`)}
-                    className="paymentDownloadButton paymentDownloadButtonZip"
-                  >
-                    <Download className="w-5 h-5" />
-                    Download Music Package
-                  </button>
-                  <button
-                    onClick={() => handleManualDownload(item.pdfUrl, `${item.trackTitle}_rights.pdf`)}
-                    className="paymentDownloadButton paymentDownloadButtonPdf"
-                  >
-                    <FileText className="w-5 h-5" />
-                    Download Rights PDF
-                  </button>
-                </div>
-              ))}
+
+          {Array.isArray(downloadData.items) && downloadData.items.length > 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
+              <div style={{ fontWeight: 600 }}>Included Tracks:</div>
+              <ul style={{ margin: 0, paddingLeft: 18, opacity: 0.9 }}>
+                {downloadData.items.map((item) => (
+                  <li key={item.trackId} style={{ marginBottom: 4 }}>
+                    {item.trackTitle}
+                  </li>
+                ))}
+              </ul>
             </div>
-          ) : (
-            <>
-              <button
-                onClick={() => handleManualDownload(downloadData.downloadUrl!, `${downloadData.trackTitle}.zip`)}
-                className="paymentDownloadButton paymentDownloadButtonZip"
-              >
-                <Download className="w-5 h-5" />
-                Download Music Package
-              </button>
-              
-              <button
-                onClick={() => handleManualDownload(downloadData.pdfUrl!, `${downloadData.trackTitle}_rights.pdf`)}
-                className="paymentDownloadButton paymentDownloadButtonPdf"
-              >
-                <FileText className="w-5 h-5" />
-                Download Rights PDF
-              </button>
-            </>
           )}
+
+          <button
+            onClick={() => handleManualDownload(downloadData.collectionZipUrl!, 'Hendo-Beats-Collection.zip')}
+            className="paymentDownloadButton paymentDownloadButtonZip"
+          >
+            <Download className="w-5 h-5" />
+            Download Hendo-Beats-Collection.zip
+          </button>
         </div>
         
         <div className="paymentSuccessNote">

@@ -5,12 +5,6 @@ import { getUserFromSession } from '@/lib/auth';
 export async function POST(request: NextRequest) {
   try {
     const user = await getUserFromSession();
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
-    }
 
     const body = await request.json().catch(() => ({}));
     const { items, musicTrackId, musicTitle, price } = body as {
@@ -52,7 +46,7 @@ export async function POST(request: NextRequest) {
 
     let session;
     if (Array.isArray(items) && items.length > 0) {
-      session = await createCheckoutSessionForItems(items, user.email, successUrl, cancelUrl);
+      session = await createCheckoutSessionForItems(items, user?.email, successUrl, cancelUrl);
     } else {
       if (!musicTrackId || !musicTitle || !price) {
         return NextResponse.json(
@@ -60,7 +54,7 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
-      session = await createCheckoutSession(musicTrackId, musicTitle, price, user.email, successUrl, cancelUrl);
+      session = await createCheckoutSession(musicTrackId, musicTitle, price, user?.email, successUrl, cancelUrl);
     }
 
     return NextResponse.json({ url: session.url });

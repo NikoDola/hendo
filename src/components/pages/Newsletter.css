@@ -93,6 +93,9 @@ Newsletter Component Styles
   color: #7C3AED;
 }
 
+.subscribe{
+  border-radius: 0 10rem 10rem 0;
+}
 
 @media (max-width: 768px) {
   .newsletterWrapper {

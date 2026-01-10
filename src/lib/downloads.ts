@@ -12,6 +12,37 @@ interface DownloadPackage {
   expiresAt: Date;
 }
 
+interface CollectionDownloadPackage {
+  zipUrl: string;
+  expiresAt: Date;
+  items: Array<{ trackId: string; trackTitle: string; price: number }>;
+}
+
+function sanitizeFolderName(input: string): string {
+  const cleaned = (input || 'track')
+    .trim()
+    // replace path separators and reserved chars
+    .replace(/[\\/:*?"<>|]+/g, '_')
+    // collapse whitespace
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return cleaned.length > 0 ? cleaned : 'track';
+}
+
+function inferExtensionFromUrl(url: string): string {
+  try {
+    const pathname = new URL(url).pathname;
+    const last = pathname.split('/').pop() || '';
+    const decoded = decodeURIComponent(last);
+    const ext = decoded.includes('.') ? decoded.split('.').pop() : '';
+    const safe = (ext || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    return safe.length > 0 ? safe : 'mp3';
+  } catch {
+    return 'mp3';
+  }
+}
+
 /**
  * Generates a ZIP file containing the purchased music track and PDF
  */
@@ -220,6 +251,112 @@ export async function generateDownloadPackage(
   } catch (error) {
     console.error('Error generating download package:', error);
     throw new Error(`Failed to generate download package: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+}
+
+/**
+ * Generates ONE ZIP file for a single or multi-track purchase.
+ *
+ * ZIP structure:
+ *  Hendo-Beats-Collection/
+ *    <Track Title 1>/
+ *      <Track Title 1>.<ext>
+ *      <Track Title 1>_Rights.pdf
+ *    <Track Title 2>/
+ *      ...
+ */
+export async function generateCollectionDownloadPackage(
+  trackIds: string[],
+  userId: string,
+  userName: string,
+  userEmail: string
+): Promise<CollectionDownloadPackage> {
+  try {
+    const cleanedIds = Array.from(new Set(trackIds))
+      .filter((id) => typeof id === 'string' && id.trim().length > 0);
+
+    if (cleanedIds.length === 0) {
+      throw new Error('No track IDs provided');
+    }
+
+    // Get storage bucket name from environment variable
+    const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || process.env.FIREBASE_STORAGE_BUCKET;
+    if (!storageBucket) {
+      throw new Error('Storage bucket not configured. Please set NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET in your environment variables.');
+    }
+
+    const purchaseDate = new Date();
+    const timestamp = Date.now();
+    const zip = new JSZip();
+
+    const rootFolderName = 'Hendo-Beats-Collection';
+    const root = zip.folder(rootFolderName);
+    if (!root) {
+      throw new Error('Failed to create zip root folder');
+    }
+
+    const items: Array<{ trackId: string; trackTitle: string; price: number }> = [];
+
+    for (const trackId of cleanedIds) {
+      const track = await getMusicTrackServer(trackId);
+      if (!track) {
+        throw new Error(`Track not found: ${trackId}`);
+      }
+
+      const trackFolderName = sanitizeFolderName(track.title);
+      const trackFolder = root.folder(trackFolderName);
+      if (!trackFolder) {
+        throw new Error(`Failed to create folder for track: ${track.title}`);
+      }
+
+      // Generate PDF rights
+      const pdfBuffer = await generateRightsPDF(track.title, userName, userEmail, purchaseDate);
+
+      // Download audio
+      const audioResponse = await fetch(track.audioFileUrl);
+      if (!audioResponse.ok) {
+        throw new Error(`Failed to download audio file: ${audioResponse.statusText}`);
+      }
+      const audioBlob = await audioResponse.blob();
+      const audioArrayBuffer = await audioBlob.arrayBuffer();
+
+      const ext = inferExtensionFromUrl(track.audioFileUrl);
+      const sanitizedTitle = trackFolderName.replace(/[^a-z0-9 ]/gi, '_').replace(/\s+/g, '_');
+      const audioFileName = `${sanitizedTitle}.${ext}`;
+      const pdfFileName = `${sanitizedTitle}_Rights.pdf`;
+
+      trackFolder.file(audioFileName, audioArrayBuffer);
+      trackFolder.file(pdfFileName, pdfBuffer);
+
+      items.push({ trackId: track.id, trackTitle: track.title, price: track.price });
+    }
+
+    const zipBuffer = await zip.generateAsync({ type: 'nodebuffer' });
+
+    // Upload ZIP to Firebase Storage using Admin SDK
+    const zipFileName = `purchases/${userId}/${timestamp}_${rootFolderName}.zip`;
+    const bucket = firebaseAdmin.storage().bucket(storageBucket);
+    const zipFile = bucket.file(zipFileName);
+
+    await zipFile.save(zipBuffer, {
+      contentType: 'application/zip',
+      metadata: {
+        contentType: 'application/zip',
+      },
+    });
+
+    const [zipUrl] = await zipFile.getSignedUrl({
+      action: 'read',
+      expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+    });
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7);
+
+    return { zipUrl, expiresAt, items };
+  } catch (error) {
+    console.error('Error generating collection download package:', error);
+    throw new Error(`Failed to generate collection download package: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
