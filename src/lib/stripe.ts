@@ -9,7 +9,7 @@ export interface CheckoutItem {
 }
 
 // Server-side Stripe instance
-const stripeSecretKey = process.env.STRIPE_TEST_KEY;
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 if (!stripeSecretKey) {
   console.error('STRIPE_SECRET_KEY is not set in environment variables. Please add it to your .env.local file.');
 }
@@ -22,7 +22,7 @@ export const stripe = stripeSecretKey
 
 // Client-side Stripe instance
 export const getStripe = () => {
-  return loadStripe(process.env.NEXT_PUBLIC_TEST_STRIPE_PUBLISHABLE_KEY!);
+  return loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 };
 
 // Create a payment intent for music purchase
