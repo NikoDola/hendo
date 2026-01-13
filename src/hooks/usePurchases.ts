@@ -7,6 +7,7 @@ export interface Purchase {
   price: number;
   zipUrl: string;
   pdfUrl: string;
+  audioFileUrl?: string;
   purchasedAt: string;
   expiresAt: string;
 }

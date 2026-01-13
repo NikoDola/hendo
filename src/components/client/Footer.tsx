@@ -1,10 +1,16 @@
 import React from 'react';
 import './Footer.css';
+import ContactFooter from "@/components/client/ContactFooter"
 
-const Footer: React.FC = () => {
+type FooterProps = {
+  showContact?: boolean;
+};
+
+const Footer: React.FC<FooterProps> = ({ showContact = true }) => {
   return (
     <footer className="footer glass-effect">
       <div className="footer-content">
+        {showContact && <ContactFooter />}
         <div className="social-links">
           <div className="social-section">
             <div className="social-icons">

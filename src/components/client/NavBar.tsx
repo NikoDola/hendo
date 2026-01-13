@@ -81,11 +81,12 @@ export default function NavMenu() {
 
   const handleViewProfile = () => {
     setProfileDropdown(false);
-    if (user?.role === 'admin') {
-      router.push('/admin/dashboard');
-    } else {
-      router.push('/dashboard');
-    }
+    router.push('/dashboard');
+  };
+
+  const handleAdminDashboard = () => {
+    setProfileDropdown(false);
+    router.push('/admin/dashboard');
   };
 
   const handleLogout = async () => {
@@ -96,6 +97,28 @@ export default function NavMenu() {
     } catch (error) {
       console.error('Logout error:', error);
     }
+  };
+
+  const handleContactLinkClick = (e: React.MouseEvent) => {
+    // Close any open menus (especially mobile) before scrolling/navigation.
+    setIsOpen(false);
+    setDropdown(false);
+    setProfileDropdown(false);
+
+    // Always prevent default so we can scroll AFTER the mobile menu unlocks body scroll.
+    e.preventDefault();
+
+    const tryScrollOrNavigate = () => {
+      const el = typeof document !== 'undefined' ? document.getElementById('contactFr') : null;
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+      router.push('/home#contactFr');
+    };
+
+    // Wait a tick so the mobile menu close effect can restore body scroll.
+    setTimeout(tryScrollOrNavigate, 50);
   };
 
   // Toggle menu
@@ -119,11 +142,7 @@ export default function NavMenu() {
             >
               About
             </Link>
-            <Link
-              className="linkDesktop"
-              href="/home#contact"
-              onClick={handleLinkClick}
-            >
+            <Link className="linkDesktop" href="/home#contactFr" onClick={handleContactLinkClick}>
               Contact
             </Link>
           </ul>
@@ -208,6 +227,15 @@ export default function NavMenu() {
                         <CiUser className="dropdownIcon" />
                       View Profile
                       </li>
+                      {user?.role === 'admin' && (
+                        <>
+                          <hr className="hrLine" />
+                          <li onClick={handleAdminDashboard} className="dropdownLink">
+                            <CiUser className="dropdownIcon" />
+                            Admin Dashboard
+                          </li>
+                        </>
+                      )}
                       <hr className="hrLine" />
                       <li
                       onClick={handleLogout}
@@ -266,11 +294,7 @@ export default function NavMenu() {
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    className="linkMobile"
-                    href="/home#contact"
-                    onClick={handleLinkClick}
-                  >
+                  <Link className="linkMobile" href="/home#contactFr" onClick={handleContactLinkClick}>
                     Contact
                   </Link>
                 </li>
@@ -365,6 +389,18 @@ export default function NavMenu() {
                           <CiUser className="mobileDropdownIcon" />
                           View Profile
                         </li>
+                        {user?.role === 'admin' && (
+                          <>
+                            <hr className="mobileHrLine" />
+                            <li
+                              onClick={handleAdminDashboard}
+                              className="mobileStoreDropdownItem"
+                            >
+                              <CiUser className="mobileDropdownIcon" />
+                              Admin Dashboard
+                            </li>
+                          </>
+                        )}
                         <hr className="mobileHrLine" />
                         <li
                           onClick={handleLogout}

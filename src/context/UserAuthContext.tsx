@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { auth } from '@/lib/firebase';
 import {
   onAuthStateChanged,
@@ -52,6 +52,11 @@ export function UserAuthProvider({ children }: { children: React.ReactNode }) {
   // Always start with null on both server and client to avoid hydration mismatch
   const [user, setUser] = useState<SessionUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const lastKnownUserRef = useRef<SessionUser | null>(null);
+
+  useEffect(() => {
+    lastKnownUserRef.current = user;
+  }, [user]);
 
   // Hydrate from localStorage after mount (client-side only)
   useEffect(() => {
@@ -86,22 +91,45 @@ export function UserAuthProvider({ children }: { children: React.ReactNode }) {
       try {
         if (fbUser) {
           await setServerSessionFromCurrentUser(fbUser);
-          // Ask server for role and normalized user
-          const res = await fetch('/api/auth/me');
-          const data = await res.json();
-          if (data?.authenticated) {
-            const userData = {
+
+          // Ask server for role + normalized user (cookie creation can be briefly behind)
+          const fetchMe = async () => fetch('/api/auth/me');
+          let res = await fetchMe();
+          if (res.status === 401) {
+            await new Promise((r) => setTimeout(r, 600));
+            res = await fetchMe();
+          }
+
+          let data: unknown = null;
+          try {
+            data = await res.json();
+          } catch {
+            data = null;
+          }
+
+          if (res.ok && (data as { authenticated?: boolean })?.authenticated) {
+            const typed = data as { user?: { role?: Role } };
+            const userData: SessionUser = {
               uid: fbUser.uid,
               email: fbUser.email,
               displayName: fbUser.displayName,
-              role: data.user.role as Role,
+              role: (typed.user?.role || 'user') as Role,
             };
             setUser(userData);
-            // Cache user data in localStorage
             localStorage.setItem('hendo_user', JSON.stringify(userData));
           } else {
-            setUser(null);
-            localStorage.removeItem('hendo_user');
+            // Don't aggressively log the user out just because /api/auth/me is temporarily unavailable.
+            // Keep last known role if available; otherwise fall back to 'user' while session settles.
+            const fallbackRole: Role =
+              (lastKnownUserRef.current?.uid === fbUser.uid && lastKnownUserRef.current?.role) || 'user';
+            const fallbackUser: SessionUser = {
+              uid: fbUser.uid,
+              email: fbUser.email,
+              displayName: fbUser.displayName,
+              role: fallbackRole,
+            };
+            setUser(fallbackUser);
+            localStorage.setItem('hendo_user', JSON.stringify(fallbackUser));
           }
         } else {
           setUser(null);
@@ -109,8 +137,14 @@ export function UserAuthProvider({ children }: { children: React.ReactNode }) {
         }
       } catch (e) {
         console.error('Auth state change error:', e);
-        setUser(null);
-        localStorage.removeItem('hendo_user');
+        // Avoid booting the user to logged-out state due to transient network errors.
+        // Preserve last known user if present.
+        if (lastKnownUserRef.current) {
+          setUser(lastKnownUserRef.current);
+        } else {
+          setUser(null);
+          localStorage.removeItem('hendo_user');
+        }
       } finally {
         setLoading(false);
       }

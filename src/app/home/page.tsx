@@ -17,9 +17,7 @@ export const metadata: Metadata = {
 const Newsletter = dynamic(() => import("@/components/pages/Newsletter"), {
   loading: () => <div style={{ minHeight: '300px' }} />,
 });
-const Contact = dynamic(() => import("@/components/client/Contact"), {
-  loading: () => <div style={{ minHeight: '400px' }} />,
-});
+
 
 export default function Home() {
   
@@ -41,9 +39,7 @@ export default function Home() {
       </section>
 
 
-      <section className="section-regular">
-        <Contact />
-      </section>
+
 
 
     </main>

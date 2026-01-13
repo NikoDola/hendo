@@ -10,6 +10,7 @@ export interface UserPurchase {
   price: number;
   zipUrl: string;
   pdfUrl: string;
+  audioFileUrl?: string;
   purchasedAt: Date;
   expiresAt: Date;
 }
@@ -88,6 +89,32 @@ export async function getUserPurchases(userId: string): Promise<UserPurchase[]> 
       };
       return purchase;
     });
+
+    // Enrich purchases with track audio URL so the user dashboard can play/pause directly.
+    // We batch-fetch track docs to avoid N+1.
+    const uniqueTrackIds = Array.from(
+      new Set(
+        purchases
+          .map((p) => p.trackId)
+          .filter((id) => typeof id === 'string' && id.length > 0)
+      )
+    );
+
+    if (uniqueTrackIds.length > 0) {
+      const refs = uniqueTrackIds.map((id) => db.collection('music').doc(id));
+      const snaps = await db.getAll(...refs);
+      const audioByTrackId: Record<string, string> = {};
+
+      for (const s of snaps) {
+        if (!s.exists) continue;
+        const data = s.data() as Record<string, unknown>;
+        audioByTrackId[s.id] = String(data.audioFileUrl || '');
+      }
+
+      for (const p of purchases) {
+        (p as UserPurchase).audioFileUrl = audioByTrackId[p.trackId] || '';
+      }
+    }
     
     // Sort manually by purchase date (newest first)
     purchases.sort((a, b) => {
