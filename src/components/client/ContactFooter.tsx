@@ -142,7 +142,9 @@ export default function Contact() {
 
         {statusMessage && (
           <div
-            className={`contactStatusMessage ${status === "success" ? "contactStatusSuccess" : "contactStatusError"}`}
+            className={`contactStatusMessage ${
+              status === "success" ? "contactStatusSuccess" : status === "error" ? "contactStatusError" : ""
+            }`}
           >
             {statusMessage}
           </div>

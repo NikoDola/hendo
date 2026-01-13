@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { firebaseAdmin } from '@/lib/firebaseAdmin';
 import { sendContactEmail } from '@/lib/email';
+
+export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   try {
@@ -58,13 +59,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Save contact message to Firestore
-    const contactRef = collection(db, 'contact_messages');
-    await addDoc(contactRef, {
+    // Save contact message to Firestore (Admin SDK so it works without login / client rules)
+    const db = firebaseAdmin.firestore();
+    await db.collection('contact_messages').add({
       name: name.trim(),
       email: email.toLowerCase().trim(),
       message: message.trim(),
-      createdAt: serverTimestamp(),
+      createdAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
       status: 'new',
       read: false
     });

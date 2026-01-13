@@ -213,28 +213,6 @@ export default function MusicStore() {
     router.push('/dashboard/cart');
   };
 
-  if (isLoading) {
-    return (
-      <section className="section-regular">
-        <header className="musicStoreHeader">
-          <div className="musicStoreHeaderContent">
-            <Music className="musicStoreHeaderIcon" size={40} />
-            <h1 className="musicStoreHeaderTitle">Music Store</h1>
-          </div>
-        </header>
-
-        <div>
-          <SkeletonFilterBar />
-          <div className="musicStoreList">
-            {Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
-              <SkeletonMusicCard key={index} />
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <>
       <PurchaseWarningPopup
@@ -245,35 +223,50 @@ export default function MusicStore() {
 
       <section className="section-regular">
         <header className="musicStoreHeader">
+           <Music className="musicStoreHeaderIcon" size={40} />
           <div className="musicStoreHeaderContent">
-            <Music className="musicStoreHeaderIcon" size={40} />
-            <h1 className="musicStoreHeaderTitle">Music Store</h1>
+             
+              <h1 className="musicStoreHeaderTitle">DreamStation</h1>
+            <h5 className='subheaderMusic'>Music store</h5>
           </div>
         </header>
 
         <div>
-          {/* Filter Bar */}
-          <MusicFilterBar
-            filters={filters}
-            availableGenres={availableGenres}
-            onFilterChange={setFilters}
-          />
-
-          <div className="musicStoreList">
-            {filteredAndSortedTracks.slice(0, displayedCount).map((track) => (
-              <MusicListCard
-                key={track.id}
-                track={track}
-                isPlaying={playingTrack === track.id}
-                onPlayPause={handlePlayPause}
-                onPurchase={handlePurchase}
-                isPurchased={isTrackPurchased(track.id)}
+          {isLoading ? (
+            <>
+              <SkeletonFilterBar />
+              <div className="musicStoreList">
+                {Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
+                  <SkeletonMusicCard key={index} />
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Filter Bar */}
+              <MusicFilterBar
+                filters={filters}
+                availableGenres={availableGenres}
+                onFilterChange={setFilters}
               />
-            ))}
-          </div>
+
+              <div className="musicStoreList">
+                {filteredAndSortedTracks.slice(0, displayedCount).map((track) => (
+                  <MusicListCard
+                    key={track.id}
+                    track={track}
+                    isPlaying={playingTrack === track.id}
+                    onPlayPause={handlePlayPause}
+                    onPurchase={handlePurchase}
+                    isPurchased={isTrackPurchased(track.id)}
+                  />
+                ))}
+              </div>
+            </>
+          )}
 
           {/* Loading more indicator */}
-          {displayedCount < filteredAndSortedTracks.length && (
+          {!isLoading && displayedCount < filteredAndSortedTracks.length && (
             <div ref={observerTarget} className="musicStoreLoadingMore">
               {isLoadingMore && (
                 <>

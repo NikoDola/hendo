@@ -1,5 +1,3 @@
-import { db } from '@/lib/firebase';
-import { collection, addDoc, query, where, getDocs, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { cookies } from 'next/headers';
 import bcrypt from 'bcryptjs';
 import { firebaseAdmin } from '@/lib/firebaseAdmin';
@@ -59,9 +57,10 @@ export async function createOrUpdateUser(userData: {
   try {
     const email = userData.email.toLowerCase();
     const isAdmin = isAdminEmail(email);
-    const usersRef = collection(db, 'users');
-    const q = query(usersRef, where('email', '==', email));
-    const querySnapshot = await getDocs(q);
+
+    // Use Admin SDK on the server to avoid Firestore rules / permission-denied on refresh.
+    const adminDb = firebaseAdmin.firestore();
+    const querySnapshot = await adminDb.collection('users').where('email', '==', email).limit(1).get();
 
     if (querySnapshot.empty) {
       return await createNewUser(userData, isAdmin);
@@ -82,13 +81,14 @@ async function createNewUser(userData: {
   lastName?: string;
   password?: string;
 }, isAdmin: boolean): Promise<User> {
+  const adminDb = firebaseAdmin.firestore();
   const payload: Record<string, unknown> = {
     email: userData.email,
     name: userData.name ?? userData.email.split('@')[0],
     authUid: userData.authUid,
     role: isAdmin ? 'admin' : 'user',
-    createdAt: serverTimestamp(),
-    lastLoginAt: serverTimestamp(),
+    createdAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
+    lastLoginAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
     purchases: 0
   };
 
@@ -96,7 +96,7 @@ async function createNewUser(userData: {
   if (userData.lastName) payload.lastName = userData.lastName;
   if (userData.password) payload.password = await hashPassword(userData.password);
 
-  const newUserRef = await addDoc(collection(db, 'users'), payload);
+  const newUserRef = await adminDb.collection('users').add(payload);
 
   return {
     id: newUserRef.id,
@@ -110,12 +110,24 @@ async function createNewUser(userData: {
   };
 }
 
-async function updateExistingUser(userDoc: { id: string; data: () => Record<string, unknown> }, userData: { ipAddress?: string }): Promise<User> {
+async function updateExistingUser(
+  userDoc: { id: string; data: () => Record<string, unknown> },
+  userData: { ipAddress?: string; authUid?: string; name?: string; firstName?: string; lastName?: string }
+): Promise<User> {
+  const adminDb = firebaseAdmin.firestore();
   const docData = userDoc.data();
-  await updateDoc(doc(db, 'users', userDoc.id), {
-    lastLoginAt: serverTimestamp(),
-    ipAddress: userData.ipAddress
-  });
+  await adminDb.collection('users').doc(userDoc.id).set(
+    {
+      lastLoginAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
+      ipAddress: userData.ipAddress,
+      // Opportunistically backfill fields
+      ...(userData.authUid ? { authUid: userData.authUid } : {}),
+      ...(userData.name ? { name: userData.name } : {}),
+      ...(userData.firstName ? { firstName: userData.firstName } : {}),
+      ...(userData.lastName ? { lastName: userData.lastName } : {}),
+    },
+    { merge: true }
+  );
 
   return {
     id: userDoc.id,
@@ -132,12 +144,11 @@ async function updateExistingUser(userDoc: { id: string; data: () => Record<stri
 
 export async function getAllUsers(): Promise<User[]> {
   try {
-    const usersRef = collection(db, 'users');
-    const querySnapshot = await getDocs(usersRef);
+    const adminDb = firebaseAdmin.firestore();
+    const querySnapshot = await adminDb.collection('users').get();
     
     // Get all purchases to calculate total spent per user
-    const purchasesRef = collection(db, 'purchases');
-    const purchasesSnapshot = await getDocs(purchasesRef);
+    const purchasesSnapshot = await adminDb.collection('purchases').get();
     
     // Group purchases by userId and calculate total spent
     const userSpending = new Map<string, { count: number; total: number }>();
@@ -179,10 +190,14 @@ export async function getAllUsers(): Promise<User[]> {
 
 export async function deleteUser(userId: string): Promise<void> {
   try {
-    await updateDoc(doc(db, 'users', userId), {
-      deleted: true,
-      deletedAt: serverTimestamp()
-    });
+    const adminDb = firebaseAdmin.firestore();
+    await adminDb.collection('users').doc(userId).set(
+      {
+        deleted: true,
+        deletedAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    );
   } catch (error) {
     console.error('Error deleting user:', error);
     throw new Error('Failed to delete user');
@@ -200,9 +215,8 @@ export async function authenticateUser(credentials: {
 }): Promise<User> {
   try {
     const email = credentials.email.toLowerCase();
-    const usersRef = collection(db, 'users');
-    const q = query(usersRef, where('email', '==', email));
-    const querySnapshot = await getDocs(q);
+    const adminDb = firebaseAdmin.firestore();
+    const querySnapshot = await adminDb.collection('users').where('email', '==', email).limit(1).get();
 
     if (querySnapshot.empty) {
       throw new Error('Invalid email or password');
@@ -220,10 +234,13 @@ export async function authenticateUser(credentials: {
       throw new Error('Invalid email or password');
     }
 
-    await updateDoc(doc(db, 'users', userDoc.id), {
-      lastLoginAt: serverTimestamp(),
-      ipAddress: credentials.ipAddress
-    });
+    await adminDb.collection('users').doc(userDoc.id).set(
+      {
+        lastLoginAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
+        ipAddress: credentials.ipAddress,
+      },
+      { merge: true }
+    );
 
     return {
       id: userDoc.id,
