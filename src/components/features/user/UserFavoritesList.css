@@ -1,0 +1,46 @@
+/* User Favorites List Component Styles */
+
+.userFavoritesListContainer {
+  margin-top: 0;
+}
+
+.userFavoritesListHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.userFavoritesListTitle {
+  margin: 0;
+}
+
+.userFavoritesEmpty {
+  text-align: center;
+  padding: 2rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.userFavoritesEmptyIcon {
+  margin: 0 auto 1rem;
+  opacity: 0.5;
+}
+
+.userFavoritesEmptyLink {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: underline;
+  margin-top: 0.5rem;
+  display: inline-block;
+}
+
+.userListTitleWithIcon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.userListTitleIcon {
+  color: var(--theme-color);
+}
+
+

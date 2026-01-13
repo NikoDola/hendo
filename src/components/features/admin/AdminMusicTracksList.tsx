@@ -1,10 +1,9 @@
 'use client';
 
-import { Plus, Edit, Trash2, Star, ShoppingCart, Play, Pause, Home } from 'lucide-react';
+import { Plus, Edit, Trash2, Play, Pause, Home } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { MusicTrack } from '@/hooks/useMusicTracks';
-import AdminTrackStatsModal, { type StatsUserRow } from './AdminTrackStatsModal';
 import './AdminMusicTracksList.css';
 
 interface AdminMusicTracksListProps {
@@ -22,47 +21,14 @@ export default function AdminMusicTracksList({
   onDeleteTrack,
   onRefreshTracks
 }: AdminMusicTracksListProps) {
-  const [statsById, setStatsById] = useState<Record<string, { favoriteCount: number; cartCount: number }>>({});
-  const [statsLoaded, setStatsLoaded] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
   const [progressById, setProgressById] = useState<Record<string, number>>({});
   const playingTrackIdRef = useRef<string | null>(null);
-
-  const [statsModalOpen, setStatsModalOpen] = useState(false);
-  const [statsModalKind, setStatsModalKind] = useState<'favorites' | 'carts'>('favorites');
-  const [statsModalTrackId, setStatsModalTrackId] = useState<string>('');
-  const [statsModalTrackTitle, setStatsModalTrackTitle] = useState<string>('');
-  const [statsModalUsers, setStatsModalUsers] = useState<StatsUserRow[]>([]);
-  const [statsModalLoading, setStatsModalLoading] = useState(false);
   const [togglingHomeId, setTogglingHomeId] = useState<string | null>(null);
 
   const trackIds = useMemo(() => tracks.map(t => t.id), [tracks]);
   const homeCount = useMemo(() => tracks.filter(t => t.showToHome).length, [tracks]);
-
-  useEffect(() => {
-    const loadStats = async () => {
-      if (trackIds.length === 0) {
-        setStatsById({});
-        setStatsLoaded(true);
-        return;
-      }
-      try {
-        const res = await fetch('/api/admin/music/stats', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ trackIds }),
-        });
-        if (!res.ok) return;
-        const data = await res.json();
-        setStatsById(data.stats || {});
-      } finally {
-        setStatsLoaded(true);
-      }
-    };
-    setStatsLoaded(false);
-    loadStats();
-  }, [trackIds]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -168,30 +134,6 @@ export default function AdminMusicTracksList({
     } finally {
       setTogglingHomeId(null);
     }
-  };
-
-  const openStatsModal = async (track: MusicTrack, kind: 'favorites' | 'carts') => {
-    setStatsModalOpen(true);
-    setStatsModalKind(kind);
-    setStatsModalTrackId(track.id);
-    setStatsModalTrackTitle(track.title);
-    setStatsModalUsers([]);
-    setStatsModalLoading(true);
-    try {
-      const res = await fetch(`/api/admin/music/stats?trackId=${encodeURIComponent(track.id)}&kind=${kind}`);
-      if (!res.ok) return;
-      const data = await res.json();
-      setStatsModalUsers(Array.isArray(data.users) ? data.users : []);
-    } finally {
-      setStatsModalLoading(false);
-    }
-  };
-
-  const closeStatsModal = () => {
-    setStatsModalOpen(false);
-    setStatsModalUsers([]);
-    setStatsModalTrackId('');
-    setStatsModalTrackTitle('');
   };
 
   const handleDelete = async (trackId: string) => {
@@ -308,31 +250,6 @@ export default function AdminMusicTracksList({
                   ))}
                 </div>
 
-                <div className="adminTrackStatsRow">
-                  <button
-                    type="button"
-                    className="adminTrackStatButton"
-                    onClick={() => openStatsModal(track, 'favorites')}
-                    aria-label="View favorites users"
-                  >
-                    <Star size={16} />
-                    <span className="adminTrackStatCount">
-                      {statsLoaded ? (statsById[track.id]?.favoriteCount ?? 0) : '—'}
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    className="adminTrackStatButton"
-                    onClick={() => openStatsModal(track, 'carts')}
-                    aria-label="View cart users"
-                  >
-                    <ShoppingCart size={16} />
-                    <span className="adminTrackStatCount">
-                      {statsLoaded ? (statsById[track.id]?.cartCount ?? 0) : '—'}
-                    </span>
-                  </button>
-                </div>
-
                 <div className="adminTrackFooter">
                   <span className="adminTrackPrice">${track.price.toFixed(2)}</span>
                   <span className="adminTrackDate">
@@ -360,15 +277,6 @@ export default function AdminMusicTracksList({
           </div>
         )}
       </div>
-
-      <AdminTrackStatsModal
-        isOpen={statsModalOpen}
-        kind={statsModalKind}
-        trackTitle={statsModalTrackTitle}
-        users={statsModalUsers}
-        loading={statsModalLoading}
-        onClose={closeStatsModal}
-      />
     </div>
   );
 }

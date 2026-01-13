@@ -1,7 +1,17 @@
 /* User Purchases List Component Styles */
 
 .userPurchasesListContainer {
-  margin-top: 2rem;
+  margin-top: 0;
+}
+
+.userListTitleWithIcon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.userListTitleIcon {
+  color: var(--theme-color);
 }
 
 .userPurchasesListHeader {

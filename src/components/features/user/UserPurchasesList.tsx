@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Download, Music, Pause, Play } from 'lucide-react';
+import { DollarSign, Download, Music, Pause, Play } from 'lucide-react';
 import type { Purchase } from '@/hooks/usePurchases';
 import './UserPurchasesList.css';
 import { useEffect, useRef, useState } from 'react';
@@ -11,6 +11,7 @@ interface UserPurchasesListProps {
   loading: boolean;
   onRefresh: () => void;
   onDownload: (purchaseId: string, type: 'zip' | 'pdf', filename: string) => void;
+  embedded?: boolean;
 }
 
 export default function UserPurchasesList({
@@ -18,6 +19,8 @@ export default function UserPurchasesList({
   loading,
   onRefresh,
   onDownload
+  ,
+  embedded = false
 }: UserPurchasesListProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [activePurchaseId, setActivePurchaseId] = useState<string | null>(null);
@@ -113,10 +116,13 @@ export default function UserPurchasesList({
   };
 
   return (
-    <div className="userProfileCard userPurchasesListContainer">
+    <div className={`${embedded ? '' : 'userProfileCard '}userPurchasesListContainer`}>
       <div className="userPurchasesListHeader">
         <div>
-        <h2 className="userProfileTitle userPurchasesListTitle">My Purchased Tracks</h2>
+        <h2 className="userProfileTitle userPurchasesListTitle userListTitleWithIcon">
+          <DollarSign size={20} className="userListTitleIcon" />
+          My Purchased Tracks
+        </h2>
         <p className='bold'>total {purchases.length} tracks </p>
         </div>
 
