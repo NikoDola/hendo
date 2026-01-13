@@ -167,6 +167,9 @@ export default function NavMenu() {
                   </ul>
                 </div> : ""}
             </div>
+            <Link className="linkDesktop" href="/faq" onClick={handleLinkClick}>
+              FAQ
+            </Link>
             {!isHydrated && (
               <div className="profileContainer">
                 <div className="profileIconsWrapper">
@@ -296,6 +299,11 @@ export default function NavMenu() {
                 <li>
                   <Link className="linkMobile" href="/home#contactFr" onClick={handleContactLinkClick}>
                     Contact
+                  </Link>
+                </li>
+                <li>
+                  <Link className="linkMobile" href="/faq" onClick={handleLinkClick}>
+                    FAQ
                   </Link>
                 </li>
                 <li className="mobileStoreContainer">

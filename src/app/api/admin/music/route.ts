@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { title, description, hashtags, genre, price, audioFileUrl, audioFileName, pdfFileUrl, pdfFileName, imageFileUrl, imageFileName, showToHome } = body;
+    const { title, description, hashtags, genre, price, audioFileUrl, audioFileName, pdfFileUrl, pdfFileName, imageFileUrl, imageFileName, showToHome, stems } = body;
 
     // Validation
     if (!title || !title.trim()) {
@@ -109,12 +109,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create track in Firestore with file URLs
+    // Create track in Firestore with file URLs (Admin SDK bypasses Firestore rules)
     try {
-      const { db } = await import('@/lib/firebase');
-      const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
-
-      const musicRef = await addDoc(collection(db, 'music'), {
+      const adminDb = firebaseAdmin.firestore();
+      const musicRef = await adminDb.collection('music').add({
         title: title.trim(),
         description: description.trim(),
         hashtags: Array.isArray(hashtags) ? hashtags : [],
@@ -126,9 +124,10 @@ export async function POST(request: NextRequest) {
         pdfFileName: pdfFileName || null,
         imageFileUrl: imageFileUrl || null,
         imageFileName: imageFileName || null,
+        stems: Boolean(stems),
         showToHome: showToHome || false,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
+        createdAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
         createdBy: admin.email
       });
 
@@ -145,6 +144,7 @@ export async function POST(request: NextRequest) {
         pdfFileName: pdfFileName || undefined,
         imageFileUrl: imageFileUrl || undefined,
         imageFileName: imageFileName || undefined,
+        stems: Boolean(stems),
         showToHome: showToHome || false,
         createdAt: new Date(),
         updatedAt: new Date(),

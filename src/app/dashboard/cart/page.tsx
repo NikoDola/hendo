@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
-import { Trash2, ShoppingBag, ArrowLeft } from 'lucide-react';
+import { Trash2, ShoppingBag, ArrowLeft, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import '@/components/pages/CartPage.css';
@@ -13,6 +13,8 @@ export default function CartPage() {
   const { cartItems, removeFromCart, cartTotal } = useCart();
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [isPurchasing, setIsPurchasing] = useState(false);
+  const [hasReadRights, setHasReadRights] = useState(false);
+  const [rightsOpen, setRightsOpen] = useState(false);
   const hasInitializedSelection = useRef(false);
 
   // Select all items by default on first load (after cartItems hydrate from localStorage)
@@ -32,6 +34,16 @@ export default function CartPage() {
   useEffect(() => {
     setSelectedItems(prev => prev.filter(id => cartItems.some(item => item.id === id)));
   }, [cartItems]);
+
+  // Close rights modal with Esc
+  useEffect(() => {
+    if (!rightsOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setRightsOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [rightsOpen]);
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -56,6 +68,10 @@ export default function CartPage() {
   const handleContinueToPurchase = async () => {
     if (selectedItems.length === 0) {
       alert('Please select items to purchase');
+      return;
+    }
+    if (!hasReadRights) {
+      alert('Please read and accept the rights before continuing.');
       return;
     }
 
@@ -201,10 +217,33 @@ export default function CartPage() {
                 <span className="cartPageSummaryTotalPrice">${cartTotal.toFixed(2)}</span>
               </div>
 
+              <div className="cartPageRightsSection">
+                <div className="cartPageRightsLinks">
+                  <Link href="/faq" className="cartPageFaqLink">FAQ</Link>
+                  <button
+                    type="button"
+                    className="cartPageRightsOpenButton"
+                    onClick={() => setRightsOpen(true)}
+                  >
+                    Read the rights
+                  </button>
+                </div>
+
+                <div className="cartPageRightsRow">
+                  <input
+                    type="checkbox"
+                    className="cartPageCheckbox"
+                    checked={hasReadRights}
+                    onChange={(e) => setHasReadRights(e.target.checked)}
+                  />
+                  <span className="cartPageRightsCheckboxText">I have read the rights</span>
+                </div>
+              </div>
+
               <button
                 onClick={handleContinueToPurchase}
                 className="cartPagePurchaseButton"
-                disabled={selectedItems.length === 0 || isPurchasing}
+                disabled={selectedItems.length === 0 || isPurchasing || !hasReadRights}
               >
                 <ShoppingBag size={20} />
                 {isPurchasing
@@ -215,6 +254,42 @@ export default function CartPage() {
           </>
         )}
       </div>
+
+      {rightsOpen && (
+        <div
+          className="cartRightsOverlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Rights and license terms"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) setRightsOpen(false);
+          }}
+        >
+          <div className="cartRightsModal glass-effect" onMouseDown={(e) => e.stopPropagation()}>
+            <div className="cartRightsHeader">
+              <h2 className="cartRightsTitle">Demo Rights</h2>
+              <button
+                type="button"
+                className="cartRightsCloseButton"
+                onClick={() => setRightsOpen(false)}
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="cartRightsBody">
+              <p><strong>What you are buying:</strong> You are purchasing a license to use the beat — not ownership of the beat.</p>
+              <p><strong>Distribution/monetization:</strong> Allowed only if your license includes distribution/monetization rights. Always check the license terms.</p>
+              <p><strong>No reselling:</strong> Reselling, sharing, redistributing, or giving away files is prohibited.</p>
+              <p><strong>Refunds:</strong> All digital sales are final. No refunds, no exchanges.</p>
+              <p><strong>Content ID:</strong> Do not upload to YouTube Content ID unless your license explicitly allows it.</p>
+              <p>
+                Full details are available on the <Link href="/faq" className="cartPageFaqLink">FAQ</Link> page.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

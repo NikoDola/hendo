@@ -13,6 +13,7 @@ export interface ServerMusicTrack {
   pdfFileName?: string | null;
   imageFileUrl?: string | null;
   imageFileName?: string | null;
+  stems?: boolean;
   showToHome?: boolean;
   createdAt: string;
   updatedAt: string;
@@ -38,6 +39,7 @@ export async function getMusicTrackServer(trackId: string): Promise<ServerMusicT
     pdfFileName: data.pdfFileName !== undefined ? (data.pdfFileName as string | null) : undefined,
     imageFileUrl: data.imageFileUrl !== undefined ? (data.imageFileUrl as string | null) : undefined,
     imageFileName: data.imageFileName !== undefined ? (data.imageFileName as string | null) : undefined,
+    stems: Boolean(data.stems),
     showToHome: Boolean(data.showToHome),
     createdAt: createdAt ? createdAt.toISOString() : new Date().toISOString(),
     updatedAt: updatedAt ? updatedAt.toISOString() : new Date().toISOString(),

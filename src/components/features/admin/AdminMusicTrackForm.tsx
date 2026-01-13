@@ -13,6 +13,7 @@ interface TrackFormData {
   audioFile: File | null;
   pdfFile: File | null;
   imageFile: File | null;
+  stems: boolean;
   showToHome: boolean;
 }
 
@@ -57,6 +58,7 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
     audioFile: null,
     pdfFile: null,
     imageFile: null,
+    stems: Boolean((track as unknown as { stems?: unknown })?.stems),
     showToHome: track?.showToHome || false,
   });
   const [hashtagInput, setHashtagInput] = useState('');
@@ -169,6 +171,7 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
         pdfFileName,
         imageFileUrl,
         imageFileName,
+        stems: formData.stems,
         showToHome: formData.showToHome
       });
 
@@ -369,6 +372,21 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
               aria-label="Upload cover image"
             />
           </label>
+        </div>
+
+        <div className="adminFormGroup">
+          <label className="adminFormLabel" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+            <input
+              type="checkbox"
+              checked={formData.stems}
+              onChange={(e) => setFormData(prev => ({ ...prev, stems: e.target.checked }))}
+              style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+            />
+            <span>Stems</span>
+          </label>
+          <p style={{ fontSize: '0.875rem', color: '#666', marginTop: '0.25rem' }}>
+            Check this if this track includes stems
+          </p>
         </div>
 
         <div className="adminFormGroup">

@@ -262,6 +262,111 @@
 .cartPagePurchaseButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  background: rgba(120, 120, 120, 0.6);
+}
+
+/* FAQ + Rights section (below totals) */
+.cartPageRightsSection {
+  margin-top: 1rem;
+  margin-bottom: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cartPageRightsLinks {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.cartPageFaqLink {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.cartPageRightsRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.cartPageRightsCheckboxText {
+  color: white;
+  font-weight: 600;
+}
+
+.cartPageRightsOpenButton {
+  background: none;
+  border: none;
+  padding: 0;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Rights modal */
+.cartRightsOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 10000;
+}
+
+.cartRightsModal {
+  width: 100%;
+  max-width: 700px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.cartRightsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cartRightsTitle {
+  margin: 0;
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 800;
+  font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
+}
+
+.cartRightsCloseButton {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cartRightsBody {
+  max-height: 60vh;
+  overflow: auto;
+  padding: 1rem 1.25rem 1.25rem;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.6;
+}
+
+.cartRightsBody p {
+  margin: 0.75rem 0;
 }
 
 /* Responsive */
