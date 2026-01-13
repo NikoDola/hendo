@@ -99,6 +99,31 @@
   margin: 0;
 }
 
+.footerLegalLink {
+  display: inline-block;
+  font-family: var(--font-lemonmilk);
+  font-weight: 300;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: underline;
+}
+
+.footerLegalLink:hover {
+  color: white;
+}
+
+.footerLegalLinks {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.footerLegalDivider {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.75rem;
+}
+
 
 
 /* Responsive design */

@@ -1,0 +1,65 @@
+/* Terms Page Styles */
+
+.termsPage {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.termsTitle {
+  color: white;
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0 0.25rem 0;
+  font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
+}
+
+.termsUpdated {
+  margin: 0 0 1.25rem 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+}
+
+.termsIntro {
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.7;
+  margin: 0 0 1.5rem 0;
+}
+
+.termsSectionTitle {
+  margin: 1.5rem 0 0.75rem 0;
+  color: white;
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+
+.termsBold {
+  font-weight: 800;
+  color: white;
+}
+
+.termsText {
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.7;
+  margin: 0.5rem 0;
+}
+
+.termsList {
+  margin: 0.5rem 0 0.75rem 0;
+  padding-left: 1.25rem;
+  list-style: disc;
+  list-style-position: outside;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.7;
+}
+
+.termsList li {
+  margin: 0.25rem 0;
+}
+
+@media (max-width: 640px) {
+  .termsTitle {
+    font-size: 1.6rem;
+  }
+}
+
+

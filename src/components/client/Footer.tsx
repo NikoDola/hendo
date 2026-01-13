@@ -1,5 +1,6 @@
 import React from 'react';
 import './Footer.css';
+import Link from 'next/link';
 import ContactFooter from "@/components/client/ContactFooter"
 
 type FooterProps = {
@@ -71,6 +72,15 @@ const Footer: React.FC<FooterProps> = ({ showContact = true }) => {
 
         <div className="footer-bottom">
           <p>&copy; 2025 T. HENDO. All rights reserved.</p>
+          <div className="footerLegalLinks">
+            <Link href="/privacy-policy" className="footerLegalLink">
+              Privacy Policy
+            </Link>
+            <span className="footerLegalDivider">·</span>
+            <Link href="/terms" className="footerLegalLink">
+              Terms &amp; Conditions
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

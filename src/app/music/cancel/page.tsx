@@ -42,14 +42,15 @@ export default function PaymentCancel() {
         <div className="paymentCancelNote">
           If you keep seeing cancellations, check your card details or try a different payment method.
         </div>
-      </div>
-
-      <div className="paymentCancelLinkRow">
+              <div className="paymentCancelLinkRow">
         <Link href="/" className="paymentCancelHomeLink">
           <Home size={18} style={{ marginRight: 8, verticalAlign: 'middle' }} />
           Go Home →
         </Link>
       </div>
+      </div>
+
+
     </div>
   );
 }
