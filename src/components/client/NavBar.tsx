@@ -157,7 +157,7 @@ export default function NavMenu() {
                   <ul className="dropdownLinkWrapper glass-effect">
                     <Link href="/music" className="dropdownLink" onClick={handleLinkClick}>
                       <IoMoonOutline className="dropdownIcon" />
-                      Dream Station
+                      Dreamstation
                     </Link>
                     <hr className="hrLine" />
                     <li className="dropdownLink">
@@ -318,7 +318,7 @@ export default function NavMenu() {
                         onClick={handleLinkClick}
                       >
                         <IoMoonOutline className="mobileDropdownIcon" />
-                        Dream Station
+                        Dreamstation
                       </Link>
                       <hr className="mobileHrLine" />
                       <li className="mobileStoreDropdownItem">
