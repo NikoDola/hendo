@@ -114,8 +114,10 @@
 ========================= */
 
 @media (max-width: 1000px) {
+  
   .aboutTextWrapper {
     padding: 12% 5%;
+    margin-top: 15rem;
   }
 
   .aboutHeadline {

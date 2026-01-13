@@ -325,7 +325,6 @@ export default function NavMenu() {
                     <div className="mobileProfileIconsWrapper">
                       <CiUser className="navIcons navIconsLoading" />
                       <CiShoppingCart className="navIcons navIconsLoading" />
-                      <span>Profile</span>
                     </div>
                   </li>
                 )}
@@ -378,7 +377,6 @@ export default function NavMenu() {
                           <span className="navCartBadge">{cartCount}</span>
                         )}
                       </Link>
-                      <span>Profile</span>
                     </div>
                     {profileDropdown && (
                       <ul className="mobileStoreDropdown">

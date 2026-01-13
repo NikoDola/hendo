@@ -46,10 +46,13 @@
   gap: 1rem;
 }
 
-@media (max-width: 640px){
+@media (max-width: 1000px){
   .submitButtonCfr{
     width: 100%;
     margin-left: 0;
+  }
+  .contactWrapperCfr{
+    padding: 2rem;
   }
 
   .button__termsWrapperCfr{
