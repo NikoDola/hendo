@@ -146,12 +146,12 @@ export async function sendContactEmail(name: string, email: string, message: str
     const currentTime = new Date().toLocaleString();
 
     const info = await transporter.sendMail({
-      from: `HENDO Contact Form <${process.env.PROTON_SMTP_USER}>`,
+      from: `${name} via HENDO (${email}) <${process.env.PROTON_SMTP_USER}>`,
       to: recipientEmail,
       // If the main recipient is not the Proton inbox, still send a private copy there.
       ...(ownerEmail && ownerEmail !== recipientEmail ? { bcc: ownerEmail } : {}),
       replyTo: email,
-      subject: `Contact Us: ${name}`,
+      subject: `Contact Us: ${name} <${email}>`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
           <div style="background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">

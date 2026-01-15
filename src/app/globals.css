@@ -13,8 +13,23 @@
 
 /* Global theme color transition - applies to all elements */
 /* Individual elements can override with their own transition property */
-h1, h2, h3, h4, h5, h6, p, span, div, section, header, footer, nav, main, article, aside {
-  transition: 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+div,
+section,
+header,
+footer,
+nav,
+main,
+article,
+aside {
+  transition:
     color 3s ease,
     background-color 3s ease,
     background 3s ease,
@@ -24,7 +39,7 @@ h1, h2, h3, h4, h5, h6, p, span, div, section, header, footer, nav, main, articl
 
 :root {
   font-family: var(--font-lemonmilk), system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  
+
   /* Default theme colors (JavaScript will update these) */
   --theme-color: hsl(220, 100%, 50%);
   --theme-color-1: hsl(220, 100%, 50%);
@@ -84,7 +99,7 @@ h1 {
   font-family: var(--font-lemonmilk);
   font-weight: 200;
 
- 
+
   margin-bottom: 2rem;
 
   background-image: linear-gradient(90deg,
@@ -539,6 +554,7 @@ textarea::placeholder {
   margin-top: var(--space-10);
   margin-bottom: var(--space-25);
 }
+
 /* .heroSection
 .heroSection {
   margin-top: var(--space-14)
