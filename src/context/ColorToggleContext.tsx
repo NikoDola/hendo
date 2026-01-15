@@ -1,76 +1,71 @@
-  "use client";
+"use client";
 
-  import  { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, ReactNode } from "react";
 
-  // 5 gradient color pairs for text gradients
-  const gradientPairs = [
-    {
-      color1: "hsl(220 100% 50%)", // blue
-      color2: "hsl(120 100% 50%)", // green
-      solid: "hsl(220 100% 50%)"
-    },
-    {
-      color1: "hsl(30 100% 55%)",  // orange
-      color2: "hsl(0 100% 60%)",   // red
-      solid: "hsl(30 100% 55%)"
-    },
-    {
-      color1: "hsl(320 100% 55%)", // pink
-      color2: "hsl(270 100% 60%)", // purple
-      solid: "hsl(320 100% 55%)"
-    },
-    {
-      color1: "hsl(190 100% 50%)", // cyan/turquoise
-      color2: "hsl(140 100% 50%)", // green
-      solid: "hsl(190 100% 50%)"
-    },
-    {
-      color1: "hsl(240 100% 55%)", // royal blue
-      color2: "hsl(320 100% 60%)", // pink
-      solid: "hsl(240 100% 55%)"
-    }
-  ];
+// Color pairs for cycling
+const gradientPairs = [
+  { color1: "hsl(220, 100%, 50%)", color2: "hsl(120, 100%, 50%)", solid: "hsl(220, 100%, 50%)" },
+  { color1: "hsl(30, 100%, 55%)", color2: "hsl(0, 100%, 60%)", solid: "hsl(30, 100%, 55%)" },
+  { color1: "hsl(320, 100%, 55%)", color2: "hsl(270, 100%, 60%)", solid: "hsl(320, 100%, 55%)" },
+  { color1: "hsl(190, 100%, 50%)", color2: "hsl(140, 100%, 50%)", solid: "hsl(190, 100%, 50%)" },
+  { color1: "hsl(240, 100%, 55%)", color2: "hsl(320, 100%, 60%)", solid: "hsl(240, 100%, 55%)" },
+];
 
-  interface ColorToggleContextType {
-    color: string;
-    color1: string;
-    color2: string;
-    colorIndex: number;
-  }
+// Static context values (we use CSS variables, not React state)
+const staticColors = {
+  color: "var(--theme-color)",
+  color1: "var(--theme-color-1)",
+  color2: "var(--theme-color-2)",
+  colorIndex: 0,
+};
 
-  const ColorToggleContext = createContext<ColorToggleContextType | undefined>(undefined);
+interface ColorToggleContextType {
+  color: string;
+  color1: string;
+  color2: string;
+  colorIndex: number;
+}
 
-  export function ColorToggleProvider({ children }: { children: ReactNode }) {
-    const [colorIndex, setColorIndex] = useState(0);
+const ColorToggleContext = createContext<ColorToggleContextType | undefined>(undefined);
 
-    useEffect(() => {
-      // Cycle through all 5 gradient pairs every 8 seconds (5s transition + 3s display)
-      const interval = setInterval(() => {
-        setColorIndex((prevIndex) => (prevIndex + 1) % gradientPairs.length);
-      }, 8000);
+// This provider directly updates CSS variables without causing React re-renders
+export function ColorToggleProvider({ children }: { children: ReactNode }) {
+  const indexRef = useRef(0);
 
-      return () => clearInterval(interval);
-    }, []);
-
-    const value = {
-      color: gradientPairs[colorIndex].solid,
-      color1: gradientPairs[colorIndex].color1,
-      color2: gradientPairs[colorIndex].color2,
-      colorIndex,
+  useEffect(() => {
+    // Function to update CSS variables directly on the document
+    const updateColors = () => {
+      const pair = gradientPairs[indexRef.current];
+      const root = document.documentElement;
+      root.style.setProperty("--theme-color", pair.solid);
+      root.style.setProperty("--theme-color-1", pair.color1);
+      root.style.setProperty("--theme-color-2", pair.color2);
+      
+      // Move to next color
+      indexRef.current = (indexRef.current + 1) % gradientPairs.length;
     };
 
-    return (
-      <ColorToggleContext.Provider value={value}>
-        {children}
-      </ColorToggleContext.Provider>
-    );
-  }
+    // Set initial colors
+    updateColors();
 
-  export function useColorToggle() {
-    const context = useContext(ColorToggleContext);
-    if (context === undefined) {
-      throw new Error("useColorToggle must be used within a ColorToggleProvider");
-    }
-    return context;
+    // Cycle every 8 seconds (no React state = no re-renders)
+    const interval = setInterval(updateColors, 8000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <ColorToggleContext.Provider value={staticColors}>
+      {children}
+    </ColorToggleContext.Provider>
+  );
+}
+
+export function useColorToggle() {
+  const context = useContext(ColorToggleContext);
+  if (context === undefined) {
+    throw new Error("useColorToggle must be used within a ColorToggleProvider");
   }
+  return context;
+}
 
