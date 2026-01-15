@@ -150,8 +150,12 @@
 
 .musicListCardPrice {
   font-weight: 700;
-  color: var(--theme-color);
+  color: white;
   font-size: 1.25rem;
+}
+
+.musicListCardPlaying .musicListCardPrice {
+  color: var(--theme-color);
 }
 
 .musicListCardIconActions {
@@ -177,15 +181,24 @@
 }
 
 .musicListCardIconButton:hover {
-  color: var(--theme-color);
+  color: rgba(255, 255, 255, 0.7);
   background: transparent;
   box-shadow: none;
 }
 
 .musicListCardIconButton.active {
-  color: var(--theme-color);
+  color: rgba(255, 255, 255, 0.7);
   background: transparent;
   box-shadow: none;
+}
+
+/* Playing state: theme colors */
+.musicListCardPlaying .musicListCardIconButton:hover {
+  color: var(--theme-color);
+}
+
+.musicListCardPlaying .musicListCardIconButton.active {
+  color: var(--theme-color);
 }
 
 .musicListCardIconButton:disabled,
@@ -278,8 +291,8 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(to top right, var(--theme-color-1), var(--theme-color-2));
-  color: black;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
   border: none;
   border-radius: 12px;
   font-size: 1rem;
@@ -287,13 +300,25 @@
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
-  box-shadow: 0 0 15px var(--theme-color-1), 0 0 30px var(--theme-color-2);
+  box-shadow: none;
 }
 
 .musicListCardPurchaseBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Playing state: gradient colors */
+.musicListCardPlaying .musicListCardPurchaseBtn {
+  background: linear-gradient(to top right, var(--theme-color-1), var(--theme-color-2));
+  color: black;
+  box-shadow: 0 0 15px var(--theme-color-1), 0 0 30px var(--theme-color-2);
+}
+
+.musicListCardPlaying .musicListCardPurchaseBtn:hover:not(:disabled) {
   background: var(--light-gray);
   color: black;
-  transform: translateY(-2px);
   box-shadow: 0 0 20px var(--theme-color-1), 0 0 40px var(--theme-color-2);
 }
 
@@ -327,15 +352,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(to top right, var(--theme-color-1), var(--theme-color-2));
-  color: black;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
   border: none;
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.3s ease;
   aspect-ratio: 1 / 1;
   padding: 0;
-  box-shadow: 0 0 10px var(--theme-color-1), 0 0 20px var(--theme-color-2);
+  box-shadow: none;
 }
 
 .musicListCardPlayButton svg {
@@ -344,6 +369,17 @@
 
 .musicListCardPlayButton:hover {
   transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Playing state: gradient colors */
+.musicListCardPlaying .musicListCardPlayButton {
+  background: linear-gradient(to top right, var(--theme-color-1), var(--theme-color-2));
+  color: black;
+  box-shadow: 0 0 10px var(--theme-color-1), 0 0 20px var(--theme-color-2);
+}
+
+.musicListCardPlaying .musicListCardPlayButton:hover {
   box-shadow: 0 0 15px var(--theme-color-1), 0 0 30px var(--theme-color-2);
 }
 
@@ -369,7 +405,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: linear-gradient(to right, var(--theme-color-1), var(--theme-color-2));
+  background: rgba(255, 255, 255, 0.5);
   border-radius: 3px;
 }
 
@@ -383,8 +419,8 @@
   height: 16px;
   background: white;
   border-radius: 50%;
-  box-shadow: 0 0 10px var(--theme-color-1), 0 0 20px var(--theme-color-2), 0 0 4px rgba(0, 0, 0, 0.3);
-  border: 3px solid var(--theme-color-2);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.8);
   z-index: 10;
 }
 
@@ -393,6 +429,21 @@
   top: 0;
   left: 0;
   height: 100%;
+  background: transparent;
+  filter: none;
+}
+
+/* Playing state: gradient colors */
+.musicListCardPlaying .musicListCardProgressFill {
+  background: linear-gradient(to right, var(--theme-color-1), var(--theme-color-2));
+}
+
+.musicListCardPlaying .musicListCardProgressFill::after {
+  box-shadow: 0 0 10px var(--theme-color-1), 0 0 20px var(--theme-color-2), 0 0 4px rgba(0, 0, 0, 0.3);
+  border: 3px solid var(--theme-color-2);
+}
+
+.musicListCardPlaying .musicListCardProgressGlow {
   background: linear-gradient(to right, var(--theme-color-1), var(--theme-color-2));
   filter: blur(8px);
   transition: width 0.1s linear, opacity 0.2s;
