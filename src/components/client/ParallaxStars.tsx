@@ -1,21 +1,49 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { useColorToggle } from "@/context/ColorToggleContext";
+
+// Default color fallback
+const DEFAULT_COLOR = "hsl(220, 100%, 50%)";
+
+// Helper to get current theme color from CSS variable
+const getThemeColor = (): string => {
+  if (typeof document === 'undefined') return DEFAULT_COLOR;
+  
+  // Try inline style first (set by JavaScript)
+  const inlineColor = document.documentElement.style.getPropertyValue('--theme-color').trim();
+  if (inlineColor) return inlineColor;
+  
+  // Fallback to computed style
+  const computedColor = getComputedStyle(document.documentElement)
+    .getPropertyValue('--theme-color')
+    .trim();
+  
+  return computedColor || DEFAULT_COLOR;
+};
 
 export default function ParallaxStars() {
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
 
-  // Get color from context
-  const { color } = useColorToggle();
+  // Use ref to track color - reads from CSS variable
+  const colorRef = useRef(DEFAULT_COLOR);
 
-  // Use ref to track color without causing re-renders
-  const colorRef = useRef(color);
-
-  // Update the ref when color changes
+  // Poll the CSS variable for color changes (every 300ms for smoother updates)
   useEffect(() => {
-    colorRef.current = color;
-  }, [color]);
+    const updateColor = () => {
+      const newColor = getThemeColor();
+      colorRef.current = newColor;
+    };
+    
+    // Initial read after a small delay to ensure ColorToggleContext has set the colors
+    const initialTimeout = setTimeout(updateColor, 200);
+    
+    const interval = setInterval(updateColor, 300);
+    
+    return () => {
+      clearTimeout(initialTimeout);
+      clearInterval(interval);
+    };
+  }, []);
 
   useEffect(() => {
     const bgCanvas = bgCanvasRef.current;

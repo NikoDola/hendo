@@ -5,9 +5,21 @@
 @import './variables.css';
 
 /* Theme colors - updated by JavaScript, no @property needed */
+
 * {
   padding: 0;
   margin: 0;
+}
+
+/* Global theme color transition - applies to all elements */
+/* Individual elements can override with their own transition property */
+h1, h2, h3, h4, h5, h6, p, span, div, section, header, footer, nav, main, article, aside {
+  transition: 
+    color 3s ease,
+    background-color 3s ease,
+    background 3s ease,
+    border-color 3s ease,
+    box-shadow 3s ease;
 }
 
 :root {
