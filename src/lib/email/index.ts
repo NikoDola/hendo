@@ -159,8 +159,16 @@ export async function sendContactEmail(name: string, email: string, message: str
               New Contact Form Submission
             </h2>
             
+            <!-- Quick Reply Button at the top -->
+            <div style="text-align: center; margin: 20px 0;">
+              <a href="mailto:${email}?subject=Re: Your message to HENDO" 
+                 style="background-color: #4a90e2; color: #fff; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 16px;">
+                Reply to ${name}
+              </a>
+            </div>
+            
             <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
-              A message by <strong>${name}</strong> has been received. Kindly respond at your earliest convenience.
+              A message by <strong>${name}</strong> (${email}) has been received. Kindly respond at your earliest convenience.
             </p>
             
             <hr style="border: none; border-top: 1px dashed #ddd; margin: 25px 0;">
@@ -172,6 +180,7 @@ export async function sendContactEmail(name: string, email: string, message: str
                 </div>
                 <div>
                   <div style="font-weight: bold; color: #333; font-size: 16px;">${name}</div>
+                  <div style="color: #4a90e2; font-size: 14px;">${email}</div>
                   <div style="color: #999; font-size: 12px; margin-top: 2px;">${currentTime}</div>
                 </div>
               </div>
@@ -183,7 +192,10 @@ export async function sendContactEmail(name: string, email: string, message: str
             
             <div style="background-color: #f0f7ff; padding: 15px; border-radius: 6px; border-left: 4px solid #4a90e2;">
               <p style="margin: 0; color: #666; font-size: 14px;">
-                <strong>Reply to:</strong> <a href="mailto:${email}" style="color: #4a90e2; text-decoration: none;">${email}</a>
+                <strong>Sender's Email:</strong> <a href="mailto:${email}" style="color: #4a90e2; text-decoration: none; font-weight: bold;">${email}</a>
+              </p>
+              <p style="margin: 10px 0 0 0; color: #888; font-size: 12px;">
+                Click the email above or use the "Reply to ${name}" button to respond directly.
               </p>
             </div>
           </div>
