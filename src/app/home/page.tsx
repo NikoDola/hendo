@@ -3,6 +3,7 @@ import "../globals.css"
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import Hero from "@/components/client/Hero.jsx"
+import Contact from "@/components/client/Contact";
 
 
 import Link from "next/link";
@@ -37,7 +38,7 @@ export default function Home() {
       <section className="section-regular">
         <Newsletter />
       </section>
-
+<Contact />
 
 
 
