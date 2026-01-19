@@ -155,10 +155,32 @@ export function UserAuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = useCallback(async () => {
     const provider = new GoogleAuthProvider();
+
+    // iOS Safari frequently blocks/halts popups; redirect is the most reliable.
+    const isIOSSafari =
+      typeof window !== 'undefined' &&
+      /iP(hone|od|ad)/.test(navigator.userAgent) &&
+      /Safari/.test(navigator.userAgent) &&
+      !/CriOS|FxiOS|EdgiOS|OPiOS/.test(navigator.userAgent);
+
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    if (isIOSSafari) {
+      await signInWithRedirect(auth, provider);
+      return;
+    }
+
+    // Try popup, but if it errors OR hangs (Safari/pop-up blockers), fall back to redirect.
     try {
-      const result = await signInWithPopup(auth, provider);
-      await setServerSessionFromCurrentUser(result.user);
-    } catch (e) {
+      const popupPromise = signInWithPopup(auth, provider);
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        window.setTimeout(() => reject(new Error('popup-timeout')), 800);
+      });
+
+      const result = await Promise.race([popupPromise, timeoutPromise]);
+      // If we got here, popup succeeded
+      await setServerSessionFromCurrentUser((result as { user: FirebaseUser }).user);
+    } catch {
       await signInWithRedirect(auth, provider);
     }
   }, []);

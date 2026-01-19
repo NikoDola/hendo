@@ -385,6 +385,7 @@
 
 }
 
+
 .musicCardIconButton::before,
 .musicCardIconButton::after {
   /* Kill global button pseudo background */

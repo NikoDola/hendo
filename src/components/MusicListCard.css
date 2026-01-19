@@ -199,6 +199,7 @@
   box-shadow: none;
 }
 
+
 .musicListCardIconButton.active {
   /* Active keeps the theme "before/after" background */
   color: white;

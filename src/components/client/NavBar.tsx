@@ -328,41 +328,32 @@ export default function NavMenu() {
                     </ul>
                   )}
                 </li>
+              </ul>
+
+              {/* Sticky footer actions (prevents iOS Safari hiding them below the fold) */}
+              <div className="mobileNavFooter">
                 {!isHydrated && (
-                  <li>
-                    <div className="mobileProfileIconsWrapper">
-                      <CiUser className="navIcons navIconsLoading" />
-                      <CiShoppingCart className="navIcons navIconsLoading" />
-                    </div>
-                  </li>
+                  <div className="mobileProfileIconsWrapper">
+                    <CiUser className="navIcons navIconsLoading" />
+                    <CiShoppingCart className="navIcons navIconsLoading" />
+                  </div>
                 )}
+
                 {isHydrated && !user && (
-                  <>
-                    <li>
-                      <Link
-                        className="linkMobile"
-                        href="/login"
-                        onClick={handleLinkClick}
-                      >
-                        Login
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        className="linkMobile"
-                        href="/signup"
-                        onClick={handleLinkClick}
-                      >
-                        Signup
-                      </Link>
-                    </li>
-                  </>
+                  <div className="mobileAuthLinks">
+                    <Link className="linkMobile" href="/login" onClick={handleLinkClick}>
+                      Login
+                    </Link>
+                    <Link className="linkMobile" href="/signup" onClick={handleLinkClick}>
+                      Signup
+                    </Link>
+                  </div>
                 )}
+
                 {isHydrated && user && (
-                  <li>
+                  <>
                     <div className="mobileProfileIconsWrapper">
                       <div
-                     
                         className="profileToggleButton"
                         onClick={handleProfileDropdown}
                         aria-label="Open profile menu"
@@ -381,45 +372,35 @@ export default function NavMenu() {
                         aria-label="Open cart"
                       >
                         <CiShoppingCart className="navIcons" />
-                        {cartCount > 0 && (
-                          <span className="navCartBadge">{cartCount}</span>
-                        )}
+                        {cartCount > 0 && <span className="navCartBadge">{cartCount}</span>}
                       </Link>
                     </div>
+
                     {profileDropdown && (
-                      <ul className="mobileStoreDropdown">
-                        <li
-                          onClick={handleViewProfile}
-                          className="mobileStoreDropdownItem"
-                        >
+                      <ul className="mobileProfileDropdown mobileStoreDropdown">
+                        <li onClick={handleViewProfile} className="mobileStoreDropdownItem">
                           <CiUser className="mobileDropdownIcon" />
                           View Profile
                         </li>
                         {user?.role === 'admin' && (
                           <>
                             <hr className="mobileHrLine" />
-                            <li
-                              onClick={handleAdminDashboard}
-                              className="mobileStoreDropdownItem"
-                            >
+                            <li onClick={handleAdminDashboard} className="mobileStoreDropdownItem">
                               <CiUser className="mobileDropdownIcon" />
                               Admin Dashboard
                             </li>
                           </>
                         )}
                         <hr className="mobileHrLine" />
-                        <li
-                          onClick={handleLogout}
-                          className="mobileStoreDropdownItem"
-                        >
+                        <li onClick={handleLogout} className="mobileStoreDropdownItem">
                           <IoLogOutOutline className="mobileDropdownIcon" />
                           Logout
                         </li>
                       </ul>
                     )}
-                  </li>
+                  </>
                 )}
-              </ul>
+              </div>
             </nav>
           </div>
 
