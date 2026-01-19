@@ -184,7 +184,7 @@
 }
 
 .musicListCardIconButton.active {
-  color: var(--theme-color);
+  color: white;
   background: transparent;
   box-shadow: none;
 }
