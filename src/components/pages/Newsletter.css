@@ -96,7 +96,10 @@ Newsletter Component Styles
 
 .subscribe{
   margin-top: 1rem;
-  width: 100%;
+  width: 50%;
+  margin: 0 auto;
+  margin-top: 2rem;
+  border-radius: 2rem;
 }
 
 @media (max-width: 768px) {
