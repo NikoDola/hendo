@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .h1text {
+            position: relative;
+            color: red;
+            height: 100px;
+            line-height: 100px;
+            font-size: 3rem;
+        }
+        
+        .h1text::before {
+            position: absolute;
+            content: "Gradient Text";
+            color: blue;
+            height: 100%;
+            overflow: hidden;
+            -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+            mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+        }
+    </style>
+</head>
+<body>
+    <h1 class="h1text">Gradient Text</h1>
+</body>
+</html>

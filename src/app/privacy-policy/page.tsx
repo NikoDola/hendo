@@ -5,7 +5,7 @@ import '@/components/pages/PrivacyPolicy.css';
 export default function PrivacyPolicyPage() {
   return (
     <section className="section-regular privacyPolicyPage">
-      <h1 className="privacyPolicyTitle">Privacy Policy</h1>
+      <h1 className="privacyPolicyTitle" data-text="Privacy Policy">Privacy Policy</h1>
       <p className="privacyPolicyUpdated">Last Updated: JAN 1 2026</p>
 
       <p className="privacyPolicyIntro">

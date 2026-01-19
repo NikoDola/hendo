@@ -87,7 +87,7 @@ export default function LoginPage() {
   return (
     <div className="underWrapper">
       <div className="formWrapper">
-        <h2 className="newsletterTitle">Login</h2>
+        <h2 className="newsletterTitle" data-text="Login">Login</h2>
         <p className="subscribeDescription">
           Access your account
         </p>

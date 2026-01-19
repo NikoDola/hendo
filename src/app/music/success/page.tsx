@@ -185,7 +185,7 @@ function PaymentSuccessContent() {
         <div className="paymentSuccessCard glass-effect">
           <div className="paymentSuccessError">
             <X className="paymentSuccessErrorIcon" />
-            <h1 className="paymentSuccessErrorTitle">Payment Verification Failed</h1>
+            <h1 className="paymentSuccessErrorTitle" data-text="Payment Verification Failed">Payment Verification Failed</h1>
             <p className="paymentSuccessErrorMessage">
               We couldn&apos;t verify your payment. If you completed checkout, please contact support.
             </p>
@@ -205,7 +205,7 @@ function PaymentSuccessContent() {
           <CheckCircle className="w-12 h-12 text-green-500" />
         </div>
         
-        <h1 className="paymentSuccessTitle">
+        <h1 className="paymentSuccessTitle" data-text="Payment Successful!">
           Payment Successful!
         </h1>
         
@@ -216,7 +216,7 @@ function PaymentSuccessContent() {
         <div className="paymentDownloadsSection">
           <div className="paymentDownloadsHeader">
             <Download className="w-10 h-10" />
-            <h2>Your Downloads</h2>
+            <h2 data-text="Your Downloads">Your Downloads</h2>
           </div>
 
           {Array.isArray(downloadData.items) && downloadData.items.length > 0 && (

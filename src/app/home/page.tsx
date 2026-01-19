@@ -27,22 +27,15 @@ export default function Home() {
       <section className="section-full hrsWrapper" >
     <Hero />
       </section>
-
       <section className="section-regular secondSection">
         <HomeMusicSectionServer />
         <Link href="/music" className="view-more">
           view more beats
         </Link>
       </section>
-
       <section className="section-regular">
         <Newsletter />
       </section>
-<Contact />
-
-
-
-
     </main>
   );
 }

@@ -31,7 +31,7 @@ export default function DeleteConfirmModal({
 
         <div className="deleteModalHeader">
           <div className="deleteModalIcon">⚠️</div>
-          <h2 className="deleteModalTitle">Delete User?</h2>
+          <h2 className="deleteModalTitle" data-text="Delete User?">Delete User?</h2>
         </div>
 
         <div className="deleteModalBody">

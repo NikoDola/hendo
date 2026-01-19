@@ -45,7 +45,7 @@ export default function AdminLogin() {
         <div className="flex justify-center">
           <Music className="text-blue-600" size={48} />
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 data-text="Admin Login" className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           Admin Login
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">

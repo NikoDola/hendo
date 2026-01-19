@@ -68,7 +68,7 @@ export default function Hero() {
   return (
     <div ref={fatherRef} className="hrsWrapper">
       <div ref={childRef} className="hrsHeadlineWrapper">
-        <h2 className="hrsHeadline">LEVEL UP</h2>
+        <h1 data-text="LEVEL UP" className="hrsHeadline">LEVEL UP</h1>
         <p className="hrsJapan">レベルアップ</p>
       </div>
 

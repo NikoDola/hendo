@@ -102,7 +102,7 @@ export default function HomeMusicClientFetcher() {
       <div className="homeMusicSection">
         <header className="homeMusicHeader">
           <div className="homeMusicHeaderContent">
-            <h2 className="homeMusicHeaderTitle">Featured Beats</h2>
+            <h2 className="homeMusicHeaderTitle" data-text="Featured Beats">Featured Beats</h2>
           </div>
         </header>
         <main className="homeMusicMain">
@@ -125,7 +125,7 @@ export default function HomeMusicClientFetcher() {
     <div className="homeMusicSection">
       <header className="homeMusicHeader">
         <div className="homeMusicHeaderContent">
-          <h2 className="homeMusicHeaderTitle">Featured Beats</h2>
+          <h2 className="homeMusicHeaderTitle" data-text="Featured Beats">Featured Beats</h2>
         </div>
       </header>
 

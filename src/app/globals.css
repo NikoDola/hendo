@@ -94,46 +94,48 @@ a {
   letter-spacing: 2px;
 }
 
-h1 {
-  font-size: var(--text-8xl);
-  font-family: var(--font-lemonmilk);
-  font-weight: 200;
+h1, h2{
+  position: relative;
 
-
-  margin-bottom: 2rem;
-
-  background-image: linear-gradient(90deg,
-      var(--theme-color-1),
-      var(--theme-color-2));
-
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
   width: max-content;
+  line-height: 1;
+  color: var(--theme-color-1);
+  transition: color 3s ease;
 }
 
+/* Overlay color with fade */
+h1::before, h2::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: var(--theme-color-2);
+  pointer-events: none;
+  transition: color 3s ease;
 
-h1::selection {
-  background-color: var(--brand-color);
-  color: var(--foreground);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    transparent 100%
+  );
+
+  mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    transparent 100%
+  );
+}
+h1 {
+  font-size: 4rem;
+  font-weight: 200;
+  font-family: var(--font-lemonmilk);
+  margin-bottom: 2rem;
 }
 
 h2 {
   font-size: var(--text-5xl);
   font-family: 'lemonmilk';
   font-weight: 200;
-
   margin-bottom: 1rem;
-  width: max-content;
-
-  background-image: linear-gradient(90deg,
-      var(--theme-color-1),
-      var(--theme-color-2));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
 }
 
 h3 {
@@ -177,10 +179,8 @@ form {
 }
 
 button {
-
-  background-image: linear-gradient(90deg,
-      var(--theme-color-1),
-      var(--theme-color-2));
+  position: relative;
+  background-color: transparent;
   border: none;
   border-radius: 0.5rem;
   padding: 0.5rem 1rem;
@@ -197,13 +197,67 @@ button {
   line-height: normal;
   font-family: var(--font-lemonmilk);
   padding: 0.75rem;
+  overflow: hidden;
+}
+button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--theme-color-2);
+  z-index: -1;
+  transition: background-color 3s ease;
+
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black 50%,
+    transparent 100%
+  );
+
+  mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black 50%,
+    transparent 100%
+  );
+}
+
+button::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--theme-color-1);
+  z-index: -1;
+  transition: background-color 3s ease;
+
+  -webkit-mask-image: linear-gradient(
+    to top,
+    black 0%,
+    black 50%,
+    transparent 100%
+  );
+
+  mask-image: linear-gradient(
+    to top,
+    black 0%,
+    black 50%,
+    transparent 100%
+  );
 }
 
 button:hover {
   background-color: black;
   color: var(--light-gray);
   box-shadow: 0 0 20px var(--theme-color);
+
 }
+
 
 .view-more {
   position: relative;

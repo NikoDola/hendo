@@ -27,7 +27,7 @@ export default function AdminHeader({
               {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
             <Music size={32} className="adminHeaderMusicIcon" />
-            <h1 className="adminTitle">Admin Dashboard</h1>
+            <h1 className="adminTitle" data-text="Admin Dashboard">Admin Dashboard</h1>
           </div>
 
           <div className="adminHeaderRight">

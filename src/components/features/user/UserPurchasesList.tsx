@@ -119,7 +119,7 @@ export default function UserPurchasesList({
     <div className={`${embedded ? '' : 'userProfileCard '}userPurchasesListContainer`}>
       <div className="userPurchasesListHeader">
         <div>
-        <h2 className="userProfileTitle userPurchasesListTitle userListTitleWithIcon">
+        <h2 className="userProfileTitle userPurchasesListTitle userListTitleWithIcon" data-text="My Purchased Tracks">
           <DollarSign size={20} className="userListTitleIcon" />
           My Purchased Tracks
         </h2>

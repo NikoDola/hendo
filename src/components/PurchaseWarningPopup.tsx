@@ -29,7 +29,7 @@ export default function PurchaseWarningPopup({
         </button>
         
         <div className="purchaseWarningContent">
-          <h2 className="purchaseWarningTitle">Already Purchased</h2>
+          <h2 className="purchaseWarningTitle" data-text="Already Purchased">Already Purchased</h2>
           <p className="purchaseWarningMessage">
             You already have this track: <strong>{trackTitle}</strong>
           </p>

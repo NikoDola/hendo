@@ -129,7 +129,7 @@
 .musicListCardTitle {
   font-size: 1.5rem;
   font-weight: 700;
-  color: white;
+
   margin: 0;
   font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
 }

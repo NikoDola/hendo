@@ -14,7 +14,7 @@ interface UserProfileProps {
 export default function UserProfile({ user, userData }: UserProfileProps) {
   return (
     <div className="userProfileCard glass-effect">
-      <h2 className="userProfileTitle">Your Profile</h2>
+      <h2 className="userProfileTitle" data-text="Your Profile">Your Profile</h2>
       
       <div className="userProfileGrid">
         <div className="userProfileSection">

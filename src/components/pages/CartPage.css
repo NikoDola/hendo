@@ -39,7 +39,6 @@
 .cartPageTitle {
   font-size: 2rem;
   font-weight: bold;
-  color: white;
   margin: 0;
   font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
 }
@@ -302,7 +301,7 @@
 .cartPageRightsOpenButton {
   background: none;
   border: none;
-  padding: 0;
+
   color: white;
   font-weight: 700;
   cursor: pointer;

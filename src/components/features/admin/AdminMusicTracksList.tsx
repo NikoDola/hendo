@@ -146,7 +146,7 @@ export default function AdminMusicTracksList({
   return (
     <div>
       <div className="adminMusicTracksHeader">
-        <h2 className="adminSectionTitle">Music</h2>
+        <h2 className="adminSectionTitle" data-text="Music">Music</h2>
         <button
           onClick={onAddTrack}
           className="adminProductAddButton adminMusicTracksAddButton"

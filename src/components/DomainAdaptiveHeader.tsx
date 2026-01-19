@@ -18,7 +18,7 @@ export default function DomainAdaptiveHeader() {
         <div className="logo">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={domainConfig.logo} alt={domainConfig.displayName} />
-          <h1>{domainConfig.displayName}</h1>
+          <h1 data-text={domainConfig.displayName}>{domainConfig.displayName}</h1>
         </div>
 
         <nav className="nav">

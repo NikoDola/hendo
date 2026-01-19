@@ -156,13 +156,13 @@ export default function CartPage() {
             <ArrowLeft size={20} />
             Back to Dashboard
           </Link>
-          <h1 className="cartPageTitle">Shopping Cart</h1>
+          <h1 className="cartPageTitle" data-text="Shopping Cart">Shopping Cart</h1>
         </div>
 
         {cartItems.length === 0 ? (
           <div className="cartPageEmpty glass-effect">
             <ShoppingBag size={64} className="cartPageEmptyIcon" />
-            <h2>Your cart is empty</h2>
+            <h2 data-text="Your cart is empty">Your cart is empty</h2>
             <p>Add some tracks to get started!</p>
             <Link href="/music" className="cartPageEmptyButton">
               Browse Music
@@ -293,7 +293,7 @@ export default function CartPage() {
         >
           <div className="cartRightsModal glass-effect" onMouseDown={(e) => e.stopPropagation()}>
             <div className="cartRightsHeader">
-              <h2 className="cartRightsTitle">Read the Rights</h2>
+              <h2 className="cartRightsTitle" data-text="Read the Rights">Read the Rights</h2>
               <button
                 type="button"
                 className="cartRightsCloseButton"

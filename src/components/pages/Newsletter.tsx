@@ -81,7 +81,7 @@ export default function Newsletter() {
   return (
       
       <section className="section-regular underWrapper">
-        <h2 className="newsletterTitle">NEWSLETTER</h2>
+        <h2 className="newsletterTitle" data-text="NEWSLETTER">NEWSLETTER</h2>
         <p className="subscribeDescription">
           Subscribe to my newsletter and be the first to hear about new music,
           exclusive drops from our clothing brand, and behind-the-scenes content.

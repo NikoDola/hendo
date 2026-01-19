@@ -110,7 +110,7 @@ export default function SignupPage() {
     return (
       <div className="underWrapper">
         <div className="formWrapper">
-          <h2 className="newsletterTitle">Account Created!</h2>
+          <h2 className="newsletterTitle" data-text="Account Created!">Account Created!</h2>
           <p className="subscribeDescription">
             Redirecting you to your dashboard...
           </p>
@@ -122,7 +122,7 @@ export default function SignupPage() {
   return (
     <div className="underWrapper">
       <div className="formWrapper">
-        <h2 className="newsletterTitle">Create Account</h2>
+        <h2 className="newsletterTitle" data-text="Create Account">Create Account</h2>
         
         <form onSubmit={handleSubmit} className="signupForm">
           <div className="inputWrapper signupInputWrapper">

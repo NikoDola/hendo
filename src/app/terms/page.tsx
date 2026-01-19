@@ -5,7 +5,7 @@ import '@/components/pages/TermsPage.css';
 export default function TermsPage() {
   return (
     <section className="section-regular termsPage">
-      <h1 className="termsTitle">Terms &amp; Conditions</h1>
+      <h1 className="termsTitle" data-text="Terms & Conditions">Terms &amp; Conditions</h1>
       <p className="termsUpdated">Last Updated: JAN 1 2026</p>
 
       <p className="termsIntro">

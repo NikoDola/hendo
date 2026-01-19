@@ -55,7 +55,7 @@ export default function UnderConstruction() {
           <Logo size="2rem" />
         </div>
         
-        <h1 className="underConstructionTitle">
+        <h1 className="underConstructionTitle" data-text="Coming Soon">
           Coming Soon
         </h1>
         

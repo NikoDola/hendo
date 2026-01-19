@@ -17,7 +17,7 @@ export default function About() {
   return (
     <section className="section-full aboutSection">
       <div className="aboutTextWrapper">
-        <h1 className="aboutHeadline">
+        <h1 className="aboutHeadline" data-text="Welcome to the DREAMSTATION.">
           Welcome to the<br/>DREAMSTATION.
         </h1>
 
@@ -43,7 +43,7 @@ export default function About() {
         </div>
 
         <div className="aboutFooter">
-          <h2>LEVEL UP.</h2>
+          <h2 data-text="LEVEL UP.">LEVEL UP.</h2>
         </div>
       </div>
 

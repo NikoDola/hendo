@@ -22,7 +22,7 @@ export default function PaymentCancel() {
           <Frown size={42} color="#ef4444" />
         </div>
 
-        <h1 className="paymentCancelTitle">Payment Cancelled</h1>
+        <h1 className="paymentCancelTitle" data-text="Payment Cancelled">Payment Cancelled</h1>
         <p className="paymentCancelSubtitle">
           No worries — your payment was cancelled and <strong>no charges were made</strong>.
         </p>

@@ -71,7 +71,7 @@ export default function AdminUsersList({ users, onDeleteUser }: AdminUsersListPr
 
   return (
     <div>
-      <h2 className="adminSectionTitle">Users</h2>
+      <h2 className="adminSectionTitle" data-text="Users">Users</h2>
       
       <div className="adminUsersControls">
         <div className="adminSearchWrapper">

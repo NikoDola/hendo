@@ -56,7 +56,7 @@ function VerifyEmailInner() {
           {status === 'loading' && (
             <>
               <div className="loadingSpinner"></div>
-              <h2>Verifying your email...</h2>
+              <h2 data-text="Verifying your email...">Verifying your email...</h2>
               <p>Please wait while we verify your email address.</p>
             </>
           )}
@@ -64,7 +64,7 @@ function VerifyEmailInner() {
           {status === 'success' && (
             <>
               <div className="successIcon">✅</div>
-              <h2>Email Verified!</h2>
+              <h2 data-text="Email Verified!">Email Verified!</h2>
               <p>{message}</p>
               <div className="successActions">
                 <Link href="/" className="homeButton">Go to Homepage</Link>
@@ -94,7 +94,7 @@ export default function VerifyEmail() {
       <section className="section-regular verifyWrapper">
         <div className="verificationCard">
           <div className="loadingSpinner"></div>
-          <h2>Loading...</h2>
+          <h2 data-text="Loading...">Loading...</h2>
           <p>Please wait.</p>
         </div>
       </section>

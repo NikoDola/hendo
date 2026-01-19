@@ -86,7 +86,7 @@ export default function FAQPage() {
 
   return (
     <section className="section-regular faqPageContainer">
-      <h1 className="faqPageTitle">Frequently Asked Questions (FAQ)</h1>
+      <h1 className="faqPageTitle" data-text="Frequently Asked Questions (FAQ)">Frequently Asked Questions (FAQ)</h1>
 
       <div className="faqColumns">
         {groups.map((group, colIdx) => (

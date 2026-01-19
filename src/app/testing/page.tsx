@@ -1,9 +1,9 @@
-
-import "./style.css"
-export default function Testing(){
-  return(
+import "./style.css";
+export default function Testing() {
+  return (
     <div className="h-[100vh]">
-      <div className="inverted_star"></div>
+      <h1 data-text="DEMO TEXT">DEMO TEXT</h1>
+      <button>Hello</button>
     </div>
-  )
+  );
 }

@@ -27,7 +27,7 @@ export default function UserFavoritesList({ embedded = false }: UserFavoritesLis
     <div className={`${embedded ? '' : 'userProfileCard '}userFavoritesListContainer`}>
       <div className="userFavoritesListHeader">
         <div>
-          <h2 className="userProfileTitle userFavoritesListTitle userListTitleWithIcon">
+          <h2 className="userProfileTitle userFavoritesListTitle userListTitleWithIcon" data-text="My Favorite Tracks">
             <Star size={20} className="userListTitleIcon" />
             My Favorite Tracks
           </h2>

@@ -67,7 +67,7 @@ export default function MusicUploadForm({
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">
+      <h2 className="text-2xl font-bold mb-6 text-gray-800" data-text={mode === 'create' ? 'Upload New Music' : 'Edit Music Track'}>
         {mode === 'create' ? 'Upload New Music' : 'Edit Music Track'}
       </h2>
 

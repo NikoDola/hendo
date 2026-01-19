@@ -73,13 +73,13 @@ export default function FavoritesPage() {
             <ArrowLeft size={20} />
             Back to Dashboard
           </Link>
-          <h1 className="favoritesPageTitle">Favorites</h1>
+          <h1 className="favoritesPageTitle" data-text="Favorites">Favorites</h1>
         </div>
 
         {favoriteItems.length === 0 ? (
           <div className="favoritesPageEmpty glass-effect">
             <Heart size={64} className="favoritesPageEmptyIcon" />
-            <h2>No favorites yet</h2>
+            <h2 data-text="No favorites yet">No favorites yet</h2>
             <p>Add tracks to your favorites to see them here!</p>
             <Link href="/music" className="favoritesPageEmptyButton">
               Browse Music

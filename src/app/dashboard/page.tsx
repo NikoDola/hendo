@@ -94,7 +94,7 @@ export default function UserDashboard() {
           <div className="userHeaderContent">
             <div className="userHeaderLeft">
               <Music size={32} className="userMusicIcon" />
-              <h1 className="userTitle">Dashboard</h1>
+              <h1 className="userTitle" data-text="Dashboard">Dashboard</h1>
             </div>
             
             <button

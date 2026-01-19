@@ -91,7 +91,7 @@ export default function Contact() {
   return (
     <section id="contact" className="section-regular contactWrapper">
       <div>
-        <h2 className="contactHeadline"> Dreamstation<br />  hotline </h2>
+        <h2 className="contactHeadline" data-text="Dreamstation hotline"> Dreamstation<br />  hotline </h2>
         <h3>straight to HQ</h3>
       </div>
       <form className="formWrapper" onSubmit={handleSubmit}>

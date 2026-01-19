@@ -71,7 +71,7 @@ function GoogleCallbackInner() {
     return (
       <div className="underWrapper">
         <div className="formWrapper">
-          <h2 className="newsletterTitle">Completing Google Sign-in...</h2>
+          <h2 className="newsletterTitle" data-text="Completing Google Sign-in...">Completing Google Sign-in...</h2>
           <p className="subscribeDescription">
             Please wait while we set up your account
           </p>
@@ -84,7 +84,7 @@ function GoogleCallbackInner() {
     return (
       <div className="underWrapper">
         <div className="formWrapper">
-          <h2 className="newsletterTitle" style={{ color: '#ff6b6b' }}>Authentication Failed</h2>
+          <h2 className="newsletterTitle" data-text="Authentication Failed" style={{ color: '#ff6b6b' }}>Authentication Failed</h2>
           <p className="subscribeDescription">
             {error}
           </p>
@@ -108,7 +108,7 @@ export default function GoogleCallback() {
     <Suspense fallback={
       <div className="underWrapper">
         <div className="formWrapper">
-          <h2 className="newsletterTitle">Loading...</h2>
+          <h2  className="newsletterTitle" data-text="Loading...">Loading...</h2>
           <p className="subscribeDescription">
             Please wait...
           </p>

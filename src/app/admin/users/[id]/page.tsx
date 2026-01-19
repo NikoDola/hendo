@@ -83,7 +83,7 @@ export default function AdminUserDetailPage() {
     return (
       <div className="adminUserDetailContainer">
         <div className="adminUserDetailError">
-          <h2>Error</h2>
+          <h2 data-text="Error">Error</h2>
           <p>{error || 'User not found'}</p>
           <button onClick={() => router.push('/admin/dashboard')} className="adminUserDetailBackButton">
             Back to Dashboard
@@ -108,12 +108,12 @@ export default function AdminUserDetailPage() {
             <ArrowLeft size={20} />
             Back to Dashboard
           </button>
-          <h1 className="adminUserDetailTitle">User Details</h1>
+          <h1 className="adminUserDetailTitle" data-text="User Details">User Details</h1>
         </div>
 
         {/* User Info Card */}
         <div className="adminUserDetailCard glass-effect">
-          <h2 className="adminUserDetailCardTitle">Account Information</h2>
+          <h2 data-text="Account Information" className="adminUserDetailCardTitle">Account Information</h2>
           
           <div className="adminUserDetailGrid">
             <div className="adminUserDetailField">
@@ -177,7 +177,7 @@ export default function AdminUserDetailPage() {
         {/* Purchase History Card */}
         <div className="adminUserDetailCard glass-effect">
           <div className="adminUserDetailCardHeader">
-            <h2 className="adminUserDetailCardTitle">Purchase History</h2>
+            <h2 className="adminUserDetailCardTitle" data-text="Purchase History">Purchase History</h2>
             <div className="adminUserDetailStats">
               <div className="adminUserDetailStat">
                 <span className="adminUserDetailStatLabel">Total Items:</span>
