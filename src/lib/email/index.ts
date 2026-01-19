@@ -146,7 +146,7 @@ export async function sendContactEmail(name: string, email: string, message: str
     const currentTime = new Date().toLocaleString();
 
     const info = await transporter.sendMail({
-      from: `${name} via Dreamtation (${email}) <${process.env.PROTON_SMTP_USER}>`,
+      from: `${name} via Dreamstation (${email}) <${process.env.PROTON_SMTP_USER}>`,
       to: recipientEmail,
       // If the main recipient is not the Proton inbox, still send a private copy there.
       ...(ownerEmail && ownerEmail !== recipientEmail ? { bcc: ownerEmail } : {}),
