@@ -42,7 +42,7 @@
 
 .musicStoreHeaderIcon {
   margin-top: 0.5rem;
-  color: var(--theme-color);
+  
 }
 
 
@@ -126,6 +126,14 @@
 }
 
 @media (max-width: 1000px){
+  .musicStoreHeaderIcon{
+    margin-top: 0;
+    width: 2rem;
+  }
+ .musicStorHeading{
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+ }
   .musicStoreHeaderTitle{
     font-size: 2rem;
   }
