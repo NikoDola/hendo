@@ -396,13 +396,15 @@ export default function MusicListCard({
               <ShoppingCart size={20} />
             </button>
             <button
-              onClick={() => toggleFavorite(track.id, {
-                id: track.id,
-                title: track.title,
-                price: track.price,
-                imageFileUrl: track.imageFileUrl
-              })}
-              className={`musicListCardIconButton ${isFavorite(track.id) ? 'active' : ''}`}
+              onClick={() =>
+                toggleFavorite(track.id, {
+                  id: track.id,
+                  title: track.title,
+                  price: track.price,
+                  imageFileUrl: track.imageFileUrl
+                })
+              }
+              className={`musicListCardIconButton favorite ${isFavorite(track.id) ? 'active' : ''}`}
               aria-label="Add to favorites"
             >
               <Star size={20} fill={isFavorite(track.id) ? 'currentColor' : 'none'} />

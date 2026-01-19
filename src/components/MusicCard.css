@@ -163,9 +163,10 @@
   gap: 0.25rem;
   background: none;
   border: none;
-  padding: 0.5rem 0.75rem;
-  border-radius: 20px;
-  color: rgba(255, 255, 255, 0.9);
+  /* Match /music (MusicListCard): no "chip" background */
+  padding: 0;
+  border-radius: 0;
+  color: rgba(255, 255, 255, 0.7);
   font-size: 0.875rem;
   font-weight: 700;
   cursor: pointer;
@@ -174,6 +175,12 @@
   margin-top: 0.5rem;
   width: fit-content;
   box-shadow: none;
+}
+
+.musicCardHashtagsToggle::before,
+.musicCardHashtagsToggle::after {
+  /* Disable global button skin for this control */
+  content: none;
 }
 
 .musicCardHashtagsToggle:hover {
@@ -226,16 +233,17 @@
 }
 
 .musicCardPlayButton {
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
-  min-height: 44px;
-  max-width: 44px;
-  max-height: 44px;
+  /* Match /music (MusicListCard) */
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
+  max-width: 48px;
+  max-height: 48px;
   border-radius: 50%;
-  background: transparent;
-  border: 2px solid var(--theme-color-1);
-  color: var(--theme-color-1);
+
+  border: none;
+  color: black;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -245,20 +253,24 @@
   flex-grow: 0;
   padding: 0;
   aspect-ratio: 1 / 1;
-  box-shadow: none;
+  box-shadow: 0 0 10px var(--theme-color-1), 0 0 20px var(--theme-color-2);
+  /* Match purchase button timing */
+
 }
+
+
 
 .musicCardPlayButton:hover {
   transform: scale(1.1);
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: none;
+  box-shadow: 0 0 15px var(--theme-color-1), 0 0 30px var(--theme-color-2);
 }
 
 .musicCardPlayButton.playing {
+  /* Keep identical to default so it matches /music */
   background: linear-gradient(to top right, var(--theme-color-1), var(--theme-color-2));
   border: none;
-  color: white;
-  box-shadow: 0 0 20px var(--theme-color-1), 0 0 40px var(--theme-color-2);
+  color: black;
+  box-shadow: 0 0 10px var(--theme-color-1), 0 0 20px var(--theme-color-2);
 }
 
 .musicCardProgressBar {
@@ -270,6 +282,8 @@
   cursor: pointer;
 
   position: relative;
+  /* Match purchase button timing */
+  transition: height 3s ease, background 3s ease;
 }
 
 .musicCardProgressBar:hover {
@@ -282,6 +296,8 @@
   background: linear-gradient(to right, var(--theme-color-1), var(--theme-color-2));
   border-radius: 3px;
   position: relative;
+  /* Keep progress movement responsive, but color/glow transitions match purchase */
+  transition: width 0.1s linear, background 3s ease, box-shadow 3s ease;
 }
 
 .musicCardProgressFill::after {
@@ -297,6 +313,7 @@
   box-shadow: 0 0 10px var(--theme-color-1), 0 0 20px var(--theme-color-2), 0 0 4px rgba(0, 0, 0, 0.3);
   border: 3px solid var(--theme-color-2);
   z-index: 10;
+  transition: box-shadow 3s ease, border-color 3s ease, background-color 3s ease;
 }
 
 /* Purchase section - Bottom (ROW) */
@@ -344,7 +361,8 @@
 }
 
 .musicCardIconButton {
-  background: transparent;
+  /* Simple + reliable: black by default, white when active */
+  background: black;
   border: none;
   box-shadow: none;
   color: white;
@@ -352,21 +370,62 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
-  padding: 0;
+  padding: 0.5rem;
   margin: 0;
+  transition: none !important;
+  position: relative;
+  overflow: hidden;
 }
 
-.musicCardIconButton:hover {
-  color: var(--theme-color-1);
-  background: transparent;
+.musicCardIconButton:not(.active):hover {
+  /* Hover flip (only when NOT active) */
+  color: black;
+  background: white;
   box-shadow: none;
+
+}
+
+.musicCardIconButton::before,
+.musicCardIconButton::after {
+  /* Kill global button pseudo background */
+  content: none !important;
+  background: transparent !important;
+}
+
+.musicCardIconButton svg {
+  position: relative;
+  z-index: 1;
+  transition: none !important;
 }
 
 .musicCardIconButton.active {
-  color: var(--theme-color-2);
+  /* Active keeps the theme "before/after" background */
   background: transparent;
+  color: white;
   box-shadow: none;
+}
+
+.musicCardIconButton.active::before,
+.musicCardIconButton.active::after {
+  content: "" !important;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  transition: none !important;
+}
+
+/* Match global button split-color background */
+.musicCardIconButton.active::before {
+  background-color: var(--theme-color-2) !important;
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 50%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 50%, transparent 100%);
+}
+
+.musicCardIconButton.active::after {
+  background-color: var(--theme-color-1) !important;
+  -webkit-mask-image: linear-gradient(to top, black 0%, black 50%, transparent 100%);
+  mask-image: linear-gradient(to top, black 0%, black 50%, transparent 100%);
 }
 
 .musicCardIconButton:disabled,
