@@ -234,9 +234,14 @@
   width: fit-content;
   margin-top: 0.5rem;
   box-shadow: none;
-  background: none;
-}
 
+}
+.musicListCardHashtagsToggle::before{
+  background-color: transparent;
+}
+.musicListCardHashtagsToggle::after{
+  background-color: transparent;
+}
 .musicListCardHashtagsToggle:hover {
   background: none;
   background-color: none;

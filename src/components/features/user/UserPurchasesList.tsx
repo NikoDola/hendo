@@ -119,10 +119,10 @@ export default function UserPurchasesList({
     <div className={`${embedded ? '' : 'userProfileCard '}userPurchasesListContainer`}>
       <div className="userPurchasesListHeader">
         <div>
-        <h2 className="userProfileTitle userPurchasesListTitle userListTitleWithIcon" data-text="My Purchased Tracks">
+        <h3 className="userProfileTitle userPurchasesListTitle userListTitleWithIcon" data-text="My Purchased Tracks">
           <DollarSign size={20} className="userListTitleIcon" />
           My Purchased Tracks
-        </h2>
+        </h3>
         <p className='bold'>total {purchases.length} tracks </p>
         </div>
 
@@ -197,13 +197,13 @@ export default function UserPurchasesList({
               </div>
 
               <div className="userPurchaseActions">
-                <button
+                <div
                   onClick={() =>
                     onDownload(
                       purchase.id,
                       'zip',
                       purchase.zipUrl?.includes('Hendo-Beats-Collection')
-                        ? 'Hendo-Beats-Collection.zip'
+                        ? 'T.Hendo-Beats-Collection.zip'
                         : `${purchase.trackTitle}.zip`
                     )
                   }
@@ -211,7 +211,7 @@ export default function UserPurchasesList({
                 >
                   <Download size={18} />
                   Download ZIP (Includes Rights PDFs)
-                </button>
+                </div>
               </div>
             </div>
           ))}

@@ -40,6 +40,7 @@ Newsletter Component Styles
 
 .newsletterWrapper {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   gap: 0;
   width: 40%;
@@ -49,7 +50,7 @@ Newsletter Component Styles
 
 .inputNewsletter {
   flex: 0 0 80%;
-  border-radius: 20px 0px 0 20px;
+ 
 }
 
 
@@ -94,7 +95,8 @@ Newsletter Component Styles
 }
 
 .subscribe{
-  border-radius: 0 10rem 10rem 0;
+  margin-top: 1rem;
+  width: 100%;
 }
 
 @media (max-width: 768px) {

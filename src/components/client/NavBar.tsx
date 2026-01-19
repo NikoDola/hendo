@@ -361,15 +361,15 @@ export default function NavMenu() {
                 {isHydrated && user && (
                   <li>
                     <div className="mobileProfileIconsWrapper">
-                      <button
-                        type="button"
+                      <div
+                     
                         className="profileToggleButton"
                         onClick={handleProfileDropdown}
                         aria-label="Open profile menu"
                         aria-expanded={profileDropdown}
                       >
                         <CiUser className="navIcons" />
-                      </button>
+                      </div>
                       <Link
                         href="/dashboard/cart"
                         className="navCartIconWrapper"

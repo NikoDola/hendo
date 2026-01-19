@@ -262,7 +262,7 @@ export default function CartPage() {
                     checked={hasReadRights}
                     onChange={(e) => setHasReadRights(e.target.checked)}
                   />
-                  <span className="cartPageRightsCheckboxText">I have read the rights</span>
+                  <span className="cartPageRightsCheckboxText">REVIEW THE POLICY</span>
                 </div>
               </div>
 
