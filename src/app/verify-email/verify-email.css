@@ -26,8 +26,10 @@
 .verificationCard h2 {
   font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
   font-size: var(--text-3xl);
-  margin: 1rem 0;
-  color: white;
+  margin: 1rem auto;
+  /* Override global h2 "width: max-content" so this title can center properly */
+  width: 100%;
+  text-align: center;
 }
 
 .verificationCard p {
@@ -35,6 +37,7 @@
   font-size: 1.1rem;
   line-height: 1.6;
   margin: 1rem 0 2rem 0;
+  /* Don't force white; keep consistent with theme */
   color: rgba(255, 255, 255, 0.85);
   opacity: 0.8;
 }
@@ -63,6 +66,9 @@
 .errorIcon {
   font-size: 4rem;
   margin-bottom: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .successActions,
