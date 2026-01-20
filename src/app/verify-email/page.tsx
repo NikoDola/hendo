@@ -51,7 +51,7 @@ function VerifyEmailInner() {
   }, [searchParams]);
 
   return (
-      <section className="section-regular verifyWrapper">
+      <section className="section-regular glass-effect">
         <div className="verificationCard">
           {status === 'loading' && (
             <>
@@ -62,19 +62,19 @@ function VerifyEmailInner() {
           )}
 
           {status === 'success' && (
-            <>
-              <div className="successIcon">✅</div>
+            <div>
+              <div className="glass-effect">✅</div>
               <h2 data-text="Email Verified!">Email Verified!</h2>
               <p>{message}</p>
               <div className="successActions">
                 <Link href="/" className="homeButton">Go to Homepage</Link>
                 <Link href="/newsletter" className="newsletterButton">View Newsletter</Link>
               </div>
-            </>
+            </div>
           )}
 
           {status === 'error' && (
-            <>
+            <div>
               <div className="errorIcon">❌</div>
               <h2>Verification Failed</h2>
               <p>{message}</p>
@@ -82,7 +82,7 @@ function VerifyEmailInner() {
                 <Link href="/newsletter" className="retryButton">Try Again</Link>
                 <Link href="/" className="homeButton">Go to Homepage</Link>
               </div>
-            </>
+            </div>
           )}
         </div>
       </section>  );

@@ -1,32 +1,26 @@
 "use server"
 
-import { db } from "@/lib/firebase"
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  addDoc,
-  setDoc,
-  doc,
-  serverTimestamp,
-} from "firebase/firestore"
 import { headers } from "next/headers"
+import { firebaseAdmin } from "@/lib/firebaseAdmin"
 
-type TimestampLike = Date | number | { toMillis: () => number }
-
-function toMillis(value: TimestampLike): number {
-  if (typeof value === 'number') return value
-  if (value instanceof Date) return value.getTime()
-  return value.toMillis()
-}
 import { sendVerificationEmail } from "@/lib/email"
 
-const COOLDOWN_MS = 60 * 1000 // 1 minute
-const MAX_ATTEMPTS = 3 // Maximum attempts per IP
+const WINDOW_MS = 60 * 60 * 1000 // 1 hour
+const MAX_ATTEMPTS = 20 // Maximum attempts per IP per hour (temporary for testing)
 
 export async function newsletter(email: string, token: string) {
   try {
+    const emailNormalized = (email || "").toLowerCase().trim()
+
+    if (!emailNormalized) {
+      return { error: "Email is required." }
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(emailNormalized)) {
+      return { error: "Please enter a valid email address." }
+    }
+
     // 1. Verify recaptcha
     const res = await fetch("https://www.google.com/recaptcha/api/siteverify", {
       method: "POST",
@@ -41,66 +35,54 @@ export async function newsletter(email: string, token: string) {
     // 2. Get client IP (await headers() in server actions)
     const headerStore = await headers()
     const forwardedFor = headerStore.get("x-forwarded-for")
-    const ip = forwardedFor ? forwardedFor.split(",")[0].trim() : "unknown"
+    const realIp = headerStore.get("x-real-ip")
+    const ip = (forwardedFor ? forwardedFor.split(",")[0].trim() : realIp) || "unknown"
 
-    // 3. Check attempts from Firestore
-    const attemptDoc = doc(db, "newsletter_attempts", ip)
-    const attemptSnap = await getDocs(
-      query(collection(db, "newsletter_attempts"), where("__name__", "==", ip))
-    )
-
+    const firestore = firebaseAdmin.firestore()
     const now = Date.now()
-    let attemptData: { attempts: TimestampLike[], lastAttempt: TimestampLike | null } = { attempts: [], lastAttempt: null }
 
-    if (!attemptSnap.empty) {
-      const docData = attemptSnap.docs[0].data()
-      attemptData = {
-        attempts: docData.attempts || [],
-        lastAttempt: docData.lastAttempt || null
+    // 3. Rate limit per IP (3/hour)
+    const attemptsRef = firestore.collection("newsletter_attempts").doc(ip)
+    await firestore.runTransaction(async (tx) => {
+      const snap = await tx.get(attemptsRef)
+      const attemptsRaw = (snap.exists ? (snap.data()?.attempts as number[] | undefined) : []) || []
+      const recentAttempts = attemptsRaw.filter((ms) => now - ms < WINDOW_MS)
+      if (recentAttempts.length >= MAX_ATTEMPTS) {
+        throw new Error("RATE_LIMIT")
       }
-    }
-
-    // Filter out attempts older than 1 minute
-    const recentAttempts = attemptData.attempts?.filter((timestamp) => {
-      const attemptMs = toMillis(timestamp)
-      return now - attemptMs < COOLDOWN_MS
-    }) || []
-
-    // Check if user has exceeded max attempts
-    if (recentAttempts.length >= MAX_ATTEMPTS) {
-      return { error: `Too many attempts. You can try ${MAX_ATTEMPTS} times per minute. Please wait.` }
-    }
-
-    // 4. Save/update attempt data
-    const newAttempts = [...recentAttempts, new Date()]
-    await setDoc(attemptDoc, {
-      attempts: newAttempts,
-      lastAttempt: new Date()
+      tx.set(
+        attemptsRef,
+        {
+          attempts: [...recentAttempts, now],
+          updatedAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
+        },
+        { merge: true }
+      )
     })
 
-    // 5. Check if email already exists in Firestore
-    const q = query(collection(db, "subscribers"), where("email", "==", email))
-    const snap = await getDocs(q)
-    if (!snap.empty) {
+    // 4. Prevent duplicate subscription by using email as doc id
+    const subscriberRef = firestore.collection("subscribers").doc(emailNormalized)
+    const existing = await subscriberRef.get()
+    if (existing.exists) {
       return { error: "This email is already subscribed." }
     }
 
-    // 6. Generate verification token
+    // 5. Generate verification token
     const verificationToken = Math.random().toString(36).slice(-12) + Date.now().toString(36)
 
-    // 7. Save subscriber to Firestore for tracking
-    await addDoc(collection(db, "subscribers"), {
-      email,
-      createdAt: serverTimestamp(),
+    // 6. Save subscriber to Firestore for tracking
+    await subscriberRef.set({
+      email: emailNormalized,
+      createdAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
       ip,
       source: "newsletter",
       verified: false,
-      verificationToken: verificationToken
+      verificationToken,
     })
 
     // 8. Try to send verification email using custom service
     try {
-      await sendVerificationEmail(email, verificationToken)
+      await sendVerificationEmail(emailNormalized, verificationToken)
       return { success: true }
     } catch (emailError) {
       console.error('Custom email service failed:', emailError)
@@ -109,6 +91,9 @@ export async function newsletter(email: string, token: string) {
     }
 
   } catch (err) {
+    if (err instanceof Error && err.message === "RATE_LIMIT") {
+      return { error: `Too many signups. Limit is ${MAX_ATTEMPTS} per hour. Please wait and try again.` }
+    }
     console.error("Newsletter error:", err)
     return { error: "Something went wrong." }
   }

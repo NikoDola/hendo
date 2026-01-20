@@ -3,17 +3,6 @@
 import { useState, useEffect } from "react";
 import "@/components/client/ContactFooter.css";
 
-declare global {
-  interface Window {
-    grecaptcha: {
-      execute: (
-        siteKey: string,
-        options: { action: string }
-      ) => Promise<string>;
-    };
-  }
-}
-
 export default function Contact() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

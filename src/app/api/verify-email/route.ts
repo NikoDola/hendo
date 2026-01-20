@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { sendWelcomeEmail } from '@/lib/email';
+import { firebaseAdmin } from '@/lib/firebaseAdmin';
+
+// firebase-admin requires the Node.js runtime (not Edge)
+export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,32 +16,49 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify the token (simple validation for now)
-    // In a real implementation, you'd verify the token with your email service
+    const emailNormalized = String(email).toLowerCase().trim();
+    const tokenNormalized = String(token).trim();
 
-    // Update the subscriber record in Firestore to mark as verified
-    const subscribersRef = collection(db, 'subscribers');
-    const q = query(subscribersRef, where('email', '==', email));
-    const querySnapshot = await getDocs(q);
-
-    if (querySnapshot.empty) {
+    // If Firebase Admin isn't initialized (missing server env vars), fail with a helpful message.
+    if (!firebaseAdmin.apps?.length) {
       return NextResponse.json(
-        { error: 'Subscriber not found' },
-        { status: 404 }
+        {
+          error:
+            'Server is missing Firebase Admin credentials. Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY in your deployment environment.',
+        },
+        { status: 500 }
       );
     }
 
-    // Update the first matching document
-    const subscriberDoc = querySnapshot.docs[0];
-    await updateDoc(doc(db, 'subscribers', subscriberDoc.id), {
-      verified: true,
-      verifiedAt: new Date(),
-      verificationToken: token
-    });
+    const firestore = firebaseAdmin.firestore();
+    const subscriberRef = firestore.collection('subscribers').doc(emailNormalized);
+    const snap = await subscriberRef.get();
+
+    if (!snap.exists) {
+      return NextResponse.json({ error: 'Subscriber not found' }, { status: 404 });
+    }
+
+    const data = snap.data() as { verificationToken?: string; verified?: boolean } | undefined;
+
+    if (data?.verified) {
+      return NextResponse.json({ success: true, message: 'Email already verified' }, { status: 200 });
+    }
+
+    if (!data?.verificationToken || data.verificationToken !== tokenNormalized) {
+      return NextResponse.json({ error: 'Invalid or expired verification link' }, { status: 400 });
+    }
+
+    await subscriberRef.set(
+      {
+        verified: true,
+        verifiedAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    );
 
     // Send welcome email
     try {
-      await sendWelcomeEmail(email);
+      await sendWelcomeEmail(emailNormalized);
     } catch (emailError) {
       console.error('Failed to send welcome email:', emailError);
       // Don't fail the verification if welcome email fails
@@ -50,11 +69,32 @@ export async function POST(request: NextRequest) {
       message: 'Email verified successfully'
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Email verification error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+
+    // Always return something actionable (without stack traces / secrets)
+    const message =
+      error instanceof Error
+        ? error.message || error.name || 'Internal server error'
+        : typeof error === 'string'
+          ? error
+          : (() => {
+              try {
+                return JSON.stringify(error);
+              } catch {
+                return String(error);
+              }
+            })();
+
+    const debug = {
+      runtime: process.env.NEXT_RUNTIME || 'unknown',
+      nodeEnv: process.env.NODE_ENV,
+      adminApps: firebaseAdmin.apps?.length ?? 0,
+      hasProjectId: Boolean(process.env.FIREBASE_PROJECT_ID),
+      hasClientEmail: Boolean(process.env.FIREBASE_CLIENT_EMAIL),
+      hasPrivateKey: Boolean(process.env.FIREBASE_PRIVATE_KEY),
+    };
+
+    return NextResponse.json({ error: message, debug }, { status: 500 });
   }
 }

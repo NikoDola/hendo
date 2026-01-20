@@ -3,17 +3,6 @@ import "./UnderConstruction.css";
 import { newsletter } from "@/lib/actions";
 import { useState, useEffect } from "react";
 
-declare global {
-  interface Window {
-    grecaptcha: {
-      execute: (
-        siteKey: string,
-        options: { action: string }
-      ) => Promise<string>;
-    };
-  }
-}
-
 export default function Newsletter() {
   const [email, setEmail] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
