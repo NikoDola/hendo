@@ -51,41 +51,40 @@ function VerifyEmailInner() {
   }, [searchParams]);
 
   return (
-      <section className="section-regular glass-effect">
-        <div className="verificationCard">
-          {status === 'loading' && (
-            <>
-              <div className="loadingSpinner"></div>
-              <h2 data-text="Verifying your email...">Verifying your email...</h2>
-              <p>Please wait while we verify your email address.</p>
-            </>
-          )}
+    <section className="section-regular verifyWrapper">
+      <div className="verificationCard glass-effect">
+        {status === 'loading' && (
+          <>
+            <div className="loadingSpinner"></div>
+            <h2 data-text="Verifying your email...">Verifying your email...</h2>
+            <p>Please wait while we verify your email address.</p>
+          </>
+        )}
 
-          {status === 'success' && (
-            <div>
-              <div className="glass-effect">✅</div>
-              <h2 data-text="Email Verified!">Email Verified!</h2>
-              <p>{message}</p>
-              <div className="successActions">
-                <Link href="/" className="homeButton">Go to Homepage</Link>
-                <Link href="/newsletter" className="newsletterButton">View Newsletter</Link>
-              </div>
+        {status === 'success' && (
+          <div className="verificationSuccess">
+            <div className="successIcon">✅</div>
+            <h2 data-text="Email Verified!">Email Verified!</h2>
+            <p>{message}</p>
+            <div className="successActions">
+              <Link href="/home" className="homeButton">Go back home</Link>
             </div>
-          )}
+          </div>
+        )}
 
-          {status === 'error' && (
-            <div>
-              <div className="errorIcon">❌</div>
-              <h2>Verification Failed</h2>
-              <p>{message}</p>
-              <div className="errorActions">
-                <Link href="/newsletter" className="retryButton">Try Again</Link>
-                <Link href="/" className="homeButton">Go to Homepage</Link>
-              </div>
+        {status === 'error' && (
+          <div className="verificationError">
+            <div className="errorIcon">❌</div>
+            <h2>Verification Failed</h2>
+            <p>{message}</p>
+            <div className="errorActions">
+              <Link href="/home" className="homeButton">Go back home</Link>
             </div>
-          )}
-        </div>
-      </section>  );
+          </div>
+        )}
+      </div>
+    </section>
+  );
 }
 
 export default function VerifyEmail() {
