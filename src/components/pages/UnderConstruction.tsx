@@ -43,9 +43,19 @@ export default function Newsletter() {
     setLoading(true);
 
     try {
+      const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+      if (!siteKey) {
+        setError("reCAPTCHA is not configured. Missing site key.");
+        return;
+      }
+      if (!window.grecaptcha?.execute) {
+        setError("reCAPTCHA is still loading. Please try again in a moment.");
+        return;
+      }
+
       // 🔑 Get reCAPTCHA token (strongly typed)
       const token = await window.grecaptcha.execute(
-        process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string,
+        siteKey as string,
         { action: "newsletter" }
       );
 

@@ -37,9 +37,21 @@ export default function Contact() {
     }
 
     try {
+      const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+      if (!siteKey) {
+        setStatus('error');
+        setStatusMessage('reCAPTCHA is not configured. Please try again later.');
+        return;
+      }
+      if (!window.grecaptcha?.execute) {
+        setStatus('error');
+        setStatusMessage('reCAPTCHA is still loading. Please try again in a moment.');
+        return;
+      }
+
       // Get reCAPTCHA token
       const recaptchaToken = await window.grecaptcha.execute(
-        process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string,
+        siteKey as string,
         { action: "contact" }
       );
 
