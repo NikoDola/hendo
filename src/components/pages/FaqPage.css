@@ -6,7 +6,7 @@
 }
 
 .faqPageTitle {
-  color: white;
+
   font-size: 2rem;
   font-weight: 700;
   margin: 0 0 1.5rem 0;
@@ -46,6 +46,20 @@
   cursor: pointer;
   text-align: left;
   color: white;
+  /* Override global <button> theme skin for FAQ cards */
+  box-shadow: none;
+  font-family: 'Roboto', sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.faqQuestionRow::before,
+.faqQuestionRow::after {
+  content: none !important;
+}
+
+.faqQuestionRow:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: white;
 }
 
 .faqQuestionText {
@@ -54,7 +68,7 @@
 }
 
 .faqChevron {
-  color: var(--theme-color);
+  color: rgba(255, 255, 255, 0.8);
   transition: transform 0.2s ease;
   flex-shrink: 0;
 }
