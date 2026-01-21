@@ -25,7 +25,7 @@
 .homeMusicHeaderTitle {
   font-size: var(--text-3xl);
   font-weight: 700;
-  color: white;
+
   margin: 0;
   font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
 }
