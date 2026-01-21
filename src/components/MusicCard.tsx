@@ -471,7 +471,7 @@ export default function MusicCard({
                   className={`musicCardIconButton favorite ${isFavorite(track.id) ? 'active' : ''}`}
                   aria-label="Add to favorites"
                 >
-                  <Star size={20} fill={isFavorite(track.id) ? 'currentColor' : 'none'} />
+                  <Star size={20} className="musicCardFavoriteIcon" />
                 </button>
               </div>
             </div>
