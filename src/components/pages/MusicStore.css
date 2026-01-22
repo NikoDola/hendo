@@ -42,7 +42,11 @@
 
 .musicStoreHeaderIcon {
   margin-top: 0.5rem;
-  
+  width: 3.5rem;
+}
+
+.subheaderMusic{
+  margin-top: -1rem;
 }
 
 
@@ -127,8 +131,9 @@
 
 @media (max-width: 1000px){
   .musicStoreHeaderIcon{
-    margin-top: 0;
-    width: 2rem;
+    margin-top: -0.5rem;
+    width: 2.5rem;
+
   }
  .musicStorHeading{
   font-size: 2rem;
@@ -137,6 +142,10 @@
   .musicStoreHeaderTitle{
     font-size: 2rem;
   }
+  .subheaderMusic{
+  margin-top: 0;
+}
+
 }
 
 /* Mobile styles handled by individual card components */

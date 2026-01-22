@@ -223,9 +223,8 @@ export default function MusicStore() {
 
       <section className="section-regular">
         <header className="musicStoreHeader">
-           <Music className="musicStoreHeaderIcon" size={40} />
+           <Music className="musicStoreHeaderIcon" size={60} />
           <div className="musicStoreHeaderContent">
-             
               <h1 className="musicStorHeading" data-text="DreamStation">DreamStation</h1>
             <h5 className='subheaderMusic'>Music store</h5>
           </div>
