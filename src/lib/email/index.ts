@@ -27,17 +27,17 @@ export async function sendVerificationEmail(email: string, verificationToken: st
     const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}&email=${encodeURIComponent(email)}`;
 
     const info = await transporter.sendMail({
-      from: `HENDO <${process.env.PROTON_SMTP_USER}>`,
+      from: `T. HENDO <${process.env.PROTON_SMTP_USER}>`,
       to: email,
-      subject: 'Verify your email - HENDO Newsletter',
+      subject: 'Verify your email - T. HENDO Newsletter',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #000; color: #fff;">
           <div style="text-align: center; margin-bottom: 30px;">
-            <h1 style="color: #fff; font-size: 32px; margin: 0;">HENDO</h1>
+            <h1 style="color: #fff; font-size: 32px; margin: 0;">T. HENDO</h1>
           </div>
           
           <div style="background-color: #1a1a1a; padding: 30px; border-radius: 10px; border: 1px solid #333;">
-            <h2 style="color: #fff; margin-top: 0;">Welcome to HENDO Newsletter!</h2>
+            <h2 style="color: #fff; margin-top: 0;">Welcome to T. HENDO Newsletter!</h2>
             
             <p style="color: #ccc; line-height: 1.6; margin-bottom: 25px;">
               Thank you for subscribing to our newsletter. To complete your subscription and start receiving updates, please verify your email address by clicking the button below.
@@ -58,7 +58,7 @@ export async function sendVerificationEmail(email: string, verificationToken: st
             <hr style="border: none; border-top: 1px solid #333; margin: 30px 0;">
             
             <p style="color: #888; font-size: 12px; text-align: center; margin: 0;">
-              This email was sent because you subscribed to the HENDO newsletter. If you didn't subscribe, you can safely ignore this email.
+              This email was sent because you subscribed to the T. HENDO newsletter. If you didn't subscribe, you can safely ignore this email.
             </p>
           </div>
         </div>
@@ -80,20 +80,20 @@ export async function sendWelcomeEmail(email: string) {
     }
 
     const info = await transporter.sendMail({
-      from: `HENDO <${process.env.PROTON_SMTP_USER}>`,
+      from: `T. HENDO <${process.env.PROTON_SMTP_USER}>`,
       to: email,
-      subject: 'Welcome to HENDO Newsletter! 🎉',
+      subject: 'Welcome to T. HENDO Newsletter! 🎉',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #000; color: #fff;">
           <div style="text-align: center; margin-bottom: 30px;">
-            <h1 style="color: #fff; font-size: 32px; margin: 0;">HENDO</h1>
+            <h1 style="color: #fff; font-size: 32px; margin: 0;">T. HENDO</h1>
           </div>
           
           <div style="background-color: #1a1a1a; padding: 30px; border-radius: 10px; border: 1px solid #333;">
-            <h2 style="color: #fff; margin-top: 0;">Welcome to HENDO! 🎉</h2>
+            <h2 style="color: #fff; margin-top: 0;">Welcome to T. HENDO! 🎉</h2>
             
             <p style="color: #ccc; line-height: 1.6; margin-bottom: 25px;">
-              Thank you for verifying your email and joining our newsletter! You're now part of the HENDO community and will receive updates about our latest products, news, and exclusive offers.
+              Thank you for verifying your email and joining our newsletter! You're now part of the T. HENDO community and will receive updates about our latest products, news, and exclusive offers.
             </p>
             
             <div style="background-color: #2a2a2a; padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -113,7 +113,7 @@ export async function sendWelcomeEmail(email: string) {
             <hr style="border: none; border-top: 1px solid #333; margin: 30px 0;">
             
             <p style="color: #888; font-size: 12px; text-align: center; margin: 0;">
-              You're receiving this email because you subscribed to the HENDO newsletter.
+              You're receiving this email because you subscribed to the T. HENDO newsletter.
             </p>
           </div>
         </div>
@@ -161,7 +161,7 @@ export async function sendContactEmail(name: string, email: string, message: str
             
             <!-- Quick Reply Button at the top -->
             <div style="text-align: center; margin: 20px 0;">
-              <a href="mailto:${email}?subject=Re: Your message to HENDO" 
+              <a href="mailto:${email}?subject=Re: Your message to T. HENDO" 
                  style="background-color: #4a90e2; color: #fff; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 16px;">
                 Reply to ${name}
               </a>
