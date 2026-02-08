@@ -291,59 +291,59 @@ button:hover {
   width: 100%;
 }
 
-input,
-textarea {
-  outline: none;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 0.7rem;
-  font-family: "Roboto";
-  border-radius: 1rem;
-  color: rgb(208, 208, 208);
-  transition: 0.3s ease;
-  background: rgba(255, 255, 255, 0.05);
-}
+  input,
+  textarea {
+    outline: none;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 0.7rem;
+    font-family: "Roboto";
+    border-radius: 1rem;
+    color: rgb(208, 208, 208);
+    transition: 0.3s ease;
+    background: rgba(255, 255, 255, 0.05);
+  }
 
-input:focus,
-textarea:focus {
-  outline: none;
-  border-color: var(--theme-color);
-}
+  input:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--theme-color);
+  }
 
-input::placeholder,
-textarea::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-  font-style: normal;
-  font-family: 'Roboto', system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-}
+  input::placeholder,
+  textarea::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+    font-style: normal;
+    font-family: 'Roboto', system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
 
-/* Global input styling for all forms */
-.input {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  padding: 1rem;
-  color: white;
-  font-size: 16px;
-  width: 100%;
-  box-sizing: border-box;
-  outline: none;
-  transition: all 0.3s ease;
-}
+  /* Global input styling for all forms */
+  .input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 1rem;
+    color: white;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+    transition: all 0.3s ease;
+  }
 
-.input:focus {
-  outline: none;
-  border: 1px solid var(--theme-color);
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.08);
-}
+  .input:focus {
+    outline: none;
+    border: 1px solid var(--theme-color);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
+  }
 
-.input:focus::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
+  .input:focus::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
 
-.input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-}
+  .input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
 
 /* /Form */
 .formWrapper {
