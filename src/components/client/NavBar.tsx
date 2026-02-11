@@ -12,7 +12,6 @@ import { useUserAuth } from "@/context/UserAuthContext";
 import { usePathname, useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 
-
 export default function NavMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdown, setDropdown] = useState(false);
@@ -35,17 +34,17 @@ export default function NavMenu() {
       const scrollY = window.scrollY;
 
       // Prevent scroll on both body and html
-      document.body.style.position = 'fixed';
+      document.body.style.position = "fixed";
       document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = '100%';
-      document.body.style.overflow = 'hidden';
+      document.body.style.width = "100%";
+      document.body.style.overflow = "hidden";
 
       return () => {
         // Restore scroll position
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
-        document.body.style.overflow = '';
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        document.body.style.overflow = "";
         window.scrollTo(0, scrollY);
       };
     }
@@ -81,21 +80,21 @@ export default function NavMenu() {
 
   const handleViewProfile = () => {
     setProfileDropdown(false);
-    router.push('/dashboard');
+    router.push("/dashboard");
   };
 
   const handleAdminDashboard = () => {
     setProfileDropdown(false);
-    router.push('/admin/dashboard');
+    router.push("/admin/dashboard");
   };
 
   const handleLogout = async () => {
     setProfileDropdown(false);
     try {
       await signOut();
-      router.push('/');
+      router.push("/");
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     }
   };
 
@@ -109,12 +108,15 @@ export default function NavMenu() {
     e.preventDefault();
 
     const tryScrollOrNavigate = () => {
-      const el = typeof document !== 'undefined' ? document.getElementById('contactFr') : null;
+      const el =
+        typeof document !== "undefined"
+          ? document.getElementById("contactFr")
+          : null;
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
         return;
       }
-      router.push('/home#contactFr');
+      router.push("/home#contactFr");
     };
 
     // Wait a tick so the mobile menu close effect can restore body scroll.
@@ -132,7 +134,11 @@ export default function NavMenu() {
       <header className="headerWrapperDesktop">
         <nav className="navWrapperDesktop">
           <ul className="linksWrapperDesktop">
-            <Link className="linkDesktop" href="/home" onClick={handleLinkClick}>
+            <Link
+              className="linkDesktop"
+              href="/home"
+              onClick={handleLinkClick}
+            >
               Home
             </Link>
             <Link
@@ -142,7 +148,11 @@ export default function NavMenu() {
             >
               About
             </Link>
-            <Link className="linkDesktop" href="/home#contactFr" onClick={handleContactLinkClick}>
+            <Link
+              className="linkDesktop"
+              href="/home#contactFr"
+              onClick={handleContactLinkClick}
+            >
               Contact
             </Link>
           </ul>
@@ -150,22 +160,37 @@ export default function NavMenu() {
             <Logo size="40px" />
           </div>
           <ul className="linksWrapperDesktop">
-            <div className="linkDesktop" id="dropdownElement" onClick={handleDropdown}>
+            <div
+              className="linkDesktop"
+              id="dropdownElement"
+              onClick={handleDropdown}
+            >
               ✨Store
-              {dropdown ?
+              {dropdown ? (
                 <div className="dropdownWrapper">
                   <ul className="dropdownLinkWrapper glass-effect">
-                    <Link href="/music" className="dropdownLink" onClick={handleLinkClick}>
+                    <Link
+                      href="/music"
+                      className="dropdownLink"
+                      onClick={handleLinkClick}
+                    >
                       <IoMoonOutline className="dropdownIcon" />
                       Dreamstation
                     </Link>
                     <hr className="hrLine" />
-                    <li className="dropdownLink">
-                      <IoShirtOutline className="dropdownIcon" />
-                      Clothing
-                    </li>
+                   <Link
+                        href="https://nebulacloudco.com/"
+                        className="mobileStoreDropdownItem mobileStoreDropdownItemLink"
+                        onClick={handleLinkClick}
+                      >
+                        <IoShirtOutline className="mobileDropdownIcon" />
+                        Clothing
+                      </Link>
                   </ul>
-                </div> : ""}
+                </div>
+              ) : (
+                ""
+              )}
             </div>
             <Link className="linkDesktop" href="/faq" onClick={handleLinkClick}>
               FAQ
@@ -180,7 +205,11 @@ export default function NavMenu() {
             )}
             {isHydrated && !user && (
               <>
-                <Link className="linkDesktop" href="/login" onClick={handleLinkClick}>
+                <Link
+                  className="linkDesktop"
+                  href="/login"
+                  onClick={handleLinkClick}
+                >
                   Login
                 </Link>
                 <Link
@@ -196,7 +225,6 @@ export default function NavMenu() {
               <div className="profileContainer">
                 <div className="profileIconsWrapper">
                   <div
-                    
                     className="profileToggleButton"
                     onClick={handleProfileDropdown}
                     aria-label="Open profile menu"
@@ -223,29 +251,26 @@ export default function NavMenu() {
                 {profileDropdown && (
                   <div className="dropdownWrapper">
                     <ul className="dropdownLinkWrapper glass-effect">
-                      <li
-                      onClick={handleViewProfile}
-                        className="dropdownLink"
-                    >
+                      <li onClick={handleViewProfile} className="dropdownLink">
                         <CiUser className="dropdownIcon" />
-                      View Profile
+                        View Profile
                       </li>
-                      {user?.role === 'admin' && (
+                      {user?.role === "admin" && (
                         <>
                           <hr className="hrLine" />
-                          <li onClick={handleAdminDashboard} className="dropdownLink">
+                          <li
+                            onClick={handleAdminDashboard}
+                            className="dropdownLink"
+                          >
                             <CiUser className="dropdownIcon" />
                             Admin Dashboard
                           </li>
                         </>
                       )}
                       <hr className="hrLine" />
-                      <li
-                      onClick={handleLogout}
-                        className="dropdownLink"
-                    >
+                      <li onClick={handleLogout} className="dropdownLink">
                         <IoLogOutOutline className="dropdownIcon" />
-                      Logout
+                        Logout
                       </li>
                     </ul>
                   </div>
@@ -297,17 +322,28 @@ export default function NavMenu() {
                   </Link>
                 </li>
                 <li>
-                  <Link className="linkMobile" href="/home#contactFr" onClick={handleContactLinkClick}>
+                  <Link
+                    className="linkMobile"
+                    href="/home#contactFr"
+                    onClick={handleContactLinkClick}
+                  >
                     Contact
                   </Link>
                 </li>
                 <li>
-                  <Link className="linkMobile" href="/faq" onClick={handleLinkClick}>
+                  <Link
+                    className="linkMobile"
+                    href="/faq"
+                    onClick={handleLinkClick}
+                  >
                     FAQ
                   </Link>
                 </li>
                 <li className="mobileStoreContainer">
-                  <div className="linkMobile mobileStoreButton" onClick={handleDropdown}>
+                  <div
+                    className="linkMobile mobileStoreButton"
+                    onClick={handleDropdown}
+                  >
                     ✨Store
                   </div>
                   {dropdown && (
@@ -321,10 +357,15 @@ export default function NavMenu() {
                         Dreamstation
                       </Link>
                       <hr className="mobileHrLine" />
-                      <li className="mobileStoreDropdownItem">
+                        <Link
+                        href="https://nebulacloudco.com/"
+                        className="mobileStoreDropdownItem mobileStoreDropdownItemLink"
+                        onClick={handleLinkClick}
+                      >
                         <IoShirtOutline className="mobileDropdownIcon" />
                         Clothing
-                      </li>
+                      </Link>
+              
                     </ul>
                   )}
                 </li>
@@ -341,10 +382,18 @@ export default function NavMenu() {
 
                 {isHydrated && !user && (
                   <div className="mobileAuthLinks">
-                    <Link className="linkMobile" href="/login" onClick={handleLinkClick}>
+                    <Link
+                      className="linkMobile"
+                      href="/login"
+                      onClick={handleLinkClick}
+                    >
                       Login
                     </Link>
-                    <Link className="linkMobile" href="/signup" onClick={handleLinkClick}>
+                    <Link
+                      className="linkMobile"
+                      href="/signup"
+                      onClick={handleLinkClick}
+                    >
                       Signup
                     </Link>
                   </div>
@@ -372,27 +421,38 @@ export default function NavMenu() {
                         aria-label="Open cart"
                       >
                         <CiShoppingCart className="navIcons" />
-                        {cartCount > 0 && <span className="navCartBadge">{cartCount}</span>}
+                        {cartCount > 0 && (
+                          <span className="navCartBadge">{cartCount}</span>
+                        )}
                       </Link>
                     </div>
 
                     {profileDropdown && (
                       <ul className="mobileProfileDropdown mobileStoreDropdown">
-                        <li onClick={handleViewProfile} className="mobileStoreDropdownItem">
+                        <li
+                          onClick={handleViewProfile}
+                          className="mobileStoreDropdownItem"
+                        >
                           <CiUser className="mobileDropdownIcon" />
                           View Profile
                         </li>
-                        {user?.role === 'admin' && (
+                        {user?.role === "admin" && (
                           <>
                             <hr className="mobileHrLine" />
-                            <li onClick={handleAdminDashboard} className="mobileStoreDropdownItem">
+                            <li
+                              onClick={handleAdminDashboard}
+                              className="mobileStoreDropdownItem"
+                            >
                               <CiUser className="mobileDropdownIcon" />
                               Admin Dashboard
                             </li>
                           </>
                         )}
                         <hr className="mobileHrLine" />
-                        <li onClick={handleLogout} className="mobileStoreDropdownItem">
+                        <li
+                          onClick={handleLogout}
+                          className="mobileStoreDropdownItem"
+                        >
                           <IoLogOutOutline className="mobileDropdownIcon" />
                           Logout
                         </li>
@@ -403,9 +463,7 @@ export default function NavMenu() {
               </div>
             </nav>
           </div>
-
         </nav>
-
       </header>
     </>
   );
