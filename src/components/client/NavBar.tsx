@@ -184,7 +184,7 @@ export default function NavMenu() {
                         onClick={handleLinkClick}
                       >
                         <IoShirtOutline className="mobileDropdownIcon" />
-                        Clothing
+                        Nebula Clouds Co.
                       </Link>
                   </ul>
                 </div>
@@ -363,7 +363,7 @@ export default function NavMenu() {
                         onClick={handleLinkClick}
                       >
                         <IoShirtOutline className="mobileDropdownIcon" />
-                        Clothing
+                        Nebula Clouds Co.
                       </Link>
               
                     </ul>
