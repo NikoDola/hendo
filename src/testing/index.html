@@ -113,7 +113,10 @@
                 });
 
                 // ---------- ZOOMING STARS (persistent, infinite) ----------
-                const ZOOMING_STAR_COUNT = 12;  // a bit more presence
+                // Keep a density per viewport area so enlarged windows are repopulated.
+                const ZOOMING_STAR_DENSITY = 150000; // pixels per zooming star
+                const MIN_ZOOMING_STARS = 12;
+                let zoomingStarCount = MIN_ZOOMING_STARS;
 
                 function createZoomingStar() {
                     const star = document.createElement('div');
@@ -148,10 +151,21 @@
                     hardLayer.appendChild(star);
                 }
 
-                // initial batch
-                for (let i = 0; i < ZOOMING_STAR_COUNT; i++) {
-                    createZoomingStar();
+                function getTargetZoomingStarCount() {
+                    const area = window.innerWidth * window.innerHeight;
+                    return Math.max(MIN_ZOOMING_STARS, Math.ceil(area / ZOOMING_STAR_DENSITY));
                 }
+
+                function refillZoomingStars() {
+                    const missing = Math.max(0, zoomingStarCount - hardLayer.querySelectorAll('.zooming-star').length);
+                    for (let i = 0; i < missing; i++) {
+                        createZoomingStar();
+                    }
+                }
+
+                // initial batch
+                zoomingStarCount = getTargetZoomingStarCount();
+                refillZoomingStars();
 
                 // ---------- canvas global variables ----------
                 let width, height;
@@ -164,6 +178,8 @@
                 updateDimensions();
                 window.addEventListener('resize', () => {
                     updateDimensions();
+                    zoomingStarCount = getTargetZoomingStarCount();
+                    refillZoomingStars();
                     // critical: when canvas resizes, we need to reposition all existing canvas stars
                     // we recreate star array according to new dimensions.
                     initStarsAndShooters();
@@ -251,7 +267,7 @@
 
                 function initStarsAndShooters() {
                     // recreate stars based on NEW width/height
-                    const starCount = Math.min(Math.floor(height * 0.5), 500);  // as original
+                    const starCount = Math.min(Math.floor((width * height) / 2500), 700);
                     const newEntities = [];
 
                     for (let i = 0; i < starCount; i++) {
