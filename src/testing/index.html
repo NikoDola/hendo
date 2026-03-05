@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas + Zoom stars · unified effect</title>
+    <style>
+        /* minimal reset, just to make body full screen */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #000; /* fallback, canvas covers anyway */
+            min-height: 100vh;
+        }
+
+        /* ---- HARD LAYER (for zooming stars & optional red dots) ---- */
+        #hard-effects-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 2147483647;   /* keep on top, but pointer-events none */
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        /* red test dots (optional — you can remove if unwanted) */
+        .test-dot {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: red;
+            border-radius: 50%;
+        }
+        /* predefined positions (keep or delete) */
+        .test-dot.d1 { top: 20%; left: 20%; }
+        .test-dot.d2 { top: 60%; left: 70%; }
+        .test-dot.d3 { top: 40%; left: 50%; }
+        .test-dot.d4 { top: 75%; left: 30%; }
+
+        /* zooming stars base style */
+        .zooming-star {
+            position: absolute;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            width: 30px;  /* will be overridden by inline style */
+            height: 30px;
+            will-change: transform, opacity;
+        }
+
+        @keyframes starLifecycle {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- canvas background (parallax stars + shooting stars) placed behind everything -->
+    <canvas id="parallax-stars-bg"></canvas>
+
+    <!-- div for zooming stars (and test dots) -->
+    <div id="hard-effects-layer"></div>
+
+    <script>
+        (function() {
+            // --------------------------------------------------------------
+            // 1) CANVAS STARS (background + shooting stars)
+            //    + dynamic resize: stars reposition relative to new dimensions
+            // --------------------------------------------------------------
+            function initCanvasAndLayer() {
+                const canvas = document.getElementById('parallax-stars-bg');
+                const hardLayer = document.getElementById('hard-effects-layer');
+
+                if (!canvas || !hardLayer) {
+                    // retry until DOM ready
+                    setTimeout(initCanvasAndLayer, 50);
+                    return;
+                }
+
+                // ---------- canvas setup ----------
+                const ctx = canvas.getContext('2d');
+                if (!ctx) return;
+
+                // styles (canvas will be fixed and behind)
+                canvas.style.position = 'fixed';
+                canvas.style.top = '0';
+                canvas.style.left = '0';
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+                canvas.style.pointerEvents = 'none';
+                canvas.style.zIndex = '-1';           // behind everything
+
+                // ---------- hard layer: test dots (optional) ----------
+                // (if you want to keep the 4 red circles as reference)
+                const redPositions = [
+                    { top: '20%', left: '20%' },
+                    { top: '60%', left: '70%' },
+                    { top: '40%', left: '50%' },
+                    { top: '75%', left: '30%' }
+                ];
+                redPositions.forEach(pos => {
+                    const dot = document.createElement('div');
+                    dot.className = 'test-dot';
+                    dot.style.top = pos.top;
+                    dot.style.left = pos.left;
+                    hardLayer.appendChild(dot);
+                });
+
+                // ---------- ZOOMING STARS (persistent, infinite) ----------
+                const ZOOMING_STAR_COUNT = 12;  // a bit more presence
+
+                function createZoomingStar() {
+                    const star = document.createElement('div');
+                    star.className = 'zooming-star';
+
+                    // random relative position (vw/vh based, but using % so it scales with screen)
+                    const x = Math.random() * 100;   // % of viewport width
+                    const y = Math.random() * 100;   // % of viewport height
+                    const size = 15 + Math.random() * 30;   // between 15px and 45px
+                    const duration = 4000 + Math.random() * 4000;  // 4-8 sec
+                    const delay = Math.random() * 4000;
+
+                    star.style.left = x + '%';
+                    star.style.top = y + '%';
+                    star.style.width = size + 'px';
+                    star.style.height = size + 'px';
+                    star.style.animation = `starLifecycle ${duration}ms ease-in-out ${delay}ms 1 forwards`;
+
+                    // svg star (white, same shape as original)
+                    star.innerHTML = `
+                        <svg viewBox="0 0 52 52" width="100%" height="100%" style="display:block;">
+                            <path d="M52,26c-23.9,1.2-24.8,2.1-26,26c-1.2-23.9-2.1-24.8-26-26c23.9-1.2,24.8-2.1,26-26C27.2,23.9,28.1,24.8,52,26z" fill="white"/>
+                        </svg>
+                    `;
+
+                    // when animation ends, remove and create a new one (endless)
+                    star.addEventListener('animationend', function onEnd() {
+                        star.remove();
+                        createZoomingStar();   // spawn a new star elsewhere
+                    });
+
+                    hardLayer.appendChild(star);
+                }
+
+                // initial batch
+                for (let i = 0; i < ZOOMING_STAR_COUNT; i++) {
+                    createZoomingStar();
+                }
+
+                // ---------- canvas global variables ----------
+                let width, height;
+                const updateDimensions = () => {
+                    width = window.innerWidth;
+                    height = window.innerHeight;
+                    canvas.width = width;
+                    canvas.height = height;
+                };
+                updateDimensions();
+                window.addEventListener('resize', () => {
+                    updateDimensions();
+                    // critical: when canvas resizes, we need to reposition all existing canvas stars
+                    // we recreate star array according to new dimensions.
+                    initStarsAndShooters();
+                });
+
+                // ---------- theme color handling ----------
+                const DEFAULT_COLOR = 'hsl(220, 100%, 50%)'; // blue
+                let shootingColor = DEFAULT_COLOR;
+                const getThemeColor = () => {
+                    try {
+                        const inline = document.documentElement.style.getPropertyValue('--theme-color').trim();
+                        if (inline) return inline;
+                        const computed = getComputedStyle(document.documentElement).getPropertyValue('--theme-color').trim();
+                        return computed || DEFAULT_COLOR;
+                    } catch (e) {
+                        return DEFAULT_COLOR;
+                    }
+                };
+                setInterval(() => {
+                    shootingColor = getThemeColor();
+                }, 300);
+
+                // ---------- star classes (canvas) ----------
+                class Star {
+                    constructor() {
+                        this.reset();
+                        // but we want initial x,y within current canvas
+                        this.x = Math.random() * width;
+                        this.y = Math.random() * height;
+                    }
+
+                    reset() {
+                        this.size = Math.random() * 2;
+                        this.speed = Math.random() * 0.1;
+                        this.x = width;               // start from right edge
+                        this.y = Math.random() * height;
+                    }
+
+                    update() {
+                        this.x -= this.speed;
+                        if (this.x < 0) this.reset();
+                        // draw as simple rect (white)
+                        ctx.fillRect(this.x, this.y, this.size, this.size);
+                    }
+                }
+
+                class ShootingStar {
+                    constructor() {
+                        this.reset();
+                    }
+
+                    reset() {
+                        this.x = Math.random() * width;
+                        this.y = 0;
+                        this.len = Math.random() * 80 + 10;
+                        this.speed = Math.random() * 10 + 6;
+                        this.size = Math.random() * 1 + 0.1;
+                        this.waitTime = Date.now() + Math.random() * 3000 + 500;
+                        this.active = false;
+                    }
+
+                    update() {
+                        if (this.active) {
+                            this.x -= this.speed;
+                            this.y += this.speed;
+
+                            if (this.x < 0 || this.y > height) {
+                                this.reset();
+                            } else {
+                                ctx.lineWidth = this.size;
+                                ctx.strokeStyle = shootingColor;
+                                ctx.beginPath();
+                                ctx.moveTo(this.x, this.y);
+                                ctx.lineTo(this.x + this.len, this.y - this.len);
+                                ctx.stroke();
+                            }
+                        } else if (this.waitTime < Date.now()) {
+                            this.active = true;
+                        }
+                    }
+                }
+
+                // global canvas entities array
+                let entities = [];
+
+                function initStarsAndShooters() {
+                    // recreate stars based on NEW width/height
+                    const starCount = Math.min(Math.floor(height * 0.5), 500);  // as original
+                    const newEntities = [];
+
+                    for (let i = 0; i < starCount; i++) {
+                        newEntities.push(new Star());
+                    }
+                    for (let i = 0; i < 8; i++) {
+                        newEntities.push(new ShootingStar());
+                    }
+
+                    entities = newEntities;
+                }
+
+                // first population
+                initStarsAndShooters();
+
+                // ---------- animation ----------
+                const startTime = Date.now();
+                const FADE_DURATION = 3000;
+                const MAX_STAR_OPACITY = 0.8;
+
+                function animate() {
+                    try {
+                        const elapsed = Date.now() - startTime;
+                        const opacity = Math.min(elapsed / FADE_DURATION, 1) * MAX_STAR_OPACITY;
+
+                        // clear canvas with black
+                        ctx.globalAlpha = 1;
+                        ctx.fillStyle = '#000';
+                        ctx.fillRect(0, 0, width, height);
+
+                        // draw stars with fade-in opacity
+                        ctx.globalAlpha = opacity;
+                        ctx.fillStyle = '#fff';   // star color
+
+                        // loop through entities (canvas stars + shooting stars)
+                        // note: shooting star uses its own strokeStyle
+                        entities.forEach(e => {
+                            if (e && typeof e.update === 'function') {
+                                e.update();
+                            }
+                        });
+
+                        ctx.globalAlpha = 1;
+                    } catch (e) {
+                        // silent fail for shopify safety
+                    }
+
+                    requestAnimationFrame(animate);
+                }
+
+                animate();
+
+                // expose a way to re-init if needed (optional but safe)
+                window.addEventListener('theme-change', () => {}); // placeholder
+            }
+
+            // start everything after DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initCanvasAndLayer);
+            } else {
+                initCanvasAndLayer();
+            }
+        })();
+    </script>
+
+    <!-- small note: red dots and zoom stars are inside hard layer, canvas behind.
+         On window resize, canvas stars are re-generated proportionally.
+         Zooming stars use % and recreate infinitely, so they adapt automatically. -->
+</body>
+</html>

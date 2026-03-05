@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useRef, useState } from 'react';
+import  { useEffect, useRef} from 'react';
 
 const BackgroundComponent = ({ children }) => {
     const canvasRef = useRef(null);
