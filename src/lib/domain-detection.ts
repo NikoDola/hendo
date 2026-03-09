@@ -20,7 +20,7 @@ export const DOMAIN_CONFIGS: Record<SupportedDomain, DomainConfig> = {
   },
   nebulaclouds: {
     name: 'nebulaclouds',
-    displayName: 'Nebula Clouds',
+    displayName: 'Nebula Cloud',
     primaryColor: '#4ECDC4',
     logo: '/images/nebula-logo.png',
     theme: 'nebula'
