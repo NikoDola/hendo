@@ -1,11 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { firebaseAdmin } from '@/lib/firebaseAdmin';
-
-const ADMIN_EMAILS = new Set([
-  'thelegendofhendo@gmail.com',
-  'nikodola@gmail.com',
-]);
+import { isAuthorizedAdmin } from '@/lib/auth';
 
 export async function GET() {
   try {
@@ -16,10 +12,9 @@ export async function GET() {
     }
 
     const decoded = await firebaseAdmin.auth().verifySessionCookie(session, true);
-    const email = decoded.email || '';
+    const email = (decoded.email || '').toLowerCase();
     const name = decoded.name || email.split('@')[0];
-
-    const role = ADMIN_EMAILS.has(email.toLowerCase()) ? 'admin' : 'user';
+    const role = isAuthorizedAdmin(email) ? 'admin' : 'user';
 
     return NextResponse.json({
       authenticated: true,
@@ -35,5 +30,3 @@ export async function GET() {
     return NextResponse.json({ authenticated: false }, { status: 401 });
   }
 }
-
-

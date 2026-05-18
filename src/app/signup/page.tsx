@@ -88,9 +88,15 @@ export default function SignupPage() {
       // Create Firebase account
       const cred = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const idToken = await cred.user.getIdToken();
-      await fetch('/api/auth/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken }) });
-      // Upsert name details in backend separately
-      await fetch('/api/auth/signup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ firstName: formData.firstName, lastName: formData.lastName, email: formData.email }) });
+      await fetch('/api/auth/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          idToken,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+        }),
+      });
       setSuccess(true);
       setTimeout(async () => {
         const me = await fetch('/api/auth/me');

@@ -142,10 +142,9 @@ export async function PUT(
     return NextResponse.json({ track: updatedTrack });
 
   } catch (error: unknown) {
-    const err = error as Error;
     console.error('Update music track error:', error);
     return NextResponse.json(
-      { error: err.message || 'Failed to update music track' },
+      { error: 'Failed to update music track' },
       { status: 500 }
     );
   }

@@ -155,26 +155,25 @@ export async function POST(request: NextRequest) {
     } catch (createError: unknown) {
       const error = createError as Error;
       console.error('Create music track error:', createError);
-      const errorMessage = error.message || 'Unknown error occurred';
-      
+      const errorMessage = error.message || '';
+
       let statusCode = 500;
+      let clientMessage = 'Failed to save track. Please try again.';
       if (errorMessage.includes('permission') || errorMessage.includes('unauthorized')) {
         statusCode = 403;
+        clientMessage = 'You do not have permission to save tracks.';
       } else if (errorMessage.includes('quota')) {
         statusCode = 507;
+        clientMessage = 'Storage quota exceeded. Please contact the administrator.';
       }
-      
-      return NextResponse.json(
-        { error: `Failed to save track: ${errorMessage}` },
-        { status: statusCode }
-      );
+
+      return NextResponse.json({ error: clientMessage }, { status: statusCode });
     }
 
   } catch (error: unknown) {
-    const err = error as Error;
     console.error('Create music track error:', error);
     return NextResponse.json(
-      { error: err.message || 'Failed to create music track. Please try again.' },
+      { error: 'Failed to create music track. Please try again.' },
       { status: 500 }
     );
   }

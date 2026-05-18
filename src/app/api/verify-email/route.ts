@@ -72,7 +72,16 @@ export async function POST(request: NextRequest) {
   } catch (error: unknown) {
     console.error('Email verification error:', error);
 
-    // Always return something actionable (without stack traces / secrets)
+    const isProd = process.env.NODE_ENV === 'production';
+
+    // In prod we never echo internal error detail back to the client.
+    if (isProd) {
+      return NextResponse.json(
+        { error: 'Email verification failed. Please try again later.' },
+        { status: 500 }
+      );
+    }
+
     const message =
       error instanceof Error
         ? error.message || error.name || 'Internal server error'

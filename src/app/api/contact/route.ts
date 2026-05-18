@@ -8,23 +8,32 @@ export async function POST(request: NextRequest) {
   try {
     const { name, email, message, recaptchaToken } = await request.json();
 
-    // Verify reCAPTCHA token
-    if (recaptchaToken) {
-      const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
-      if (recaptchaSecret) {
-        const verifyResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: `secret=${recaptchaSecret}&response=${recaptchaToken}`,
-        });
+    // reCAPTCHA: required in production; optional in development (so local dev
+    // without the secret still works). Previously the verification block was
+    // skipped silently when no token was sent — an obvious bypass.
+    const isProd = process.env.NODE_ENV === 'production';
+    const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
 
-        const verifyData = await verifyResponse.json();
-        if (!verifyData.success || verifyData.score < 0.5) {
-          return NextResponse.json(
-            { error: 'reCAPTCHA verification failed. Please try again.' },
-            { status: 400 }
-          );
-        }
+    if (isProd && (!recaptchaToken || !recaptchaSecret)) {
+      return NextResponse.json(
+        { error: 'reCAPTCHA verification is required.' },
+        { status: 400 }
+      );
+    }
+
+    if (recaptchaToken && recaptchaSecret) {
+      const verifyResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `secret=${encodeURIComponent(recaptchaSecret)}&response=${encodeURIComponent(recaptchaToken)}`,
+      });
+
+      const verifyData = await verifyResponse.json();
+      if (!verifyData.success || (typeof verifyData.score === 'number' && verifyData.score < 0.5)) {
+        return NextResponse.json(
+          { error: 'reCAPTCHA verification failed. Please try again.' },
+          { status: 400 }
+        );
       }
     }
 

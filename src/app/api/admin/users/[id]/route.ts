@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { isAdminEmail } from '@/lib/auth';
-import { db } from '@/lib/firebase';
-import { doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { cookies } from 'next/headers';
 import { firebaseAdmin } from '@/lib/firebaseAdmin';
+import { isAuthorizedAdmin } from '@/lib/auth';
 
 export async function DELETE(
   request: NextRequest,
@@ -11,7 +9,6 @@ export async function DELETE(
 ) {
   const { id } = await params;
   try {
-    // Verify admin via Firebase session cookie
     const cookieStore = await cookies();
     const session = cookieStore.get('fb_session')?.value;
     if (!session) {
@@ -20,20 +17,19 @@ export async function DELETE(
 
     const decoded = await firebaseAdmin.auth().verifySessionCookie(session, true);
     const email = decoded.email?.toLowerCase() || '';
-    if (!isAdminEmail(email)) {
+    if (!isAuthorizedAdmin(email)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Fetch Firestore doc to get authUid
-    const userRef = doc(db, 'users', id);
-    const snapshot = await getDoc(userRef);
-    if (snapshot.exists()) {
-      const data = snapshot.data() as { authUid?: string; email?: string };
-      // Try delete in Firebase Auth first
+    const db = firebaseAdmin.firestore();
+    const userRef = db.collection('users').doc(id);
+    const snapshot = await userRef.get();
+
+    if (snapshot.exists) {
+      const data = snapshot.data() as { authUid?: string; email?: string } | undefined;
       try {
-        let uidToDelete = data.authUid as string | undefined;
-        if (!uidToDelete && data.email) {
-          // Fallback: resolve UID by email if we never stored authUid
+        let uidToDelete = data?.authUid;
+        if (!uidToDelete && data?.email) {
           const userRecord = await firebaseAdmin.auth().getUserByEmail(String(data.email));
           uidToDelete = userRecord.uid;
         }
@@ -43,11 +39,10 @@ export async function DELETE(
       } catch (e) {
         console.warn('Auth user delete failed (continuing to delete Firestore doc):', e);
       }
-      // Remove Firestore document
-      await deleteDoc(userRef);
+      await userRef.delete();
     }
-    return NextResponse.json({ success: true });
 
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Delete user error:', error);
     return NextResponse.json(

@@ -17,14 +17,9 @@ export async function GET() {
     return NextResponse.json({ purchases });
 
   } catch (error: unknown) {
-    const err = error as Error & { stack?: string };
     console.error('Get purchases error:', error);
-    console.error('Error details:', {
-      message: err.message,
-      stack: err.stack
-    });
     return NextResponse.json(
-      { error: err.message || 'Failed to get purchases', purchases: [] },
+      { error: 'Failed to get purchases', purchases: [] },
       { status: 500 }
     );
   }

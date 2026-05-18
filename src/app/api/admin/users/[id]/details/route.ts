@@ -1,16 +1,13 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { firebaseAdmin } from '@/lib/firebaseAdmin';
-import { isAdminEmail } from '@/lib/auth';
-import { db } from '@/lib/firebase';
-import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { isAuthorizedAdmin } from '@/lib/auth';
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Verify admin
     const cookieStore = await cookies();
     const session = cookieStore.get('fb_session')?.value;
     if (!session) {
@@ -19,47 +16,56 @@ export async function GET(
 
     const decoded = await firebaseAdmin.auth().verifySessionCookie(session, true);
     const email = decoded.email?.toLowerCase() || '';
-    if (!isAdminEmail(email)) {
+    if (!isAuthorizedAdmin(email)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id: userId } = await params;
+    const db = firebaseAdmin.firestore();
 
-    // Get user details
-    const userDoc = await getDoc(doc(db, 'users', userId));
-    if (!userDoc.exists()) {
+    const userDoc = await db.collection('users').doc(userId).get();
+    if (!userDoc.exists) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const userData = userDoc.data();
+    const userData = userDoc.data() as Record<string, unknown>;
+    const createdAt = (userData.createdAt as { toDate?: () => Date } | undefined)?.toDate?.();
+    const lastLoginAt = (userData.lastLoginAt as { toDate?: () => Date } | undefined)?.toDate?.();
+
     const user = {
       id: userDoc.id,
-      email: userData.email,
-      name: userData.name,
-      role: userData.role,
-      createdAt: userData.createdAt?.toDate().toISOString() || new Date().toISOString(),
-      lastLoginAt: userData.lastLoginAt?.toDate().toISOString() || new Date().toISOString(),
-      ipAddress: userData.ipAddress,
+      email: String(userData.email || ''),
+      name: String(userData.name || ''),
+      role: String(userData.role || 'user'),
+      createdAt: createdAt ? createdAt.toISOString() : new Date().toISOString(),
+      lastLoginAt: lastLoginAt ? lastLoginAt.toISOString() : new Date().toISOString(),
+      ipAddress: userData.ipAddress as string | undefined,
     };
 
-    // Get user purchases
-    const purchasesRef = collection(db, 'purchases');
-    const q = query(purchasesRef, where('userId', '==', userId));
-    const purchasesSnapshot = await getDocs(q);
+    const purchasesSnap = await db
+      .collection('purchases')
+      .where('userId', '==', userId)
+      .get();
 
-    const purchases = purchasesSnapshot.docs.map(doc => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        trackId: data.trackId,
-        trackTitle: data.trackTitle,
-        price: data.price,
-        purchasedAt: data.purchasedAt?.toDate().toISOString() || data.createdAt?.toDate().toISOString() || new Date().toISOString(),
-      };
-    });
-
-    // Sort by purchase date (newest first)
-    purchases.sort((a, b) => new Date(b.purchasedAt).getTime() - new Date(a.purchasedAt).getTime());
+    const purchases = purchasesSnap.docs
+      .map((d) => {
+        const data = d.data() as Record<string, unknown>;
+        const purchasedAt =
+          (data.purchasedAt as { toDate?: () => Date } | undefined)?.toDate?.() ||
+          (data.createdAt as { toDate?: () => Date } | undefined)?.toDate?.() ||
+          new Date();
+        return {
+          id: d.id,
+          trackId: String(data.trackId || ''),
+          trackTitle: String(data.trackTitle || ''),
+          price: typeof data.price === 'number' ? data.price : Number(data.price || 0),
+          purchasedAt: purchasedAt.toISOString(),
+        };
+      })
+      .sort(
+        (a, b) =>
+          new Date(b.purchasedAt).getTime() - new Date(a.purchasedAt).getTime()
+      );
 
     return NextResponse.json({ user, purchases });
   } catch (error) {
@@ -70,4 +76,3 @@ export async function GET(
     );
   }
 }
-

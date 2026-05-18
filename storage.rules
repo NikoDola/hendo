@@ -1,28 +1,41 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    // Music files - public read, admin write
-    match /music/{allPaths=**} {
-      allow read: if true; // Public read for music files (previews)
-      allow write: if request.auth != null && 
-        (request.auth.token.email.matches('.*@nikodola\\.com$') ||
-         request.auth.token.email.matches('.*thelegendofhendo@gmail\\.com$') ||
-         request.auth.token.email.matches('.*nikodola@gmail\\.com$'));
+    // Single-segment audio files (e.g. music/12345_song.mp3) — public preview
+    match /music/{file} {
+      allow read: if true;
+      allow write: if isAdminAuth();
     }
-    
-    // Purchased files - users can only read their own purchases
-    // Note: Server uploads use Admin SDK (bypasses rules)
-    // Downloads use signed URLs (bypass rules), but direct access still requires auth
-    match /purchases/{userId}/{allPaths=**} {
-      allow read: if request.auth != null && 
-        request.auth.uid == userId;
-      allow write: if false; // Only server (Admin SDK) can write purchases
+
+    // Cover images — public
+    match /music/images/{file=**} {
+      allow read: if true;
+      allow write: if isAdminAuth();
     }
-    
-    // Deny all other paths by default
+
+    // Rights PDFs — NOT publicly readable. Server uses Admin SDK / signed URLs.
+    match /music/pdfs/{file=**} {
+      allow read: if false;
+      allow write: if isAdminAuth();
+    }
+
+    // Purchased content — each user can read only their own files.
+    // Writes are server-only (Admin SDK).
+    match /purchases/{userId}/{file=**} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false;
+    }
+
+    // Default deny
     match /{allPaths=**} {
       allow read, write: if false;
     }
+
+    function isAdminAuth() {
+      return request.auth != null && request.auth.token.email != null && (
+        request.auth.token.email == 'thelegendofhendo@gmail.com' ||
+        request.auth.token.email == 'nikodola@gmail.com'
+      );
+    }
   }
 }
-

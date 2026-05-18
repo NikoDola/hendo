@@ -34,13 +34,16 @@ interface UserAuthContextValue {
 
 const UserAuthContext = createContext<UserAuthContextValue | undefined>(undefined);
 
-async function setServerSessionFromCurrentUser(firebaseUser: FirebaseUser | null): Promise<void> {
+async function setServerSessionFromCurrentUser(
+  firebaseUser: FirebaseUser | null,
+  profile?: { firstName?: string; lastName?: string }
+): Promise<void> {
   if (!firebaseUser) return;
   const idToken = await firebaseUser.getIdToken();
   const response = await fetch('/api/auth/session', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ idToken }),
+    body: JSON.stringify({ idToken, ...(profile ?? {}) }),
   });
   if (!response.ok) {
     const error = await response.text();
@@ -195,13 +198,7 @@ export function UserAuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUpEmail = useCallback(async (firstName: string, lastName: string, email: string, password: string) => {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
-    await setServerSessionFromCurrentUser(cred.user);
-    // Upsert profile info on server (no password sent)
-    await fetch('/api/auth/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ firstName, lastName, email }),
-    });
+    await setServerSessionFromCurrentUser(cred.user, { firstName, lastName });
   }, []);
 
   const signOut = useCallback(async () => {

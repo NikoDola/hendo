@@ -1,5 +1,4 @@
 import { cookies } from 'next/headers';
-import bcrypt from 'bcryptjs';
 import { firebaseAdmin } from '@/lib/firebaseAdmin';
 
 export interface User {
@@ -9,7 +8,6 @@ export interface User {
   authUid?: string;
   firstName?: string;
   lastName?: string;
-  password?: string;
   role: 'admin' | 'user';
   createdAt: Date;
   lastLoginAt: Date;
@@ -18,28 +16,23 @@ export interface User {
   totalSpent?: number;
 }
 
-const ADMIN_EMAILS = ['thelegendofhendo@gmail.com', 'nikodola@gmail.com'];
-const SALT_ROUNDS = 12;
-
-// ============================================================================
-// Password Management
-// ============================================================================
-
-export async function hashPassword(password: string): Promise<string> {
-  return await bcrypt.hash(password, SALT_ROUNDS);
-}
-
-export async function verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
-  return await bcrypt.compare(password, hashedPassword);
-}
+// Single source of truth for admin allowlist. Add/remove emails here only.
+const ADMIN_EMAILS: ReadonlySet<string> = new Set([
+  'thelegendofhendo@gmail.com',
+  'nikodola@gmail.com',
+]);
 
 // ============================================================================
 // User Role Management
 // ============================================================================
 
-export function isAdminEmail(email: string): boolean {
-  return ADMIN_EMAILS.includes(email.toLowerCase());
+export function isAuthorizedAdmin(email: string | null | undefined): boolean {
+  if (!email) return false;
+  return ADMIN_EMAILS.has(email.toLowerCase());
 }
+
+// Backwards-compatible alias so older imports keep working.
+export const isAdminEmail = isAuthorizedAdmin;
 
 // ============================================================================
 // User CRUD Operations
@@ -51,12 +44,11 @@ export async function createOrUpdateUser(userData: {
   authUid?: string;
   firstName?: string;
   lastName?: string;
-  password?: string;
   ipAddress?: string;
 }): Promise<User> {
   try {
     const email = userData.email.toLowerCase();
-    const isAdmin = isAdminEmail(email);
+    const isAdmin = isAuthorizedAdmin(email);
 
     // Use Admin SDK on the server to avoid Firestore rules / permission-denied on refresh.
     const adminDb = firebaseAdmin.firestore();
@@ -79,7 +71,6 @@ async function createNewUser(userData: {
   authUid?: string;
   firstName?: string;
   lastName?: string;
-  password?: string;
 }, isAdmin: boolean): Promise<User> {
   const adminDb = firebaseAdmin.firestore();
   const payload: Record<string, unknown> = {
@@ -94,7 +85,6 @@ async function createNewUser(userData: {
 
   if (userData.firstName) payload.firstName = userData.firstName;
   if (userData.lastName) payload.lastName = userData.lastName;
-  if (userData.password) payload.password = await hashPassword(userData.password);
 
   const newUserRef = await adminDb.collection('users').add(payload);
 
@@ -205,60 +195,8 @@ export async function deleteUser(userId: string): Promise<void> {
 }
 
 // ============================================================================
-// Authentication Operations
+// Session
 // ============================================================================
-
-export async function authenticateUser(credentials: {
-  email: string;
-  password: string;
-  ipAddress?: string;
-}): Promise<User> {
-  try {
-    const email = credentials.email.toLowerCase();
-    const adminDb = firebaseAdmin.firestore();
-    const querySnapshot = await adminDb.collection('users').where('email', '==', email).limit(1).get();
-
-    if (querySnapshot.empty) {
-      throw new Error('Invalid email or password');
-    }
-
-    const userDoc = querySnapshot.docs[0];
-    const userData = userDoc.data();
-
-    if (!userData.password) {
-      throw new Error('Please use Google sign-in for this account');
-    }
-
-    const isValidPassword = await verifyPassword(credentials.password, userData.password);
-    if (!isValidPassword) {
-      throw new Error('Invalid email or password');
-    }
-
-    await adminDb.collection('users').doc(userDoc.id).set(
-      {
-        lastLoginAt: firebaseAdmin.firestore.FieldValue.serverTimestamp(),
-        ipAddress: credentials.ipAddress,
-      },
-      { merge: true }
-    );
-
-    return {
-      id: userDoc.id,
-      email: userData.email,
-      name: userData.name,
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      role: userData.role,
-      createdAt: userData.createdAt?.toDate() || new Date(),
-      lastLoginAt: new Date(),
-      ipAddress: userData.ipAddress,
-      purchases: userData.purchases || 0
-    };
-  } catch (error) {
-    console.error('Error authenticating user:', error);
-    throw new Error(error instanceof Error ? error.message : 'Authentication failed');
-  }
-}
 
 export async function getUserFromSession(): Promise<User | null> {
   try {
@@ -289,7 +227,7 @@ export async function getUserFromSession(): Promise<User | null> {
     if (userSnap.empty) {
       // Create minimal profile (needed for engagement tracking, purchases, etc.)
       const name = decodedClaims.name || email.split('@')[0];
-      const role = isAdminEmail(email) ? 'admin' : 'user';
+      const role = isAuthorizedAdmin(email) ? 'admin' : 'user';
       const ref = await adminDb.collection('users').add({
         email,
         name,
@@ -332,7 +270,7 @@ export async function getUserFromSession(): Promise<User | null> {
       email: String(data.email || email),
       name: String(data.name || decodedClaims.name || email.split('@')[0]),
       authUid: String(data.authUid || uid),
-      role: (data.role as 'admin' | 'user') || (isAdminEmail(email) ? 'admin' : 'user'),
+      role: (data.role as 'admin' | 'user') || (isAuthorizedAdmin(email) ? 'admin' : 'user'),
       createdAt,
       lastLoginAt,
       ipAddress: data.ipAddress as string | undefined,

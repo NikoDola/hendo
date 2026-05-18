@@ -12,10 +12,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Request body is empty' }, { status: 400 });
     }
     
-    const { idToken } = JSON.parse(body);
+    const parsed = JSON.parse(body);
+    const { idToken } = parsed as { idToken?: string };
     if (!idToken) {
       return NextResponse.json({ error: 'idToken is required' }, { status: 400 });
     }
+    const profileFirstName = typeof parsed.firstName === 'string' ? parsed.firstName.trim().slice(0, 100) : undefined;
+    const profileLastName = typeof parsed.lastName === 'string' ? parsed.lastName.trim().slice(0, 100) : undefined;
 
     const expiresIn = 1000 * 60 * 60 * 24 * 7; // 7 days
     let sessionCookie: string;
@@ -38,9 +41,15 @@ export async function POST(request: NextRequest) {
     // Upsert user in Firestore based on decoded token
     const decoded = await firebaseAdmin.auth().verifyIdToken(idToken, true);
     const email = decoded.email || '';
-    const name = decoded.name || email.split('@')[0];
-    const [firstName, ...rest] = name.split(' ');
-    const lastName = rest.join(' ');
+    const decodedName = decoded.name || '';
+    const [decodedFirst, ...decodedRest] = decodedName.split(' ');
+    const decodedLast = decodedRest.join(' ');
+    const firstName = profileFirstName || decodedFirst || undefined;
+    const lastName = profileLastName || decodedLast || undefined;
+    const name =
+      decodedName ||
+      [firstName, lastName].filter(Boolean).join(' ') ||
+      email.split('@')[0];
     try {
       await createOrUpdateUser({
         email,

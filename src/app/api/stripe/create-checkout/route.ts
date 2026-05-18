@@ -14,33 +14,19 @@ export async function POST(request: NextRequest) {
       price?: number;
     };
 
-    // Get base URL from the request (for local testing) or env variable
-    // Check multiple headers to determine the correct base URL
-    let baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    
-    // Try to get from origin header first
-    const origin = request.headers.get('origin');
-    if (origin) {
-      baseUrl = origin;
-    } else {
-      // Fall back to referer or host header
-      const referer = request.headers.get('referer');
-      if (referer) {
-        try {
-          const url = new URL(referer);
-          baseUrl = `${url.protocol}//${url.host}`;
-        } catch {
-          // If parsing fails, use default
-        }
-      } else {
-        // Try host header
-        const host = request.headers.get('host');
-        if (host) {
-          baseUrl = `http://${host}`;
-        }
-      }
+    // Base URL is server-controlled. Never read from Origin/Referer/Host —
+    // those are attacker-controllable and would let a third party redirect the
+    // Stripe success flow to their own domain (phishing + session_id leak).
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+      || (process.env.NODE_ENV !== 'production' ? 'http://localhost:3000' : '');
+    if (!baseUrl) {
+      console.error('NEXT_PUBLIC_BASE_URL is not set in production');
+      return NextResponse.json(
+        { error: 'Checkout is misconfigured. Please contact support.' },
+        { status: 500 }
+      );
     }
-    
+
     const successUrl = `${baseUrl}/music/success?session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${baseUrl}/music/cancel`;
 
