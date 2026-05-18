@@ -91,6 +91,12 @@ export function UserAuthProvider({ children }: { children: React.ReactNode }) {
     })();
 
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
+      // Block protected pages from bouncing while we resolve the server session + role.
+      // Without this, there is a window where loading=false and user=null right after sign-in,
+      // which causes /admin/dashboard and /dashboard to redirect back to /login.
+      if (fbUser) {
+        setLoading(true);
+      }
       try {
         if (fbUser) {
           await setServerSessionFromCurrentUser(fbUser);

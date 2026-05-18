@@ -7,6 +7,20 @@ import { auth } from '@/lib/firebase';
 import { useUserAuth } from '@/context/UserAuthContext';
 import '@/components/pages/Login.css';
 
+type DebugInfo = {
+  step: string;
+  contextLoading: boolean;
+  contextUserEmail: string | null;
+  contextUserRole: string | null;
+  meStatus: number | null;
+  meBody: string | null;
+  sessionStatus: number | null;
+  cookieEnabled: boolean;
+  protocol: string;
+  host: string;
+  lastError: string | null;
+};
+
 export default function LoginPage() {
   const [formData, setFormData] = useState({
     email: '',
@@ -15,11 +29,36 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
-  const { user, loading } = useUserAuth();
+  const { user, loading, signInWithGoogle } = useUserAuth();
 
-  // Redirect if already logged in
+  const [debug, setDebug] = useState<DebugInfo>({
+    step: 'mount',
+    contextLoading: true,
+    contextUserEmail: null,
+    contextUserRole: null,
+    meStatus: null,
+    meBody: null,
+    sessionStatus: null,
+    cookieEnabled: typeof navigator !== 'undefined' ? navigator.cookieEnabled : true,
+    protocol: typeof window !== 'undefined' ? window.location.protocol : '',
+    host: typeof window !== 'undefined' ? window.location.host : '',
+    lastError: null,
+  });
+
+  // Mirror context state so the client can see it on-screen.
+  useEffect(() => {
+    setDebug((d) => ({
+      ...d,
+      contextLoading: loading,
+      contextUserEmail: user?.email ?? null,
+      contextUserRole: user?.role ?? null,
+    }));
+  }, [user, loading]);
+
+  // Redirect if already logged in — driven by context, not by handleSubmit, to avoid race.
   useEffect(() => {
     if (!loading && user) {
+      setDebug((d) => ({ ...d, step: `redirecting (role=${user.role})` }));
       if (user.role === 'admin') {
         router.push('/admin/dashboard');
       } else {
@@ -42,20 +81,25 @@ export default function LoginPage() {
       try {
         const result = await getRedirectResult(auth);
         if (!result) return;
-        const idToken = await result.user.getIdToken();
-        await fetch('/api/auth/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken }) });
-        const me = await fetch('/api/auth/me');
-        const data = await me.json();
-        if (data?.user?.role === 'admin') router.push('/admin/dashboard');
-        else router.push('/dashboard');
-      } catch {}
+        setDebug((d) => ({ ...d, step: 'got getRedirectResult, leaving the rest to context' }));
+        // Don't manually redirect — the context's onAuthStateChanged will set the user,
+        // and the redirect useEffect above will fire.
+      } catch (e) {
+        setDebug((d) => ({
+          ...d,
+          step: 'getRedirectResult threw',
+          lastError: (e as Error)?.message ?? String(e),
+        }));
+      }
     })();
-  }, [router]);
+  }, []);
 
-  const { signInWithGoogle } = useUserAuth();
   const handleGoogleLogin = async () => {
+    setError('');
+    setDebug((d) => ({ ...d, step: 'signInWithGoogle: starting' }));
     try {
       await signInWithGoogle();
+      setDebug((d) => ({ ...d, step: 'signInWithGoogle: returned, waiting for context' }));
     } catch (e) {
       const code = (e as { code?: string })?.code ?? '';
       const message = (e as { message?: string })?.message ?? String(e);
@@ -65,6 +109,11 @@ export default function LoginPage() {
         (code ? `Code: ${code}. ` : '') +
         `Details: ${message}`
       );
+      setDebug((d) => ({
+        ...d,
+        step: 'signInWithGoogle: threw',
+        lastError: (code ? `${code}: ` : '') + message,
+      }));
     }
   };
 
@@ -72,31 +121,34 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+    setDebug((d) => ({ ...d, step: 'email sign-in: starting' }));
 
     try {
-      // Sign in with Firebase Auth (email/password)
+      // 1. Firebase Auth
       const cred = await signInWithEmailAndPassword(auth, formData.email, formData.password);
+      setDebug((d) => ({ ...d, step: 'email sign-in: Firebase Auth ok' }));
+
+      // 2. Server session
       const idToken = await cred.user.getIdToken();
-      const sessionRes = await fetch('/api/auth/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken }) });
+      const sessionRes = await fetch('/api/auth/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      });
+      setDebug((d) => ({ ...d, step: 'email sign-in: /api/auth/session done', sessionStatus: sessionRes.status }));
       if (!sessionRes.ok) {
         const errText = await sessionRes.text().catch(() => '');
         throw new Error(`Server session setup failed (HTTP ${sessionRes.status}). ${errText}`);
       }
-      const me = await fetch('/api/auth/me');
-      const data = await me.json().catch(() => null);
-      const signedInEmail = data?.user?.email ?? cred.user.email ?? '(no email)';
-      const role = data?.user?.role ?? '(no role — session cookie may be blocked)';
-      if (data?.user?.role === 'admin') {
-        router.push('/admin/dashboard');
-      } else if (data?.user?.role === 'user') {
-        router.push('/dashboard');
-      } else {
-        setError(
-          `Signed in as ${signedInEmail}, but the server could not confirm your role (got: "${role}"). ` +
-          `This usually means the session cookie was blocked by the browser. ` +
-          `Try disabling tracking protection / strict privacy mode, allow cookies for this site, and retry.`
-        );
-      }
+
+      // 3. Verify cookie round-trips so we can show useful diagnostics.
+      const me = await fetch('/api/auth/me', { cache: 'no-store' });
+      const meText = await me.text();
+      setDebug((d) => ({ ...d, step: 'email sign-in: /api/auth/me done', meStatus: me.status, meBody: meText.slice(0, 500) }));
+
+      // 4. Do NOT router.push here — let the context's onAuthStateChanged update user,
+      //    then the top-level useEffect redirects based on role. This avoids the dashboard
+      //    bouncing back to /login when context has not caught up.
     } catch (error) {
       const code = (error as { code?: string })?.code ?? '';
       const message = (error as { message?: string })?.message ?? String(error);
@@ -106,6 +158,11 @@ export default function LoginPage() {
         (code ? `Code: ${code}. ` : '') +
         `Details: ${message}`
       );
+      setDebug((d) => ({
+        ...d,
+        step: 'email sign-in: threw',
+        lastError: (code ? `${code}: ` : '') + message,
+      }));
     } finally {
       setIsLoading(false);
     }
@@ -118,7 +175,7 @@ export default function LoginPage() {
         <p className="subscribeDescription">
           Access your account
         </p>
-        
+
         <form onSubmit={handleSubmit} className="loginForm">
           <div className="inputWrapper loginInputWrapper">
             <label htmlFor="email">Email Address</label>
@@ -192,6 +249,39 @@ export default function LoginPage() {
               Sign up
             </a>
           </p>
+        </div>
+
+        {/* On-screen diagnostic panel — visible so the client can screenshot it. */}
+        <div
+          style={{
+            marginTop: '1.5rem',
+            padding: '1rem',
+            border: '2px dashed #f59e0b',
+            borderRadius: '0.5rem',
+            background: '#fffbeb',
+            color: '#92400e',
+            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+            fontSize: '0.75rem',
+            lineHeight: 1.4,
+            wordBreak: 'break-all',
+            whiteSpace: 'pre-wrap',
+          }}
+        >
+          <div style={{ fontWeight: 700, marginBottom: '0.5rem', fontSize: '0.875rem' }}>
+            DEBUG INFO (please screenshot if login does not work)
+          </div>
+          <div>step: {debug.step}</div>
+          <div>contextLoading: {String(debug.contextLoading)}</div>
+          <div>contextUserEmail: {debug.contextUserEmail ?? '(null)'}</div>
+          <div>contextUserRole: {debug.contextUserRole ?? '(null)'}</div>
+          <div>sessionStatus: {debug.sessionStatus ?? '(not called)'}</div>
+          <div>meStatus: {debug.meStatus ?? '(not called)'}</div>
+          <div>meBody: {debug.meBody ?? '(empty)'}</div>
+          <div>cookieEnabled: {String(debug.cookieEnabled)}</div>
+          <div>protocol: {debug.protocol}</div>
+          <div>host: {debug.host}</div>
+          <div>userAgent: {typeof navigator !== 'undefined' ? navigator.userAgent : ''}</div>
+          <div>lastError: {debug.lastError ?? '(none)'}</div>
         </div>
       </div>
     </div>
