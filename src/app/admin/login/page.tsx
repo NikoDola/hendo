@@ -1,44 +1,156 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Music } from 'lucide-react';
 import { useUserAuth } from '@/context/UserAuthContext';
 import styles from './page.module.css';
+
+type DebugInfo = {
+  step: string;
+  contextLoading: boolean;
+  contextUserEmail: string | null;
+  contextUserRole: string | null;
+  meStatus: number | null;
+  meBody: string | null;
+  cookieEnabled: boolean;
+  protocol: string;
+  host: string;
+  lastError: string | null;
+};
 
 export default function AdminLogin() {
   const router = useRouter();
   const { user, loading, signInWithGoogle, signOut } = useUserAuth();
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [error, setError] = useState('');
+  const redirectedRef = useRef(false);
+
+  const [debug, setDebug] = useState<DebugInfo>({
+    step: 'mount',
+    contextLoading: true,
+    contextUserEmail: null,
+    contextUserRole: null,
+    meStatus: null,
+    meBody: null,
+    cookieEnabled: typeof navigator !== 'undefined' ? navigator.cookieEnabled : true,
+    protocol: typeof window !== 'undefined' ? window.location.protocol : '',
+    host: typeof window !== 'undefined' ? window.location.host : '',
+    lastError: null,
+  });
+
+  // Mirror context state into the debug panel so the client can see it on-screen.
+  useEffect(() => {
+    setDebug((d) => ({
+      ...d,
+      contextLoading: loading,
+      contextUserEmail: user?.email ?? null,
+      contextUserRole: user?.role ?? null,
+    }));
+  }, [user, loading]);
+
+  // On mount, hit /api/auth/me directly and surface the result.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/auth/me', { cache: 'no-store' });
+        const text = await res.text();
+        if (cancelled) return;
+        setDebug((d) => ({
+          ...d,
+          step: 'fetched /api/auth/me on mount',
+          meStatus: res.status,
+          meBody: text.slice(0, 500),
+        }));
+      } catch (e) {
+        if (cancelled) return;
+        setDebug((d) => ({
+          ...d,
+          step: 'fetch /api/auth/me failed on mount',
+          lastError: (e as Error)?.message ?? String(e),
+        }));
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (loading) return;
     if (user?.role === 'admin') {
+      if (!redirectedRef.current) {
+        redirectedRef.current = true;
+        setDebug((d) => ({ ...d, step: 'redirecting to /admin/dashboard' }));
+      }
       router.push('/admin/dashboard');
     } else if (user) {
-      setError(`${user.email} is not an authorized admin account.`);
+      setError(
+        `Signed in as ${user.email ?? '(no email returned)'} with role "${user.role}". ` +
+        `This account is not on the admin allowlist, or the server session cookie did not stick. ` +
+        `If this is the wrong Google account, click "Sign out and try another account" below and pick the correct one. ` +
+        `If the email shown above IS your admin email, take a screenshot of this entire page (including the debug box at the bottom) and send it to the site owner.`
+      );
     }
   }, [user, loading, router]);
 
   const handleGoogleLogin = async () => {
     setError('');
     setIsSigningIn(true);
+    setDebug((d) => ({ ...d, step: 'signInWithGoogle: starting' }));
     try {
       await signInWithGoogle();
+      setDebug((d) => ({ ...d, step: 'signInWithGoogle: returned' }));
+
+      // After sign-in, re-fetch /api/auth/me so the debug panel shows the new state.
+      try {
+        const res = await fetch('/api/auth/me', { cache: 'no-store' });
+        const text = await res.text();
+        setDebug((d) => ({
+          ...d,
+          step: 'fetched /api/auth/me after sign-in',
+          meStatus: res.status,
+          meBody: text.slice(0, 500),
+        }));
+      } catch (e) {
+        setDebug((d) => ({
+          ...d,
+          step: 'fetch /api/auth/me failed after sign-in',
+          lastError: (e as Error)?.message ?? String(e),
+        }));
+      }
     } catch (e) {
+      const code = (e as { code?: string })?.code ?? '';
+      const message = (e as { message?: string })?.message ?? String(e);
       console.error('Google sign-in failed', e);
-      setError('Google sign-in failed. Please try again.');
+      setError(
+        `Google sign-in failed. ` +
+        (code ? `Code: ${code}. ` : '') +
+        `Details: ${message}`
+      );
+      setDebug((d) => ({
+        ...d,
+        step: 'signInWithGoogle: threw',
+        lastError: (code ? `${code}: ` : '') + message,
+      }));
       setIsSigningIn(false);
     }
   };
 
   const handleSignOut = async () => {
     setError('');
+    setDebug((d) => ({ ...d, step: 'signOut: starting' }));
     try {
       await signOut();
+      setDebug((d) => ({ ...d, step: 'signOut: done' }));
     } catch (e) {
       console.error('Sign out failed', e);
+      setDebug((d) => ({
+        ...d,
+        step: 'signOut: threw',
+        lastError: (e as Error)?.message ?? String(e),
+      }));
     }
   };
 
@@ -95,6 +207,38 @@ export default function AdminLogin() {
             <p>This admin panel is restricted to authorized personnel only.</p>
             <p>All access attempts are logged and monitored.</p>
           </div>
+        </div>
+
+        {/* On-screen diagnostic panel — visible to the client so they can screenshot it. */}
+        <div
+          style={{
+            marginTop: '1.5rem',
+            padding: '1rem',
+            border: '2px dashed #f59e0b',
+            borderRadius: '0.5rem',
+            background: '#fffbeb',
+            color: '#92400e',
+            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+            fontSize: '0.75rem',
+            lineHeight: 1.4,
+            wordBreak: 'break-all',
+            whiteSpace: 'pre-wrap',
+          }}
+        >
+          <div style={{ fontWeight: 700, marginBottom: '0.5rem', fontSize: '0.875rem' }}>
+            DEBUG INFO (please screenshot if login does not work)
+          </div>
+          <div>step: {debug.step}</div>
+          <div>contextLoading: {String(debug.contextLoading)}</div>
+          <div>contextUserEmail: {debug.contextUserEmail ?? '(null)'}</div>
+          <div>contextUserRole: {debug.contextUserRole ?? '(null)'}</div>
+          <div>meStatus: {debug.meStatus ?? '(not called yet)'}</div>
+          <div>meBody: {debug.meBody ?? '(empty)'}</div>
+          <div>cookieEnabled: {String(debug.cookieEnabled)}</div>
+          <div>protocol: {debug.protocol}</div>
+          <div>host: {debug.host}</div>
+          <div>userAgent: {typeof navigator !== 'undefined' ? navigator.userAgent : ''}</div>
+          <div>lastError: {debug.lastError ?? '(none)'}</div>
         </div>
       </div>
     </div>

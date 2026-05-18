@@ -57,8 +57,14 @@ export default function LoginPage() {
     try {
       await signInWithGoogle();
     } catch (e) {
+      const code = (e as { code?: string })?.code ?? '';
+      const message = (e as { message?: string })?.message ?? String(e);
       console.error('Google sign-in failed', e);
-      setError('Google sign-in failed');
+      setError(
+        `Google sign-in failed. ` +
+        (code ? `Code: ${code}. ` : '') +
+        `Details: ${message}`
+      );
     }
   };
 
@@ -71,14 +77,35 @@ export default function LoginPage() {
       // Sign in with Firebase Auth (email/password)
       const cred = await signInWithEmailAndPassword(auth, formData.email, formData.password);
       const idToken = await cred.user.getIdToken();
-      await fetch('/api/auth/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken }) });
+      const sessionRes = await fetch('/api/auth/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken }) });
+      if (!sessionRes.ok) {
+        const errText = await sessionRes.text().catch(() => '');
+        throw new Error(`Server session setup failed (HTTP ${sessionRes.status}). ${errText}`);
+      }
       const me = await fetch('/api/auth/me');
-      const data = await me.json();
-      if (data?.user?.role === 'admin') router.push('/admin/dashboard');
-      else router.push('/dashboard');
+      const data = await me.json().catch(() => null);
+      const signedInEmail = data?.user?.email ?? cred.user.email ?? '(no email)';
+      const role = data?.user?.role ?? '(no role — session cookie may be blocked)';
+      if (data?.user?.role === 'admin') {
+        router.push('/admin/dashboard');
+      } else if (data?.user?.role === 'user') {
+        router.push('/dashboard');
+      } else {
+        setError(
+          `Signed in as ${signedInEmail}, but the server could not confirm your role (got: "${role}"). ` +
+          `This usually means the session cookie was blocked by the browser. ` +
+          `Try disabling tracking protection / strict privacy mode, allow cookies for this site, and retry.`
+        );
+      }
     } catch (error) {
+      const code = (error as { code?: string })?.code ?? '';
+      const message = (error as { message?: string })?.message ?? String(error);
       console.error('Login error:', error);
-      setError('Login failed. Please try again.');
+      setError(
+        `Login failed. ` +
+        (code ? `Code: ${code}. ` : '') +
+        `Details: ${message}`
+      );
     } finally {
       setIsLoading(false);
     }
