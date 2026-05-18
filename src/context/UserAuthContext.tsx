@@ -155,6 +155,7 @@ export function UserAuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = useCallback(async () => {
     const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
 
     // iOS Safari frequently blocks/halts popups; redirect is the most reliable.
     const isIOSSafari =
@@ -163,25 +164,27 @@ export function UserAuthProvider({ children }: { children: React.ReactNode }) {
       /Safari/.test(navigator.userAgent) &&
       !/CriOS|FxiOS|EdgiOS|OPiOS/.test(navigator.userAgent);
 
-    provider.setCustomParameters({ prompt: 'select_account' });
-
     if (isIOSSafari) {
       await signInWithRedirect(auth, provider);
       return;
     }
 
-    // Try popup, but if it errors OR hangs (Safari/pop-up blockers), fall back to redirect.
+    // Wait for the user to actually pick an account. Only fall back to redirect
+    // if the popup is genuinely unavailable (blocked, no browser support).
     try {
-      const popupPromise = signInWithPopup(auth, provider);
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        window.setTimeout(() => reject(new Error('popup-timeout')), 800);
-      });
-
-      const result = await Promise.race([popupPromise, timeoutPromise]);
-      // If we got here, popup succeeded
-      await setServerSessionFromCurrentUser((result as { user: FirebaseUser }).user);
-    } catch {
-      await signInWithRedirect(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      await setServerSessionFromCurrentUser(result.user);
+    } catch (e) {
+      const code = (e as { code?: string })?.code || '';
+      const popupUnavailable =
+        code === 'auth/popup-blocked' ||
+        code === 'auth/operation-not-supported-in-this-environment';
+      if (popupUnavailable) {
+        await signInWithRedirect(auth, provider);
+        return;
+      }
+      // Closed by user, network error, etc. — surface to caller; don't kick off a second flow.
+      throw e;
     }
   }, []);
 

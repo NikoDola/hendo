@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T.HENDO — Branding Post Creator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- ─── Header ─── -->
+    <header class="header">
+      <div class="header-inner">
+        <span class="brand-logo">T.HENDO</span>
+        <span class="brand-divider"></span>
+        <span class="brand-tag">Branding Post Creator</span>
+      </div>
+    </header>
+
+    <div class="workspace">
+
+      <!-- ─── Preview Column ─── -->
+      <div class="preview-col">
+
+        <div class="format-bar">
+          <button class="format-btn active" data-format="feed">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+            Feed 1:1
+          </button>
+          <button class="format-btn" data-format="story">
+            <svg width="10" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="2" width="14" height="20" rx="2"/></svg>
+            Story 9:16
+          </button>
+        </div>
+
+        <div class="canvas-wrap" id="canvasContainer">
+          <canvas id="postCanvas"></canvas>
+        </div>
+
+        <div class="playback-bar">
+          <!-- Single toggle button — JS swaps icon + label -->
+          <button id="playPauseBtn" class="action-btn accent-btn" data-playing="true">
+            <svg class="icon-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            <svg class="icon-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M8 5v14l11-7z"/></svg>
+            <span id="ppLabel">Pause</span>
+          </button>
+
+          <button id="saveBtn" class="action-btn save-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zm7-18L5.33 9h3.84v4h5.66V9h3.84L12 2z"/></svg>
+            Save PNG
+          </button>
+        </div>
+
+      </div><!-- /preview-col -->
+
+      <!-- ─── Controls Panel ─── -->
+      <div class="controls-panel">
+
+        <!-- STARS -->
+        <div class="ctrl-section">
+          <div class="section-title">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2z"/></svg>
+            Stars
+          </div>
+
+          <div class="ctrl-row">
+            <div class="ctrl-label-row">
+              <span class="ctrl-label">Falling Stars</span>
+              <span class="ctrl-val" id="shootingVal">8</span>
+            </div>
+            <input type="range" class="ctrl-range" id="shootingCount" min="0" max="30" value="8">
+          </div>
+
+          <div class="ctrl-row">
+            <div class="ctrl-label-row">
+              <span class="ctrl-label">Blinking Stars</span>
+              <span class="ctrl-val" id="blinkingVal">20</span>
+            </div>
+            <input type="range" class="ctrl-range" id="blinkingCount" min="0" max="60" value="20">
+          </div>
+
+          <div class="ctrl-row">
+            <div class="ctrl-label-row">
+              <span class="ctrl-label">Speed</span>
+              <span class="ctrl-val" id="speedVal">1.0×</span>
+            </div>
+            <input type="range" class="ctrl-range" id="speedControl" min="0.1" max="4" step="0.1" value="1">
+          </div>
+
+          <div class="ctrl-row">
+            <span class="ctrl-label">Drop Direction</span>
+            <div class="seg-ctrl" id="dropMode">
+              <button class="seg-btn active" data-value="top">Top Only</button>
+              <button class="seg-btn" data-value="all">All Sides</button>
+            </div>
+          </div>
+
+          <div class="ctrl-row">
+            <span class="ctrl-label">Falling Stars Color</span>
+            <div class="seg-ctrl" id="shootColorMode">
+              <button class="seg-btn active" data-value="white">White</button>
+              <button class="seg-btn" data-value="cycle">Cycle</button>
+              <button class="seg-btn" data-value="mixed">Mixed</button>
+            </div>
+          </div>
+
+          <div class="ctrl-row">
+            <span class="ctrl-label">Blinking Stars Color</span>
+            <div class="seg-ctrl" id="blinkColorMode">
+              <button class="seg-btn active" data-value="white">White</button>
+              <button class="seg-btn" data-value="cycle">Cycle</button>
+              <button class="seg-btn" data-value="mixed">Mixed</button>
+            </div>
+          </div>
+
+        </div><!-- /Stars -->
+
+        <!-- TEXT -->
+        <div class="ctrl-section">
+          <div class="section-title">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M5 4v3h5.5v12h3V7H19V4z"/></svg>
+            Text
+          </div>
+
+          <textarea id="postText" class="ctrl-textarea" placeholder="Type your post text…&#10;Enter for new line" rows="4" spellcheck="false"></textarea>
+
+          <div class="ctrl-row">
+            <div class="ctrl-label-row">
+              <span class="ctrl-label">Font Size</span>
+              <span class="ctrl-val" id="fontSizeVal">60</span>
+            </div>
+            <input type="range" class="ctrl-range" id="fontSize" min="12" max="130" value="60">
+          </div>
+
+          <div class="ctrl-row">
+            <span class="ctrl-label">Font</span>
+            <select id="fontSelect" class="ctrl-select">
+              <option value="LemonMilk">Lemon Milk</option>
+              <option value="Rajdhani">Rajdhani</option>
+              <option value="'Exo 2'">Exo 2</option>
+              <option value="Arial">Arial</option>
+              <option value="Georgia">Georgia</option>
+            </select>
+          </div>
+
+          <div class="ctrl-row">
+            <span class="ctrl-label">Text Color</span>
+            <div class="seg-ctrl" id="textColorMode">
+              <button class="seg-btn active" data-value="gradient">Gradient</button>
+              <button class="seg-btn" data-value="cycle">Cycle</button>
+              <button class="seg-btn" data-value="white">White</button>
+              <button class="seg-btn" data-value="solid">Custom</button>
+            </div>
+          </div>
+
+          <div class="ctrl-row" id="solidColorRow" style="display:none">
+            <span class="ctrl-label">Pick Color</span>
+            <input type="color" id="textColor" value="#ffffff" class="ctrl-color">
+          </div>
+
+          <div class="ctrl-row">
+            <div class="ctrl-label-row">
+              <span class="ctrl-label">Vertical Position</span>
+            </div>
+            <input type="range" class="ctrl-range" id="textPosY" min="10" max="90" value="50">
+          </div>
+
+        </div><!-- /Text -->
+
+        <!-- SAVED MOMENTS -->
+        <div class="ctrl-section">
+          <div class="section-title">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+            Saved Moments
+          </div>
+          <p class="ctrl-hint">Pause animation then save a moment to keep for later.</p>
+          <button id="saveMomentBtn" class="action-btn full-width">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+            Save This Moment
+          </button>
+          <div id="momentsList" class="moments-list"></div>
+        </div>
+
+      </div><!-- /controls-panel -->
+    </div><!-- /workspace -->
+  </div><!-- /app -->
+
+  <script src="app.js"></script>
+</body>
+</html>
