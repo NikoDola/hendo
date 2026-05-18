@@ -12,13 +12,17 @@ interface AdminUsersListProps {
 export default function AdminUsersList({ users, onDeleteUser }: AdminUsersListProps) {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
+  const [roleFilter, setRoleFilter] = useState<'all' | 'admin' | 'user'>('all');
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [loadingUserId, setLoadingUserId] = useState<string | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
+  const adminCount = users.filter((u) => u.role === 'admin').length;
+
   const filteredUsers = users
+    .filter((user) => roleFilter === 'all' || user.role === roleFilter)
     .filter(user =>
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -72,7 +76,11 @@ export default function AdminUsersList({ users, onDeleteUser }: AdminUsersListPr
   return (
     <div>
       <h2 className="adminSectionTitle" data-text="Users">Users</h2>
-      
+
+      <p style={{ margin: '0.25rem 0 1rem', fontSize: '0.875rem', opacity: 0.7 }}>
+        Total: {users.length} &middot; Admins: {adminCount}
+      </p>
+
       <div className="adminUsersControls">
         <div className="adminSearchWrapper">
           <Search className="adminSearchIcon" size={20} />
@@ -84,6 +92,16 @@ export default function AdminUsersList({ users, onDeleteUser }: AdminUsersListPr
             className="adminSearchInput"
           />
         </div>
+        <select
+          value={roleFilter}
+          onChange={(e) => setRoleFilter(e.target.value as 'all' | 'admin' | 'user')}
+          className="adminSortSelect"
+          aria-label="Filter by role"
+        >
+          <option value="all">All roles</option>
+          <option value="admin">Admins only</option>
+          <option value="user">Users only</option>
+        </select>
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
