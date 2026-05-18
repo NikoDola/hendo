@@ -50,11 +50,7 @@ export default function ParallaxStars() {
 
 
 
-    if (!bgCanvas) { return }
-    else {
-      bgCanvas.width = window.innerWidth;
-      bgCanvas.height = window.innerHeight;
-    };
+    if (!bgCanvas) { return };
 
     const bgCtx = bgCanvas.getContext("2d");
 
@@ -62,32 +58,20 @@ export default function ParallaxStars() {
 
     const bg: CanvasRenderingContext2D = bgCtx;
 
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+
+    const updateDimensions = () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      bgCanvas.width = width;
+      bgCanvas.height = height;
+    };
+    updateDimensions();
 
     // Track start time for fade-in effect
     const startTime = Date.now();
     const FADE_DURATION = 3000; // 3 seconds fade-in
-
-    // Terrain generation
-    const points: number[] = [];
-    let displacement = 140;
-    const power = Math.pow(2, Math.ceil(Math.log(width) / Math.log(2)));
-
-    // Set start and end heights
-    points[0] = (height - (Math.random() * height / 2)) - displacement;
-    points[power] = (height - (Math.random() * height / 2)) - displacement;
-
-    // Create terrain points using midpoint displacement
-    for (let i = 1; i < power; i *= 2) {
-      for (let j = (power / i) / 2; j < power; j += power / i) {
-        points[j] = ((points[j - (power / i) / 2] + points[j + (power / i) / 2]) / 2) +
-          Math.floor(Math.random() * -displacement + displacement);
-      }
-      displacement *= 0.6;
-    }
-
-    // Draw terrain
 
     // Star class
     class Star {
@@ -169,17 +153,23 @@ export default function ParallaxStars() {
     }
 
     // Initialize entities
-    const entities: (Star | ShootingStar)[] = [];
+    let entities: (Star | ShootingStar)[] = [];
 
-    // Add stars
-    for (let i = 0; i < height; i++) {
-      entities.push(new Star({ x: Math.random() * width, y: Math.random() * height, opacity: 0 }));
-    }
+    const initEntities = () => {
+      const nextEntities: (Star | ShootingStar)[] = [];
+      const starCount = Math.min(Math.floor((width * height) / 2500), 700);
 
-    // Add shooting stars (temporarily increased for testing)
-    for (let i = 0; i < 8; i++) {
-      entities.push(new ShootingStar());
-    }
+      for (let i = 0; i < starCount; i++) {
+        nextEntities.push(new Star({ x: Math.random() * width, y: Math.random() * height, opacity: 0 }));
+      }
+
+      for (let i = 0; i < 8; i++) {
+        nextEntities.push(new ShootingStar());
+      }
+
+      entities = nextEntities;
+    };
+    initEntities();
 
     // Animation loop
     const MAX_STAR_OPACITY = 0.8; // 20% lower than full opacity
@@ -214,8 +204,15 @@ export default function ParallaxStars() {
     // Start animation
     animate();
 
+    const handleResize = () => {
+      updateDimensions();
+      initEntities();
+    };
+    window.addEventListener("resize", handleResize);
+
     // Cleanup
     return () => {
+      window.removeEventListener("resize", handleResize);
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }

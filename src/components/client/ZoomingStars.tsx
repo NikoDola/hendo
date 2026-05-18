@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 
 import "./ZoomingStars.css";
 
@@ -17,8 +17,10 @@ interface Star {
 }
 
 export default function ZoomingStars() {
-
+  const MIN_STARS = 15;
+  const STAR_DENSITY = 150000; // pixels per star
   const [stars, setStars] = useState<Star[]>([]);
+  const nextIdRef = useRef(0);
 
   // Generate a new random star
   const generateStar = useCallback((id: number, cycleCount: number = 0): Star => {
@@ -35,17 +37,43 @@ export default function ZoomingStars() {
     };
   }, []);
 
+  const getTargetStarCount = useCallback((): number => {
+    if (typeof window === "undefined") return MIN_STARS;
+    const area = window.innerWidth * window.innerHeight;
+    return Math.max(MIN_STARS, Math.ceil(area / STAR_DENSITY));
+  }, []);
+
   // Initialize stars
   useEffect(() => {
-    const starCount = 15;
+    const starCount = getTargetStarCount();
     const newStars: Star[] = [];
     
     for (let i = 0; i < starCount; i++) {
-      newStars.push(generateStar(i));
+      newStars.push(generateStar(nextIdRef.current++));
     }
     
     setStars(newStars);
-  }, [generateStar]);
+  }, [generateStar, getTargetStarCount]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const targetCount = getTargetStarCount();
+
+      setStars((prev) => {
+        if (prev.length === targetCount) return prev;
+        if (prev.length > targetCount) return prev.slice(0, targetCount);
+
+        const additional: Star[] = [];
+        for (let i = prev.length; i < targetCount; i++) {
+          additional.push(generateStar(nextIdRef.current++));
+        }
+        return [...prev, ...additional];
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [generateStar, getTargetStarCount]);
 
   // Handle star reset after complete animation cycle
   const handleAnimationIteration = useCallback((starId: number) => {
@@ -84,10 +112,7 @@ export default function ZoomingStars() {
             onAnimationEnd={(e) => {
               // Only handle the main animation end, not any child animations
               if (e.animationName === 'starLifecycle') {
-                // Animation completed, now reset the star
-                setTimeout(() => {
-                  handleAnimationIteration(star.id);
-                }, 50); // Small delay before resetting
+                handleAnimationIteration(star.id);
               }
             }}
           >
