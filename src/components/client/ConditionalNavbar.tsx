@@ -6,8 +6,8 @@ import NavBar from '@/components/client/NavBar';
 export default function ConditionalNavbar() {
   const pathname = usePathname();
   
-  // Hide navbar only on the root path (under construction page)
-  if (pathname === '/') {
+  // Hide navbar on the root path (under construction page) and the admin login page.
+  if (pathname === '/' || pathname === '/admin/login') {
     return null;
   }
   

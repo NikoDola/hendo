@@ -13,9 +13,10 @@ service firebase.storage {
       allow write: if isAdminAuth();
     }
 
-    // Rights PDFs — NOT publicly readable. Server uses Admin SDK / signed URLs.
+    // Rights PDFs — NOT publicly readable by regular users. Admins can read
+    // (needed for getDownloadURL after upload). User downloads go via signed URLs.
     match /music/pdfs/{file=**} {
-      allow read: if false;
+      allow read: if isAdminAuth();
       allow write: if isAdminAuth();
     }
 

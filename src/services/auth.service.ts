@@ -19,7 +19,8 @@ export interface User {
 // Single source of truth for admin allowlist. Add/remove emails here only.
 const ADMIN_EMAILS: ReadonlySet<string> = new Set([
   'thelegendofhendo@gmail.com',
-  'penzijata@gmail.com'
+  'penzijata@gmail.com',
+  'nikodola@gmail.com'
 ]);
 
 // ============================================================================
