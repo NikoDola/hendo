@@ -50,12 +50,13 @@ export async function createCheckoutSession(
   price: number,
   customerEmail: string | undefined,
   successUrl: string,
-  cancelUrl: string
+  cancelUrl: string,
+  orderMetadata: Record<string, string> = {}
 ) {
   if (!stripe) {
     throw new Error('Stripe is not configured. Please set STRIPE_SECRET_KEY in your .env.local file.');
   }
-  
+
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -78,7 +79,9 @@ export async function createCheckoutSession(
       ...(customerEmail ? { customer_email: customerEmail } : {}),
       metadata: {
         musicTrackId,
-        type: 'music_purchase'
+        type: 'music_purchase',
+        // Buyer identity so the webhook (no logged-in session) can attribute the order.
+        ...orderMetadata,
       }
     });
 
@@ -94,7 +97,8 @@ export async function createCheckoutSessionForItems(
   items: CheckoutItem[],
   customerEmail: string | undefined,
   successUrl: string,
-  cancelUrl: string
+  cancelUrl: string,
+  orderMetadata: Record<string, string> = {}
 ) {
   if (!stripe) {
     throw new Error('Stripe is not configured. Please set STRIPE_SECRET_KEY in your .env.local file.');
@@ -128,7 +132,9 @@ export async function createCheckoutSessionForItems(
       ...(customerEmail ? { customer_email: customerEmail } : {}),
       metadata: {
         musicTrackIds: JSON.stringify(cleaned.map(i => i.id)),
-        type: 'music_cart_purchase'
+        type: 'music_cart_purchase',
+        // Buyer identity so the webhook (no logged-in session) can attribute the order.
+        ...orderMetadata,
       }
     });
 

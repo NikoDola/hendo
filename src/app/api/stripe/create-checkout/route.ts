@@ -30,9 +30,17 @@ export async function POST(request: NextRequest) {
     const successUrl = `${baseUrl}/music/success?session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${baseUrl}/music/cancel`;
 
+    // Stamp the buyer's identity onto the session so fulfillment works from the
+    // webhook (which has no cookie/session). Stripe metadata values must be strings.
+    const orderMetadata: Record<string, string> = {};
+    if (user?.id) orderMetadata.userId = user.id;
+    if (user?.authUid) orderMetadata.authUid = user.authUid;
+    if (user?.name) orderMetadata.userName = user.name;
+    if (user?.email) orderMetadata.userEmail = user.email;
+
     let session;
     if (Array.isArray(items) && items.length > 0) {
-      session = await createCheckoutSessionForItems(items, user?.email, successUrl, cancelUrl);
+      session = await createCheckoutSessionForItems(items, user?.email, successUrl, cancelUrl, orderMetadata);
     } else {
       if (!musicTrackId || !musicTitle || !price) {
         return NextResponse.json(
@@ -40,7 +48,7 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
-      session = await createCheckoutSession(musicTrackId, musicTitle, price, user?.email, successUrl, cancelUrl);
+      session = await createCheckoutSession(musicTrackId, musicTitle, price, user?.email, successUrl, cancelUrl, orderMetadata);
     }
 
     return NextResponse.json({ url: session.url });
