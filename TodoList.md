@@ -5,23 +5,29 @@ at a time.
 
 Legend: ✅ done · 🚧 in progress · ⏳ queued (approved) · 📌 pinned (revisit later)
 
-## In progress
-- 🚧 **#1 — Reliable webhook-based order fulfillment**
+## Done
+- ✅ **#1 — Reliable webhook-based order fulfillment** (merged to `main`, commit `webhook stripe`)
   A Stripe `checkout.session.completed` webhook fulfills orders server-side, so a
   paying customer always gets their download even if they close the success tab,
-  lose connection, or the redirect fails. Includes idempotency (no duplicate
-  orders) and is reused by the success page.
-  - [ ] Carry user/order info in checkout session metadata
-  - [ ] Shared, idempotent fulfillment module
-  - [ ] `/api/stripe/webhook` route (Stripe signature verified)
-  - [ ] Refactor `verify-payment` to reuse the same fulfillment
-  - **Vercel env var:** `STRIPE_WEBHOOK_SECRET` (value = the `whsec_…` signing
-    secret from the Stripe webhook endpoint). Register the endpoint at
-    `https://thelegendofhendo.com/api/stripe/webhook` for event
-    `checkout.session.completed`.
+  lose connection, or the redirect fails. Idempotent (no duplicate orders) and
+  reused by the success page.
+  - [x] Carry user/order info in checkout session metadata
+  - [x] Shared, idempotent fulfillment module (`src/lib/fulfillment.ts`)
+  - [x] `/api/stripe/webhook` route (Stripe signature verified)
+  - [x] Refactor `verify-payment` to reuse the same fulfillment
+  - **STILL TO DO (config, not code):** register the webhook endpoint at
+    `https://thelegendofhendo.com/api/stripe/webhook` (event
+    `checkout.session.completed`) and set `STRIPE_WEBHOOK_SECRET` (`whsec_…`) in Vercel.
+
+## In progress
+- 🚧 **#4 — Purchase confirmation email** (branded receipt + download link)
+  Sent once from the fulfillment step (so it can't double-send), via the existing
+  Proton SMTP transporter. Dark theme, electric-blue accent, stars, LemonMilk-style
+  all-caps headings.
+  - [ ] `sendPurchaseConfirmationEmail` template in `src/lib/email/index.ts`
+  - [ ] Call it from `src/lib/fulfillment.ts` (non-blocking)
 
 ## Queued (approved — do next, in this order)
-- ⏳ **#4 — Purchase confirmation email** (receipt + download link via Resend). Pairs with #1.
 - ⏳ **#3 — Guest purchase recovery** (email the downloads / link guest orders to an account).
 - ⏳ **#6 — Apple Pay / Google Pay + promo codes** at checkout.
 - ⏳ **#9 — Permanent re-downloads** (lifetime access to purchased files).

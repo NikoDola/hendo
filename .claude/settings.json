@@ -2,7 +2,15 @@
   "permissions": {
     "allow": [
       "Bash(npx firebase *)",
-      "PowerShell(npx tsc --noEmit -p tsconfig.json)"
+      "PowerShell(npx tsc --noEmit -p tsconfig.json)",
+      "PowerShell(Start-Process \"$env:TEMP\\\\hendo-email-preview.html\")",
+      "PowerShell($p = Join-Path $env:TEMP 'hendo-email-preview.html'; \"Exists: $\\(Test-Path $p\\)\"; \"Path: $p\"; Invoke-Item $p)",
+      "PowerShell($p = 'C:\\\\Users\\\\Dolov\\\\AppData\\\\Local\\\\Temp\\\\hendo-email-preview.html'; \"Exists: $\\(Test-Path $p\\)\"; Invoke-Item $p)",
+      "Bash(nslookup -type=TXT thelegendofhendo.com)",
+      "Bash(nslookup -type=TXT _dmarc.thelegendofhendo.com)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\Dolov\\AppData\\Local\\Temp"
     ]
   }
 }

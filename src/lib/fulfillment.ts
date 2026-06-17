@@ -12,6 +12,7 @@ import { generateCollectionDownloadPackage } from '@/lib/downloads';
 import { recordPurchase } from '@/lib/purchases';
 import { getMusicTrackServer } from '@/lib/music-server';
 import { updateUserPurchases } from '@/lib/auth';
+import { sendPurchaseConfirmationEmail } from '@/lib/email';
 
 export interface FulfillmentResult {
   collectionZipUrl: string;
@@ -132,6 +133,27 @@ async function doFulfill(session: Stripe.Checkout.Session): Promise<FulfillmentR
   // Update the registered user's purchase count (Firestore document ID).
   if (metaUserId) {
     await updateUserPurchases(metaUserId, collection.items.length);
+  }
+
+  // Send the branded purchase confirmation. Best-effort: a mail failure must
+  // never break (or re-trigger) fulfillment — the order is already complete.
+  const recipientEmail = metaUserEmail || customerEmail;
+  if (recipientEmail) {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    try {
+      await sendPurchaseConfirmationEmail({
+        to: recipientEmail,
+        customerName: metaUserName || customerName || undefined,
+        items: collection.items.map((i) => ({ trackTitle: i.trackTitle, price: i.price })),
+        amountTotal: session.amount_total,
+        currency: session.currency,
+        orderId: session.id,
+        dashboardUrl: `${baseUrl}/dashboard`,
+        downloadUrl: collection.zipUrl,
+      });
+    } catch (err) {
+      console.error('Failed to send purchase confirmation email (order still fulfilled):', err);
+    }
   }
 
   return {

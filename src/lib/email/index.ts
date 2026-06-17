@@ -1,5 +1,31 @@
 import nodemailer from 'nodemailer';
 
+// ---------------------------------------------------------------------------
+// Small helpers (shared by templates)
+// ---------------------------------------------------------------------------
+
+/** Escape user-controlled strings before interpolating into email HTML. */
+function escapeHtml(input: string): string {
+  return String(input ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/** Format an amount in the smallest currency unit (cents) as e.g. "$12.00". */
+function formatMoney(cents: number, currency: string = 'usd'): string {
+  try {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: (currency || 'usd').toUpperCase(),
+    }).format((cents || 0) / 100);
+  } catch {
+    return `$${((cents || 0) / 100).toFixed(2)}`;
+  }
+}
+
 // Create Proton Mail SMTP transporter
 const createTransporter = () => {
   if (!process.env.PROTON_SMTP_USER || !process.env.PROTON_SMTP_TOKEN) {
@@ -206,6 +232,209 @@ export async function sendContactEmail(name: string, email: string, message: str
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error('Contact email sending error:', error);
+    throw error;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Purchase confirmation (receipt + downloads)
+// ---------------------------------------------------------------------------
+
+export interface PurchaseConfirmationParams {
+  to: string;
+  customerName?: string;
+  items: Array<{ trackTitle: string; price: number }>;
+  /** Total actually charged, in the smallest currency unit (cents). Falls back to summing items. */
+  amountTotal?: number | null;
+  currency?: string | null;
+  orderId: string;
+  /** Where the buyer can always re-download (their dashboard). */
+  dashboardUrl: string;
+  /** Optional direct ZIP link (time-limited signed URL). */
+  downloadUrl?: string;
+}
+
+function renderPurchaseConfirmationHtml(params: PurchaseConfirmationParams): string {
+  const {
+    customerName,
+    items,
+    amountTotal,
+    currency,
+    orderId,
+    dashboardUrl,
+    downloadUrl,
+  } = params;
+
+  // LemonMilk-style: geometric, all-caps. Montserrat loads where allowed; the
+  // rest of the stack keeps the geometric all-caps feel in Gmail/Outlook.
+  const headFont =
+    "'Montserrat','Century Gothic','Trebuchet MS','Helvetica Neue',Arial,sans-serif";
+  const bodyFont = "'Montserrat','Century Gothic','Helvetica Neue',Arial,sans-serif";
+
+  const greetingName = customerName ? `, ${escapeHtml(customerName.split(' ')[0])}` : '';
+
+  const totalCents =
+    typeof amountTotal === 'number' && amountTotal > 0
+      ? amountTotal
+      : Math.round(items.reduce((sum, i) => sum + (Number(i.price) || 0), 0) * 100);
+  const totalLabel = formatMoney(totalCents, currency || 'usd');
+
+  const itemRows = items
+    .map(
+      (i) => `
+            <tr>
+              <td class="bd" style="font-family:${bodyFont};color:#cdd3e0;font-size:14px;padding:12px 0;border-bottom:1px solid #161b27;">${escapeHtml(
+        i.trackTitle
+      )}</td>
+              <td class="bd" align="right" style="font-family:${bodyFont};color:#cdd3e0;font-size:14px;padding:12px 0;border-bottom:1px solid #161b27;white-space:nowrap;">${formatMoney(
+        Math.round((Number(i.price) || 0) * 100),
+        currency || 'usd'
+      )}</td>
+            </tr>`
+    )
+    .join('');
+
+  const directDownloadLine = downloadUrl
+    ? `<br><span style="color:#6b7280;">Direct download (link expires in 7 days): </span><a href="${downloadUrl}" style="color:#4d8bff;text-decoration:none;">Download .ZIP</a>`
+    : '';
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <meta name="supported-color-schemes" content="dark">
+  <title>Your T. HENDO order</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&display=swap');
+    body { margin:0; padding:0; background-color:#04050a; }
+    @media (max-width:600px) {
+      .container { width:100% !important; }
+      .px { padding-left:22px !important; padding-right:22px !important; }
+    }
+  </style>
+</head>
+<body style="margin:0;padding:0;background-color:#04050a;">
+  <!-- preheader (hidden) -->
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">Payment confirmed — your beats are ready to download.</div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#04050a;background-image:radial-gradient(circle at 18% 12%, rgba(0,85,255,0.20), transparent 42%), radial-gradient(circle at 85% 4%, rgba(0,85,255,0.12), transparent 38%);">
+    <tr>
+      <td align="center" style="padding:34px 12px;">
+        <table role="presentation" width="600" class="container" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;">
+
+          <!-- Header: stars + wordmark -->
+          <tr>
+            <td align="center" class="px" style="padding:6px 40px 26px;">
+              <div style="font-family:${headFont};color:#5e7cff;font-size:15px;letter-spacing:0.55em;">&#10022;&nbsp;&nbsp;&#10023;&nbsp;&nbsp;&#8902;&nbsp;&nbsp;&#10023;&nbsp;&nbsp;&#10022;</div>
+              <div style="font-family:${headFont};color:#ffffff;font-size:36px;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;margin-top:16px;">T.&nbsp;HENDO</div>
+              <div style="font-family:${headFont};color:#5e7cff;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.42em;margin-top:8px;">Dreamstation</div>
+            </td>
+          </tr>
+
+          <!-- Card -->
+          <tr>
+            <td style="padding:0 6px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#0a0d15;border:1px solid #1c2333;border-radius:16px;">
+
+                <tr>
+                  <td class="px" style="padding:38px 40px 6px;">
+                    <div style="font-family:${headFont};color:#ffffff;font-size:25px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;">Payment Confirmed</div>
+                    <p class="bd" style="font-family:${bodyFont};color:#aab1c4;font-size:15px;line-height:1.7;margin:14px 0 0;">
+                      Thank you${greetingName}. Your purchase is complete and your tracks are ready to download.
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- CTA button -->
+                <tr>
+                  <td align="center" class="px" style="padding:26px 40px 30px;">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td align="center" bgcolor="#0055ff" style="border-radius:10px;box-shadow:0 0 22px rgba(0,85,255,0.45);">
+                          <a href="${dashboardUrl}" style="display:inline-block;padding:16px 38px;font-family:${headFont};color:#ffffff;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;text-decoration:none;border-radius:10px;">Get Your Downloads</a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Order summary -->
+                <tr>
+                  <td class="px" style="padding:0 40px;">
+                    <div style="font-family:${headFont};color:#6b7280;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.22em;padding-bottom:6px;border-bottom:1px solid #1c2333;">Order Summary</div>
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                      ${itemRows}
+                      <tr>
+                        <td class="bd" style="font-family:${headFont};color:#ffffff;font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;padding:16px 0 0;">Total</td>
+                        <td class="bd" align="right" style="font-family:${headFont};color:#5e7cff;font-size:18px;font-weight:800;padding:16px 0 0;white-space:nowrap;">${totalLabel}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Meta -->
+                <tr>
+                  <td class="px" style="padding:24px 40px 34px;">
+                    <p class="bd" style="font-family:${bodyFont};color:#6b7280;font-size:12px;line-height:1.7;margin:0;">
+                      Order reference: ${escapeHtml(orderId)}${directDownloadLine}
+                    </p>
+                    <p class="bd" style="font-family:${bodyFont};color:#6b7280;font-size:12px;line-height:1.7;margin:14px 0 0;">
+                      You can re-download your tracks anytime from your dashboard.
+                    </p>
+                  </td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td align="center" class="px" style="padding:28px 40px 8px;">
+              <div style="font-family:${headFont};color:#3a4256;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.32em;">&#10022;&nbsp;&nbsp;The Legend of Hendo&nbsp;&nbsp;&#10022;</div>
+              <p class="bd" style="font-family:${bodyFont};color:#525a6e;font-size:11px;line-height:1.6;margin:14px 0 0;">
+                You received this email because you made a purchase at thelegendofhendo.com.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
+export async function sendPurchaseConfirmationEmail(params: PurchaseConfirmationParams) {
+  try {
+    const transporter = createTransporter();
+    if (!transporter) {
+      throw new Error('Proton Mail SMTP not configured');
+    }
+
+    if (!params.to) {
+      throw new Error('No recipient email for purchase confirmation');
+    }
+
+    const trackCount = params.items.length;
+    const subject =
+      trackCount > 1
+        ? `Your T. HENDO order — ${trackCount} tracks`
+        : `Your T. HENDO order — ${params.items[0]?.trackTitle ?? 'your purchase'}`;
+
+    const info = await transporter.sendMail({
+      from: `T. HENDO <${process.env.PROTON_SMTP_USER}>`,
+      to: params.to,
+      subject,
+      html: renderPurchaseConfirmationHtml(params),
+    });
+
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('Purchase confirmation email error:', error);
     throw error;
   }
 }
