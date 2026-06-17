@@ -20,6 +20,24 @@ Legend: ✅ done · 🚧 in progress · ⏳ queued (approved) · 📌 pinned (re
     `checkout.session.completed`) and set `STRIPE_WEBHOOK_SECRET` (`whsec_…`) in Vercel.
 
 ## In progress
+- 🚧 **#13 — Fix low-quality mobile thumbnails + auto-compress to AVIF** (client-reported, fixing now)
+  Root cause: admin cover-image uploads go straight to Firebase Storage with zero
+  resizing/compression, and the `next/image` usage on the cards has no `sizes` prop
+  with too-small intrinsic dimensions — `MusicListCard`'s image container goes
+  full-width on mobile (`MusicListCard.css` ~L469) while the source is capped at a
+  small density-descriptor size, so mobile gets the blurriest result. Porting the
+  same `sharp`-based AVIF pipeline already running in the `hr` project
+  (`src/lib/images.ts` + `/api/admin/compress`) so every upload is re-encoded
+  server-side to a consistent quality/size, regardless of what the admin uploads.
+  - [x] `sharp` dependency + `serverExternalPackages: ["sharp"]` in `next.config.ts`
+  - [x] `compressToAvif` helper in `src/lib/images.ts`
+  - [x] `/api/admin/compress` route (admin-session gated)
+  - [x] Wire `AdminMusicTrackForm.tsx` cover upload through the compress endpoint
+  - [x] Add `sizes` + correct intrinsic width/height to `MusicCard.tsx` and
+    `MusicListCard.tsx` `<Image>` usage
+  - [ ] Test locally: upload a track image via admin, confirm it lands in
+    Firebase Storage as `.avif` and looks sharp on a real mobile device/DPR
+
 - 🚧 **#4 — Purchase confirmation email** (branded receipt + download link)
   Sent once from the fulfillment step (so it can't double-send), via the existing
   Proton SMTP transporter. Dark theme, electric-blue accent, stars, LemonMilk-style
@@ -29,7 +47,15 @@ Legend: ✅ done · 🚧 in progress · ⏳ queued (approved) · 📌 pinned (re
 
 ## Queued (approved — do next, in this order)
 - ⏳ **#3 — Guest purchase recovery** (email the downloads / link guest orders to an account).
-- ⏳ **#6 — Apple Pay / Google Pay + promo codes** at checkout.
+- 🚧 **#6 — Apple Pay / Google Pay + promo codes** at checkout.
+  - [x] `allow_promotion_codes: true` on both checkout session creators (`src/lib/stripe.ts`)
+  - [x] Apple Pay / Google Pay — no code needed. We use Stripe-hosted Checkout
+    (redirect to `checkout.stripe.com`), where wallet buttons appear automatically
+    for `'card'` on supported browsers/devices (Safari w/ Apple Pay, Chrome/Android
+    w/ Google Pay). No domain registration required (that's only for embedded
+    Payment Element on your own domain).
+  - [ ] Test on a real Apple Pay (Safari/iOS) and Google Pay (Chrome/Android) device
+  - [ ] Create at least one Coupon + Promotion Code in the Stripe Dashboard to test
 - ⏳ **#9 — Permanent re-downloads** (lifetime access to purchased files).
 
 ## Pinned (client said "put a pin on it" — not now)

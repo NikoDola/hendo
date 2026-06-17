@@ -310,8 +310,9 @@ export default function MusicListCard({
           <Image
             src={track.imageFileUrl || '/images/hendo/4.png'}
             alt={track.title}
-            width={150}
-            height={150}
+            width={360}
+            height={360}
+            sizes="(max-width: 768px) 100vw, 180px"
             className="musicListCardImage"
             style={{
               filter: isPlaying ? `brightness(${1 + glowIntensity * 0.3})` : 'brightness(1)',

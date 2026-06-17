@@ -7,7 +7,8 @@
       "PowerShell($p = Join-Path $env:TEMP 'hendo-email-preview.html'; \"Exists: $\\(Test-Path $p\\)\"; \"Path: $p\"; Invoke-Item $p)",
       "PowerShell($p = 'C:\\\\Users\\\\Dolov\\\\AppData\\\\Local\\\\Temp\\\\hendo-email-preview.html'; \"Exists: $\\(Test-Path $p\\)\"; Invoke-Item $p)",
       "Bash(nslookup -type=TXT thelegendofhendo.com)",
-      "Bash(nslookup -type=TXT _dmarc.thelegendofhendo.com)"
+      "Bash(nslookup -type=TXT _dmarc.thelegendofhendo.com)",
+      "Bash(node -e ' *)"
     ],
     "additionalDirectories": [
       "C:\\Users\\Dolov\\AppData\\Local\\Temp"

@@ -152,10 +152,22 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
       }
 
       if (formData.imageFile) {
+        // Re-encode to AVIF server-side before storing, so cover art is always
+        // small and consistently sharp regardless of what the admin uploaded.
+        const compressFd = new FormData();
+        compressFd.append('image', formData.imageFile);
+        const compressRes = await fetch('/api/admin/compress', { method: 'POST', body: compressFd });
+        if (!compressRes.ok) {
+          const err = await compressRes.json().catch(() => ({ error: 'Image compression failed.' }));
+          throw new Error(err.error || 'Image compression failed.');
+        }
+        const avifBlob = await compressRes.blob();
+
         const timestamp = Date.now();
-        imageFileName = `music/images/${timestamp}_${formData.imageFile.name}`;
+        const baseName = formData.imageFile.name.replace(/\.[^./]+$/, '');
+        imageFileName = `music/images/${timestamp}_${baseName}.avif`;
         const imageStorageRef = ref(storage, imageFileName);
-        await uploadBytes(imageStorageRef, formData.imageFile);
+        await uploadBytes(imageStorageRef, avifBlob, { contentType: 'image/avif' });
         imageFileUrl = await getDownloadURL(imageStorageRef);
       }
 

@@ -22,6 +22,11 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
 
+  // sharp uses a platform-specific native binary. Bundling it into the
+  // serverless function breaks it on Vercel (Linux x64). Keep it external so
+  // it is require()d at runtime from node_modules instead.
+  serverExternalPackages: ["sharp"],
+
   // Add this so Next.js 16 + Turbopack stops throwing errors
   turbopack: {},
 

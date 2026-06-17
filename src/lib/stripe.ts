@@ -76,6 +76,7 @@ export async function createCheckoutSession(
       mode: 'payment',
       success_url: successUrl,
       cancel_url: cancelUrl,
+      allow_promotion_codes: true,
       ...(customerEmail ? { customer_email: customerEmail } : {}),
       metadata: {
         musicTrackId,
@@ -129,6 +130,7 @@ export async function createCheckoutSessionForItems(
       mode: 'payment',
       success_url: successUrl,
       cancel_url: cancelUrl,
+      allow_promotion_codes: true,
       ...(customerEmail ? { customer_email: customerEmail } : {}),
       metadata: {
         musicTrackIds: JSON.stringify(cleaned.map(i => i.id)),
