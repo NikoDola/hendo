@@ -166,25 +166,24 @@ export function UserAuthProvider({ children }: { children: React.ReactNode }) {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
 
-    // iOS Safari frequently blocks/halts popups; redirect is the most reliable.
-    const isIOSSafari =
-      typeof window !== 'undefined' &&
-      /iP(hone|od|ad)/.test(navigator.userAgent) &&
-      /Safari/.test(navigator.userAgent) &&
-      !/CriOS|FxiOS|EdgiOS|OPiOS/.test(navigator.userAgent);
-
-    if (isIOSSafari) {
-      await signInWithRedirect(auth, provider);
-      return;
-    }
-
-    // Wait for the user to actually pick an account. Only fall back to redirect
-    // if the popup is genuinely unavailable (blocked, no browser support).
+    // Use a popup for ALL browsers, including iOS Safari. Our Firebase
+    // authDomain (t-hendo.firebaseapp.com) is a different site from the app
+    // (thelegendofhendo.com), so signInWithRedirect breaks under Safari's ITP /
+    // third-party storage partitioning: the redirect returns but
+    // getRedirectResult() is empty, so the user silently lands back on /login.
+    // A popup completes auth in its own top-level (first-party) window and posts
+    // the result back via postMessage, which ITP does NOT block — so it works on
+    // Safari where redirect does not. signInWithPopup calls window.open
+    // synchronously, so this must stay reachable without an await in front of it
+    // from the click handler, or iOS Safari's popup blocker will stop it.
     try {
       const result = await signInWithPopup(auth, provider);
       await setServerSessionFromCurrentUser(result.user);
     } catch (e) {
       const code = (e as { code?: string })?.code || '';
+      // Only fall back to redirect if the popup genuinely couldn't open. On
+      // Safari this fallback is itself unreliable (same ITP reason as above),
+      // but it covers the rare non-Safari popup-blocked case.
       const popupUnavailable =
         code === 'auth/popup-blocked' ||
         code === 'auth/operation-not-supported-in-this-environment';
