@@ -27,6 +27,14 @@ const nextConfig: NextConfig = {
   // it is require()d at runtime from node_modules instead.
   serverExternalPackages: ["sharp"],
 
+  // Vercel's automatic file tracer can miss sharp's native libvips .so file
+  // since it's loaded via dlopen() rather than require(), which throws
+  // ERR_DLOPEN_FAILED at runtime even though npm installed it correctly.
+  // Force it into the deployed function bundle explicitly.
+  outputFileTracingIncludes: {
+    "/api/admin/compress": ["./node_modules/@img/**/*", "./node_modules/sharp/**/*"],
+  },
+
   // Add this so Next.js 16 + Turbopack stops throwing errors
   turbopack: {},
 

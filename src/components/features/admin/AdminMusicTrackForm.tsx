@@ -152,23 +152,28 @@ export default function AdminMusicTrackForm({ track, onSubmit, onCancel }: Admin
       }
 
       if (formData.imageFile) {
-        // Re-encode to AVIF server-side before storing, so cover art is always
-        // small and consistently sharp regardless of what the admin uploaded.
-        const compressFd = new FormData();
-        compressFd.append('image', formData.imageFile);
-        const compressRes = await fetch('/api/admin/compress', { method: 'POST', body: compressFd });
+        // Upload the raw file straight to Storage first (unchanged, client-side,
+        // no size limit), then ask the server to re-encode it to AVIF in place.
+        // We pass only the Storage path to /api/admin/compress, not the file
+        // itself — Vercel functions cap request bodies at 4.5 MB and cover
+        // photos routinely exceed that.
+        const timestamp = Date.now();
+        const rawFileName = `music/images/${timestamp}_${formData.imageFile.name}`;
+        const rawStorageRef = ref(storage, rawFileName);
+        await uploadBytes(rawStorageRef, formData.imageFile);
+
+        const compressRes = await fetch('/api/admin/compress', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: rawFileName }),
+        });
         if (!compressRes.ok) {
           const err = await compressRes.json().catch(() => ({ error: 'Image compression failed.' }));
           throw new Error(err.error || 'Image compression failed.');
         }
-        const avifBlob = await compressRes.blob();
-
-        const timestamp = Date.now();
-        const baseName = formData.imageFile.name.replace(/\.[^./]+$/, '');
-        imageFileName = `music/images/${timestamp}_${baseName}.avif`;
-        const imageStorageRef = ref(storage, imageFileName);
-        await uploadBytes(imageStorageRef, avifBlob, { contentType: 'image/avif' });
-        imageFileUrl = await getDownloadURL(imageStorageRef);
+        const { url, path } = await compressRes.json();
+        imageFileUrl = url;
+        imageFileName = path;
       }
 
       await onSubmit({

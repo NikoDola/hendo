@@ -35,8 +35,22 @@ Legend: ✅ done · 🚧 in progress · ⏳ queued (approved) · 📌 pinned (re
   - [x] Wire `AdminMusicTrackForm.tsx` cover upload through the compress endpoint
   - [x] Add `sizes` + correct intrinsic width/height to `MusicCard.tsx` and
     `MusicListCard.tsx` `<Image>` usage
-  - [ ] Test locally: upload a track image via admin, confirm it lands in
-    Firebase Storage as `.avif` and looks sharp on a real mobile device/DPR
+  - [x] Backfilled all 11 existing tracks' cover images to AVIF
+    (`scripts/backfill-avif-covers.js --apply`, ~2.6MB → ~130KB each,
+    originals left in Storage untouched)
+  - [x] Fixed `FUNCTION_PAYLOAD_TOO_LARGE` on Vercel: `/api/admin/compress`
+    used to receive the raw file in the request body, which hits Vercel's
+    hard 4.5MB function body cap. Now the client uploads the raw file to
+    Storage directly (as before), then calls compress with just the Storage
+    path; the server fetches/compresses/replaces via the Admin SDK
+    (no body-size limit on that side).
+  - [x] Fixed `ERR_DLOPEN_FAILED` (sharp's libvips missing on Vercel): added
+    `outputFileTracingIncludes` in `next.config.ts` for `/api/admin/compress`
+    so Vercel's file tracer force-includes sharp's native binary instead of
+    silently dropping it (it's loaded via `dlopen`, which static tracing can miss).
+  - [ ] Redeploy to Vercel and re-test a real upload (both fixes need a fresh
+    deploy — if `ERR_DLOPEN_FAILED` somehow persists, redeploy once with
+    Vercel's build cache disabled)
 
 - 🚧 **#4 — Purchase confirmation email** (branded receipt + download link)
   Sent once from the fulfillment step (so it can't double-send), via the existing
