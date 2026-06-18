@@ -1,0 +1,184 @@
+/* Custom dark genre picker — matches the admin form inputs / our interface,
+   replacing the native white <select> dropdown. */
+
+.genreSelect {
+  position: relative;
+  width: 100%;
+}
+
+/* Trigger button (closed state) — mirrors .adminFormInput. */
+.genreSelectTrigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  /* Extra right padding so the chevron sits away from the edge. */
+  padding: 0.75rem 1rem 0.75rem 0.75rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0.375rem;
+  color: white;
+  font-size: 1rem;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: none !important;
+  transition: border-color 0.2s ease;
+}
+
+.genreSelectTrigger:hover,
+.genreSelectTrigger:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Neutralise the global <button> skin (split-color pseudos + glow). */
+.genreSelectTrigger::before,
+.genreSelectTrigger::after,
+.genreSelectOption::before,
+.genreSelectOption::after,
+.genreSelectCreate::before,
+.genreSelectCreate::after {
+  content: none !important;
+}
+
+.genreSelectPlaceholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.genreSelectValue {
+  color: white;
+}
+
+.genreSelectChevron {
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.7);
+  /* Nudge the arrow in from the right edge. */
+  margin-right: 0.25rem;
+  transition: transform 0.2s ease;
+}
+
+.genreSelectChevron.open {
+  transform: rotate(180deg);
+}
+
+/* Dropdown panel (open state). */
+.genreSelectPanel {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.genreSelectSearch {
+  position: relative;
+  padding: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.genreSelectSearchIcon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--theme-color);
+  pointer-events: none;
+}
+
+.genreSelectSearchInput {
+  width: 100%;
+  padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.375rem;
+  color: white;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.genreSelectSearchInput::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.genreSelectSearchInput:focus {
+  outline: none;
+  border-color: var(--theme-color);
+}
+
+.genreSelectOptions {
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 0.25rem;
+}
+
+.genreSelectOption {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  background: transparent;
+  border: none;
+  border-radius: 0.375rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.95rem;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: none !important;
+}
+
+.genreSelectOption:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.genreSelectOption.selected {
+  color: var(--theme-color);
+}
+
+.genreSelectOption svg {
+  color: var(--theme-color);
+  flex-shrink: 0;
+}
+
+.genreSelectEmpty {
+  padding: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.genreSelectCreate {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  background: transparent;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0;
+  color: var(--theme-color);
+  font-size: 0.95rem;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: none !important;
+}
+
+.genreSelectCreate:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.genreSelectCreate svg {
+  flex-shrink: 0;
+}

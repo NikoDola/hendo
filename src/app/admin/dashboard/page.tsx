@@ -10,6 +10,7 @@ import AdminSidebar from '@/components/features/admin/AdminSidebar';
 import AdminUsersList from '@/components/features/admin/AdminUsersList';
 import AdminMusicTracksList from '@/components/features/admin/AdminMusicTracksList';
 import AdminMusicTrackForm from '@/components/features/admin/AdminMusicTrackForm';
+import AdminCouponsManager from '@/components/features/admin/AdminCouponsManager';
 import '@/components/pages/AdminDashboard.css';
 
 export default function AdminDashboard() {
@@ -158,6 +159,9 @@ export default function AdminDashboard() {
                   track={editingTrack}
                   onSubmit={handleSubmitTrack}
                   onCancel={handleCancelForm}
+                  existingGenres={Array.from(
+                    new Set(tracks.map((t) => t.genre).filter((g): g is string => Boolean(g)))
+                  )}
                 />
               ) : (
                 <AdminMusicTracksList
@@ -170,6 +174,8 @@ export default function AdminDashboard() {
               )}
             </div>
           )}
+
+          {activeTab === 'coupons' && <AdminCouponsManager />}
 
           {/* Statistics tab removed */}
         </main>

@@ -17,7 +17,8 @@
       "Bash(sort -t: -k2 -nr)",
       "PowerShell(npx tsc --noEmit -p tsconfig.json 2>&1)",
       "PowerShell(Get-CimInstance Win32_Process -Filter \"Name='node.exe'\" | Select-Object ProcessId, @{N='Cmd';E={$_.CommandLine}} | Format-List)",
-      "PowerShell(npm run build 2>&1)"
+      "PowerShell(npm run build 2>&1)",
+      "Bash(node -e \"console.log\\(require\\('./node_modules/stripe/package.json'\\).version\\)\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\Dolov\\AppData\\Local\\Temp"

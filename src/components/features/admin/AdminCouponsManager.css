@@ -1,0 +1,185 @@
+.adminCoupons {
+  max-width: 900px;
+}
+
+.adminCouponsHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.adminCouponsHeader h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.adminCouponsHeader svg {
+  color: var(--theme-color);
+}
+
+.adminCouponsHint {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0 0 1.5rem;
+}
+
+/* Create form */
+.adminCouponForm {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.adminCouponFormRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.adminCouponFormRow .adminFormGroup {
+  margin-bottom: 0;
+}
+
+/* Use the global submit button look, but lay out icon + text inline. */
+.adminCouponForm .adminFormSubmitButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.adminCouponSpin {
+  animation: adminCouponSpin 0.8s linear infinite;
+}
+
+@keyframes adminCouponSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* List */
+.adminCouponsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.adminCouponsMuted {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.adminCouponsError {
+  color: #ff6b6b;
+}
+
+.adminCouponCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.5rem;
+  padding: 0.875rem 1rem;
+}
+
+.adminCouponCard.inactive {
+  opacity: 0.55;
+}
+
+.adminCouponMain {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Code chip doubles as a copy button — neutralise the global button skin. */
+.adminCouponCode {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.375rem;
+  padding: 0.4rem 0.75rem;
+  color: white;
+  font-family: var(--font-lemonmilk, monospace);
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: none !important;
+}
+
+.adminCouponCode::before,
+.adminCouponCode::after {
+  content: none !important;
+}
+
+.adminCouponCode:hover {
+  border-color: var(--theme-color);
+}
+
+.adminCouponCode svg {
+  color: rgba(255, 255, 255, 0.6);
+  flex-shrink: 0;
+}
+
+.adminCouponBadge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--theme-color);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  padding: 0.25rem 0.6rem;
+  white-space: nowrap;
+}
+
+.adminCouponBadge.inactiveBadge {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.adminCouponMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.55);
+  white-space: nowrap;
+}
+
+/* Deactivate button — neutralise the global button skin. */
+.adminCouponDeactivate {
+  background: transparent !important;
+  border: 1px solid rgba(255, 107, 107, 0.5);
+  border-radius: 0.375rem;
+  padding: 0.4rem 0.875rem;
+  color: #ff8a8a;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: none !important;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.adminCouponDeactivate::before,
+.adminCouponDeactivate::after {
+  content: none !important;
+}
+
+.adminCouponDeactivate:hover {
+  background: rgba(255, 107, 107, 0.15) !important;
+  color: #ffb3b3;
+}
+
+@media (max-width: 640px) {
+  .adminCouponMeta {
+    flex-basis: 100%;
+  }
+}
