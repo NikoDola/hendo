@@ -447,7 +447,7 @@
   border-radius: 12px;
   border: none;
 
-  color: white;
+  color: black;
   font-weight: 600;
   cursor: pointer;
 
@@ -456,14 +456,23 @@
   justify-content: center;
   gap: 0.5rem;
   font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
+  /* Rest: colored gradient fill (cycles via :root). Hover flips to black + glow. */
+  background: linear-gradient(to top right, var(--theme-color-1), var(--theme-color-2));
   box-shadow: 0 0 15px var(--theme-color-1), 0 0 30px var(--theme-color-2);
   font-size: 0.9rem;
 }
 
+/* Disable the global split-color pseudos so the black hover stays clean. */
+.musicCardPurchaseButton::before,
+.musicCardPurchaseButton::after {
+  content: none;
+}
+
 .musicCardPurchaseButton:hover {
+  /* Hover: black fill with a single theme-color glow ring, like SUBMIT. */
   background: black;
   color: var(--light-gray);
-  box-shadow: 0 0 20px var(--theme-color-1), 0 0 40px var(--theme-color-2);
+  box-shadow: 0 0 20px var(--theme-color);
   transform: translateY(-1px);
 }
 

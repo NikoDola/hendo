@@ -52,7 +52,10 @@ export default function ParallaxStars() {
 
     if (!bgCanvas) { return };
 
-    const bgCtx = bgCanvas.getContext("2d");
+    // alpha:false lets Safari/WebKit skip per-frame alpha compositing for this
+    // opaque, full-screen background canvas (it already paints solid black each
+    // frame) — a cheap, meaningful win on Safari.
+    const bgCtx = bgCanvas.getContext("2d", { alpha: false });
 
     if (!bgCtx) return;
 
@@ -157,7 +160,7 @@ export default function ParallaxStars() {
 
     const initEntities = () => {
       const nextEntities: (Star | ShootingStar)[] = [];
-      const starCount = Math.min(Math.floor((width * height) / 2500), 700);
+      const starCount = Math.min(Math.floor((width * height) / 4000), 450);
 
       for (let i = 0; i < starCount; i++) {
         nextEntities.push(new Star({ x: Math.random() * width, y: Math.random() * height, opacity: 0 }));
@@ -173,7 +176,8 @@ export default function ParallaxStars() {
 
     // Animation loop
     const MAX_STAR_OPACITY = 0.8; // 20% lower than full opacity
-    const animate = () => {
+
+    const drawFrame = () => {
       // Calculate fade-in opacity (0 to MAX_STAR_OPACITY over 3 seconds)
       const elapsed = Date.now() - startTime;
       const globalOpacity = Math.min(elapsed / FADE_DURATION, 1) * MAX_STAR_OPACITY;
@@ -197,12 +201,32 @@ export default function ParallaxStars() {
 
       // Reset alpha for next frame
       bg.globalAlpha = 1;
-
-      animationRef.current = requestAnimationFrame(animate);
     };
 
-    // Start animation
-    animate();
+    // Throttle to ~30fps. The stars drift at most ~0.1px/frame, so 30fps looks
+    // identical to 60fps but roughly halves the canvas work — the biggest lever
+    // for Safari/WebKit, whose 2D canvas is slower than Chrome's.
+    const TARGET_FPS = 30;
+    const frameInterval = 1000 / TARGET_FPS;
+    let lastFrameTime = 0;
+
+    const animate = (now: number) => {
+      animationRef.current = requestAnimationFrame(animate);
+      if (now - lastFrameTime < frameInterval) return;
+      lastFrameTime = now;
+      drawFrame();
+    };
+
+    // Respect reduced-motion: draw one static frame and skip the loop entirely.
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      drawFrame();
+    } else {
+      animationRef.current = requestAnimationFrame(animate);
+    }
 
     const handleResize = () => {
       updateDimensions();
@@ -210,9 +234,26 @@ export default function ParallaxStars() {
     };
     window.addEventListener("resize", handleResize);
 
+    // Pause the loop when the tab is hidden — saves battery and avoids the jank
+    // Safari can produce when a backgrounded rAF loop resumes.
+    const handleVisibility = () => {
+      if (prefersReducedMotion) return;
+      if (document.hidden) {
+        if (animationRef.current) {
+          cancelAnimationFrame(animationRef.current);
+          animationRef.current = null;
+        }
+      } else if (animationRef.current === null) {
+        lastFrameTime = 0;
+        animationRef.current = requestAnimationFrame(animate);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+
     // Cleanup
     return () => {
       window.removeEventListener("resize", handleResize);
+      document.removeEventListener("visibilitychange", handleVisibility);
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
