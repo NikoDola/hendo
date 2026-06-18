@@ -59,7 +59,10 @@ export async function createCheckoutSession(
 
   try {
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+      // No payment_method_types: let Checkout show every method enabled in the
+      // Stripe Dashboard (cards + Apple Pay / Google Pay / etc.) for the current
+      // mode. Hardcoding ['card'] is not needed — wallets ride on cards anyway —
+      // and omitting it hands control to the Dashboard's live-mode settings.
       line_items: [
         {
           price_data: {
@@ -115,7 +118,9 @@ export async function createCheckoutSessionForItems(
 
   try {
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+      // No payment_method_types: let Checkout show every method enabled in the
+      // Stripe Dashboard (cards + Apple Pay / Google Pay / etc.) for the current
+      // mode.
       line_items: cleaned.map(item => ({
         price_data: {
           currency: 'usd',

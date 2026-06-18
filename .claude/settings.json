@@ -18,10 +18,14 @@
       "PowerShell(npx tsc --noEmit -p tsconfig.json 2>&1)",
       "PowerShell(Get-CimInstance Win32_Process -Filter \"Name='node.exe'\" | Select-Object ProcessId, @{N='Cmd';E={$_.CommandLine}} | Format-List)",
       "PowerShell(npm run build 2>&1)",
-      "Bash(node -e \"console.log\\(require\\('./node_modules/stripe/package.json'\\).version\\)\")"
+      "Bash(node -e \"console.log\\(require\\('./node_modules/stripe/package.json'\\).version\\)\")",
+      "Bash(powershell.exe Start-Process \"C:\\\\Users\\\\Dolov\\\\OneDrive\\\\Desktop\\\\v2\\\\compare.html\")",
+      "Bash(powershell.exe Start-Process \"C:\\\\Users\\\\Dolov\\\\OneDrive\\\\Desktop\\\\v3\\\\v3.html\")",
+      "Bash(powershell.exe Start-Process \"C:\\\\Users\\\\Dolov\\\\OneDrive\\\\Desktop\\\\v4\\\\v4.html\")"
     ],
     "additionalDirectories": [
-      "C:\\Users\\Dolov\\AppData\\Local\\Temp"
+      "C:\\Users\\Dolov\\AppData\\Local\\Temp",
+      "C:\\Users\\Dolov\\OneDrive\\Desktop\\v4"
     ]
   }
 }

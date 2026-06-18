@@ -50,7 +50,7 @@ aside {
 @property --theme-color-1 {
   syntax: "<color>";
   inherits: true;
-  initial-value: hsl(220, 100%, 50%);
+  initial-value: oklab(53.319% -0.03321 -0.25759);
 }
 @property --theme-color-2 {
   syntax: "<color>";
@@ -64,7 +64,7 @@ aside {
   /* Default theme colors (JavaScript will update these) */
   --theme-color: hsl(220, 100%, 50%);
   --theme-color-1: hsl(220, 100%, 50%);
-  --theme-color-2: hsl(120, 100%, 50%);
+  --theme-color-2: rgb(0, 255, 0);
 
   /* Ease the color cycle itself so every consumer (fills + glows) fades
      together over 3s. Matches the existing per-button 3s timing. */
