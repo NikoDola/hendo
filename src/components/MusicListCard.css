@@ -335,22 +335,29 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 3s ease;
+  /* Theme color fade comes from the :root variable animation (in sync with all
+     buttons); keep short transitions only for the hover lift + text swap. */
+  transition: transform 0.3s ease, color 0.3s ease;
   white-space: nowrap;
   box-shadow: 0 0 15px var(--theme-color-1), 0 0 30px var(--theme-color-2);
 }
 
 .musicListCardPurchaseBtn:hover:not(:disabled) {
-  background: var(--light-gray);
-  color: black;
+  /* Match the global / form submit button hover: turn black with the cycling
+     theme color glowing behind. */
+  background: black;
+  color: var(--light-gray);
   transform: translateY(-2px);
   box-shadow: 0 0 20px var(--theme-color-1), 0 0 40px var(--theme-color-2);
 }
 
 .musicListCardPurchaseBtn:disabled,
 .musicListCardPurchaseBtn.purchased {
-  background: rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.6);
+  /* Keep the theme gradient + 3s blend (inherited from the base rule) so a
+     purchased card stays in the exact same color rhythm as available cards;
+     just dim it and disable interaction to read as "purchased". */
+  opacity: 0.5;
+  color: black;
   cursor: not-allowed;
   transform: none;
 }
@@ -382,8 +389,8 @@
   border: none;
   border-radius: 50%;
   cursor: pointer;
-  /* Match purchase button timing */
-  transition: all 3s ease;
+  /* Theme color fade comes from :root; keep transform for the hover scale. */
+  transition: transform 0.3s ease;
   aspect-ratio: 1 / 1;
   padding: 0;
   box-shadow: 0 0 10px var(--theme-color-1), 0 0 20px var(--theme-color-2);
@@ -422,8 +429,8 @@
   height: 100%;
   background: linear-gradient(to right, var(--theme-color-1), var(--theme-color-2));
   border-radius: 3px;
-  /* Keep progress movement responsive, but color/glow transitions match purchase */
-  transition: width 0.1s linear, background 3s ease, box-shadow 3s ease;
+  /* Keep progress movement responsive; color/glow fade is driven by :root. */
+  transition: width 0.1s linear;
 }
 
 .musicListCardProgressFill::after {
@@ -439,7 +446,7 @@
   box-shadow: 0 0 10px var(--theme-color-1), 0 0 20px var(--theme-color-2), 0 0 4px rgba(0, 0, 0, 0.3);
   border: 3px solid var(--theme-color-2);
   z-index: 10;
-  transition: box-shadow 3s ease, border-color 3s ease, background-color 3s ease;
+  /* Colors fade via the :root variable animation, in sync with everything. */
 }
 
 .musicListCardProgressGlow {

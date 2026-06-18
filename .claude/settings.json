@@ -13,7 +13,9 @@
       "Bash(node --env-file=.env.local -e \"console.log\\(process.env.FIREBASE_PROJECT_ID\\); console.log\\(process.env.FIREBASE_PRIVATE_KEY.slice\\(0,40\\)\\)\")",
       "Bash(node --env-file=.env.local scripts/backfill-avif-covers.js)",
       "Bash(node --env-file=.env.local scripts/backfill-avif-covers.js --apply)",
-      "Bash(xargs -I{} sh -c 'echo \"=== {} ===\"; grep -o \"@img[^\\\\\"]*\" {} | sort -u | head -n 20; echo \"---sharp---\"; grep -o \"node_modules/sharp[^\\\\\"]*\" {} | sort -u | head -n 10')"
+      "Bash(xargs -I{} sh -c 'echo \"=== {} ===\"; grep -o \"@img[^\\\\\"]*\" {} | sort -u | head -n 20; echo \"---sharp---\"; grep -o \"node_modules/sharp[^\\\\\"]*\" {} | sort -u | head -n 10')",
+      "Bash(sort -t: -k2 -nr)",
+      "PowerShell(npx tsc --noEmit -p tsconfig.json 2>&1)"
     ],
     "additionalDirectories": [
       "C:\\Users\\Dolov\\AppData\\Local\\Temp"

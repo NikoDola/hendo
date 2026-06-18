@@ -37,6 +37,27 @@ aside {
     box-shadow 3s ease;
 }
 
+/* Register the theme colors as real <color> custom properties so they can be
+   interpolated. Without this, gradient fills that use these vars (purchase /
+   play buttons, progress bars) SNAP when the JS color cycle flips them every
+   8s — only box-shadow glows could fade. With @property, the variables
+   themselves animate, so gradient fills cross-fade smoothly and in sync. */
+@property --theme-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: hsl(220, 100%, 50%);
+}
+@property --theme-color-1 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: hsl(220, 100%, 50%);
+}
+@property --theme-color-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: hsl(120, 100%, 50%);
+}
+
 :root {
   font-family: var(--font-lemonmilk), system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
@@ -44,6 +65,10 @@ aside {
   --theme-color: hsl(220, 100%, 50%);
   --theme-color-1: hsl(220, 100%, 50%);
   --theme-color-2: hsl(120, 100%, 50%);
+
+  /* Ease the color cycle itself so every consumer (fills + glows) fades
+     together over 3s. Matches the existing per-button 3s timing. */
+  transition: --theme-color 3s ease, --theme-color-1 3s ease, --theme-color-2 3s ease;
 }
 
 html {
@@ -100,7 +125,8 @@ h1, h2{
   width: max-content;
   line-height: 1;
   color: var(--theme-color-1);
-  transition: color 3s ease;
+  /* Color fade is driven by the :root variable animation so it stays in sync
+     with every other themed element — no local transition. */
 }
 
 /* Overlay color with fade */
@@ -110,7 +136,6 @@ h1::before, h2::before {
   inset: 0;
   color: var(--theme-color-2);
   pointer-events: none;
-  transition: color 3s ease;
 
   -webkit-mask-image: linear-gradient(
     to bottom,
@@ -208,7 +233,6 @@ button::before {
   height: 100%;
   background-color: var(--theme-color-2);
   z-index: -1;
-  transition: background-color 3s ease;
 
   -webkit-mask-image: linear-gradient(
     to bottom,
@@ -234,7 +258,6 @@ button::after {
   height: 100%;
   background-color: var(--theme-color-1);
   z-index: -1;
-  transition: background-color 3s ease;
 
   -webkit-mask-image: linear-gradient(
     to top,

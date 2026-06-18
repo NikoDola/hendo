@@ -296,8 +296,8 @@
   background: linear-gradient(to right, var(--theme-color-1), var(--theme-color-2));
   border-radius: 3px;
   position: relative;
-  /* Keep progress movement responsive, but color/glow transitions match purchase */
-  transition: width 0.1s linear, background 3s ease, box-shadow 3s ease;
+  /* Keep progress movement responsive; color/glow fade is driven by :root. */
+  transition: width 0.1s linear;
 }
 
 .musicCardProgressFill::after {
@@ -313,7 +313,7 @@
   box-shadow: 0 0 10px var(--theme-color-1), 0 0 20px var(--theme-color-2), 0 0 4px rgba(0, 0, 0, 0.3);
   border: 3px solid var(--theme-color-2);
   z-index: 10;
-  transition: box-shadow 3s ease, border-color 3s ease, background-color 3s ease;
+  /* Colors fade via the :root variable animation, in sync with everything. */
 }
 
 /* Purchase section - Bottom (ROW) */
@@ -395,7 +395,9 @@
   z-index: 0;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.3s ease, background-color 3s ease;
+  /* Fade the active/inactive toggle quickly; the theme color itself fades via
+     :root in sync with all other buttons. */
+  transition: opacity 0.3s ease;
 }
 
 .musicCardIconButton svg {

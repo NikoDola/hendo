@@ -66,8 +66,10 @@ async function assertSharpCanDecode(input: Buffer): Promise<void> {
 
 /**
  * Compresses an image buffer to AVIF, stepping quality and width down until the
- * result is <= maxBytes. Throws ImageError if the image can't be decoded or if
- * even the smallest profile can't fit within maxBytes.
+ * result is <= maxBytes. Throws ImageError only if the image can't be decoded.
+ * If even the smallest profile can't fit within maxBytes (rare — only happens
+ * with pathological inputs), the smallest AVIF we managed is returned anyway:
+ * shipping a slightly-over-budget cover beats rejecting the admin's upload.
  *
  * Width steps top out at 1600 — well above the largest size any cover art
  * actually renders at (full-bleed mobile cards), even at 3x DPR.
@@ -95,8 +97,7 @@ export async function compressToAvif(input: Buffer, maxBytes: number = TARGET_CO
       if (!smallest || out.length < smallest.length) smallest = out;
     }
   }
-  throw new ImageError(
-    `Could not compress image below ${Math.round(maxBytes / 1024)} KB ` +
-      `(smallest: ${smallest ? (smallest.length / 1024).toFixed(1) : "?"} KB).`,
-  );
+  // Nothing fit under the budget — return the best-effort smallest. The loop
+  // always runs at least once, so `smallest` is non-null here.
+  return smallest!;
 }
