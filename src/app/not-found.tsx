@@ -1,39 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Music, Home } from 'lucide-react';
 import '@/components/pages/NotFound.css';
 
 export default function NotFound() {
-  const [color, setColor] = useState('var(--theme-color)');
-
-  useEffect(() => {
-    const colors = [
-      'var(--theme-color)',
-      '#ff6b6b',
-      '#4ecdc4',
-      '#45b7d1',
-      '#96ceb4',
-      '#feca57',
-      '#ff9ff3',
-      '#54a0ff'
-    ];
-
-    const interval = setInterval(() => {
-      setColor(colors[Math.floor(Math.random() * colors.length)]);
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <div className="notFoundContainer">
       <div className="notFoundContent">
-        <h1 
-          className="notFoundTitle"
-          style={{ color }}
-        >
+        <h1 className="notFoundTitle" data-text="404">
           404
         </h1>
         <p className="notFoundMessage">
