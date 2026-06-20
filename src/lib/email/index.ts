@@ -153,6 +153,133 @@ export async function sendWelcomeEmail(email: string) {
   }
 }
 
+/** Dark, on-brand contact-form notification (sent to the T. HENDO inbox). */
+export function renderContactNotificationHtml(
+  name: string,
+  email: string,
+  message: string,
+  currentTime: string
+): string {
+  const headFont =
+    "'Montserrat','Century Gothic','Trebuchet MS','Helvetica Neue',Arial,sans-serif";
+  const bodyFont = "'Montserrat','Century Gothic','Helvetica Neue',Arial,sans-serif";
+  const safeName = escapeHtml(name);
+  const safeEmail = escapeHtml(email);
+  const initial = escapeHtml((name.trim().charAt(0) || '?').toUpperCase());
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <meta name="supported-color-schemes" content="dark">
+  <title>New contact message</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&display=swap');
+    body { margin:0; padding:0; background-color:#04050a; }
+    @media (max-width:600px) {
+      .container { width:100% !important; }
+      .px { padding-left:22px !important; padding-right:22px !important; }
+    }
+  </style>
+</head>
+<body style="margin:0;padding:0;background-color:#04050a;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">New message from ${safeName} via Dreamstation.</div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#04050a;background-image:radial-gradient(circle at 18% 12%, rgba(0,85,255,0.20), transparent 42%), radial-gradient(circle at 85% 4%, rgba(0,85,255,0.12), transparent 38%);">
+    <tr>
+      <td align="center" style="padding:34px 12px;">
+        <table role="presentation" width="600" class="container" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;">
+
+          <!-- Header -->
+          <tr>
+            <td align="center" class="px" style="padding:6px 40px 26px;">
+              <div style="font-family:${headFont};color:#5e7cff;font-size:15px;letter-spacing:0.55em;">&#10022;&nbsp;&nbsp;&#10023;&nbsp;&nbsp;<span style="color:#ffffff;font-size:26px;line-height:1;text-shadow:0 0 6px #ffffff,0 0 12px #5e7cff,0 0 20px #5e7cff;">&#10038;</span>&nbsp;&nbsp;&#10023;&nbsp;&nbsp;&#10022;</div>
+              <div style="font-family:${headFont};color:#ffffff;font-size:36px;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;margin-top:16px;">T.&nbsp;HENDO</div>
+              <div style="font-family:${headFont};color:#5e7cff;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.42em;margin-top:8px;">Dreamstation</div>
+            </td>
+          </tr>
+
+          <!-- Card -->
+          <tr>
+            <td style="padding:0 6px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#0a0d15;border:1px solid #1c2333;border-radius:16px;">
+
+                <tr>
+                  <td class="px" style="padding:38px 40px 6px;">
+                    <div style="font-family:${headFont};color:#ffffff;font-size:25px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;">New Message</div>
+                    <p style="font-family:${bodyFont};color:#aab1c4;font-size:15px;line-height:1.7;margin:14px 0 0;">
+                      A message from <strong style="color:#ffffff;">${safeName}</strong> has been received. Reply at your earliest convenience.
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Reply button -->
+                <tr>
+                  <td align="center" class="px" style="padding:26px 40px 30px;">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td align="center" bgcolor="#0055ff" style="border-radius:10px;box-shadow:0 0 22px rgba(0,85,255,0.45);">
+                          <a href="mailto:${safeEmail}?subject=Re: Your message to T. HENDO" style="display:inline-block;padding:16px 38px;font-family:${headFont};color:#ffffff;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;text-decoration:none;border-radius:10px;">Reply to ${safeName}</a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Sender -->
+                <tr>
+                  <td class="px" style="padding:0 40px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid #1c2333;border-bottom:1px solid #1c2333;">
+                      <tr>
+                        <td width="52" valign="top" style="padding:18px 0;">
+                          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                              <td align="center" valign="middle" width="44" height="44" bgcolor="#0055ff" style="width:44px;height:44px;border-radius:50%;font-family:${headFont};color:#ffffff;font-size:18px;font-weight:800;">${initial}</td>
+                            </tr>
+                          </table>
+                        </td>
+                        <td valign="middle" style="padding:18px 0 18px 14px;">
+                          <div style="font-family:${headFont};color:#ffffff;font-size:16px;font-weight:700;">${safeName}</div>
+                          <div style="font-family:${bodyFont};font-size:14px;"><a href="mailto:${safeEmail}" style="color:#5e7cff;text-decoration:none;">${safeEmail}</a></div>
+                          <div style="font-family:${bodyFont};color:#6b7280;font-size:12px;margin-top:2px;">${escapeHtml(currentTime)}</div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Message -->
+                <tr>
+                  <td class="px" style="padding:24px 40px 34px;">
+                    <div style="font-family:${headFont};color:#6b7280;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.22em;margin-bottom:10px;">Message</div>
+                    <div style="font-family:${bodyFont};color:#cdd3e0;font-size:15px;line-height:1.8;white-space:pre-wrap;">${escapeHtml(message)}</div>
+                  </td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td align="center" class="px" style="padding:28px 40px 8px;">
+              <div style="font-family:${headFont};color:#3a4256;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.32em;">&#10022;&nbsp;&nbsp;The Legend of Hendo&nbsp;&nbsp;&#10022;</div>
+              <p style="font-family:${bodyFont};color:#525a6e;font-size:11px;line-height:1.6;margin:14px 0 0;">
+                Sent from the contact form at thelegendofhendo.com.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
 export async function sendContactEmail(name: string, email: string, message: string) {
   try {
     const transporter = createTransporter();
@@ -178,55 +305,7 @@ export async function sendContactEmail(name: string, email: string, message: str
       ...(ownerEmail && ownerEmail !== recipientEmail ? { bcc: ownerEmail } : {}),
       replyTo: email,
       subject: `Contact Us: ${name} <${email}>`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
-          <div style="background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            <h2 style="color: #333; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px;">
-              New Contact Form Submission
-            </h2>
-            
-            <!-- Quick Reply Button at the top -->
-            <div style="text-align: center; margin: 20px 0;">
-              <a href="mailto:${email}?subject=Re: Your message to T. HENDO" 
-                 style="background-color: #4a90e2; color: #fff; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 16px;">
-                Reply to ${name}
-              </a>
-            </div>
-            
-            <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
-              A message by <strong>${name}</strong> (${email}) has been received. Kindly respond at your earliest convenience.
-            </p>
-            
-            <hr style="border: none; border-top: 1px dashed #ddd; margin: 25px 0;">
-            
-            <div style="background-color: #f9f9f9; padding: 20px; border-radius: 6px; margin: 20px 0;">
-              <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                <div style="width: 40px; height: 40px; background-color: #4a90e2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
-                  <span style="color: #fff; font-weight: bold; font-size: 18px;">${name.charAt(0).toUpperCase()}</span>
-                </div>
-                <div>
-                  <div style="font-weight: bold; color: #333; font-size: 16px;">${name}</div>
-                  <div style="color: #4a90e2; font-size: 14px;">${email}</div>
-                  <div style="color: #999; font-size: 12px; margin-top: 2px;">${currentTime}</div>
-                </div>
-              </div>
-              
-              <div style="color: #333; line-height: 1.8; white-space: pre-wrap;">${message}</div>
-            </div>
-            
-            <hr style="border: none; border-top: 1px dashed #ddd; margin: 25px 0;">
-            
-            <div style="background-color: #f0f7ff; padding: 15px; border-radius: 6px; border-left: 4px solid #4a90e2;">
-              <p style="margin: 0; color: #666; font-size: 14px;">
-                <strong>Sender's Email:</strong> <a href="mailto:${email}" style="color: #4a90e2; text-decoration: none; font-weight: bold;">${email}</a>
-              </p>
-              <p style="margin: 10px 0 0 0; color: #888; font-size: 12px;">
-                Click the email above or use the "Reply to ${name}" button to respond directly.
-              </p>
-            </div>
-          </div>
-        </div>
-      `,
+      html: renderContactNotificationHtml(name, email, message, currentTime),
     });
 
     return { success: true, messageId: info.messageId };
@@ -324,10 +403,10 @@ export function renderPurchaseConfirmationHtml(params: PurchaseConfirmationParam
       <td align="center" style="padding:34px 12px;">
         <table role="presentation" width="600" class="container" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;">
 
-          <!-- Header: stars + wordmark -->
+          <!-- Header: stars + wordmark (shining star in the middle of the diamonds) -->
           <tr>
             <td align="center" class="px" style="padding:6px 40px 26px;">
-              <div style="font-family:${headFont};color:#5e7cff;font-size:15px;letter-spacing:0.55em;">&#10022;&nbsp;&nbsp;&#10023;&nbsp;&nbsp;&#8902;&nbsp;&nbsp;&#10023;&nbsp;&nbsp;&#10022;</div>
+              <div style="font-family:${headFont};color:#5e7cff;font-size:15px;letter-spacing:0.55em;">&#10022;&nbsp;&nbsp;&#10023;&nbsp;&nbsp;<span style="color:#ffffff;font-size:26px;line-height:1;text-shadow:0 0 6px #ffffff,0 0 12px #5e7cff,0 0 20px #5e7cff;">&#10038;</span>&nbsp;&nbsp;&#10023;&nbsp;&nbsp;&#10022;</div>
               <div style="font-family:${headFont};color:#ffffff;font-size:36px;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;margin-top:16px;">T.&nbsp;HENDO</div>
               <div style="font-family:${headFont};color:#5e7cff;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.42em;margin-top:8px;">Dreamstation</div>
             </td>

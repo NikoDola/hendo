@@ -21,7 +21,8 @@
       "Bash(node -e \"console.log\\(require\\('./node_modules/stripe/package.json'\\).version\\)\")",
       "Bash(powershell.exe Start-Process \"C:\\\\Users\\\\Dolov\\\\OneDrive\\\\Desktop\\\\v2\\\\compare.html\")",
       "Bash(powershell.exe Start-Process \"C:\\\\Users\\\\Dolov\\\\OneDrive\\\\Desktop\\\\v3\\\\v3.html\")",
-      "Bash(powershell.exe Start-Process \"C:\\\\Users\\\\Dolov\\\\OneDrive\\\\Desktop\\\\v4\\\\v4.html\")"
+      "Bash(powershell.exe Start-Process \"C:\\\\Users\\\\Dolov\\\\OneDrive\\\\Desktop\\\\v4\\\\v4.html\")",
+      "Bash(powershell.exe Start-Process explorer \"C:\\\\Users\\\\Dolov\\\\OneDrive\\\\Desktop\\\\v1\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\Dolov\\AppData\\Local\\Temp",
