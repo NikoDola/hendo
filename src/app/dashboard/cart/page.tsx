@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { Trash2, ShoppingBag, ArrowLeft, X } from 'lucide-react';
@@ -17,6 +18,10 @@ export default function CartPage() {
   const [rightsOpen, setRightsOpen] = useState(false);
   const [hasReachedRightsBottom, setHasReachedRightsBottom] = useState(false);
   const rightsBodyRef = useRef<HTMLDivElement | null>(null);
+  // Beat Lease popup — shown after the user accepts the terms and clicks Purchase.
+  const [leaseOpen, setLeaseOpen] = useState(false);
+  const [hasReachedLeaseBottom, setHasReachedLeaseBottom] = useState(false);
+  const leaseBodyRef = useRef<HTMLDivElement | null>(null);
   const hasInitializedSelection = useRef(false);
 
   // Select all items by default on first load (after cartItems hydrate from localStorage)
@@ -71,6 +76,39 @@ export default function CartPage() {
     }, 0);
   }, [rightsOpen]);
 
+  // Close lease popup with Esc
+  useEffect(() => {
+    if (!leaseOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLeaseOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [leaseOpen]);
+
+  // Lock page scroll while lease popup is open
+  useEffect(() => {
+    if (!leaseOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [leaseOpen]);
+
+  // Reset "scrolled to bottom" gate when opening the lease popup
+  useEffect(() => {
+    if (!leaseOpen) return;
+    setHasReachedLeaseBottom(false);
+    setTimeout(() => {
+      const el = leaseBodyRef.current;
+      if (!el) return;
+      if (el.scrollHeight <= el.clientHeight + 2) {
+        setHasReachedLeaseBottom(true);
+      }
+    }, 0);
+  }, [leaseOpen]);
+
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
       setSelectedItems(cartItems.map(item => item.id));
@@ -87,11 +125,11 @@ export default function CartPage() {
     }
   };
 
-  const selectedTotal = cartItems
-    .filter(item => selectedItems.includes(item.id))
-    .reduce((sum, item) => sum + item.price, 0);
+  const selectedBeats = cartItems.filter(item => selectedItems.includes(item.id));
+  const selectedTotal = selectedBeats.reduce((sum, item) => sum + item.price, 0);
 
-  const handleContinueToPurchase = async () => {
+  // Step 1: validate, then show the Beat Lease agreement before payment.
+  const handleContinueToPurchase = () => {
     if (selectedItems.length === 0) {
       alert('Please select items to purchase');
       return;
@@ -100,7 +138,15 @@ export default function CartPage() {
       alert('Please read and accept the rights before continuing.');
       return;
     }
+    if (selectedBeats.length === 0) {
+      alert('Please select items to purchase');
+      return;
+    }
+    setLeaseOpen(true);
+  };
 
+  // Step 2: after the user agrees to the Beat Lease, start Stripe checkout.
+  const startCheckout = async () => {
     const selected = cartItems.filter(item => selectedItems.includes(item.id));
     if (selected.length === 0) {
       alert('Please select items to purchase');
@@ -494,6 +540,139 @@ export default function CartPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {leaseOpen && typeof document !== 'undefined' && createPortal(
+        <div
+          className="cartRightsOverlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Beat Lease License"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget && !isPurchasing) setLeaseOpen(false);
+          }}
+        >
+          <div className="cartRightsModal glass-effect" onMouseDown={(e) => e.stopPropagation()}>
+            <div className="cartRightsHeader">
+              <h2 className="cartRightsTitle" data-text="Beat Lease License">Beat Lease License</h2>
+              <button
+                type="button"
+                className="cartRightsCloseButton"
+                onClick={() => setLeaseOpen(false)}
+                aria-label="Close"
+                disabled={isPurchasing}
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div
+              className="cartRightsBody"
+              ref={leaseBodyRef}
+              onScroll={() => {
+                const el = leaseBodyRef.current;
+                if (!el) return;
+                const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 6;
+                if (atBottom) setHasReachedLeaseBottom(true);
+              }}
+            >
+              <h3 className="cartRightsSectionTitle">BEAT LEASE LICENSE</h3>
+
+              {selectedBeats.length > 0 && (
+                <>
+                  <p><strong>This Beat Lease applies to:</strong></p>
+                  <ul>
+                    {selectedBeats.map((beat) => (
+                      <li key={beat.id}>{beat.title} — ${beat.price.toFixed(2)}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
+
+              <p><strong>License Overview</strong></p>
+              <p>
+                By purchasing this lease, the Licensee is granted a non-exclusive, non-transferable license to use
+                the instrumental (&apos;Beat&apos;) in one commercial sound recording.
+              </p>
+
+              <p><strong>Included Rights</strong></p>
+              <ul>
+                <li>Record vocals over the Beat</li>
+                <li>Release music on streaming platforms</li>
+                <li>Sell digital downloads and physical copies</li>
+                <li>Perform the song live</li>
+                <li>Monetize on major streaming services</li>
+              </ul>
+
+              <p><strong>Usage Limits</strong></p>
+              <ul>
+                <li>Maximum of 100,000 total streams across all platforms</li>
+                <li>One (1) commercial sound recording</li>
+                <li>Non-exclusive rights only</li>
+                <li>Producer retains ownership of the Beat</li>
+              </ul>
+
+              <p><strong>Restrictions</strong></p>
+              <ul>
+                <li>No resale, transfer, or sublicensing of the Beat</li>
+                <li>No ownership claims to the Beat or composition</li>
+                <li>No use in film, television, commercials, video games, or other visual media without a separate Sync License</li>
+                <li>License must be upgraded if stream limits are exceeded</li>
+              </ul>
+
+              <p><strong>Producer Credit</strong></p>
+              <p>Credit: &quot;Produced by T. Hendo&quot;</p>
+
+              <p><strong>Ownership</strong></p>
+              <p>
+                All copyrights to the Beat, instrumental composition, and master recording remain the sole property
+                of T. Hendo. Purchase grants usage rights only and does not transfer ownership.
+              </p>
+
+              <p><strong>Termination</strong></p>
+              <p>
+                Violation of any terms may result in immediate termination of the license and removal of usage rights.
+              </p>
+
+              <p><strong>Acceptance</strong></p>
+              <p>
+                By purchasing, downloading, or using the Beat, the Licensee agrees to all terms and conditions of
+                this License Agreement.
+              </p>
+
+              <p>Producer: T. Hendo</p>
+              <p>© All Rights Reserved.</p>
+
+              <p>
+                <em>A full Beat Lease Agreement, autofilled with your details and the price paid, is included as a PDF
+                in your download folder after purchase.</em>
+              </p>
+            </div>
+
+            <div className="cartRightsFooter">
+              <button
+                type="button"
+                className="cartRightsAgreeButton"
+                disabled={!hasReachedLeaseBottom || isPurchasing}
+                onClick={startCheckout}
+              >
+                {isPurchasing
+                  ? 'Starting checkout...'
+                  : hasReachedLeaseBottom
+                    ? 'Agree & Continue to Payment'
+                    : 'Scroll to the bottom to Agree'}
+              </button>
+              <button
+                type="button"
+                className="cartRightsShopButton"
+                onClick={() => setLeaseOpen(false)}
+                disabled={isPurchasing}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   );
