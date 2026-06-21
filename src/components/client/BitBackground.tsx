@@ -11,7 +11,7 @@ export default function BitBackground({ showPlayButton = true }: BitBackgroundPr
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
-  const [dataArray, setDataArray] = useState<Uint8Array | null>(null);
+  const [dataArray, setDataArray] = useState<Uint8Array<ArrayBuffer> | null>(null);
   const animationRef = useRef<number | null>(null);
   const [beatDetected, setBeatDetected] = useState(false);
   const [intensity, setIntensity] = useState(0);
@@ -163,23 +163,40 @@ export default function BitBackground({ showPlayButton = true }: BitBackgroundPr
   useEffect(() => {
     if (!analyser || !dataArray || !isPlaying) return;
 
-    const analyzeAudio = () => {
-      // Allocate fresh frequency array matching analyser bin count
-      const freqArray = new Uint8Array(analyser.frequencyBinCount);
+    // Throttle to ~30fps — on ProMotion (120Hz) iPhones an uncapped rAF loop
+    // doubles the per-frame work vs a 60Hz device, a real trigger for Safari's
+    // memory-pressure tab reload. Reuse the pre-allocated dataArray buffer
+    // instead of allocating a fresh Uint8Array every frame.
+    const TARGET_FPS = 30;
+    const frameInterval = 1000 / TARGET_FPS;
+    let lastFrameTime = 0;
+
+    const analyzeAudio = (now: number) => {
+      animationRef.current = requestAnimationFrame(analyzeAudio);
+      if (now - lastFrameTime < frameInterval) return;
+      lastFrameTime = now;
+
+      const freqArray = dataArray;
       analyser.getByteFrequencyData(freqArray);
 
-      // Calculate intensity values
-      const average = freqArray.reduce((sum, value) => sum + value, 0) / freqArray.length;
+      let overallSum = 0;
+      let bassSum = 0;
+      let midSum = 0;
+      let trebleSum = 0;
+      for (let i = 0; i < freqArray.length; i++) {
+        const value = freqArray[i];
+        overallSum += value;
+        if (i < 8) bassSum += value;
+        else if (i < 32) midSum += value;
+        else if (i < 64) trebleSum += value;
+      }
+
+      const average = overallSum / freqArray.length;
       setIntensity(average);
 
-      // Analyze different frequency ranges
-      const bassFreqs = Array.from(freqArray.slice(0, 8));
-      const midFreqs = Array.from(freqArray.slice(8, 32));
-      const trebleFreqs = Array.from(freqArray.slice(32, 64));
-
-      const bassAverage = bassFreqs.reduce((sum, value) => sum + value, 0) / bassFreqs.length;
-      const midAverage = midFreqs.reduce((sum, value) => sum + value, 0) / midFreqs.length;
-      const trebleAverage = trebleFreqs.reduce((sum, value) => sum + value, 0) / trebleFreqs.length;
+      const bassAverage = bassSum / 8;
+      const midAverage = midSum / 24;
+      const trebleAverage = trebleSum / 32;
 
       setBassIntensity(bassAverage);
       setMidIntensity(midAverage);
@@ -190,13 +207,26 @@ export default function BitBackground({ showPlayButton = true }: BitBackgroundPr
         setBeatDetected(true);
         setTimeout(() => setBeatDetected(false), 200);
       }
-
-      animationRef.current = requestAnimationFrame(analyzeAudio);
     };
 
-    analyzeAudio();
+    animationRef.current = requestAnimationFrame(analyzeAudio);
+
+    // Pause the visualization loop (not audio playback) while the tab is hidden.
+    const handleVisibility = () => {
+      if (document.hidden) {
+        if (animationRef.current) {
+          cancelAnimationFrame(animationRef.current);
+          animationRef.current = null;
+        }
+      } else if (animationRef.current === null) {
+        lastFrameTime = 0;
+        animationRef.current = requestAnimationFrame(analyzeAudio);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }

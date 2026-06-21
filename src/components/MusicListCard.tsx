@@ -42,6 +42,7 @@ export default function MusicListCard({
   const [progress, setProgress] = useState(0);
   const [showHashtags, setShowHashtags] = useState(false);
   const animationRef = useRef<number | null>(null);
+  const freqDataRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const seekProgressRef = useRef(0);
@@ -99,16 +100,35 @@ export default function MusicListCard({
   useEffect(() => {
     if (!analyser || !isPlaying) return;
 
-    const analyzeAudio = () => {
-      const freqArray = new Uint8Array(analyser.frequencyBinCount);
+    // Throttle to ~30fps and reuse one buffer — on ProMotion (120Hz) iPhones an
+    // uncapped rAF loop doubles the per-frame array allocations vs a 60Hz device,
+    // which is a real trigger for Safari's memory-pressure tab reload.
+    const TARGET_FPS = 30;
+    const frameInterval = 1000 / TARGET_FPS;
+    let lastFrameTime = 0;
+
+    const analyzeAudio = (now: number) => {
+      animationRef.current = requestAnimationFrame(analyzeAudio);
+      if (now - lastFrameTime < frameInterval) return;
+      lastFrameTime = now;
+
+      if (!freqDataRef.current || freqDataRef.current.length !== analyser.frequencyBinCount) {
+        freqDataRef.current = new Uint8Array(analyser.frequencyBinCount);
+      }
+      const freqArray = freqDataRef.current;
       analyser.getByteFrequencyData(freqArray);
 
       const bassEnd = Math.floor(freqArray.length * 0.15);
       const midEnd = Math.floor(freqArray.length * 0.5);
 
-      const bassSum = freqArray.slice(0, bassEnd).reduce((a, b) => a + b, 0);
-      const midSum = freqArray.slice(bassEnd, midEnd).reduce((a, b) => a + b, 0);
-      const trebleSum = freqArray.slice(midEnd).reduce((a, b) => a + b, 0);
+      let bassSum = 0;
+      let midSum = 0;
+      let trebleSum = 0;
+      for (let i = 0; i < freqArray.length; i++) {
+        if (i < bassEnd) bassSum += freqArray[i];
+        else if (i < midEnd) midSum += freqArray[i];
+        else trebleSum += freqArray[i];
+      }
 
       const bass = bassSum / bassEnd / 255;
       const mid = midSum / (midEnd - bassEnd) / 255;
@@ -120,13 +140,26 @@ export default function MusicListCard({
 
       const beat = bass > 0.7 || mid > 0.6;
       setBeatDetected(beat);
-
-      animationRef.current = requestAnimationFrame(analyzeAudio);
     };
 
-    analyzeAudio();
+    animationRef.current = requestAnimationFrame(analyzeAudio);
+
+    // Pause the visualization loop (not audio playback) while the tab is hidden.
+    const handleVisibility = () => {
+      if (document.hidden) {
+        if (animationRef.current !== null) {
+          cancelAnimationFrame(animationRef.current);
+          animationRef.current = null;
+        }
+      } else if (animationRef.current === null) {
+        lastFrameTime = 0;
+        animationRef.current = requestAnimationFrame(analyzeAudio);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
       if (animationRef.current !== null) {
         cancelAnimationFrame(animationRef.current);
       }
@@ -155,6 +188,9 @@ export default function MusicListCard({
       if (audio.src !== track.audioFileUrl) {
         audio.src = track.audioFileUrl;
       }
+      if (audioContext?.state === 'suspended') {
+        audioContext.resume();
+      }
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise.catch(error => {
@@ -163,8 +199,9 @@ export default function MusicListCard({
       }
     } else {
       audio.pause();
+      audioContext?.suspend().catch(() => {});
     }
-  }, [isPlaying, track.audioFileUrl, audio]);
+  }, [isPlaying, track.audioFileUrl, audio, audioContext]);
 
   // Cleanup
   useEffect(() => {
