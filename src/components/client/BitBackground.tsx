@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
+import { getMediaElementSource } from "@/lib/audioContext";
 import "./BitBackground.css";
 
 interface BitBackgroundProps {
@@ -113,30 +114,25 @@ export default function BitBackground({ showPlayButton = true }: BitBackgroundPr
     };
   }, [audio, currentSongIndex, isPlaying]);
 
-  // Initialize audio context and analyser
+  // Initialize analyser against the shared AudioContext. Only do this once the
+  // user actually starts playback, so idle pages don't allocate an audio graph.
   useEffect(() => {
-    if (!audio) return;
+    if (!audio || !isPlaying) return;
+
+    let cancelled = false;
 
     const initAudioAnalysis = async () => {
       try {
-        // Check if audio element is already connected to prevent duplicate connections
-        if (audio.dataset.audioConnected === 'true') {
-          return;
-        }
+        const result = getMediaElementSource(audio);
+        if (!result || cancelled) return;
 
-        const AudioContextCtor: typeof AudioContext = (window as unknown as { AudioContext?: typeof AudioContext }).AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext as unknown as typeof AudioContext;
-        const context = new AudioContextCtor();
-        const source = context.createMediaElementSource(audio);
+        const { context, source } = result;
         const analyserNode = context.createAnalyser();
-
         analyserNode.fftSize = 256;
         analyserNode.smoothingTimeConstant = 0.8;
 
         source.connect(analyserNode);
         analyserNode.connect(context.destination);
-
-        // Mark audio element as connected
-        audio.dataset.audioConnected = 'true';
 
         setAudioContext(context);
         setAnalyser(analyserNode);
@@ -149,15 +145,10 @@ export default function BitBackground({ showPlayButton = true }: BitBackgroundPr
     initAudioAnalysis();
 
     return () => {
-      if (audioContext) {
-        audioContext.close();
-      }
-      // Reset connection flag when cleaning up
-      if (audio) {
-        audio.dataset.audioConnected = 'false';
-      }
+      cancelled = true;
     };
-  }, [audio]);
+    // We intentionally do not close the shared context on cleanup.
+  }, [audio, isPlaying]);
 
   // Audio analysis
   useEffect(() => {
@@ -252,7 +243,7 @@ export default function BitBackground({ showPlayButton = true }: BitBackgroundPr
           style={{
             transform: `scale(${1 + bassIntensity / 50}) translate(${bassIntensity / 10}px, ${bassIntensity / 15}px)`,
             opacity: 0.3 + bassIntensity / 100,
-            filter: `blur(${bassIntensity / 50}px)`
+            filter: bassIntensity > 0 ? `blur(${bassIntensity / 50}px)` : undefined
           }}
         />
         <div
@@ -260,7 +251,7 @@ export default function BitBackground({ showPlayButton = true }: BitBackgroundPr
           style={{
             transform: `scale(${1 + midIntensity / 40}) translate(${-midIntensity / 12}px, ${midIntensity / 20}px)`,
             opacity: 0.2 + midIntensity / 80,
-            filter: `blur(${midIntensity / 60}px)`
+            filter: midIntensity > 0 ? `blur(${midIntensity / 60}px)` : undefined
           }}
         />
         <div
@@ -268,7 +259,7 @@ export default function BitBackground({ showPlayButton = true }: BitBackgroundPr
           style={{
             transform: `scale(${1 + trebleIntensity / 30}) translate(${trebleIntensity / 8}px, ${-trebleIntensity / 10}px)`,
             opacity: 0.4 + trebleIntensity / 125,
-            filter: `blur(${trebleIntensity / 40}px)`
+            filter: trebleIntensity > 0 ? `blur(${trebleIntensity / 40}px)` : undefined
           }}
         />
         <div
@@ -276,7 +267,7 @@ export default function BitBackground({ showPlayButton = true }: BitBackgroundPr
           style={{
             transform: `scale(${1 + intensity / 45}) translate(${-intensity / 15}px, ${-intensity / 18}px)`,
             opacity: 0.1 + intensity / 50,
-            filter: `blur(${intensity / 55}px)`
+            filter: intensity > 0 ? `blur(${intensity / 55}px)` : undefined
           }}
         />
 

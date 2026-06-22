@@ -1,137 +1,63 @@
-"use client";
-
-import { useEffect, useState, useCallback, useRef } from "react";
-
 import "./ZoomingStars.css";
 
-interface Star {
-  id: number;
-  x: number;
-  y: number;
-  size: number; // Final size (15-28px)
-  appearDelay: number; // 3-5 seconds in ms
-  scaleDuration: number; // 4-7 seconds in ms
-  stayDuration: number; // 1-3 seconds in ms
-  disappearDuration: number; // 1-2 seconds in ms
-  cycleCount: number; // Track how many times this instance has cycled
-}
+// Pure-CSS star field. No client state, no effects, no per-cycle DOM churn —
+// just a fixed set of elements looping a CSS keyframe forever. This keeps
+// Safari's compositor working on a small, cached set of layers instead of
+// growing memory until the tab reloads on its own.
+//
+// Positions/sizes/timings are a hand-picked static spread (not random) so the
+// component renders deterministically on the server with zero runtime work.
+const STARS: { x: number; y: number; size: number; delay: number; duration: number }[] = [
+  { x: 6,  y: 14, size: 22, delay: 0,   duration: 9 },
+  { x: 17, y: 70, size: 16, delay: 2.4, duration: 11 },
+  { x: 27, y: 33, size: 26, delay: 5.1, duration: 8 },
+  { x: 38, y: 82, size: 14, delay: 1.2, duration: 12 },
+  { x: 46, y: 21, size: 20, delay: 3.7, duration: 10 },
+  { x: 55, y: 58, size: 24, delay: 6.3, duration: 9 },
+  { x: 63, y: 9,  size: 15, delay: 0.8, duration: 13 },
+  { x: 71, y: 44, size: 27, delay: 4.5, duration: 8 },
+  { x: 79, y: 76, size: 18, delay: 2.0, duration: 11 },
+  { x: 88, y: 28, size: 21, delay: 5.8, duration: 10 },
+  { x: 93, y: 62, size: 16, delay: 1.6, duration: 12 },
+  { x: 12, y: 47, size: 19, delay: 7.0, duration: 9 },
+  { x: 33, y: 6,  size: 23, delay: 3.1, duration: 10 },
+  { x: 50, y: 90, size: 17, delay: 6.8, duration: 8 },
+  { x: 67, y: 86, size: 25, delay: 0.4, duration: 13 },
+  { x: 84, y: 52, size: 14, delay: 4.0, duration: 11 },
+  { x: 22, y: 90, size: 20, delay: 2.7, duration: 9 },
+  { x: 58, y: 35, size: 18, delay: 5.4, duration: 12 },
+  { x: 76, y: 18, size: 22, delay: 1.0, duration: 10 },
+  { x: 3,  y: 84, size: 15, delay: 6.0, duration: 11 },
+];
 
 export default function ZoomingStars() {
-  const MIN_STARS = 15;
-  const STAR_DENSITY = 150000; // pixels per star
-  const [stars, setStars] = useState<Star[]>([]);
-  const nextIdRef = useRef(0);
-
-  // Generate a new random star
-  const generateStar = useCallback((id: number, cycleCount: number = 0): Star => {
-    return {
-      id,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: 15 + Math.random() * 13, // 15-28px
-      appearDelay: 3000 + Math.random() * 2000, // 3-5 seconds
-      scaleDuration: 4000 + Math.random() * 3000, // 4-7 seconds
-      stayDuration: 1000 + Math.random() * 2000, // 1-3 seconds
-      disappearDuration: 1000 + Math.random() * 1000, // 1-2 seconds
-      cycleCount,
-    };
-  }, []);
-
-  const getTargetStarCount = useCallback((): number => {
-    if (typeof window === "undefined") return MIN_STARS;
-    const area = window.innerWidth * window.innerHeight;
-    return Math.max(MIN_STARS, Math.ceil(area / STAR_DENSITY));
-  }, []);
-
-  // Initialize stars
-  useEffect(() => {
-    const starCount = getTargetStarCount();
-    const newStars: Star[] = [];
-    
-    for (let i = 0; i < starCount; i++) {
-      newStars.push(generateStar(nextIdRef.current++));
-    }
-    
-    setStars(newStars);
-  }, [generateStar, getTargetStarCount]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const targetCount = getTargetStarCount();
-
-      setStars((prev) => {
-        if (prev.length === targetCount) return prev;
-        if (prev.length > targetCount) return prev.slice(0, targetCount);
-
-        const additional: Star[] = [];
-        for (let i = prev.length; i < targetCount; i++) {
-          additional.push(generateStar(nextIdRef.current++));
-        }
-        return [...prev, ...additional];
-      });
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [generateStar, getTargetStarCount]);
-
-  // Handle star reset after complete animation cycle
-  const handleAnimationIteration = useCallback((starId: number) => {
-    setStars(prev => prev.map(star => {
-      if (star.id === starId) {
-        // Generate new position and timing for the next cycle
-        return generateStar(starId, star.cycleCount + 1);
-      }
-      return star;
-    }));
-  }, [generateStar]);
-
   return (
     <div className="zooming-stars-container">
-      {stars.map((star) => {
-        const initialScale = 0.5 / star.size; // Start from 0.5px
-        const totalDuration = star.scaleDuration + star.stayDuration + star.disappearDuration;
-        const totalDelay = star.appearDelay;
-        
-        return (
-          <div
-            key={`${star.id}-${star.cycleCount}`}
-            className="zooming-star"
-            style={{
-              left: `${star.x}%`,
-              top: `${star.y}%`,
-              width: `${star.size}px`,
-              height: `${star.size}px`,
-            
-              // CSS custom properties for the animation
-              '--initial-scale': initialScale,
-              '--final-scale': '1',
-              // Single animation that includes all phases
-              animation: `starLifecycle ${totalDuration}ms ease-in-out ${totalDelay}ms 1 forwards`,
-            } as React.CSSProperties}
-            onAnimationEnd={(e) => {
-              // Only handle the main animation end, not any child animations
-              if (e.animationName === 'starLifecycle') {
-                handleAnimationIteration(star.id);
-              }
-            }}
+      {STARS.map((star, i) => (
+        <div
+          key={i}
+          className="zooming-star"
+          style={{
+            left: `${star.x}%`,
+            top: `${star.y}%`,
+            width: `${star.size}px`,
+            height: `${star.size}px`,
+            animationDelay: `${star.delay}s`,
+            animationDuration: `${star.duration}s`,
+          }}
+        >
+          <svg
+            viewBox="0 0 52 52"
+            xmlns="http://www.w3.org/2000/svg"
+            style={{ width: "100%", height: "100%" }}
           >
-            <svg
-              viewBox="0 0 52 52"
-              xmlns="http://www.w3.org/2000/svg"
-              style={{
-                width: '100%',
-                height: '100%',
-              }}
-            >
-              <path
-                d="M52,26c-23.9,1.2-24.8,2.1-26,26c-1.2-23.9-2.1-24.8-26-26c23.9-1.2,24.8-2.1,26-26C27.2,23.9,28.1,24.8,52,26z"
-                fill="currentColor"
-              />
-            </svg>
-          </div>
-        );
-      })}
+            <path
+              d="M52,26c-23.9,1.2-24.8,2.1-26,26c-1.2-23.9-2.1-24.8-26-26c23.9-1.2,24.8-2.1,26-26C27.2,23.9,28.1,24.8,52,26z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
+      ))}
     </div>
   );
 }

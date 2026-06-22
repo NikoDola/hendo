@@ -5,8 +5,8 @@ import { ShoppingCart, Play, Pause, ChevronRight, ChevronDown, Star } from 'luci
 import Image from 'next/image';
 import { MusicTrack } from '@/lib/music';
 import { useCart } from '@/context/CartContext';
+import { getMediaElementSource } from '@/lib/audioContext';
 import './MusicCard.css';
-import Router from 'next/router';
 
 interface MusicCardProps {
   track: MusicTrack;
@@ -36,8 +36,8 @@ export default function MusicCard({
     return audioEl;
   });
 
-  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
   const [bassIntensity, setBassIntensity] = useState(0);
   const [midIntensity, setMidIntensity] = useState(0);
   const [trebleIntensity, setTrebleIntensity] = useState(0);
@@ -53,40 +53,39 @@ export default function MusicCard({
   const touchDirectionDetermined = useRef(false);
 
 
+  // Connect this card's audio to the shared AudioContext when playback starts.
+  // Reuses a single analyser per card and never creates a new AudioContext.
   useEffect(() => {
-    // Initialize AudioContext and analyser when playing starts
     if (!audio || !isPlaying || !audio.src || audio.paused) return;
+
+    let cancelled = false;
 
     const initAudioAnalysis = async () => {
       try {
-        if (audio.dataset.audioConnected === 'true') {
-          return;
-        }
-
         if (!audio.crossOrigin) {
           audio.crossOrigin = 'anonymous';
         }
 
-        const AudioContextCtor: typeof AudioContext =
-          (window as typeof window & { webkitAudioContext?: typeof AudioContext }).AudioContext ||
-          (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext!;
-        const context = new AudioContextCtor();
+        const result = getMediaElementSource(audio);
+        if (!result || cancelled) return;
 
+        const { context, source } = result;
         if (context.state === 'suspended') {
           await context.resume();
         }
+        if (cancelled) return;
 
-        const source = context.createMediaElementSource(audio);
-        const analyserNode = context.createAnalyser();
-        analyserNode.fftSize = 256;
-        analyserNode.smoothingTimeConstant = 0.8;
+        if (!analyserRef.current) {
+          const analyserNode = context.createAnalyser();
+          analyserNode.fftSize = 256;
+          analyserNode.smoothingTimeConstant = 0.8;
 
-        source.connect(analyserNode);
-        analyserNode.connect(context.destination);
+          source.connect(analyserNode);
+          analyserNode.connect(context.destination);
+          analyserRef.current = analyserNode;
+        }
 
-        audio.dataset.audioConnected = 'true';
-        setAudioContext(context);
-        setAnalyser(analyserNode);
+        setAnalyser(analyserRef.current);
       } catch (error) {
         console.error('AudioContext initialization failed:', error);
       }
@@ -96,15 +95,19 @@ export default function MusicCard({
       initAudioAnalysis();
     }, 100);
 
-    return () => clearTimeout(timer);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, [isPlaying, audio]);
 
   // Audio analysis for visualizations
   useEffect(() => {
     if (!analyser || !isPlaying) return;
 
+    const freqArray = new Uint8Array(analyser.frequencyBinCount);
+
     const analyzeAudio = () => {
-      const freqArray = new Uint8Array(analyser.frequencyBinCount);
       analyser.getByteFrequencyData(freqArray);
 
       const bassFreqs = Array.from(freqArray.slice(0, 8));
@@ -355,17 +358,20 @@ export default function MusicCard({
     }).format(price);
   };
 
+  // Cleanup. The AudioContext is shared app-wide (see lib/audioContext) so we
+  // never close it here — we only release this element and its analyser.
   useEffect(() => {
     return () => {
       if (audio) {
         audio.pause();
         audio.src = '';
       }
-      if (audioContext) {
-        audioContext.close();
+      if (analyserRef.current) {
+        analyserRef.current.disconnect();
+        analyserRef.current = null;
       }
     };
-  }, [audio, audioContext]);
+  }, [audio]);
 
   return (
     <div className={`musicCard ${isPlaying ? 'musicCardPlaying' : ''} ${variant === 'home' ? 'musicCardHome' : ''}`}>

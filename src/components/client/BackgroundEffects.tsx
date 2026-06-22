@@ -2,6 +2,9 @@
 
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
+// ZoomingStars is now pure CSS (no client state/effects), so it can render
+// statically without a client-only dynamic import.
+import ZoomingStars from "@/components/client/ZoomingStars";
 
 // Lazy load heavy visual components for better performance
 const ParallaxStars = dynamic(() => import("@/components/client/ParallaxStars"), {
@@ -10,11 +13,6 @@ const ParallaxStars = dynamic(() => import("@/components/client/ParallaxStars"),
 });
 
 const BitBackground = dynamic(() => import("@/components/client/BitBackground"), {
-  ssr: false,
-  loading: () => null,
-});
-
-const ZoomingStars = dynamic(() => import("@/components/client/ZoomingStars"), {
   ssr: false,
   loading: () => null,
 });
