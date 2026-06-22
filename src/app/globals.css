@@ -11,6 +11,15 @@
   margin: 0;
 }
 
+/* Stop sideways drag on mobile. The Hero art is scaled up (scale: 2) and can
+   spill past the viewport edges; this clips any horizontal overflow at the
+   page root without affecting vertical scroll or fixed/sticky elements. */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 /* Global theme color transition - applies to all elements */
 /* Individual elements can override with their own transition property */
 h1,
