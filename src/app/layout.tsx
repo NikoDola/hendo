@@ -5,6 +5,7 @@ import { MouseProvider } from "@/context/context";
 import ConditionalNavbar from "@/components/client/ConditionalNavbar";
 import ConditionalFooter from "@/components/client/ConditionalFooter";
 import BackgroundEffects from "@/components/client/BackgroundEffects";
+import ReloadDiagnostics from "@/components/client/ReloadDiagnostics";
 import { UserAuthProvider } from "@/context/UserAuthContext";
 import { ColorToggleProvider } from "@/context/ColorToggleContext";
 import { CartProvider } from "@/context/CartContext";
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body style={{ backgroundColor: "black" }} className={`${lemonMilk.variable} antialiased relative`}>
         <ColorToggleProvider>
           <ThemeCSSVariablesUpdater />
+          <ReloadDiagnostics />
           <BackgroundEffects />
           <MouseProvider>
             <UserAuthProvider>
