@@ -105,7 +105,18 @@ export default function MusicListCard({
 
     const freqArray = new Uint8Array(analyser.frequencyBinCount);
 
-    const analyzeAudio = () => {
+    // Throttle the React state updates to ~12/sec. At 60fps each update
+    // re-renders the card and repaints the animated glow + image brightness
+    // filter, which pins the GPU and overheats phones. 12/sec looks identical
+    // for a background visualizer but does ~5x less work.
+    const UPDATE_INTERVAL = 80;
+    let lastUpdate = 0;
+
+    const analyzeAudio = (now: number) => {
+      animationRef.current = requestAnimationFrame(analyzeAudio);
+      if (now - lastUpdate < UPDATE_INTERVAL) return;
+      lastUpdate = now;
+
       analyser.getByteFrequencyData(freqArray);
 
       const bassEnd = Math.floor(freqArray.length * 0.15);
@@ -125,11 +136,9 @@ export default function MusicListCard({
 
       const beat = bass > 0.7 || mid > 0.6;
       setBeatDetected(beat);
-
-      animationRef.current = requestAnimationFrame(analyzeAudio);
     };
 
-    analyzeAudio();
+    animationRef.current = requestAnimationFrame(analyzeAudio);
 
     return () => {
       if (animationRef.current !== null) {
