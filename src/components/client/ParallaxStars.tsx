@@ -160,7 +160,10 @@ export default function ParallaxStars() {
 
     const initEntities = () => {
       const nextEntities: (Star | ShootingStar)[] = [];
-      const starCount = Math.min(Math.floor((width * height) / 4000), 450);
+      // Original (denser) starfield restored — the drifting stars are the effect
+      // the client likes. The Safari wins (30fps throttle, alpha:false canvas,
+      // visibility pause) below keep this affordable even at the higher count.
+      const starCount = Math.min(Math.floor((width * height) / 2500), 700);
 
       for (let i = 0; i < starCount; i++) {
         nextEntities.push(new Star({ x: Math.random() * width, y: Math.random() * height, opacity: 0 }));
@@ -177,10 +180,15 @@ export default function ParallaxStars() {
     // Animation loop
     const MAX_STAR_OPACITY = 0.8; // 20% lower than full opacity
 
-    const drawFrame = () => {
-      // Calculate fade-in opacity (0 to MAX_STAR_OPACITY over 3 seconds)
+    const drawFrame = (forceFullOpacity = false) => {
+      // Calculate fade-in opacity (0 to MAX_STAR_OPACITY over 3 seconds).
+      // forceFullOpacity skips the fade for the single static reduced-motion
+      // frame — otherwise it would draw at opacity 0 (invisible) and never
+      // advance, hiding the whole starfield.
       const elapsed = Date.now() - startTime;
-      const globalOpacity = Math.min(elapsed / FADE_DURATION, 1) * MAX_STAR_OPACITY;
+      const globalOpacity = forceFullOpacity
+        ? MAX_STAR_OPACITY
+        : Math.min(elapsed / FADE_DURATION, 1) * MAX_STAR_OPACITY;
 
       bg.fillStyle = '#000000';
       bg.fillRect(0, 0, width, height);
@@ -223,7 +231,7 @@ export default function ParallaxStars() {
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (prefersReducedMotion) {
-      drawFrame();
+      drawFrame(true);
     } else {
       animationRef.current = requestAnimationFrame(animate);
     }
