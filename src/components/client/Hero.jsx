@@ -90,9 +90,9 @@ export default function Hero() {
           priority
         />
         <Image
-          src="/images/hendo/1-bg_AA.avif"
-          width={1301}
-          height={627}
+          src="/images/hendo/hendo2025-opt_AA.avif"
+          width={2073}
+          height={1000}
           alt="hendo"
           className="hendoImage"
           priority
