@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useColorToggle } from "@/context/ColorToggleContext";
+import { gradientPairs, SLOT_MS, THEME_CYCLE_MS } from "@/lib/themeCycle";
 import "./ColorSlider.css";
 
 interface ColorSliderProps {
@@ -25,42 +26,29 @@ function ColorSliderInner({
   // const [isDragging, setIsDragging] = useState(false);
   const [currentColor, setCurrentColor] = useState("hsl(317 100% 54%)");
 
-  // Listen for color changes from the ColorProvider with glitch timing
+  // Derive the readout color from the shared time-based cycle (mirrors the CSS
+  // `themeCycle` keyframes) instead of polling getComputedStyle every 50ms —
+  // that poll forced a synchronous style flush 20×/s. We show the active pair's
+  // solid color and switch ~1.2s into each slot, matching the original "update
+  // when the glitch starts" timing. This re-renders only ~5×/40s, not 20×/s.
   useEffect(() => {
-    let lastColor = "";
-    let colorTimeout: NodeJS.Timeout;
+    let raf = 0;
+    let lastIndex = -1;
+    const GLITCH_DELAY_MS = 1200;
 
-    const updateColor = () => {
-      const root = document.documentElement;
-      const color = getComputedStyle(root).getPropertyValue('--theme-color').trim();
-
-      if (color && color !== lastColor) {
-        lastColor = color;
-
-        // Clear any existing timeout
-        if (colorTimeout) {
-          clearTimeout(colorTimeout);
-        }
-
-        // Update color 1.2 seconds after color change (when glitch starts)
-        colorTimeout = setTimeout(() => {
-          setCurrentColor(color);
-        }, 1200); // Match glitch start timing
+    const tick = () => {
+      const t = performance.now() - GLITCH_DELAY_MS;
+      const pos = ((t % THEME_CYCLE_MS) + THEME_CYCLE_MS) % THEME_CYCLE_MS;
+      const index = Math.floor(pos / SLOT_MS);
+      if (index !== lastIndex) {
+        lastIndex = index;
+        setCurrentColor(gradientPairs[index].solid);
       }
+      raf = requestAnimationFrame(tick);
     };
+    raf = requestAnimationFrame(tick);
 
-    // Initial color
-    updateColor();
-
-    // Update every 50ms to catch color changes more precisely
-    const interval = setInterval(updateColor, 50);
-
-    return () => {
-      clearInterval(interval);
-      if (colorTimeout) {
-        clearTimeout(colorTimeout);
-      }
-    };
+    return () => cancelAnimationFrame(raf);
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

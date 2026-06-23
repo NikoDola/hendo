@@ -1,49 +1,10 @@
 "use client";
 import { useEffect, useRef } from "react";
-
-// Default color fallback
-const DEFAULT_COLOR = "hsl(220, 100%, 50%)";
-
-// Helper to get current theme color from CSS variable
-const getThemeColor = (): string => {
-  if (typeof document === 'undefined') return DEFAULT_COLOR;
-  
-  // Try inline style first (set by JavaScript)
-  const inlineColor = document.documentElement.style.getPropertyValue('--theme-color').trim();
-  if (inlineColor) return inlineColor;
-  
-  // Fallback to computed style
-  const computedColor = getComputedStyle(document.documentElement)
-    .getPropertyValue('--theme-color')
-    .trim();
-  
-  return computedColor || DEFAULT_COLOR;
-};
+import { themeColorAt } from "@/lib/themeCycle";
 
 export default function ParallaxStars() {
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
-
-  // Use ref to track color - reads from CSS variable
-  const colorRef = useRef(DEFAULT_COLOR);
-
-  // Poll the CSS variable for color changes (every 300ms for smoother updates)
-  useEffect(() => {
-    const updateColor = () => {
-      const newColor = getThemeColor();
-      colorRef.current = newColor;
-    };
-    
-    // Initial read after a small delay to ensure ColorToggleContext has set the colors
-    const initialTimeout = setTimeout(updateColor, 200);
-    
-    const interval = setInterval(updateColor, 300);
-    
-    return () => {
-      clearTimeout(initialTimeout);
-      clearInterval(interval);
-    };
-  }, []);
 
   useEffect(() => {
     const bgCanvas = bgCanvasRef.current;
@@ -198,10 +159,15 @@ export default function ParallaxStars() {
       bg.fillStyle = '#ffffff';
       bg.strokeStyle = '#ffffff';
 
-      // Update entities with color from context
+      // Derive the shooting-star color from the shared time-based cycle, which
+      // mirrors the CSS `themeCycle` keyframes — no getComputedStyle / inline
+      // style read, so the frame loop never forces a synchronous style flush.
+      const shootingStarColor = themeColorAt(performance.now());
+
+      // Update entities with the current cycle color
       entities.forEach(entity => {
         if (entity instanceof ShootingStar) {
-          entity.update(colorRef.current); // Pass color to shooting stars
+          entity.update(shootingStarColor); // Pass color to shooting stars
         } else {
           entity.update();
         }

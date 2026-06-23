@@ -9,7 +9,6 @@ import ReloadDiagnostics from "@/components/client/ReloadDiagnostics";
 import { UserAuthProvider } from "@/context/UserAuthContext";
 import { ColorToggleProvider } from "@/context/ColorToggleContext";
 import { CartProvider } from "@/context/CartContext";
-import ThemeCSSVariablesUpdater from "@/components/client/ThemeCSSVariablesUpdater";
 import { Roboto } from "next/font/google";
 
 
@@ -42,7 +41,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body style={{ backgroundColor: "black" }} className={`${lemonMilk.variable} antialiased relative`}>
         <ColorToggleProvider>
-          <ThemeCSSVariablesUpdater />
           <ReloadDiagnostics />
           <BackgroundEffects />
           <MouseProvider>

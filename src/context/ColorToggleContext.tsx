@@ -1,17 +1,15 @@
 "use client";
 
-import { createContext, useContext, useEffect, useRef, ReactNode } from "react";
+import { createContext, useContext, useEffect, ReactNode } from "react";
 
-// Color pairs for cycling
-const gradientPairs = [
-  { color1: "hsl(220, 100%, 50%)", color2: "hsl(120, 100%, 50%)", solid: "hsl(220, 100%, 50%)" },
-  { color1: "hsl(30, 100%, 55%)", color2: "hsl(0, 100%, 60%)", solid: "hsl(30, 100%, 55%)" },
-  { color1: "hsl(320, 100%, 55%)", color2: "hsl(270, 100%, 60%)", solid: "hsl(320, 100%, 55%)" },
-  { color1: "hsl(190, 100%, 50%)", color2: "hsl(140, 100%, 50%)", solid: "hsl(190, 100%, 50%)" },
-  { color1: "hsl(240, 100%, 55%)", color2: "hsl(320, 100%, 60%)", solid: "hsl(240, 100%, 55%)" },
-];
+// The color cycle itself is now driven entirely by CSS — `@keyframes themeCycle`
+// on :root in globals.css (mirrored in JS by src/lib/themeCycle.ts for canvas
+// consumers). This provider no longer runs any setInterval / setProperty loop;
+// it only exposes the CSS-variable references for components that read them and
+// wires up the ?notheme=1 diagnostic freeze.
 
-// Static context values (we use CSS variables, not React state)
+// Static context values — these are live CSS variable references, so consumers
+// always get the current animated color.
 const staticColors = {
   color: "var(--theme-color)",
   color1: "var(--theme-color-1)",
@@ -28,45 +26,19 @@ interface ColorToggleContextType {
 
 const ColorToggleContext = createContext<ColorToggleContextType | undefined>(undefined);
 
-// This provider directly updates CSS variables without causing React re-renders
 export function ColorToggleProvider({ children }: { children: ReactNode }) {
-  const indexRef = useRef(0);
-
   useEffect(() => {
-    const themeTestDisabled = new URLSearchParams(window.location.search).get('notheme') === '1';
-    if (themeTestDisabled) {
-      // Safari diagnostic mode: preserve the static :root defaults and prevent
-      // the 8-second theme cycle from invalidating styles across the page.
-      const root = document.documentElement;
-      const initialPair = gradientPairs[0];
-      root.dataset.staticThemeTest = 'true';
-      root.style.setProperty("--theme-color", initialPair.solid);
-      root.style.setProperty("--theme-color-1", initialPair.color1);
-      root.style.setProperty("--theme-color-2", initialPair.color2);
-      return () => {
-        delete root.dataset.staticThemeTest;
-      };
-    }
+    // Safari diagnostic: ?notheme=1 freezes the CSS color cycle by tagging the
+    // root. globals.css then applies `animation: none`, pinning pair 0.
+    const themeTestDisabled =
+      new URLSearchParams(window.location.search).get("notheme") === "1";
+    if (!themeTestDisabled) return;
 
-    // Function to update CSS variables directly on the document
-    const updateColors = () => {
-      const pair = gradientPairs[indexRef.current];
-      const root = document.documentElement;
-      root.style.setProperty("--theme-color", pair.solid);
-      root.style.setProperty("--theme-color-1", pair.color1);
-      root.style.setProperty("--theme-color-2", pair.color2);
-      
-      // Move to next color
-      indexRef.current = (indexRef.current + 1) % gradientPairs.length;
+    const root = document.documentElement;
+    root.dataset.staticThemeTest = "true";
+    return () => {
+      delete root.dataset.staticThemeTest;
     };
-
-    // Set initial colors
-    updateColors();
-
-    // Cycle every 8 seconds (no React state = no re-renders)
-    const interval = setInterval(updateColors, 8000);
-
-    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -83,4 +55,3 @@ export function useColorToggle() {
   }
   return context;
 }
-
