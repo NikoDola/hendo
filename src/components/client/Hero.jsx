@@ -82,17 +82,17 @@ export default function Hero() {
 
       <div className="hrsImgWrapper">
         <Image
-          src="/images/hendo/bg-opt.webp"
-          width={2560}
-          height={1235}
+          src="/images/hendo/bg-opt_AA.avif"
+          width={1587}
+          height={765}
           alt="hendo background"
           className="bgImg"
           priority
         />
         <Image
-          src="/images/hendo/hendo2025-opt.webp"
-          width={2560}
-          height={1235}
+          src="/images/hendo/1-bg_AA.avif"
+          width={1301}
+          height={627}
           alt="hendo"
           className="hendoImage"
           priority
