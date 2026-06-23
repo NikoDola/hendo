@@ -72,13 +72,17 @@ export default function ReloadDiagnostics() {
     }
 
     // Diagnosis line for quick reading.
+    // prevCleanShutdown === false means the previous page never fired
+    // pagehide/beforeunload — it was killed abruptly. With no JS error that's a
+    // WebKit memory/process kill (the navType is irrelevant: iOS Safari labels
+    // the page it brings back after a kill as "navigate", not "reload").
     let verdict = 'normal first load';
     if (current.loads > 1) {
       if (current.prevError) {
         verdict = 'JS ERROR before reload';
-      } else if (current.prevCleanShutdown === false && navType === 'reload') {
-        verdict = 'BROWSER KILLED TAB (memory crash — no clean shutdown)';
-      } else if (current.prevCleanShutdown === true) {
+      } else if (current.prevCleanShutdown === false) {
+        verdict = 'BROWSER KILLED TAB (abrupt termination — memory/process crash)';
+      } else {
         verdict = 'clean reload/navigation (deploy or code-triggered)';
       }
     }
@@ -126,10 +130,9 @@ export default function ReloadDiagnostics() {
   let verdict = 'first load';
   if (record.loads > 1) {
     if (record.prevError) verdict = '⚠️ JS ERROR before last reload';
-    else if (record.prevCleanShutdown === false && record.lastNavType === 'reload')
-      verdict = '💥 BROWSER KILLED TAB (memory crash)';
-    else if (record.prevCleanShutdown === true) verdict = '↻ clean reload (deploy/code)';
-    else verdict = 'reloaded, cause unclear';
+    else if (record.prevCleanShutdown === false)
+      verdict = '💥 BROWSER KILLED TAB (memory/process crash)';
+    else verdict = '↻ clean reload (deploy/code)';
   }
 
   return (
