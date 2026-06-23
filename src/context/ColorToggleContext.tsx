@@ -33,6 +33,21 @@ export function ColorToggleProvider({ children }: { children: ReactNode }) {
   const indexRef = useRef(0);
 
   useEffect(() => {
+    const themeTestDisabled = new URLSearchParams(window.location.search).get('notheme') === '1';
+    if (themeTestDisabled) {
+      // Safari diagnostic mode: preserve the static :root defaults and prevent
+      // the 8-second theme cycle from invalidating styles across the page.
+      const root = document.documentElement;
+      const initialPair = gradientPairs[0];
+      root.dataset.staticThemeTest = 'true';
+      root.style.setProperty("--theme-color", initialPair.solid);
+      root.style.setProperty("--theme-color-1", initialPair.color1);
+      root.style.setProperty("--theme-color-2", initialPair.color2);
+      return () => {
+        delete root.dataset.staticThemeTest;
+      };
+    }
+
     // Function to update CSS variables directly on the document
     const updateColors = () => {
       const pair = gradientPairs[indexRef.current];

@@ -37,6 +37,13 @@ aside {
     box-shadow 3s ease;
 }
 
+/* Diagnostic-only: ?notheme=1 freezes the color cycle and removes the broad
+   page-wide transition work without affecting normal visitors. */
+:root[data-static-theme-test="true"],
+:root[data-static-theme-test="true"] * {
+  transition: none !important;
+}
+
 /* Register the theme colors as real <color> custom properties so they can be
    interpolated. Without this, gradient fills that use these vars (purchase /
    play buttons, progress bars) SNAP when the JS color cycle flips them every
