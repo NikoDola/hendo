@@ -20,12 +20,21 @@ export default function HomeMusicClientFetcher() {
   const [playingTrack, setPlayingTrack] = useState<string | null>(null);
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
   const [loading, setLoading] = useState(true);
+  const [musicTestDisabled, setMusicTestDisabled] = useState(false);
   const { user, loading: authLoading } = useUserAuth();
   const { addToCart } = useCart();
   const router = useRouter();
 
-  // Fetch featured tracks via API (uses client-side Firebase SDK)
+  // Diagnostic mode: ?nomusic=1 removes the entire Featured Beats section and
+  // deliberately skips its API request. This isolates the home page from
+  // MusicCard rendering, Firebase cover images, and card-owned audio elements.
   useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('nomusic') === '1') {
+      setMusicTestDisabled(true);
+      setLoading(false);
+      return;
+    }
+
     const fetchTracks = async () => {
       try {
         const response = await fetch('/api/music/home');
@@ -95,6 +104,10 @@ export default function HomeMusicClientFetcher() {
     });
     router.push('/dashboard/cart');
   };
+
+  if (musicTestDisabled) {
+    return null;
+  }
 
   // Loading skeleton
   if (loading) {
