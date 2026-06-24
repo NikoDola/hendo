@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { getLiveSolid } from "@/lib/themeCycle";
+import { themeColorAt } from "@/lib/themeCycle";
 
 export default function ParallaxStars() {
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -159,9 +159,10 @@ export default function ParallaxStars() {
       bg.fillStyle = '#ffffff';
       bg.strokeStyle = '#ffffff';
 
-      // Use the latest color the theme driver wrote (cycling while music plays,
-      // frozen otherwise) — a plain module read, no getComputedStyle / reflow.
-      const shootingStarColor = getLiveSolid();
+      // Derive the shooting-star color from the shared time-based cycle, which
+      // mirrors the CSS `themeCycle` keyframes — no getComputedStyle / inline
+      // style read, so the frame loop never forces a synchronous style flush.
+      const shootingStarColor = themeColorAt(performance.now());
 
       // Update entities with the current cycle color
       entities.forEach(entity => {

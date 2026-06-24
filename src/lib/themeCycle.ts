@@ -103,18 +103,7 @@ export function themeColorsAt(now: number): ThemeColors {
   };
 }
 
-// Just the solid theme color for a timestamp.
+// Just the solid theme color — used by the canvas shooting stars.
 export function themeColorAt(now: number): string {
   return themeColorsAt(now).color;
-}
-
-// The latest solid color the theme driver wrote. Canvas consumers read this so
-// they match whatever the page is currently showing — cycling while music
-// plays, or frozen on the last color when it stops. Avoids any DOM read.
-let liveSolid = hsl(PAIRS_HSL[0].solid);
-export function setLiveSolid(c: string) {
-  liveSolid = c;
-}
-export function getLiveSolid() {
-  return liveSolid;
 }
