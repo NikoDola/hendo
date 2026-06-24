@@ -27,6 +27,14 @@
   animation: none !important;
 }
 
+/* Apple WebKit (desktop Safari + every iOS browser) leaks engine memory on the
+   60fps CSS @property animation, so there ColorToggleContext stops this CSS
+   animation and drives the colors from a low-fps JS loop instead (far fewer
+   whole-page recomputes). Other browsers keep the smooth CSS animation. */
+:root[data-theme-js="true"] {
+  animation: none !important;
+}
+
 /* Register the theme colors as real <color> custom properties so the
    `themeCycle` keyframes can interpolate them. Without this, gradient fills
    that use these vars (purchase / play buttons, progress bars) would SNAP at

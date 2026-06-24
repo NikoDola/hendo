@@ -79,3 +79,64 @@ export function themeColorAt(now: number): string {
   const l = lerp(cur[2], next[2], t);
   return `hsl(${h.toFixed(1)}, ${s.toFixed(1)}%, ${l.toFixed(1)}%)`;
 }
+
+// color1 / color2 of each pair as [h, s, l] for the full-gradient JS driver
+// (the Safari low-fps loop writes all three theme variables).
+const COLOR1_HSL: [number, number, number][] = [
+  [220, 100, 50],
+  [30, 100, 55],
+  [320, 100, 55],
+  [190, 100, 50],
+  [240, 100, 55],
+];
+const COLOR2_HSL: [number, number, number][] = [
+  [120, 100, 50],
+  [0, 100, 60],
+  [270, 100, 60],
+  [140, 100, 50],
+  [320, 100, 60],
+];
+
+const hslStr = (c: [number, number, number]) => `hsl(${c[0]}, ${c[1]}%, ${c[2]}%)`;
+
+function mixHsl(
+  a: [number, number, number],
+  b: [number, number, number],
+  t: number
+): string {
+  const h = lerpHue(a[0], b[0], t);
+  const s = lerp(a[1], b[1], t);
+  const l = lerp(a[2], b[2], t);
+  return `hsl(${h.toFixed(1)}, ${s.toFixed(1)}%, ${l.toFixed(1)}%)`;
+}
+
+export interface ThemeColors {
+  color: string;
+  color1: string;
+  color2: string;
+}
+
+// All three theme colors for a timestamp, mirroring the same schedule as
+// themeColorAt. Used by the Safari JS driver so the whole gradient stays in sync.
+export function themeColorsAt(now: number): ThemeColors {
+  const n = gradientPairs.length;
+  const pos = ((now % THEME_CYCLE_MS) + THEME_CYCLE_MS) % THEME_CYCLE_MS;
+  const index = Math.floor(pos / SLOT_MS);
+  const within = pos - index * SLOT_MS;
+
+  if (within <= HOLD_MS) {
+    return {
+      color: hslStr(SOLID_HSL[index]),
+      color1: hslStr(COLOR1_HSL[index]),
+      color2: hslStr(COLOR2_HSL[index]),
+    };
+  }
+
+  const ni = (index + 1) % n;
+  const t = (within - HOLD_MS) / FADE_MS;
+  return {
+    color: mixHsl(SOLID_HSL[index], SOLID_HSL[ni], t),
+    color1: mixHsl(COLOR1_HSL[index], COLOR1_HSL[ni], t),
+    color2: mixHsl(COLOR2_HSL[index], COLOR2_HSL[ni], t),
+  };
+}

@@ -1,12 +1,14 @@
 "use client";
 
 import { createContext, useContext, useEffect, ReactNode } from "react";
+import { themeColorsAt } from "@/lib/themeCycle";
 
-// The color cycle itself is now driven entirely by CSS — `@keyframes themeCycle`
-// on :root in globals.css (mirrored in JS by src/lib/themeCycle.ts for canvas
-// consumers). This provider no longer runs any setInterval / setProperty loop;
-// it only exposes the CSS-variable references for components that read them and
-// wires up the ?notheme=1 diagnostic freeze.
+// The color cycle is driven by CSS — `@keyframes themeCycle` on :root in
+// globals.css — EXCEPT on Apple WebKit (desktop Safari + every iOS browser),
+// which leaks engine memory on the 60fps CSS @property animation. There this
+// provider stops the CSS animation and drives the same colors from a low-fps
+// (default 15fps) JS loop: ~4x fewer whole-page recomputes, so the leak builds
+// ~4x slower. Chrome/Firefox keep the smooth 60fps CSS animation untouched.
 
 // Static context values — these are live CSS variable references, so consumers
 // always get the current animated color.
@@ -37,6 +39,54 @@ export function ColorToggleProvider({ children }: { children: ReactNode }) {
       root.dataset.staticThemeTest = "true";
       return () => {
         delete root.dataset.staticThemeTest;
+      };
+    }
+
+    // Apple WebKit -> drive the colors from a low-fps JS loop instead of the
+    // leaky 60fps CSS animation. Override with ?js=1 (force JS, e.g. to test on
+    // Chrome) or ?js=0 (force CSS). ?fps=<n> sets the rate (default 15). ?fast
+    // speeds the cycle up ~16x so a leak shows quickly during testing.
+    const isAppleWebKit =
+      typeof navigator !== "undefined" &&
+      navigator.vendor === "Apple Computer, Inc.";
+    const useJs =
+      params.get("js") === "1" || (isAppleWebKit && params.get("js") !== "0");
+
+    if (useJs) {
+      root.dataset.themeJs = "true"; // globals.css stops the CSS animation
+      const fps = Number(params.get("fps")) || 15;
+      const tickMs = 1000 / fps;
+      const speed = params.has("fast") ? 16 : 1;
+
+      let last = "";
+      const apply = () => {
+        const c = themeColorsAt(performance.now() * speed);
+        const key = `${c.color}|${c.color1}|${c.color2}`;
+        if (key === last) return; // unchanged -> no write -> no style recalc
+        last = key;
+        root.style.setProperty("--theme-color", c.color);
+        root.style.setProperty("--theme-color-1", c.color1);
+        root.style.setProperty("--theme-color-2", c.color2);
+      };
+
+      apply();
+      let interval: ReturnType<typeof setInterval> | null = setInterval(apply, tickMs);
+      const onVisible = () => {
+        if (document.hidden) {
+          if (interval) {
+            clearInterval(interval);
+            interval = null;
+          }
+        } else if (!interval) {
+          interval = setInterval(apply, tickMs);
+        }
+      };
+      document.addEventListener("visibilitychange", onVisible);
+
+      return () => {
+        if (interval) clearInterval(interval);
+        document.removeEventListener("visibilitychange", onVisible);
+        delete root.dataset.themeJs;
       };
     }
 
