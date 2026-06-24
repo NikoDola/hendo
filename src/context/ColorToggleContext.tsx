@@ -47,10 +47,12 @@ export function ColorToggleProvider({ children }: { children: ReactNode }) {
     // without reloading the page. We resume at the same phase via a negative
     // animation-delay so there is no visible color jump.
     //
-    // Interval is 120s by default; override with ?reset=<seconds> for faster
-    // testing (?reset=0 disables it). Must match @keyframes themeCycle (40s).
+    // DISABLED BY DEFAULT. Testing showed restarting the animation does NOT free
+    // the engine memory — it allocates fresh state on top of the old, making the
+    // crash happen FASTER. Kept behind an explicit ?reset=<seconds> opt-in only
+    // for further experiments. Must match @keyframes themeCycle (40s).
     const CYCLE_MS = 40000;
-    const resetSec = params.has("reset") ? Number(params.get("reset")) : 120;
+    const resetSec = params.has("reset") ? Number(params.get("reset")) : 0;
     if (!Number.isFinite(resetSec) || resetSec <= 0) return;
 
     const start = performance.now();
