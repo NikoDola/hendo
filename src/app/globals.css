@@ -4,104 +4,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 @import './variables.css';
 
-/* Theme colors - cycled by the pure-CSS `themeCycle` animation on :root (see
-   below). No JavaScript drives the color change anymore. */
+/* Theme colors — written to :root by a throttled JS loop, see
+   src/context/ColorToggleContext.tsx. We intentionally do NOT use a CSS
+   @property animation: on iOS Safari a long-running registered-property
+   animation leaks engine memory until the tab reloads ("significant memory").
+   Plain variable writes a few times per second have no persistent animation
+   state to accumulate. */
 
 * {
   padding: 0;
   margin: 0;
 }
 
-/* NOTE: there used to be a page-wide `transition: color/background/... 3s` on
-   every h1…aside here. It was redundant — the theme cross-fade is driven by the
-   animated `@property` color variables below — and it forced WebKit to run
-   per-property transitions across the whole DOM on every color step, a major
-   contributor to the iOS Safari "significant memory" self-reload. Removed.
-   Elements that read `var(--theme-color*)` still cross-fade via the variable
-   animation; non-theme transitions (hovers) live on their own components. */
-
-/* Diagnostic-only: ?notheme=1 freezes the color cycle (the cycle is the
-   suspected Safari memory trigger) without affecting normal visitors. The
-   variables stay pinned at their :root defaults (pair 0). */
-:root[data-static-theme-test="true"] {
-  animation: none !important;
-}
-
-/* Register the theme colors as real <color> custom properties so the
-   `themeCycle` keyframes can interpolate them. Without this, gradient fills
-   that use these vars (purchase / play buttons, progress bars) would SNAP at
-   each keyframe instead of cross-fading. With @property the variables animate,
-   so every consumer fades smoothly and in sync. */
-@property --theme-color {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: hsl(220, 100%, 50%);
-}
-@property --theme-color-1 {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: oklab(53.319% -0.03321 -0.25759);
-}
-@property --theme-color-2 {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: hsl(120, 100%, 50%);
-}
+/* NOTE: this spot previously held a page-wide `transition: color/... 3s` on
+   every h1…aside AND (later) an animated @property color cycle. Both forced
+   WebKit to recompute styles across the whole DOM on every color step and
+   leaked engine memory on iOS Safari. Both removed — the colors now change via
+   plain `--theme-color*` writes from JS; elements that read them update along.
+   Non-theme transitions (hovers) live on their own components. */
 
 :root {
   font-family: var(--font-lemonmilk), system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
-  /* Default theme colors = pair 0 (also the @property initial-values above).
-     The color cycle is driven entirely by the CSS animation below — no JS. */
+  /* Default theme colors = pair 0. The JS loop overwrites these as the cycle
+     runs, and pins them here when ?notheme=1 freezes it. */
   --theme-color: hsl(220, 100%, 50%);
   --theme-color-1: hsl(220, 100%, 50%);
   --theme-color-2: hsl(120, 100%, 50%);
-
-  /* Pure-CSS theme cycle: steps the three registered @property color vars
-     through the 5 pairs over 40s (8s each), holding ~5s then cross-fading ~3s.
-     Replaces the old JS setInterval + per-step `transition`. Mirrored in JS by
-     src/lib/themeCycle.ts (themeColorAt) for the canvas consumers. */
-  animation: themeCycle 40s linear infinite;
-}
-
-/* Keep this in sync with src/lib/themeCycle.ts. Each pair holds to the .5 stop
-   then the per-keyframe `ease` fades it into the next pair over the final 3s. */
-@keyframes themeCycle {
-  0%, 12.5% {
-    --theme-color: hsl(220, 100%, 50%);
-    --theme-color-1: hsl(220, 100%, 50%);
-    --theme-color-2: hsl(120, 100%, 50%);
-    animation-timing-function: ease;
-  }
-  20%, 32.5% {
-    --theme-color: hsl(30, 100%, 55%);
-    --theme-color-1: hsl(30, 100%, 55%);
-    --theme-color-2: hsl(0, 100%, 60%);
-    animation-timing-function: ease;
-  }
-  40%, 52.5% {
-    --theme-color: hsl(320, 100%, 55%);
-    --theme-color-1: hsl(320, 100%, 55%);
-    --theme-color-2: hsl(270, 100%, 60%);
-    animation-timing-function: ease;
-  }
-  60%, 72.5% {
-    --theme-color: hsl(190, 100%, 50%);
-    --theme-color-1: hsl(190, 100%, 50%);
-    --theme-color-2: hsl(140, 100%, 50%);
-    animation-timing-function: ease;
-  }
-  80%, 92.5% {
-    --theme-color: hsl(240, 100%, 55%);
-    --theme-color-1: hsl(240, 100%, 55%);
-    --theme-color-2: hsl(320, 100%, 60%);
-    animation-timing-function: ease;
-  }
-  100% {
-    --theme-color: hsl(220, 100%, 50%);
-    --theme-color-1: hsl(220, 100%, 50%);
-    --theme-color-2: hsl(120, 100%, 50%);
-  }
 }
 
 html {
