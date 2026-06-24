@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useUserAuth } from '@/context/UserAuthContext';
 import { useCart } from '@/context/CartContext';
 import MusicCard from '@/components/MusicCard';
+import { setMusicPlaying } from '@/lib/playbackSignal';
 import type { MusicTrack } from '@/lib/music';
 import '@/components/HomeMusicSection.css';
 
@@ -57,6 +58,12 @@ export default function HomeMusicClientFetcher() {
       loadPurchases();
     }
   }, [user, authLoading]);
+
+  // Drive the site-wide "galaxy" color cycle: it runs only while a track plays.
+  useEffect(() => {
+    setMusicPlaying(playingTrack !== null);
+  }, [playingTrack]);
+  useEffect(() => () => setMusicPlaying(false), []);
 
   const loadPurchases = async () => {
     try {

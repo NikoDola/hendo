@@ -7,6 +7,7 @@ import { Music } from 'lucide-react';
 import { useUserAuth } from '@/context/UserAuthContext';
 import { useCart } from '@/context/CartContext';
 import MusicListCard from '@/components/MusicListCard';
+import { setMusicPlaying } from '@/lib/playbackSignal';
 import SkeletonMusicCard from '@/components/SkeletonMusicCard';
 import MusicFilterBar, { FilterOptions } from '@/components/MusicFilterBar';
 import SkeletonFilterBar from '@/components/SkeletonFilterBar';
@@ -53,6 +54,12 @@ export default function MusicStore() {
       loadPurchases();
     }
   }, [user, authLoading]);
+
+  // Drive the site-wide "galaxy" color cycle: it runs only while a track plays.
+  useEffect(() => {
+    setMusicPlaying(playingTrack !== null);
+  }, [playingTrack]);
+  useEffect(() => () => setMusicPlaying(false), []);
 
   // Get available genres from tracks
   const availableGenres = useMemo(() => {
