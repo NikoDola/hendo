@@ -76,9 +76,14 @@ export default function ReloadDiagnostics() {
   const [record, setRecord] = useState<DiagRecord | null>(null);
   const [showOverlay, setShowOverlay] = useState(false);
   // Live values refreshed by the heartbeat (only while the overlay is on).
-  const [live, setLive] = useState<{ uptimeMs: number; heap: HeapInfo | null }>({
+  const [live, setLive] = useState<{
+    uptimeMs: number;
+    heap: HeapInfo | null;
+    softResets: number;
+  }>({
     uptimeMs: 0,
     heap: null,
+    softResets: 0,
   });
 
   useEffect(() => {
@@ -178,7 +183,13 @@ export default function ReloadDiagnostics() {
         const uptimeMs = Date.now() - now;
         const heap = readHeap();
         if (heap && heap.used > peak) peak = heap.used;
-        setLive({ uptimeMs, heap });
+        let softResets = 0;
+        try {
+          softResets = Number(localStorage.getItem('themeSoftResets')) || 0;
+        } catch {
+          /* ignore */
+        }
+        setLive({ uptimeMs, heap, softResets });
         patch({
           aliveMs: uptimeMs,
           heapUsed: heap?.used ?? null,
@@ -241,6 +252,7 @@ verdict: ${verdict}
 loads this session: ${record.loads}
 uptime: ${fmtDuration(live.uptimeMs)}
 heap now: ${heapNow}
+soft resets: ${live.softResets}
 prev session lasted: ${prevLife}
 nav type: ${record.lastNavType}
 gap since last unload: ${record.gapMs ?? '-'} ms
