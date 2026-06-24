@@ -15,8 +15,24 @@ import { useEffect, useState } from 'react';
 //
 // Add ?debug=1 to the URL to see the readout on screen (works on iOS where
 // there's no console). Otherwise it just logs to console and is invisible.
+//
+// MEMORY NOTE: iOS Safari does NOT expose `performance.memory`, so we cannot
+// print a real MB number on the iPhone. Instead, while ?debug=1 is on we run a
+// 1s heartbeat that persists how long THIS session has been alive. After Safari
+// kills the tab there is no unload event, so the last heartbeat value is our
+// best proxy for "how far it got before the crash" — for a memory leak that
+// time-to-death is consistent and is the most useful signal we can get
+// on-device. Where the browser does expose heap (desktop Chrome) we also show
+// it. For real MB on the iPhone itself, use a Mac + Safari Web Inspector
+// (Develop > Timelines > Memory).
 
 const KEY = 'reloadDiag';
+const HEARTBEAT_MS = 1000;
+
+interface HeapInfo {
+  used: number;
+  limit: number;
+}
 
 interface DiagRecord {
   loads: number;
@@ -28,11 +44,42 @@ interface DiagRecord {
   cleanShutdown?: boolean;
   lastUnload?: number | null;
   lastError?: string | null;
+  // Heartbeat fields (persisted ~1x/sec while alive):
+  aliveMs?: number; // how long this session has been alive
+  heapUsed?: number | null; // last heap reading (bytes), if supported
+  heapPeak?: number | null; // peak heap reading (bytes), if supported
+  // Carried over from the previous (possibly crashed) session for the readout:
+  prevAliveMs?: number | null;
+  prevHeapUsed?: number | null;
+  prevHeapPeak?: number | null;
 }
+
+// performance.memory is non-standard (Chromium only); read it defensively.
+function readHeap(): HeapInfo | null {
+  const mem = (performance as unknown as {
+    memory?: { usedJSHeapSize: number; jsHeapSizeLimit: number };
+  }).memory;
+  if (!mem) return null;
+  return { used: mem.usedJSHeapSize, limit: mem.jsHeapSizeLimit };
+}
+
+const mb = (bytes: number | null | undefined) =>
+  bytes == null ? null : Math.round(bytes / 1048576);
+
+const fmtDuration = (ms: number | null | undefined) => {
+  if (ms == null) return '-';
+  const s = Math.floor(ms / 1000);
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+};
 
 export default function ReloadDiagnostics() {
   const [record, setRecord] = useState<DiagRecord | null>(null);
   const [showOverlay, setShowOverlay] = useState(false);
+  // Live values refreshed by the heartbeat (only while the overlay is on).
+  const [live, setLive] = useState<{ uptimeMs: number; heap: HeapInfo | null }>({
+    uptimeMs: 0,
+    heap: null,
+  });
 
   useEffect(() => {
     const now = Date.now();
@@ -56,14 +103,22 @@ export default function ReloadDiagnostics() {
       prevCleanShutdown: prev.cleanShutdown ?? null,
       prevError: prev.lastError ?? null,
       gapMs: prev.lastUnload ? now - prev.lastUnload : null,
+      // Snapshot of how the PREVIOUS session ended (its last heartbeat) — this is
+      // our "how far it got before the crash" readout.
+      prevAliveMs: prev.aliveMs ?? null,
+      prevHeapUsed: prev.heapUsed ?? null,
+      prevHeapPeak: prev.heapPeak ?? null,
     };
 
-    // Persist, resetting the "clean shutdown" flag for THIS session.
-    const persisted = {
+    // Persist, resetting the per-session flags for THIS load.
+    const persisted: DiagRecord = {
       ...current,
       cleanShutdown: false,
       lastUnload: null,
       lastError: null,
+      aliveMs: 0,
+      heapUsed: readHeap()?.used ?? null,
+      heapPeak: readHeap()?.used ?? null,
     };
     try {
       localStorage.setItem(KEY, JSON.stringify(persisted));
@@ -71,11 +126,6 @@ export default function ReloadDiagnostics() {
       /* ignore */
     }
 
-    // Diagnosis line for quick reading.
-    // prevCleanShutdown === false means the previous page never fired
-    // pagehide/beforeunload — it was killed abruptly. With no JS error that's a
-    // WebKit memory/process kill (the navType is irrelevant: iOS Safari labels
-    // the page it brings back after a kill as "navigate", not "reload").
     let verdict = 'normal first load';
     if (current.loads > 1) {
       if (current.prevError) {
@@ -113,8 +163,28 @@ export default function ReloadDiagnostics() {
     window.addEventListener('error', onError);
     window.addEventListener('unhandledrejection', onRej);
 
-    if (typeof window !== 'undefined' && window.location.search.includes('debug')) {
+    const debug =
+      typeof window !== 'undefined' && window.location.search.includes('debug');
+
+    let heartbeat: ReturnType<typeof setInterval> | undefined;
+    let peak = readHeap()?.used ?? 0;
+
+    if (debug) {
       setShowOverlay(true);
+      // Heartbeat: record uptime + heap so a later load can show how long this
+      // session survived before Safari killed it. Only runs in debug mode, so
+      // normal visitors get zero added work.
+      heartbeat = setInterval(() => {
+        const uptimeMs = Date.now() - now;
+        const heap = readHeap();
+        if (heap && heap.used > peak) peak = heap.used;
+        setLive({ uptimeMs, heap });
+        patch({
+          aliveMs: uptimeMs,
+          heapUsed: heap?.used ?? null,
+          heapPeak: heap ? peak : null,
+        });
+      }, HEARTBEAT_MS);
     }
 
     return () => {
@@ -122,6 +192,7 @@ export default function ReloadDiagnostics() {
       window.removeEventListener('beforeunload', markClean);
       window.removeEventListener('error', onError);
       window.removeEventListener('unhandledrejection', onRej);
+      if (heartbeat) clearInterval(heartbeat);
     };
   }, []);
 
@@ -134,6 +205,18 @@ export default function ReloadDiagnostics() {
       verdict = '💥 BROWSER KILLED TAB (memory/process crash)';
     else verdict = '↻ clean reload (deploy/code)';
   }
+
+  const heapNow = live.heap
+    ? `${mb(live.heap.used)} / ${mb(live.heap.limit)} MB`
+    : 'n/a (Safari hides it — use Mac Web Inspector)';
+
+  // What the previous (likely crashed) session reached before it died.
+  const prevLife =
+    record.loads > 1
+      ? `${fmtDuration(record.prevAliveMs)}${
+          record.prevHeapPeak != null ? ` · peak ${mb(record.prevHeapPeak)} MB` : ''
+        }`
+      : '-';
 
   return (
     <div
@@ -156,8 +239,10 @@ export default function ReloadDiagnostics() {
       {`RELOAD DIAG
 verdict: ${verdict}
 loads this session: ${record.loads}
+uptime: ${fmtDuration(live.uptimeMs)}
+heap now: ${heapNow}
+prev session lasted: ${prevLife}
 nav type: ${record.lastNavType}
-prev clean shutdown: ${record.prevCleanShutdown}
 gap since last unload: ${record.gapMs ?? '-'} ms
 last error: ${record.prevError ?? 'none'}`}
     </div>
