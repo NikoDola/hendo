@@ -1,16 +1,15 @@
 // Single source of truth for the auto theme-color cycle.
 //
-// The cycle is *rendered* by a pure CSS @keyframes animation on :root (see
-// globals.css — `@keyframes themeCycle`). This module mirrors that exact
-// schedule in JS so canvas consumers (ParallaxStars shooting stars, the
-// ColorSlider readout) can derive the current color from `performance.now()`
-// WITHOUT reading the DOM (`getComputedStyle`) every frame — the forced style
-// flushes were part of what pushed iOS Safari into its "significant memory"
-// self-reload.
+// This module defines the cycle schedule in JS. ColorToggleContext drives the
+// page from it (writing plain `--theme-color*` custom properties on :root each
+// frame); canvas consumers (ParallaxStars shooting stars, the ColorSlider
+// readout) also derive the current color from `performance.now()` WITHOUT
+// reading the DOM (`getComputedStyle`) — the forced style flushes were part of
+// what pushed iOS Safari into its "significant memory" self-reload. There is no
+// CSS @keyframes animation of the theme vars anymore (it leaked WebKit memory).
 //
-// Keep this in sync with the @keyframes stops in globals.css: 5 pairs, 8s each
-// (40s period). Within each 8s slot the color holds for 5s then cross-fades to
-// the next over 3s.
+// The schedule: 5 pairs, 8s each (40s period). Within each 8s slot the color
+// holds for 5s then cross-fades to the next over 3s.
 
 export interface GradientPair {
   color1: string;
