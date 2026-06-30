@@ -172,3 +172,30 @@
     animation: none;
   }
 }
+
+/* "Read More" CTA — matches the music-card play button exactly:
+   gradient fill + black label + soft glow at rest, then on hover it GOES BLACK
+   (drops the gradient), casts a brighter white "lighting" glow, and scales up.
+   The gradient fill / size / repeat / animation are inherited from the global
+   `button` rule. */
+.hrsCtaWrapper button {
+  color: black;
+  border-radius: 12px;
+  padding: 0.85rem 1.9rem;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.hrsCtaWrapper button:hover {
+  background-image: none;
+  background-color: #000;
+  color: var(--light-gray);
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hrsCtaWrapper button:hover {
+    transform: none;
+  }
+}

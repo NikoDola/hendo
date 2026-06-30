@@ -349,29 +349,25 @@ button:hover {
     font-family: "Roboto";
     border-radius: 1rem;
     color: rgb(208, 208, 208);
-    transition: 0.3s ease;
-    background: rgba(255, 255, 255, 0.05);
+    /* Animate only the interactive props so BOTH hover and focus ease smoothly. */
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.05);
   }
 
+  input:hover,
+  textarea:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  /* Focus = FULL BLACK surface that casts the same white "lighting" glow as the
+     play button on hover. Fields never wear the colorful theme gradient. */
   input:focus,
   textarea:focus {
     outline: none;
-    border-color: transparent;
-    background:
-      linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08)) padding-box,
-      repeating-linear-gradient(
-        180deg,
-        #6bbf5f 0px,
-        #45c7f0 120px,
-        #8455a2 259px,
-        #ba499b 394px,
-        #ef3835 500px,
-        #f26831 612px,
-        #6bbf5f 698px
-      ) border-box;
-    background-size: 100% 100%, 100% 698px;
-    background-repeat: no-repeat, repeat;
-    animation: themeFlowY 16s ease-in-out infinite;
+    border-color: rgba(255, 255, 255, 0.45);
+    background-color: #000;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.35);
   }
 
   input::placeholder,
@@ -395,25 +391,16 @@ button:hover {
     transition: all 0.3s ease;
   }
 
+  .input:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
   .input:focus {
     outline: none;
-    border: 1px solid transparent;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-    background:
-      linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08)) padding-box,
-      repeating-linear-gradient(
-        180deg,
-        #6bbf5f 0px,
-        #45c7f0 120px,
-        #8455a2 259px,
-        #ba499b 394px,
-        #ef3835 500px,
-        #f26831 612px,
-        #6bbf5f 698px
-      ) border-box;
-    background-size: 100% 100%, 100% 698px;
-    background-repeat: no-repeat, repeat;
-    animation: themeFlowY 16s ease-in-out infinite;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    background-color: #000;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.35);
   }
 
   .input:focus::placeholder {
@@ -505,30 +492,23 @@ button:hover {
   transition: all 0.3s ease;
 }
 
+.formWrapper input:hover,
+.formWrapper textarea:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
 .formWrapper input:focus,
 .formWrapper textarea:focus {
   outline: none;
-  border: 1px solid transparent;
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08)) padding-box,
-    repeating-linear-gradient(
-      180deg,
-      #6bbf5f 0px,
-      #45c7f0 120px,
-      #8455a2 259px,
-      #ba499b 394px,
-      #ef3835 500px,
-      #f26831 612px,
-      #6bbf5f 698px
-    ) border-box;
-  background-size: 100% 100%, 100% 698px;
-  background-repeat: no-repeat, repeat;
-  animation: themeFlowY 16s ease-in-out infinite;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background-color: #000;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.35);
 }
 
 .formWrapper input:focus::placeholder,
 .formWrapper textarea:focus::placeholder {
-  color: #333;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .formWrapper input::placeholder,
