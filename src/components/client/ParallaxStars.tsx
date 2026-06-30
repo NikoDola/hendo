@@ -1,9 +1,11 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function ParallaxStars() {
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
+  // Drives the CSS opacity fade-in of the whole canvas layer on first load.
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const bgCanvas = bgCanvasRef.current;
@@ -21,9 +23,62 @@ export default function ParallaxStars() {
 
     const bg: CanvasRenderingContext2D = bgCtx;
 
-    // Canvas stars stay neutral so the theme remains CSS-only.
-    // than calling getComputedStyle inside the 30fps draw loop — one read per
-    const shootingStarColor = "#ffffff";
+    // ---- Theme color sync for the falling comets --------------------------
+    // The comets cycle through the SAME palette on the SAME 16s rhythm as the
+    // CSS `themeFlowY` gradient that themes the UI and the floating bit-particles.
+    // We replay that keyframe purely from the document timeline — no
+    // getComputedStyle, no extra timers, no @property <color> animation (the
+    // three things that leaked WebKit memory) — so it stays leak-free on Safari.
+    const THEME_PERIOD_MS = 16000;
+    const GRADIENT_H = 698;
+    // Same stops, same order, as the repeating-linear-gradient used everywhere.
+    const THEME_STOPS: { pos: number; rgb: [number, number, number] }[] = [
+      { pos: 0, rgb: [0x6b, 0xbf, 0x5f] },
+      { pos: 120, rgb: [0x45, 0xc7, 0xf0] },
+      { pos: 259, rgb: [0x84, 0x55, 0xa2] },
+      { pos: 394, rgb: [0xba, 0x49, 0x9b] },
+      { pos: 500, rgb: [0xef, 0x38, 0x35] },
+      { pos: 612, rgb: [0xf2, 0x68, 0x31] },
+      { pos: 698, rgb: [0x6b, 0xbf, 0x5f] },
+    ];
+    const smoothstep = (t: number) => t * t * (3 - 2 * t); // ≈ ease-in-out
+
+    // Replays themeFlowY's background-position.y: 4 eased steps of 174.5px down
+    // the gradient, each preceded by a hold (18.75% of each quarter), looping.
+    const themeShift = (timeMs: number) => {
+      const t = (timeMs % THEME_PERIOD_MS) / THEME_PERIOD_MS; // 0..1
+      const quarter = 0.25;
+      const holdFrac = 0.75; // 18.75% hold within each 25% quarter
+      const i = Math.min(Math.floor(t / quarter), 3); // step 0..3
+      const local = (t - i * quarter) / quarter; // 0..1 within the step
+      const eased =
+        local <= holdFrac ? 0 : smoothstep((local - holdFrac) / (1 - holdFrac));
+      return (i + eased) * (GRADIENT_H / 4); // 0..698
+    };
+
+    // Linear-interpolated gradient color at a given y (0..698), wrapping.
+    const colorAt = (y: number) => {
+      const p = ((y % GRADIENT_H) + GRADIENT_H) % GRADIENT_H;
+      for (let k = 0; k < THEME_STOPS.length - 1; k++) {
+        const a = THEME_STOPS[k];
+        const b = THEME_STOPS[k + 1];
+        if (p >= a.pos && p <= b.pos) {
+          const f = (p - a.pos) / (b.pos - a.pos);
+          const r = Math.round(a.rgb[0] + (b.rgb[0] - a.rgb[0]) * f);
+          const g = Math.round(a.rgb[1] + (b.rgb[1] - a.rgb[1]) * f);
+          const bl = Math.round(a.rgb[2] + (b.rgb[2] - a.rgb[2]) * f);
+          return `rgb(${r}, ${g}, ${bl})`;
+        }
+      }
+      return "#ffffff";
+    };
+
+    // The document timeline is the same clock CSS animations run on, so the
+    // comets stay phase-aligned with the CSS gradient — not just same-tempo.
+    const themeNow = () => {
+      const t = typeof document !== "undefined" ? document.timeline?.currentTime : null;
+      return t != null ? Number(t) : performance.now();
+    };
 
     let width = window.innerWidth;
     let height = window.innerHeight;
@@ -36,9 +91,9 @@ export default function ParallaxStars() {
     };
     updateDimensions();
 
-    // Track start time for fade-in effect
-    const startTime = Date.now();
-    const FADE_DURATION = 3000; // 3 seconds fade-in
+    // Fade-in is handled by a CSS opacity transition on the canvas element (the
+    // `visible` state below). The canvas paints opaque every frame, so fading the
+    // pixels does nothing visible — fading the ELEMENT is what eases it in.
 
     // Star class
     class Star {
@@ -144,15 +199,10 @@ export default function ParallaxStars() {
     // Animation loop
     const MAX_STAR_OPACITY = 0.8; // 20% lower than full opacity
 
-    const drawFrame = (forceFullOpacity = false) => {
-      // Calculate fade-in opacity (0 to MAX_STAR_OPACITY over 3 seconds).
-      // forceFullOpacity skips the fade for the single static reduced-motion
-      // frame — otherwise it would draw at opacity 0 (invisible) and never
-      // advance, hiding the whole starfield.
-      const elapsed = Date.now() - startTime;
-      const globalOpacity = forceFullOpacity
-        ? MAX_STAR_OPACITY
-        : Math.min(elapsed / FADE_DURATION, 1) * MAX_STAR_OPACITY;
+    const drawFrame = () => {
+      // Stars/comets draw at a constant alpha; the smooth fade-IN of the whole
+      // layer is the CSS opacity transition on the canvas element (see below).
+      const globalOpacity = MAX_STAR_OPACITY;
 
       bg.fillStyle = '#000000';
       bg.fillRect(0, 0, width, height);
@@ -162,7 +212,9 @@ export default function ParallaxStars() {
       bg.fillStyle = '#ffffff';
       bg.strokeStyle = '#ffffff';
 
-      // above — read once per second, not per frame).
+      // Comets pick up the live theme color (synced to the CSS gradient cycle);
+      // the drifting dots stay white. Computed once per frame, shared by all.
+      const shootingStarColor = colorAt(themeShift(themeNow()));
       entities.forEach(entity => {
         if (entity instanceof ShootingStar) {
           entity.update(shootingStarColor);
@@ -195,10 +247,14 @@ export default function ParallaxStars() {
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (prefersReducedMotion) {
-      drawFrame(true);
+      drawFrame();
     } else {
       animationRef.current = requestAnimationFrame(animate);
     }
+
+    // Reveal the canvas only after the first frame is painted, so the CSS
+    // opacity transition eases the real starfield in (no instant pop on load).
+    const revealId = requestAnimationFrame(() => setVisible(true));
 
     const handleResize = () => {
       updateDimensions();
@@ -226,6 +282,7 @@ export default function ParallaxStars() {
     return () => {
       window.removeEventListener("resize", handleResize);
       document.removeEventListener("visibilitychange", handleVisibility);
+      cancelAnimationFrame(revealId);
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
@@ -233,7 +290,8 @@ export default function ParallaxStars() {
   }, []); // Only run once on mount
 
   return (
-    <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 0, pointerEvents: 'none' }}>
+    <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 0, pointerEvents: 'none',
+      opacity: visible ? 1 : 0, transition: 'opacity 2s ease-in-out' }}>
       <canvas ref={bgCanvasRef} style={{ position: 'absolute', top: 0, left: 0 }} />
 
     </div>
