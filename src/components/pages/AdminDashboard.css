@@ -202,7 +202,7 @@
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 0.375rem;
-  color: var(--theme-color);
+  color: white;
   font-size: 1rem;
 }
 
@@ -779,7 +779,23 @@
 .adminTrackPrice {
   font-size: 1.125rem;
   font-weight: bold;
-  color: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: themeFlowY 16s ease-in-out infinite;
 }
 
 .adminTrackDate {

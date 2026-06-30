@@ -24,7 +24,7 @@
 }
 
 .navIcons {
-  color: var(--theme-color);
+  color: #6bbf5f;
   transition: 1s;
   font-size: 1.5rem;
   cursor: pointer;
@@ -80,7 +80,7 @@
 }
 
 .linkDesktop:hover {
-  color: var(--theme-color);
+  color: #6bbf5f;
 }
 
 .linkDesktop:before {
@@ -90,9 +90,21 @@
   top: 120%;
   height: 5px;
   width: 0%;
-  background: var(--theme-color);
-  transition: background-color 1s ease, box-shadow 1s ease, width 1s;
-  box-shadow: 0 0 20px var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  transition: width 1s;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+  animation: themeFlowY 16s ease-in-out infinite;
 }
 
 .linkDesktop:hover::before {
@@ -270,7 +282,7 @@
   }
 
   .linkMobile:hover {
-    color: var(--theme-color);
+    color: #6bbf5f;
   }
 
   .linkMobile:before {
@@ -279,9 +291,21 @@
     top: 95%;
     height: 5px;
     width: 0%;
-    background: var(--theme-color);
-    transition: background-color 1s ease, box-shadow 1s ease, width 1s;
-    box-shadow: 0 0 20px var(--theme-color);
+    background-image: repeating-linear-gradient(
+      180deg,
+      #6bbf5f 0px,
+      #45c7f0 120px,
+      #8455a2 259px,
+      #ba499b 394px,
+      #ef3835 500px,
+      #f26831 612px,
+      #6bbf5f 698px
+    );
+    background-size: 100% 698px;
+    background-repeat: repeat;
+    transition: width 1s;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+    animation: themeFlowY 16s ease-in-out infinite;
     left: 50%;
     transform: translateX(-50%);
   }
@@ -353,19 +377,19 @@
 }
 
 .dropdownLink:hover {
-  color: var(--theme-color);
+  color: #6bbf5f;
   cursor: pointer !important;
 }
 
 .dropdownIcon {
   font-size: 1.2rem;
-  color: var(--theme-color, #88D2D5);
+  color: #6bbf5f;
   transition: all 0.3s ease;
   display: inline-block;
 }
 
 .dropdownLink:hover .dropdownIcon {
-  color: var(--theme-color, #88D2D5);
+  color: #6bbf5f;
   transform: scale(1.1);
 }
 
@@ -408,18 +432,18 @@
 }
 
 .mobileStoreDropdownItem:hover {
-  color: var(--theme-color);
+  color: #6bbf5f;
 }
 
 .mobileDropdownIcon {
   font-size: 1.2rem;
-  color: var(--theme-color, #88D2D5);
+  color: #6bbf5f;
   transition: all 0.3s ease;
   display: inline-block;
 }
 
 .mobileStoreDropdownItem:hover .mobileDropdownIcon {
-  color: var(--theme-color, #88D2D5);
+  color: #6bbf5f;
   transform: scale(1.1);
 }
 

@@ -36,7 +36,7 @@
   transform: translateX(-50%);
   width: 300px;
   height: 300px;
-  background: radial-gradient(circle, var(--theme-color) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, transparent 70%);
   opacity: 0.2;
   filter: blur(80px);
   pointer-events: none;
@@ -51,12 +51,23 @@
   font-size: 3.5rem;
   line-height: 3.85rem;
   font-weight: 800;
-  background: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin-bottom: 1.5rem;
-  animation: fadeInUp 0.8s ease-out 0.2s both;
+  animation: fadeInUp 0.8s ease-out 0.2s both, themeFlowY 16s ease-in-out infinite;
 }
 
 .underConstructionText {
@@ -97,12 +108,25 @@
 }
 
 .underConstructionInput:focus {
-  border-color: var(--theme-color);
-  background: rgba(255, 255, 255, 0.08);
+  border-color: transparent;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08)) padding-box,
+    repeating-linear-gradient(
+      180deg,
+      #6bbf5f 0px,
+      #45c7f0 120px,
+      #8455a2 259px,
+      #ba499b 394px,
+      #ef3835 500px,
+      #f26831 612px,
+      #6bbf5f 698px
+    ) border-box;
+  background-size: 100% 100%, 100% 698px;
+  background-repeat: no-repeat, repeat;
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
-  box-shadow: 0 0 0 3px var(--theme-color),
-    0 0 20px var(--theme-color);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+  animation: themeFlowY 16s ease-in-out infinite;
 }
 
 .underConstructionInput:disabled {
@@ -115,7 +139,18 @@
   padding: 1rem 2rem;
   font-size: 1rem;
   font-weight: 600;
-  background: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
   color: white;
   border: none;
   border-radius: 12px;
@@ -127,6 +162,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: themeFlowY 16s ease-in-out infinite;
 }
 
 .underConstructionButton:hover:not(:disabled) {

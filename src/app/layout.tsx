@@ -7,7 +7,6 @@ import ConditionalFooter from "@/components/client/ConditionalFooter";
 import BackgroundEffects from "@/components/client/BackgroundEffects";
 import ReloadDiagnostics from "@/components/client/ReloadDiagnostics";
 import { UserAuthProvider } from "@/context/UserAuthContext";
-import { ColorToggleProvider } from "@/context/ColorToggleContext";
 import { CartProvider } from "@/context/CartContext";
 import { Roboto } from "next/font/google";
 
@@ -40,21 +39,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body style={{ backgroundColor: "black" }} className={`${lemonMilk.variable} antialiased relative`}>
-        <ColorToggleProvider>
-          <ReloadDiagnostics />
-          <BackgroundEffects />
-          <MouseProvider>
-            <UserAuthProvider>
-              <CartProvider>
-                <ConditionalNavbar />
-                <div className="mainContent">
-                  {children}
-                </div>
-                <ConditionalFooter />
-              </CartProvider>
-            </UserAuthProvider>
-          </MouseProvider>
-        </ColorToggleProvider>
+        <ReloadDiagnostics />
+        <BackgroundEffects />
+        <MouseProvider>
+          <UserAuthProvider>
+            <CartProvider>
+              <ConditionalNavbar />
+              <div className="mainContent">
+                {children}
+              </div>
+              <ConditionalFooter />
+            </CartProvider>
+          </UserAuthProvider>
+        </MouseProvider>
       </body>
     </html>
   );

@@ -382,6 +382,7 @@ export default function MusicCard({
 
   return (
     <div className={`musicCard ${isPlaying ? 'musicCardPlaying' : ''} ${variant === 'home' ? 'musicCardHome' : ''}`}>
+      <div className="musicCardThemeRing" aria-hidden="true" />
       <div className="musicCardTop">
         <div className="musicCardImageContainer">
           {track.imageFileUrl ? (

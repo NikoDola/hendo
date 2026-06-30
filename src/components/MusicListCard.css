@@ -58,20 +58,8 @@
 }
 
 .musicListCardPlaying {
-  box-shadow: 0 0 30px var(--theme-color-1), 0 0 60px var(--theme-color-2);
-  animation: playingGlow 2s ease-in-out infinite;
-}
-
-@keyframes playingGlow {
-
-  0%,
-  100% {
-    box-shadow: 0 0 30px var(--theme-color-1), 0 0 60px var(--theme-color-2);
-  }
-
-  50% {
-    box-shadow: 0 0 40px var(--theme-color-1), 0 0 80px var(--theme-color-2);
-  }
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  overflow: visible;
 }
 
 /* Top Section - Horizontal Layout */
@@ -109,6 +97,20 @@
   pointer-events: none;
   transition: opacity 0.2s ease;
   border-radius: 12px;
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  filter: blur(24px);
+  animation: themeFlowY 16s ease-in-out infinite;
 }
 
 /* Track Info Section */
@@ -150,7 +152,23 @@
 
 .musicListCardPrice {
   font-weight: 700;
-  color: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: themeFlowY 16s ease-in-out infinite;
   font-size: 1.25rem;
 }
 
@@ -201,33 +219,26 @@
 
 
 .musicListCardIconButton.active {
-  /* Active keeps the theme "before/after" background */
   color: white;
-  background: transparent;
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
   box-shadow: none;
+  animation: themeFlowY 16s ease-in-out infinite;
 }
 
 .musicListCardIconButton.active::before,
 .musicListCardIconButton.active::after {
-  content: "" !important;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  transition: none !important;
-}
-
-/* Match global button split-color background */
-.musicListCardIconButton.active::before {
-  background-color: var(--theme-color-2) !important;
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 50%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 0%, black 50%, transparent 100%);
-}
-
-.musicListCardIconButton.active::after {
-  background-color: var(--theme-color-1) !important;
-  -webkit-mask-image: linear-gradient(to top, black 0%, black 50%, transparent 100%);
-  mask-image: linear-gradient(to top, black 0%, black 50%, transparent 100%);
+  content: none !important;
 }
 
 .musicListCardIconButton:disabled,
@@ -333,11 +344,21 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  /* Rest: colored gradient fill (cycles via :root). Hover flips to the SUBMIT
-     black + glow look below. */
-  background: linear-gradient(to top right, var(--theme-color-1), var(--theme-color-2));
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
   color: black;
-  box-shadow: 0 0 15px var(--theme-color-1), 0 0 30px var(--theme-color-2);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.25);
+  animation: themeFlowY 16s ease-in-out infinite;
   transition: transform 0.3s ease, color 0.3s ease;
   white-space: nowrap;
 }
@@ -350,17 +371,16 @@
 }
 
 .musicListCardPurchaseBtn:hover:not(:disabled) {
-  /* Hover: black fill with a single theme-color glow ring, like SUBMIT. */
   background: black;
   color: var(--light-gray);
-  box-shadow: 0 0 20px var(--theme-color);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
   transform: translateY(-2px);
 }
 
 .musicListCardPurchaseBtn:disabled,
 .musicListCardPurchaseBtn.purchased {
   /* Same SUBMIT-style skin, just dimmed + non-interactive to read as purchased.
-     The glow keeps cycling via :root so it stays in rhythm with the rest. */
+     The moving gradient stays in rhythm with the rest. */
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
@@ -388,16 +408,28 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(to top right, var(--theme-color-1), var(--theme-color-2));
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
   color: black;
   border: none;
   border-radius: 50%;
   cursor: pointer;
-  /* Theme color fade comes from :root; keep transform for the hover scale. */
+  /* Keep transform for the hover scale. */
   transition: transform 0.3s ease;
   aspect-ratio: 1 / 1;
   padding: 0;
-  box-shadow: 0 0 10px var(--theme-color-1), 0 0 20px var(--theme-color-2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+  animation: themeFlowY 16s ease-in-out infinite;
 }
 
 .musicListCardPlayButton svg {
@@ -406,7 +438,7 @@
 
 .musicListCardPlayButton:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 15px var(--theme-color-1), 0 0 30px var(--theme-color-2);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.35);
 }
 
 .musicListCardProgressContainer {
@@ -431,9 +463,20 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: linear-gradient(to right, var(--theme-color-1), var(--theme-color-2));
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
   border-radius: 3px;
-  /* Keep progress movement responsive; color/glow fade is driven by :root. */
+  animation: themeFlowY 16s ease-in-out infinite;
   transition: width 0.1s linear;
 }
 
@@ -447,10 +490,9 @@
   height: 16px;
   background: white;
   border-radius: 50%;
-  box-shadow: 0 0 10px var(--theme-color-1), 0 0 20px var(--theme-color-2), 0 0 4px rgba(0, 0, 0, 0.3);
-  border: 3px solid var(--theme-color-2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.25), 0 0 4px rgba(0, 0, 0, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.85);
   z-index: 10;
-  /* Colors fade via the :root variable animation, in sync with everything. */
 }
 
 .musicListCardProgressGlow {
@@ -458,8 +500,20 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: linear-gradient(to right, var(--theme-color-1), var(--theme-color-2));
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
   filter: blur(8px);
+  animation: themeFlowY 16s ease-in-out infinite;
   transition: width 0.1s linear, opacity 3s ease;
 }
 

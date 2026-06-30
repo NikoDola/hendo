@@ -116,15 +116,27 @@
 }
 
 .purchaseWarningButtonPrimary {
-  background: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
   color: white;
-  box-shadow: 0 0 20px var(--theme-color);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+  animation: themeFlowY 16s ease-in-out infinite;
 }
 
 .purchaseWarningButtonPrimary:hover {
   background: black;
   color: var(--light-gray);
-  box-shadow: 0 0 20px var(--theme-color);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
 }
 
 .purchaseWarningButtonSecondary {
@@ -137,4 +149,3 @@
   background: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.3);
 }
-

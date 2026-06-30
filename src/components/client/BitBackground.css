@@ -47,7 +47,7 @@
   width: 40px;
   height: 40px;
   background: black;
-  border: 2px solid var(--theme-color);
+  border: 2px solid #6bbf5f;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -66,11 +66,11 @@
 .play-icon.playing {
   background: black;
   border: none;
-  box-shadow: 0 0 20px var(--theme-color);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
 }
 
 .play-icon svg {
-  color: var(--theme-color);
+  color: #6bbf5f;
   margin-left: 0;
   width: 24px;
   height: 24px;
@@ -97,7 +97,19 @@
 
 .music-progress-fill {
   height: 100%;
-  background: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  animation: themeFlowY 16s ease-in-out infinite;
   border-radius: 2px;
   width: 0%;
   transition: width 0.1s ease;
@@ -106,7 +118,17 @@
 .bit-particle {
   position: absolute;
   border-radius: 50%;
-  background: var(--theme-color, hsl(317 100% 54%));
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
   transition: all 0.1s ease;
   animation: float 6s ease-in-out infinite;
 }
@@ -164,7 +186,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  border: 2px solid var(--theme-color, hsl(317 100% 54%));
+  border: 2px solid #6bbf5f;
   border-radius: 50%;
   animation: beatRing 0.6s ease-out;
 }

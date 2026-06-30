@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { themeColorAt } from "@/lib/themeCycle";
 
 export default function ParallaxStars() {
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -21,6 +20,10 @@ export default function ParallaxStars() {
     if (!bgCtx) return;
 
     const bg: CanvasRenderingContext2D = bgCtx;
+
+    // Canvas stars stay neutral so the theme remains CSS-only.
+    // than calling getComputedStyle inside the 30fps draw loop — one read per
+    const shootingStarColor = "#ffffff";
 
     let width = window.innerWidth;
     let height = window.innerHeight;
@@ -159,15 +162,10 @@ export default function ParallaxStars() {
       bg.fillStyle = '#ffffff';
       bg.strokeStyle = '#ffffff';
 
-      // Derive the shooting-star color from the shared time-based cycle, which
-      // mirrors the CSS `themeCycle` keyframes — no getComputedStyle / inline
-      // style read, so the frame loop never forces a synchronous style flush.
-      const shootingStarColor = themeColorAt(performance.now());
-
-      // Update entities with the current cycle color
+      // above — read once per second, not per frame).
       entities.forEach(entity => {
         if (entity instanceof ShootingStar) {
-          entity.update(shootingStarColor); // Pass color to shooting stars
+          entity.update(shootingStarColor);
         } else {
           entity.update();
         }

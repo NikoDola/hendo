@@ -57,7 +57,7 @@ Newsletter Component Styles
 .subscribe:hover {
   background: black;
   color: var(--light-gray);
-  box-shadow: 0 0 20px var(--theme-color);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
 
 }
 
@@ -77,9 +77,9 @@ Newsletter Component Styles
 
 .subscribeDescription::selection {
   margin-top: 1rem;
-  background: var(--theme-color);
+  background: #6bbf5f;
   transition: background-color 1s ease, box-shadow 1s ease;
-  box-shadow: 0 0 20px var(--theme-color);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
   color: black;
 }
 

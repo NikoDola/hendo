@@ -47,12 +47,36 @@
 }
 
 .sidebarNavButton:hover {
-  background-color: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  animation: themeFlowY 16s ease-in-out infinite;
   color: var(--foreground);
 }
 
 .sidebarNavButton.active {
-  background-color: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  animation: themeFlowY 16s ease-in-out infinite;
   color: var(--foreground);
 }
 
@@ -67,7 +91,23 @@
 
 .dashboardTitle {
   font-size: 1.5rem;
-  color: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: themeFlowY 16s ease-in-out infinite;
   margin: 0;
 }
 
@@ -75,7 +115,19 @@
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   border: none;
-  background: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  animation: themeFlowY 16s ease-in-out infinite;
   color: var(--foreground);
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -97,7 +149,23 @@
 
 .sectionTitle {
   font-size: 1.25rem;
-  color: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: themeFlowY 16s ease-in-out infinite;
   margin-bottom: 1rem;
 }
 
@@ -129,7 +197,23 @@
 .pointsDisplay {
   font-size: 2rem;
   font-weight: bold;
-  color: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: themeFlowY 16s ease-in-out infinite;
   margin: 0.5rem 0;
 }
 
@@ -185,7 +269,23 @@
 
 .cartItemPrice {
   margin: 0;
-  color: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: themeFlowY 16s ease-in-out infinite;
   font-weight: bold;
 }
 
@@ -210,7 +310,19 @@
   padding: 0.75rem;
   border-radius: 0.5rem;
   border: none;
-  background: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  animation: themeFlowY 16s ease-in-out infinite;
   color: var(--foreground);
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -234,7 +346,19 @@
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   border: none;
-  background: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  animation: themeFlowY 16s ease-in-out infinite;
   color: var(--foreground);
   cursor: pointer;
   transition: background-color 0.3s ease;

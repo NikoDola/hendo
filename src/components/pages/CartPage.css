@@ -71,7 +71,19 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  animation: themeFlowY 16s ease-in-out infinite;
   border: none;
   border-radius: 0.5rem;
   color: white;
@@ -180,7 +192,23 @@
 .cartPageItemPrice {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: themeFlowY 16s ease-in-out infinite;
   margin: 0;
 }
 
@@ -229,7 +257,23 @@
 }
 
 .cartPageSummaryTotalPrice {
-  color: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: themeFlowY 16s ease-in-out infinite;
   font-size: 1.5rem;
   font-weight: 700;
   font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
@@ -242,7 +286,19 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 1rem 1.5rem;
-  background: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  animation: themeFlowY 16s ease-in-out infinite;
   border: none;
   border-radius: 0.5rem;
   color: white;
@@ -408,7 +464,19 @@
   padding: 0.9rem 1rem;
   border-radius: 0.75rem;
   border: none;
-  background: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  animation: themeFlowY 16s ease-in-out infinite;
   color: white;
   font-weight: 800;
   cursor: pointer;
@@ -463,4 +531,3 @@
     margin-left: auto;
   }
 }
-

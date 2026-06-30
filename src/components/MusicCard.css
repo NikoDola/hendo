@@ -73,20 +73,9 @@
 
 
 .musicCardPlaying {
-  box-shadow: 0 0 30px var(--theme-color), 0 0 60px var(--theme-color);
-  animation: playingGlow 2s ease-in-out infinite;
-}
-
-@keyframes playingGlow {
-
-  0%,
-  100% {
-    box-shadow: 0 0 30px var(--theme-color), 0 0 60px var(--theme-color);
-  }
-
-  50% {
-    box-shadow: 0 0 40px var(--theme-color), 0 0 80px var(--theme-color);
-  }
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  contain: layout style;
+  overflow: visible;
 }
 
 /* Image section - Changed to full width */
@@ -143,7 +132,23 @@
 }
 
 .musicCardPlaying .musicCardTitle {
-  color: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: themeFlowY 16s ease-in-out infinite;
 }
 
 .musicCardDescription {
@@ -253,8 +258,20 @@
   flex-grow: 0;
   padding: 0;
   aspect-ratio: 1 / 1;
-  box-shadow: 0 0 10px var(--theme-color-1), 0 0 20px var(--theme-color-2);
-  /* Match purchase button timing */
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+  animation: themeFlowY 16s ease-in-out infinite;
 
 }
 
@@ -262,15 +279,27 @@
 
 .musicCardPlayButton:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 15px var(--theme-color-1), 0 0 30px var(--theme-color-2);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.35);
 }
 
 .musicCardPlayButton.playing {
   /* Keep identical to default so it matches /music */
-  background: linear-gradient(to top right, var(--theme-color-1), var(--theme-color-2));
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
   border: none;
   color: black;
-  box-shadow: 0 0 10px var(--theme-color-1), 0 0 20px var(--theme-color-2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+  animation: themeFlowY 16s ease-in-out infinite;
 }
 
 .musicCardProgressBar {
@@ -293,10 +322,21 @@
 
 .musicCardProgressFill {
   height: 100%;
-  background: linear-gradient(to right, var(--theme-color-1), var(--theme-color-2));
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
   border-radius: 3px;
   position: relative;
-  /* Keep progress movement responsive; color/glow fade is driven by :root. */
+  animation: themeFlowY 16s ease-in-out infinite;
   transition: width 0.1s linear;
 }
 
@@ -310,10 +350,9 @@
   height: 16px;
   background: white;
   border-radius: 50%;
-  box-shadow: 0 0 10px var(--theme-color-1), 0 0 20px var(--theme-color-2), 0 0 4px rgba(0, 0, 0, 0.3);
-  border: 3px solid var(--theme-color-2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.25), 0 0 4px rgba(0, 0, 0, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.85);
   z-index: 10;
-  /* Colors fade via the :root variable animation, in sync with everything. */
 }
 
 /* Purchase section - Bottom (ROW) */
@@ -333,7 +372,23 @@
 .musicCardPrice {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: themeFlowY 16s ease-in-out infinite;
   font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
   text-align: left;
   white-space: nowrap;
@@ -388,16 +443,7 @@
 
 .musicCardIconButton::before,
 .musicCardIconButton::after {
-  /* Local split-theme background (animates in/out via opacity) */
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0;
-  /* Fade the active/inactive toggle quickly; the theme color itself fades via
-     :root in sync with all other buttons. */
-  transition: opacity 0.3s ease;
+  content: none;
 }
 
 .musicCardIconButton svg {
@@ -407,26 +453,21 @@
 }
 
 .musicCardIconButton.active {
-  /* Active keeps the theme "before/after" background */
-  background: transparent;
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
   color: white;
   box-shadow: none;
-}
-
-.musicCardIconButton.active::before,
-.musicCardIconButton.active::after { opacity: 1; }
-
-/* Match global button split-color background */
-.musicCardIconButton::before {
-  background-color: var(--theme-color-2) !important;
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 50%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 0%, black 50%, transparent 100%);
-}
-
-.musicCardIconButton::after {
-  background-color: var(--theme-color-1) !important;
-  -webkit-mask-image: linear-gradient(to top, black 0%, black 50%, transparent 100%);
-  mask-image: linear-gradient(to top, black 0%, black 50%, transparent 100%);
+  animation: themeFlowY 16s ease-in-out infinite;
 }
 
 .musicCardIconButton.favorite.active .musicCardFavoriteIcon {
@@ -456,9 +497,20 @@
   justify-content: center;
   gap: 0.5rem;
   font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
-  /* Rest: colored gradient fill (cycles via :root). Hover flips to black + glow. */
-  background: linear-gradient(to top right, var(--theme-color-1), var(--theme-color-2));
-  box-shadow: 0 0 15px var(--theme-color-1), 0 0 30px var(--theme-color-2);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.25);
+  animation: themeFlowY 16s ease-in-out infinite;
   font-size: 0.9rem;
 }
 
@@ -469,10 +521,9 @@
 }
 
 .musicCardPurchaseButton:hover {
-  /* Hover: black fill with a single theme-color glow ring, like SUBMIT. */
   background: black;
   color: var(--light-gray);
-  box-shadow: 0 0 20px var(--theme-color);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
   transform: translateY(-1px);
 }
 

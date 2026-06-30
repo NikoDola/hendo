@@ -1,0 +1,155 @@
+/* ========================================================================
+   Moving Gradient Theme
+
+   The theme is one repeated vertical gradient. UI elements that need the
+   theme clip that same gradient into text, fills, borders, and card rings.
+   No JavaScript writes colors. No root theme color variables.
+   ======================================================================== */
+
+@keyframes themeFlowY {
+  0%,
+  18.75% {
+    background-position: 0 0;
+  }
+
+  25%,
+  43.75% {
+    background-position: 0 -174.5px;
+  }
+
+  50%,
+  68.75% {
+    background-position: 0 -349px;
+  }
+
+  75%,
+  93.75% {
+    background-position: 0 -523.5px;
+  }
+
+  100% {
+    background-position: 0 -698px;
+  }
+}
+
+.theme-text,
+.theme-gradient-text {
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: themeFlowY 16s ease-in-out infinite;
+}
+
+.theme-fill,
+.theme-gradient-fill {
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  animation: themeFlowY 16s ease-in-out infinite;
+}
+
+.theme-gradient-border {
+  border-color: transparent;
+  background:
+    linear-gradient(#000, #000) padding-box,
+    repeating-linear-gradient(
+      180deg,
+      #6bbf5f 0px,
+      #45c7f0 120px,
+      #8455a2 259px,
+      #ba499b 394px,
+      #ef3835 500px,
+      #f26831 612px,
+      #6bbf5f 698px
+    ) border-box;
+  background-size: 100% 100%, 100% 698px;
+  background-repeat: no-repeat, repeat;
+  animation: themeFlowY 16s ease-in-out infinite;
+}
+
+.musicCardThemeRing,
+.musicListCardThemeRing {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  filter: blur(14px);
+  transition: opacity 0.2s ease;
+}
+
+.musicCardPlaying .musicCardThemeRing,
+.musicListCardPlaying .musicListCardThemeRing {
+  opacity: 1;
+}
+
+.musicCardThemeRing::before,
+.musicListCardThemeRing::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-sizing: border-box;
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: themeFlowY 16s ease-in-out infinite;
+  will-change: background-position;
+}
+
+.musicCardThemeRing::before,
+.musicListCardThemeRing::before {
+  padding: 6px;
+  opacity: 1;
+}
+
+.musicCardThemeRing::after,
+.musicListCardThemeRing::after {
+  content: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-text,
+  .theme-gradient-text,
+  .theme-fill,
+  .theme-gradient-fill,
+  .theme-gradient-border {
+    animation: none !important;
+  }
+}

@@ -3,15 +3,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 @import './variables.css';
+@import './theme-cycle.css';
 
-/* Theme colors — the cycle is driven entirely from JS (src/lib/themeCycle.ts +
-   src/context/ColorToggleContext.tsx), which writes plain `--theme-color*`
-   custom properties on :root each frame. There is intentionally NO CSS
-   @keyframes animation and NO registered `@property` color variables here:
-   animating registered @property <color> vars leaks engine memory on Apple
-   WebKit (desktop Safari + every iOS browser) until iOS reloads/kills the tab
-   ("A problem repeatedly occurred"). Plain custom-property writes do not carry
-   that leak. Defaults below (pair 0) cover SSR / first paint / JS-disabled. */
+/* Theme colors — stepped through the 5 pairs by a tiny timer in
+   8s (5 updates per 40s). Two things we deliberately avoid:
+     1. A CSS @property <color> animation — that's what leaked engine memory on
+        Apple WebKit (Safari + every iOS browser) until the tab was killed.
+     2. Relying on @keyframes to animate the vars without @property — browsers
+        silently ignore unregistered custom properties in keyframes, so that
+        does nothing at all.
+   A small interval is the cheapest leak-free way to drive the shared variable.
+   Defaults below = pair 0 (SSR/first paint + the value if JS is disabled). */
 
 * {
   padding: 0;
@@ -22,17 +24,10 @@
    every h1…aside here. It forced WebKit to run per-property transitions across
    the whole DOM on every color step, a major contributor to the iOS Safari
    "significant memory" self-reload. Removed. Elements that read
-   `var(--theme-color*)` update via the JS driver; non-theme transitions
    (hovers) live on their own components. */
 
 :root {
   font-family: var(--font-lemonmilk), system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-
-  /* Default theme colors = pair 0. The live cycle is driven from JS (see
-     ColorToggleContext); these are the static fallback before/without JS. */
-  --theme-color: hsl(220, 100%, 50%);
-  --theme-color-1: hsl(220, 100%, 50%);
-  --theme-color-2: hsl(120, 100%, 50%);
 }
 
 html {
@@ -88,17 +83,31 @@ h1, h2{
 
   width: max-content;
   line-height: 1;
-  color: var(--theme-color-1);
-  /* Color fade is driven by the :root variable animation so it stays in sync
-     with every other themed element — no local transition. */
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: themeFlowY 16s ease-in-out infinite;
 }
 
-/* Overlay color with fade */
+/* Overlay color with fade — disabled now the gradient drives the text itself. */
 h1::before, h2::before {
-  content: attr(data-text);
+  content: none;
   position: absolute;
   inset: 0;
-  color: var(--theme-color-2);
+  color: transparent;
   pointer-events: none;
 
   -webkit-mask-image: linear-gradient(
@@ -169,15 +178,26 @@ form {
 
 button {
   position: relative;
-  background-color: transparent;
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
   border: none;
   border-radius: 0.5rem;
   padding: 0.5rem 1rem;
   color: white;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 0 20px var(--theme-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  animation: themeFlowY 16s ease-in-out infinite;
   font-size: 1rem;
   display: flex;
   align-items: center;
@@ -189,13 +209,13 @@ button {
   overflow: hidden;
 }
 button::before {
-  content: "";
+  content: none;
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: var(--theme-color-2);
+  background-color: transparent;
   z-index: -1;
 
   -webkit-mask-image: linear-gradient(
@@ -214,13 +234,13 @@ button::before {
 }
 
 button::after {
-  content: "";
+  content: none;
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: var(--theme-color-1);
+  background-color: transparent;
   z-index: -1;
 
   -webkit-mask-image: linear-gradient(
@@ -239,10 +259,25 @@ button::after {
 }
 
 button:hover {
+  /* Flip to black; the glow keeps cycling via the (untouched) animation, so
+     leaving hover does NOT restart the cycle. */
+  background-image: none;
   background-color: black;
   color: var(--light-gray);
-  box-shadow: 0 0 20px var(--theme-color);
+}
 
+/* Un-themed-fill buttons must not inherit the generic gradient fill + glow.
+   Their themed bits (icon split colors, signup hover glow) are handled in their
+   own rules. The gradient-filled buttons (play/purchase) set their own
+   animation (higher specificity), so they don't need a reset. */
+.musicCardIconButton,
+.musicListCardIconButton,
+.musicCardHashtagsToggle,
+.musicListCardHashtagsToggle,
+.signupButton,
+.googleButton {
+  animation: none;
+  background-image: none;
 }
 
 
@@ -258,7 +293,23 @@ button:hover {
 }
 
 .view-more:hover {
-  color: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: themeFlowY 16s ease-in-out infinite;
 }
 
 .view-more::before {
@@ -269,7 +320,19 @@ button:hover {
   left: 50%;
   transform: translate(-50%);
   bottom: 0;
-  background-color: var(--theme-color);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  animation: themeFlowY 16s ease-in-out infinite;
   transition: all 0.5s;
   height: 2px;
 }
@@ -293,7 +356,22 @@ button:hover {
   input:focus,
   textarea:focus {
     outline: none;
-    border-color: var(--theme-color);
+    border-color: transparent;
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08)) padding-box,
+      repeating-linear-gradient(
+        180deg,
+        #6bbf5f 0px,
+        #45c7f0 120px,
+        #8455a2 259px,
+        #ba499b 394px,
+        #ef3835 500px,
+        #f26831 612px,
+        #6bbf5f 698px
+      ) border-box;
+    background-size: 100% 100%, 100% 698px;
+    background-repeat: no-repeat, repeat;
+    animation: themeFlowY 16s ease-in-out infinite;
   }
 
   input::placeholder,
@@ -319,9 +397,23 @@ button:hover {
 
   .input:focus {
     outline: none;
-    border: 1px solid var(--theme-color);
+    border: 1px solid transparent;
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.08);
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08)) padding-box,
+      repeating-linear-gradient(
+        180deg,
+        #6bbf5f 0px,
+        #45c7f0 120px,
+        #8455a2 259px,
+        #ba499b 394px,
+        #ef3835 500px,
+        #f26831 612px,
+        #6bbf5f 698px
+      ) border-box;
+    background-size: 100% 100%, 100% 698px;
+    background-repeat: no-repeat, repeat;
+    animation: themeFlowY 16s ease-in-out infinite;
   }
 
   .input:focus::placeholder {
@@ -416,9 +508,22 @@ button:hover {
 .formWrapper input:focus,
 .formWrapper textarea:focus {
   outline: none;
-  border: 1px solid var(--theme-color);
-  box-shadow: 0 0 15px rgba(var(--theme-color-rgb), 0.3);
-  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid transparent;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08)) padding-box,
+    repeating-linear-gradient(
+      180deg,
+      #6bbf5f 0px,
+      #45c7f0 120px,
+      #8455a2 259px,
+      #ba499b 394px,
+      #ef3835 500px,
+      #f26831 612px,
+      #6bbf5f 698px
+    ) border-box;
+  background-size: 100% 100%, 100% 698px;
+  background-repeat: no-repeat, repeat;
+  animation: themeFlowY 16s ease-in-out infinite;
 }
 
 .formWrapper input:focus::placeholder,
@@ -486,10 +591,10 @@ button:hover {
 
 .signupButton:hover {
   background: #000000 !important;
-  box-shadow: 0 0 22px var(--theme-color) !important;
   border: 1px solid rgba(255, 255, 255, 0.35) !important;
   color: #ffffff !important;
   text-decoration: none !important;
+  box-shadow: 0 0 11px rgba(255, 255, 255, 0.45) !important;
 }
 
 .signupButton:disabled {
@@ -684,8 +789,20 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"]:checked {
-  background: var(--theme-color, #88D2D5);
-  border-color: var(--theme-color, #88D2D5);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  border-color: transparent;
+  animation: themeFlowY 16s ease-in-out infinite;
 }
 
 input[type="checkbox"]:checked::after {
@@ -700,8 +817,8 @@ input[type="checkbox"]:checked::after {
 }
 
 input[type="checkbox"]:hover {
-  border-color: var(--theme-color, #88D2D5);
-  box-shadow: 0 0 10px rgba(136, 210, 213, 0.3);
+  border-color: rgba(255, 255, 255, 0.65);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
 }
 
 /* Checkbox Label Styling */

@@ -319,6 +319,7 @@ export default function MusicListCard({
 
   return (
     <div className={`musicListCard ${isPlaying ? 'musicListCardPlaying' : ''}`}>
+      <div className="musicListCardThemeRing" aria-hidden="true" />
       {/* Top Section: Image + Info (Horizontal) */}
       <div className="musicListCardTop">
         {/* Album Cover */}
@@ -340,7 +341,6 @@ export default function MusicListCard({
               className="musicListCardGlow"
               style={{
                 opacity: glowIntensity * 0.6,
-                boxShadow: `0 0 ${30 + glowIntensity * 50}px var(--theme-color)`,
               }}
             />
           )}

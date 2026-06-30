@@ -185,22 +185,8 @@
                     initStarsAndShooters();
                 });
 
-                // ---------- theme color handling ----------
-                const DEFAULT_COLOR = 'hsl(220, 100%, 50%)'; // blue
-                let shootingColor = DEFAULT_COLOR;
-                const getThemeColor = () => {
-                    try {
-                        const inline = document.documentElement.style.getPropertyValue('--theme-color').trim();
-                        if (inline) return inline;
-                        const computed = getComputedStyle(document.documentElement).getPropertyValue('--theme-color').trim();
-                        return computed || DEFAULT_COLOR;
-                    } catch (e) {
-                        return DEFAULT_COLOR;
-                    }
-                };
-                setInterval(() => {
-                    shootingColor = getThemeColor();
-                }, 300);
+                // ---------- canvas color handling ----------
+                const shootingColor = '#ffffff';
 
                 // ---------- star classes (canvas) ----------
                 class Star {

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Theme Gradient Playground</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0a0a0a;
+      color: #e6e6e6;
+      font: 14px/1.5 -apple-system, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1; /* sit above the star field */
+    }
+    @media (max-width: 800px) { .layout { grid-template-columns: 1fr; } }
+
+    /* ---- star field background (from the real ZoomingStars) ---- */
+    .zooming-stars-container {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+      color: #fff;
+    }
+    .zooming-star {
+      position: absolute;
+      transform-origin: center;
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0);
+      animation-name: starLifecycle;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+    }
+    .zooming-star svg { filter: drop-shadow(0 0 3px currentColor); }
+    @keyframes starLifecycle {
+      0%   { opacity: 0;   transform: translate(-50%, -50%) scale(0); }
+      15%  { opacity: 0.3; transform: translate(-50%, -50%) scale(0.2); }
+      30%  { opacity: 0.7; transform: translate(-50%, -50%) scale(0.5); }
+      50%  { opacity: 1;   transform: translate(-50%, -50%) scale(1); }
+      70%  { opacity: 1;   transform: translate(-50%, -50%) scale(1); }
+      80%  { opacity: 0.8; transform: translate(-50%, -50%) scale(0.9); }
+      90%  { opacity: 0.3; transform: translate(-50%, -50%) scale(0.3); }
+      95%  { opacity: 0.1; transform: translate(-50%, -50%) scale(0.1); }
+      100% { opacity: 0;   transform: translate(-50%, -50%) scale(0); }
+    }
+
+    /* ---- LEFT: live component gallery ---- */
+    .stage {
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      align-items: center;
+    }
+    .block { width: 100%; max-width: 460px; }
+    .block-wide { max-width: 920px; }
+    .pg-row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; justify-content: center; }
+    .pg-row .pg-card { flex: 1 1 320px; max-width: 400px; }
+    .block .label {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #777;
+      margin-bottom: 12px;
+    }
+
+    /* raw moving gradient layer (reference) */
+    #preview-bg { width: 100%; height: 90px; border-radius: 10px; }
+
+    /* headline — gradient clipped to text */
+    .pg-headline {
+      font-size: 4.5rem; font-weight: 800; line-height: 1; text-align: center;
+    }
+
+    /* primary button — NO border, gradient fill, glow, hover flips to black */
+    .pg-btn {
+      position: relative; border: none; border-radius: 0.5rem;
+      padding: 0.85rem 1.75rem; color: #fff; font-weight: 700; font-size: 1rem;
+      cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+      transition: background-color .3s ease, color .3s ease;
+    }
+
+    /* email input — focus gets the theme glow */
+    .pg-input {
+      width: 100%; background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.15); border-radius: 12px;
+      padding: 1rem; color: #fff; font-size: 16px; outline: none;
+      transition: border-color .3s ease, box-shadow .3s ease, background .3s ease;
+    }
+    .pg-input::placeholder { color: rgba(255,255,255,.4); }
+
+    /* "view more" link — animated underline + gradient text on hover */
+    .pg-viewmore {
+      position: relative; display: inline-block; padding: .6rem 0;
+      color: #e6e6e6; text-decoration: none; cursor: pointer; font-weight: 600;
+    }
+    .pg-viewmore::before {
+      content: ""; position: absolute; left: 50%; bottom: 0; height: 2px; width: 0;
+      transform: translateX(-50%); transition: width .4s ease;
+    }
+
+    /* music card — glass panel with WHITE edge border (not the theme) */
+    .pg-card {
+      position: relative; isolation: isolate;
+      display: flex; flex-direction: column; gap: 1.1rem;
+      background: rgba(255,255,255,.025);
+      -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+      border-radius: 20px; padding: 1.5rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,.1);
+    }
+    .pg-card::after {
+      content: ""; position: absolute; inset: 0; border-radius: 20px; padding: .5px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.5) 25%, transparent 50%, rgba(255,255,255,.5) 75%, transparent 100%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      pointer-events: none; z-index: 1;
+    }
+    /* Blurry, color-cycling outline. The gradient is masked to a RING (so the
+       card centre stays transparent and the stars show through); the blur lives
+       on the wrapper so it's applied AFTER the mask -> a soft glowing rim. */
+    .pg-card-glow {
+      position: absolute; inset: 0; z-index: -1;
+      border-radius: inherit; pointer-events: none;
+    }
+    .pg-card-glow::before {
+      content: ""; position: absolute; inset: 0;
+      border-radius: inherit; box-sizing: border-box;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+    }
+    .pg-card-img {
+      width: 100%; height: 190px; border-radius: 12px;
+      background: rgba(255,255,255,.05);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem; font-weight: 800; color: rgba(255,255,255,.25);
+    }
+    .pg-card-title { font-size: 1.25rem; font-weight: 600; color: #fff; }
+    .pg-card-desc { color: rgba(255,255,255,.8); font-size: .875rem; line-height: 1.6; }
+    .pg-purchase-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: .25rem; }
+    .pg-price { font-size: 1.5rem; font-weight: 800; white-space: nowrap; }
+    .pg-purchase {
+      border: none; border-radius: 12px; padding: .85rem 1.1rem; min-width: 140px;
+      color: #000; font-weight: 700; cursor: pointer; font-size: .9rem;
+      display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+      transition: background-color .3s ease, color .3s ease, transform .15s ease;
+    }
+    .pg-purchase:hover { transform: translateY(-1px); }
+    .pg-player { display: flex; align-items: center; gap: 1rem; width: 100%; margin-top: .25rem; }
+    .pg-play {
+      width: 48px; height: 48px; min-width: 48px; border-radius: 50%; border: none;
+      color: #000; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: transform .2s ease;
+    }
+    .pg-play:hover { transform: scale(1.08); }
+    .pg-progress { flex: 1; height: 6px; background: rgba(255,255,255,.2); border-radius: 3px; position: relative; }
+    .pg-progress-fill { height: 100%; width: 45%; border-radius: 3px; }
+
+    /* ---- RIGHT: controls ---- */
+    .panel {
+      background: #111; border-left: 1px solid #222; padding: 20px;
+      overflow-y: auto; max-height: 100vh;
+    }
+    .panel h1 { font-size: 15px; margin-bottom: 4px; }
+    .panel .sub { color: #777; font-size: 12px; margin-bottom: 18px; }
+    .section-label {
+      font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+      color: #777; margin-bottom: 10px;
+    }
+    .field { margin-bottom: 16px; }
+    .field > label {
+      display: flex; justify-content: space-between; font-size: 12px; color: #aaa; margin-bottom: 6px;
+    }
+    .field input[type="range"] { width: 100%; }
+
+    .stops { display: flex; flex-direction: column; gap: 10px; }
+    .stop { background: #161616; border: 1px solid #242424; border-radius: 8px; padding: 10px; }
+    .stop-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .swatch {
+      width: 24px; height: 24px; border-radius: 5px; border: 1px solid #333;
+      flex: 0 0 auto; padding: 0; cursor: pointer; background: none;
+    }
+    input.swatch { -webkit-appearance: none; appearance: none; }
+    input.swatch::-webkit-color-swatch-wrapper { padding: 0; }
+    input.swatch::-webkit-color-swatch { border: none; border-radius: 4px; }
+    input.swatch::-moz-color-swatch { border: none; border-radius: 4px; }
+    .stop-head .pos { margin-left: auto; display: flex; align-items: center; gap: 4px; font-size: 12px; color: #999; }
+    .stop-head .pos input { width: 56px; background: #0c0c0c; border: 1px solid #333; color: #eee; border-radius: 4px; padding: 3px 6px; }
+    .stop-head .remove { background: none; border: none; color: #c55; cursor: pointer; font-size: 16px; line-height: 1; }
+    .mini { display: flex; flex-direction: column; gap: 4px; }
+    .mini label { font-size: 11px; color: #888; display: flex; justify-content: space-between; }
+
+    .add { width: 100%; margin-top: 10px; background: #1d1d1d; border: 1px dashed #3a3a3a; color: #ccc; padding: 8px; border-radius: 8px; cursor: pointer; }
+    .add:hover { background: #242424; }
+    hr { border: none; border-top: 1px solid #222; margin: 18px 0; }
+    .json-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .copy { background: #2a6; border: none; color: #021; font-weight: 600; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+    .copy:hover { background: #3c8; }
+    #json {
+      width: 100%; height: 220px; background: #0c0c0c; border: 1px solid #262626;
+      color: #8fd; font: 12px/1.45 ui-monospace, "SF Mono", Consolas, monospace;
+      border-radius: 8px; padding: 10px; resize: vertical; white-space: pre;
+    }
+  </style>
+</head>
+<body>
+  <div class="zooming-stars-container" id="stars"></div>
+  <div class="layout">
+    <!-- LEFT: the real components, themed by the moving gradient -->
+    <section class="stage">
+      <div class="block">
+        <div class="label">Raw gradient (reference)</div>
+        <div id="preview-bg"></div>
+      </div>
+
+      <div class="block">
+        <div class="label">Headline</div>
+        <h1 class="pg-headline">LEVEL UP</h1>
+      </div>
+
+      <div class="block">
+        <div class="label">Primary button — normal & hover</div>
+        <div class="pg-row">
+          <button class="pg-btn">Read More</button>
+          <button class="pg-btn pg-btn-hover">Read More</button>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="label">Email input (focus me)</div>
+        <input class="pg-input" placeholder="Your Email" />
+      </div>
+
+      <div class="block">
+        <div class="label">View-more link (hover me)</div>
+        <a class="pg-viewmore">view more beats</a>
+      </div>
+
+      <div class="block block-wide">
+        <div class="label">Music card — idle & playing</div>
+        <div class="pg-row">
+          <div class="pg-card">
+            <div class="pg-card-glow"></div>
+            <div class="pg-card-img">T</div>
+            <div class="pg-card-title">THE ONE</div>
+            <div class="pg-card-desc">Do you have what it takes to be the ONE like NEO? Jump on this track and find out now.</div>
+            <div class="pg-player">
+              <button class="pg-play">▶</button>
+              <div class="pg-progress"><div class="pg-progress-fill" style="width:45%"></div></div>
+            </div>
+            <div class="pg-purchase-row">
+              <span class="pg-price">$250.00</span>
+              <button class="pg-purchase">Purchase</button>
+            </div>
+          </div>
+
+          <div class="pg-card pg-card-playing">
+            <div class="pg-card-glow"></div>
+            <div class="pg-card-img">T</div>
+            <div class="pg-card-title">THE ONE</div>
+            <div class="pg-card-desc">Do you have what it takes to be the ONE like NEO? Jump on this track and find out now.</div>
+            <div class="pg-player">
+              <button class="pg-play playing">❚❚</button>
+              <div class="pg-progress"><div class="pg-progress-fill" style="width:70%"></div></div>
+            </div>
+            <div class="pg-purchase-row">
+              <span class="pg-price">$250.00</span>
+              <button class="pg-purchase">Purchase</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: controls -->
+    <aside class="panel">
+      <h1>Theme Gradient Playground</h1>
+      <div class="sub">Tune the theme, then copy the JSON below.</div>
+
+      <div class="field">
+        <label>Angle <span id="angleVal">180°</span></label>
+        <input id="angle" type="range" min="0" max="360" value="180" />
+      </div>
+      <div class="field">
+        <label>Hold time <span id="holdVal">3s</span></label>
+        <input id="hold" type="range" min="0" max="8" step="0.5" value="3" />
+      </div>
+      <div class="field">
+        <label>Transition time <span id="transVal">1s</span></label>
+        <input id="trans" type="range" min="0.2" max="6" step="0.1" value="1" />
+      </div>
+      <div class="field">
+        <label>Steps (holds per loop) <span id="stepsVal">4</span></label>
+        <input id="steps" type="range" min="2" max="8" step="1" value="4" />
+      </div>
+
+      <hr />
+      <div class="section-label">Glow (box-shadow)</div>
+      <div class="field">
+        <label>Glow blur <span id="glowBlurVal">10px</span></label>
+        <input id="glowBlur" type="range" min="0" max="40" value="10" />
+      </div>
+      <div class="field">
+        <label>Glow strength <span id="glowStrengthVal">100%</span></label>
+        <input id="glowStrength" type="range" min="0" max="100" value="100" />
+      </div>
+
+      <hr />
+      <div class="section-label">Card outline (blurry, cycling)</div>
+      <div class="field">
+        <label>Outline blur <span id="outlineBlurVal">10px</span></label>
+        <input id="outlineBlur" type="range" min="0" max="40" value="10" />
+      </div>
+      <div class="field">
+        <label>Outline thickness <span id="outlineThickVal">3px</span></label>
+        <input id="outlineThick" type="range" min="1" max="20" value="3" />
+      </div>
+      <div class="field">
+        <label>Outline strength <span id="outlineStrengthVal">100%</span></label>
+        <input id="outlineStrength" type="range" min="0" max="100" value="100" />
+      </div>
+
+      <hr />
+      <div class="section-label">Color stops</div>
+      <div class="stops" id="stops"></div>
+      <button class="add" id="add">+ Add color stop</button>
+
+      <hr />
+      <div class="json-head">
+        <strong style="font-size:13px;">JSON</strong>
+        <button class="copy" id="copy">Copy</button>
+      </div>
+      <textarea id="json" readonly></textarea>
+    </aside>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

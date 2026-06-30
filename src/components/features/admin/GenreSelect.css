@@ -88,7 +88,7 @@
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--theme-color);
+  color: #6bbf5f;
   pointer-events: none;
 }
 
@@ -109,7 +109,7 @@
 
 .genreSelectSearchInput:focus {
   outline: none;
-  border-color: var(--theme-color);
+  border-color: #6bbf5f;
 }
 
 .genreSelectOptions {
@@ -141,11 +141,11 @@
 }
 
 .genreSelectOption.selected {
-  color: var(--theme-color);
+  color: #6bbf5f;
 }
 
 .genreSelectOption svg {
-  color: var(--theme-color);
+  color: #6bbf5f;
   flex-shrink: 0;
 }
 
@@ -166,7 +166,7 @@
   border: none;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 0;
-  color: var(--theme-color);
+  color: #6bbf5f;
   font-size: 0.95rem;
   font-family: inherit;
   font-weight: 600;

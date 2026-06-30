@@ -14,14 +14,28 @@
   width: 100%;
   height: 8px;
   border-radius: 4px;
-  background: linear-gradient(to right,
-      var(--current-color, #88D2D5) 0%,
-      var(--current-color, #88D2D5) var(--slider-fill, 50%),
+  background-image:
+    linear-gradient(to right,
+      transparent 0%,
+      transparent var(--slider-fill, 50%),
       rgba(255, 255, 255, 0.2) var(--slider-fill, 50%),
-      rgba(255, 255, 255, 0.2) 100%);
+      rgba(255, 255, 255, 0.2) 100%),
+    repeating-linear-gradient(
+      180deg,
+      #6bbf5f 0px,
+      #45c7f0 120px,
+      #8455a2 259px,
+      #ba499b 394px,
+      #ef3835 500px,
+      #f26831 612px,
+      #6bbf5f 698px
+    );
+  background-size: 100% 100%, 100% 698px;
+  background-repeat: no-repeat, repeat;
   outline: none;
   cursor: pointer;
   transition: all 0.7s ease;
+  animation: themeFlowY 16s ease-in-out infinite;
   position: relative;
   overflow: hidden;
 }
@@ -53,12 +67,12 @@
 
 .color-slider:hover {
   height: 10px;
-  box-shadow: 0 0 20px var(--current-color, #88D2D5);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.25);
 }
 
 .color-slider:active {
   height: 12px;
-  box-shadow: 0 0 30px var(--current-color, #88D2D5);
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
 }
 
 /* Webkit browsers (Chrome, Safari, Edge) */
@@ -68,10 +82,20 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--current-color, #88D2D5);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
   cursor: pointer;
   border: 2px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 0 10px var(--current-color, #88D2D5);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
   transition: all 0.7s ease;
   position: relative;
 }
@@ -79,14 +103,14 @@
 .color-slider::-webkit-slider-thumb:hover {
   width: 24px;
   height: 24px;
-  box-shadow: 0 0 15px var(--current-color, #88D2D5);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.35);
   border-color: white;
 }
 
 .color-slider::-webkit-slider-thumb:active {
   width: 28px;
   height: 28px;
-  box-shadow: 0 0 20px var(--current-color, #88D2D5);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
 }
 
 /* Firefox */
@@ -94,24 +118,34 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--current-color, #88D2D5);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
   cursor: pointer;
   border: 2px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 0 10px var(--current-color, #88D2D5);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
   transition: all 0.7s ease;
 }
 
 .color-slider::-moz-range-thumb:hover {
   width: 24px;
   height: 24px;
-  box-shadow: 0 0 15px var(--current-color, #88D2D5);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.35);
   border-color: white;
 }
 
 .color-slider::-moz-range-thumb:active {
   width: 28px;
   height: 28px;
-  box-shadow: 0 0 20px var(--current-color, #88D2D5);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
 }
 
 /* Firefox track */
@@ -126,7 +160,17 @@
 .color-slider::-moz-range-progress {
   height: 8px;
   border-radius: 4px;
-  background: var(--current-color, #88D2D5);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
 }
 
 .slider-labels {
@@ -145,10 +189,26 @@
 
 .slider-value {
   font-weight: 600;
-  color: var(--current-color, #88D2D5);
+  background-image: repeating-linear-gradient(
+    180deg,
+    #6bbf5f 0px,
+    #45c7f0 120px,
+    #8455a2 259px,
+    #ba499b 394px,
+    #ef3835 500px,
+    #f26831 612px,
+    #6bbf5f 698px
+  );
+  background-size: 100% 698px;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 1rem;
-  text-shadow: 0 0 10px var(--current-color, #88D2D5);
+  text-shadow: none;
   transition: all 0.7s ease;
+  animation: themeFlowY 16s ease-in-out infinite;
 }
 
 /* Responsive design */
