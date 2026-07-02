@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { MusicTrack } from '@/lib/music';
 import { useCart } from '@/context/CartContext';
 import { getMediaElementSource } from '@/lib/audioContext';
+import { setNowPlayingMetadata } from '@/lib/mediaSession';
 import './MusicListCard.css';
 
 interface MusicListCardProps {
@@ -175,6 +176,7 @@ export default function MusicListCard({
           console.error('Playback failed:', error);
         });
       }
+      setNowPlayingMetadata(track.title);
     } else {
       audio.pause();
     }

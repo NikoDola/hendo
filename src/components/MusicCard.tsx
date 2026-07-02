@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { MusicTrack } from '@/lib/music';
 import { useCart } from '@/context/CartContext';
 import { getMediaElementSource } from '@/lib/audioContext';
+import { setNowPlayingMetadata } from '@/lib/mediaSession';
 import './MusicCard.css';
 
 interface MusicCardProps {
@@ -221,6 +222,7 @@ export default function MusicCard({
           if (playPromise !== undefined) {
             await playPromise;
           }
+          setNowPlayingMetadata(track.title);
         } catch (error) {
           console.error('Error playing audio:', error);
 

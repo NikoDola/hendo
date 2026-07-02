@@ -3,6 +3,7 @@
 
 import { DollarSign, Download, Music, Pause, Play } from 'lucide-react';
 import type { Purchase } from '@/hooks/usePurchases';
+import { setNowPlayingMetadata } from '@/lib/mediaSession';
 import './UserPurchasesList.css';
 import { useEffect, useRef, useState } from 'react';
 
@@ -84,6 +85,7 @@ export default function UserPurchasesList({
           setIsPlaying(false);
         } else {
           await audio.play();
+          setNowPlayingMetadata(purchase.trackTitle);
           setIsPlaying(true);
         }
         return;
@@ -100,6 +102,7 @@ export default function UserPurchasesList({
       audio.src = purchase.audioFileUrl;
       audio.currentTime = 0;
       await audio.play();
+      setNowPlayingMetadata(purchase.trackTitle);
       setActivePurchaseId(purchase.id);
       setIsPlaying(true);
     } catch (e) {

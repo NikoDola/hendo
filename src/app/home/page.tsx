@@ -8,10 +8,10 @@ import Link from "next/link";
 import HomeMusicSectionServer from "@/components/server/HomeMusicSectionServer";
 
 export const metadata: Metadata = {
-  title: "T.Hendo - Home",
+  title: "T.HENDO-DREAMSTATION",
   description: "Discover premium music beats and exclusive tracks with full rights.",
   openGraph: {
-    title: "T.Hendo - Home",
+    title: "T.HENDO-DREAMSTATION",
     description: "Discover premium music beats and exclusive tracks with full rights.",
     url: 'https://thelegendofhendo.com', 
     siteName: 'T.Hendo Music',
