@@ -3,6 +3,13 @@ import nodemailer from 'nodemailer';
 // ---------------------------------------------------------------------------
 // Small helpers (shared by templates)
 // ---------------------------------------------------------------------------
+//
+// Dark-background rule for every template in this file: Gmail's mobile apps
+// (and some other clients) rewrite background-color in dark mode and can flip
+// an all-dark email to white — but they never touch background-image. So each
+// dark surface sets its color twice: background-color plus an opaque
+// linear-gradient() of the same color. Tables also carry a bgcolor attribute
+// as a fallback for clients that strip style attributes.
 
 /** Escape user-controlled strings before interpolating into email HTML. */
 function escapeHtml(input: string): string {
@@ -56,13 +63,26 @@ export async function sendVerificationEmail(email: string, verificationToken: st
       from: `T. HENDO <${process.env.PROTON_SMTP_USER}>`,
       to: email,
       subject: 'Verify your email - T. HENDO Newsletter',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #000; color: #fff;">
+      html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <meta name="supported-color-schemes" content="dark">
+  <title>Verify your email</title>
+  <style> body { margin:0; padding:0; background-color:#000000; } </style>
+</head>
+<body bgcolor="#000000" style="margin:0;padding:0;background-color:#000000;background-image:linear-gradient(#000000,#000000);">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#000000" style="background-color:#000000;background-image:linear-gradient(#000000,#000000);">
+    <tr>
+      <td align="center" style="padding:0;">
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #000; background-image: linear-gradient(#000000,#000000); color: #fff; text-align: left;">
           <div style="text-align: center; margin-bottom: 30px;">
             <h1 style="color: #fff; font-size: 32px; margin: 0;">T. HENDO</h1>
           </div>
-          
-          <div style="background-color: #1a1a1a; padding: 30px; border-radius: 10px; border: 1px solid #333;">
+
+          <div style="background-color: #1a1a1a; background-image: linear-gradient(#1a1a1a,#1a1a1a); padding: 30px; border-radius: 10px; border: 1px solid #333;">
             <h2 style="color: #fff; margin-top: 0;">Welcome to T. HENDO Newsletter!</h2>
             
             <p style="color: #ccc; line-height: 1.6; margin-bottom: 25px;">
@@ -88,7 +108,11 @@ export async function sendVerificationEmail(email: string, verificationToken: st
             </p>
           </div>
         </div>
-      `,
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`,
     });
 
     return { success: true, messageId: info.messageId };
@@ -109,20 +133,33 @@ export async function sendWelcomeEmail(email: string) {
       from: `T. HENDO <${process.env.PROTON_SMTP_USER}>`,
       to: email,
       subject: 'Welcome to T. HENDO Newsletter! 🎉',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #000; color: #fff;">
+      html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <meta name="supported-color-schemes" content="dark">
+  <title>Welcome to T. HENDO</title>
+  <style> body { margin:0; padding:0; background-color:#000000; } </style>
+</head>
+<body bgcolor="#000000" style="margin:0;padding:0;background-color:#000000;background-image:linear-gradient(#000000,#000000);">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#000000" style="background-color:#000000;background-image:linear-gradient(#000000,#000000);">
+    <tr>
+      <td align="center" style="padding:0;">
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #000; background-image: linear-gradient(#000000,#000000); color: #fff; text-align: left;">
           <div style="text-align: center; margin-bottom: 30px;">
             <h1 style="color: #fff; font-size: 32px; margin: 0;">T. HENDO</h1>
           </div>
-          
-          <div style="background-color: #1a1a1a; padding: 30px; border-radius: 10px; border: 1px solid #333;">
+
+          <div style="background-color: #1a1a1a; background-image: linear-gradient(#1a1a1a,#1a1a1a); padding: 30px; border-radius: 10px; border: 1px solid #333;">
             <h2 style="color: #fff; margin-top: 0;">Welcome to T. HENDO! 🎉</h2>
             
             <p style="color: #ccc; line-height: 1.6; margin-bottom: 25px;">
               Thank you for verifying your email and joining our newsletter! You're now part of the T. HENDO community and will receive updates about our latest products, news, and exclusive offers.
             </p>
             
-            <div style="background-color: #2a2a2a; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <div style="background-color: #2a2a2a; background-image: linear-gradient(#2a2a2a,#2a2a2a); padding: 20px; border-radius: 8px; margin: 20px 0;">
               <h3 style="color: #ffd700; margin-top: 0;">What to expect:</h3>
               <ul style="color: #ccc; line-height: 1.6;">
                 <li>Latest product launches and updates</li>
@@ -143,7 +180,11 @@ export async function sendWelcomeEmail(email: string) {
             </p>
           </div>
         </div>
-      `,
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`,
     });
 
     return { success: true, messageId: info.messageId };
@@ -184,10 +225,10 @@ export function renderContactNotificationHtml(
     }
   </style>
 </head>
-<body style="margin:0;padding:0;background-color:#04050a;">
+<body bgcolor="#04050a" style="margin:0;padding:0;background-color:#04050a;background-image:linear-gradient(#04050a,#04050a);">
   <div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">New message from ${safeName} via Dreamstation.</div>
 
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#04050a;background-image:radial-gradient(circle at 18% 12%, rgba(0,85,255,0.20), transparent 42%), radial-gradient(circle at 85% 4%, rgba(0,85,255,0.12), transparent 38%);">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#04050a" style="background-color:#04050a;background-image:radial-gradient(circle at 18% 12%, rgba(0,85,255,0.20), transparent 42%), radial-gradient(circle at 85% 4%, rgba(0,85,255,0.12), transparent 38%), linear-gradient(#04050a,#04050a);">
     <tr>
       <td align="center" style="padding:34px 12px;">
         <table role="presentation" width="600" class="container" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;">
@@ -204,7 +245,7 @@ export function renderContactNotificationHtml(
           <!-- Card -->
           <tr>
             <td style="padding:0 6px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#0a0d15;border:1px solid #1c2333;border-radius:16px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#0a0d15" style="background-color:#0a0d15;background-image:linear-gradient(#0a0d15,#0a0d15);border:1px solid #1c2333;border-radius:16px;">
 
                 <tr>
                   <td class="px" style="padding:38px 40px 6px;">
@@ -394,11 +435,11 @@ export function renderPurchaseConfirmationHtml(params: PurchaseConfirmationParam
     }
   </style>
 </head>
-<body style="margin:0;padding:0;background-color:#04050a;">
+<body bgcolor="#04050a" style="margin:0;padding:0;background-color:#04050a;background-image:linear-gradient(#04050a,#04050a);">
   <!-- preheader (hidden) -->
   <div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">Payment confirmed — your beats are ready to download.</div>
 
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#04050a;background-image:radial-gradient(circle at 18% 12%, rgba(0,85,255,0.20), transparent 42%), radial-gradient(circle at 85% 4%, rgba(0,85,255,0.12), transparent 38%);">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#04050a" style="background-color:#04050a;background-image:radial-gradient(circle at 18% 12%, rgba(0,85,255,0.20), transparent 42%), radial-gradient(circle at 85% 4%, rgba(0,85,255,0.12), transparent 38%), linear-gradient(#04050a,#04050a);">
     <tr>
       <td align="center" style="padding:34px 12px;">
         <table role="presentation" width="600" class="container" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;">
@@ -415,7 +456,7 @@ export function renderPurchaseConfirmationHtml(params: PurchaseConfirmationParam
           <!-- Card -->
           <tr>
             <td style="padding:0 6px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#0a0d15;border:1px solid #1c2333;border-radius:16px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#0a0d15" style="background-color:#0a0d15;background-image:linear-gradient(#0a0d15,#0a0d15);border:1px solid #1c2333;border-radius:16px;">
 
                 <tr>
                   <td class="px" style="padding:38px 40px 6px;">
@@ -544,7 +585,8 @@ export function renderPurchaseConfirmationHtmlCentered(params: PurchaseConfirmat
     'radial-gradient(2px 2px at 130px 165px,#ffffff 50%,transparent 51%),' +
     'radial-gradient(1px 1px at 55px 150px,rgba(255,255,255,0.4) 50%,transparent 51%),' +
     'radial-gradient(1.4px 1.4px at 182px 95px,rgba(255,255,255,0.6) 50%,transparent 51%),' +
-    'radial-gradient(1px 1px at 15px 90px,rgba(255,255,255,0.35) 50%,transparent 51%);' +
+    'radial-gradient(1px 1px at 15px 90px,rgba(255,255,255,0.35) 50%,transparent 51%),' +
+    'linear-gradient(#0a0d15,#0a0d15);' +
     'background-size:200px 200px;background-repeat:repeat;' +
     'border:1px solid #1c2333;border-radius:16px;';
 
@@ -565,11 +607,11 @@ export function renderPurchaseConfirmationHtmlCentered(params: PurchaseConfirmat
     }
   </style>
 </head>
-<body style="margin:0;padding:0;background-color:#04050a;">
+<body bgcolor="#04050a" style="margin:0;padding:0;background-color:#04050a;background-image:linear-gradient(#04050a,#04050a);">
   <!-- preheader (hidden) -->
   <div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">Payment confirmed — your beats are ready to download.</div>
 
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#04050a;background-image:radial-gradient(circle at 50% 0%, rgba(0,85,255,0.16), transparent 46%);">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#04050a" style="background-color:#04050a;background-image:radial-gradient(circle at 50% 0%, rgba(0,85,255,0.16), transparent 46%), linear-gradient(#04050a,#04050a);">
     <tr>
       <td align="center" style="padding:34px 12px;">
         <table role="presentation" width="600" class="container" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;">
@@ -712,7 +754,8 @@ export function renderPurchaseConfirmationHtmlNeon(params: PurchaseConfirmationP
     'radial-gradient(2px 2px at 130px 165px,#ffffff 50%,transparent 51%),' +
     'radial-gradient(1px 1px at 55px 150px,rgba(255,255,255,0.4) 50%,transparent 51%),' +
     'radial-gradient(1.4px 1.4px at 182px 95px,rgba(255,255,255,0.6) 50%,transparent 51%),' +
-    'radial-gradient(1px 1px at 15px 90px,rgba(255,255,255,0.35) 50%,transparent 51%);' +
+    'radial-gradient(1px 1px at 15px 90px,rgba(255,255,255,0.35) 50%,transparent 51%),' +
+    'linear-gradient(#0a0d15,#0a0d15);' +
     'background-size:200px 200px;background-repeat:repeat;' +
     'border:1px solid #241a30;border-radius:16px;';
 
@@ -733,10 +776,10 @@ export function renderPurchaseConfirmationHtmlNeon(params: PurchaseConfirmationP
     }
   </style>
 </head>
-<body style="margin:0;padding:0;background-color:#04050a;">
+<body bgcolor="#04050a" style="margin:0;padding:0;background-color:#04050a;background-image:linear-gradient(#04050a,#04050a);">
   <div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">Payment confirmed — your beats are ready to download.</div>
 
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#04050a;background-image:radial-gradient(circle at 50% 0%, rgba(255,31,208,0.16), transparent 46%);">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#04050a" style="background-color:#04050a;background-image:radial-gradient(circle at 50% 0%, rgba(255,31,208,0.16), transparent 46%), linear-gradient(#04050a,#04050a);">
     <tr>
       <td align="center" style="padding:34px 12px;">
         <table role="presentation" width="600" class="container" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;">
@@ -880,7 +923,8 @@ export function renderPurchaseConfirmationHtmlCosmic(params: PurchaseConfirmatio
     'radial-gradient(1px 1px at 150px 28px,rgba(255,255,255,0.5) 50%,transparent 51%),' +
     'radial-gradient(1.4px 1.4px at 225px 80px,rgba(157,107,255,0.6) 50%,transparent 51%),' +
     'radial-gradient(1px 1px at 40px 120px,rgba(95,230,255,0.45) 50%,transparent 51%),' +
-    'radial-gradient(1.2px 1.2px at 250px 185px,#ffffff 50%,transparent 51%);' +
+    'radial-gradient(1.2px 1.2px at 250px 185px,#ffffff 50%,transparent 51%),' +
+    'linear-gradient(#05060d,#05060d);' +
     'background-size:260px 220px;background-repeat:repeat;';
 
   // Translucent glass panel — bgcolor attribute is the Outlook fallback.
@@ -907,7 +951,7 @@ export function renderPurchaseConfirmationHtmlCosmic(params: PurchaseConfirmatio
     }
   </style>
 </head>
-<body style="margin:0;padding:0;background-color:#05060d;">
+<body bgcolor="#05060d" style="margin:0;padding:0;background-color:#05060d;background-image:linear-gradient(#05060d,#05060d);">
   <div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">Payment confirmed — your beats are ready to download.</div>
 
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#05060d" style="${cosmosBg}">
