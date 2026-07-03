@@ -6,6 +6,7 @@ import ConditionalNavbar from "@/components/client/ConditionalNavbar";
 import ConditionalFooter from "@/components/client/ConditionalFooter";
 import BackgroundEffects from "@/components/client/BackgroundEffects";
 import ReloadDiagnostics from "@/components/client/ReloadDiagnostics";
+import ThemeClockSync from "@/components/client/ThemeClockSync";
 import { UserAuthProvider } from "@/context/UserAuthContext";
 import { CartProvider } from "@/context/CartContext";
 import { Roboto } from "next/font/google";
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body style={{ backgroundColor: "black" }} className={`${lemonMilk.variable} antialiased relative`}>
         <ReloadDiagnostics />
+        <ThemeClockSync />
         <BackgroundEffects />
         <MouseProvider>
           <UserAuthProvider>

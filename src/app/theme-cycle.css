@@ -32,6 +32,37 @@
   }
 }
 
+/* Button-scale variant of the theme flow. Buttons are ~48px tall, so against
+   the 698px theme gradient a resting button clips a near-solid slice. This
+   variant packs the same palette into a 288px period with 48px bands: a 48px
+   window always spans a full two-color blend at every rest position. The step
+   (-72px) must stay period/4 so the loop wraps with no seam. */
+@keyframes themeFlowYButton {
+  0%,
+  18.75% {
+    background-position: 0 0;
+  }
+
+  25%,
+  43.75% {
+    background-position: 0 -72px;
+  }
+
+  50%,
+  68.75% {
+    background-position: 0 -144px;
+  }
+
+  75%,
+  93.75% {
+    background-position: 0 -216px;
+  }
+
+  100% {
+    background-position: 0 -288px;
+  }
+}
+
 .theme-text,
 .theme-gradient-text {
   background-image: repeating-linear-gradient(
@@ -144,12 +175,10 @@
   content: none;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .theme-text,
-  .theme-gradient-text,
-  .theme-fill,
-  .theme-gradient-fill,
-  .theme-gradient-border {
-    animation: none !important;
-  }
-}
+/* Intentionally no prefers-reduced-motion freeze for the theme flow: it is a
+   slow color crossfade, not spatial motion, and freezing only the surfaces
+   that had a reduced-motion rule (while buttons, headings and rings kept
+   cycling) left the UI showing mismatched colors — e.g. a green headline next
+   to a purple button. All theme gradients run everywhere on one clock (see
+   ThemeClockSync.tsx); transforms and hover scaling still respect the
+   reduced-motion setting in their own rules. */

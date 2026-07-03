@@ -167,11 +167,10 @@
   content: none;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .hrsHeadline {
-    animation: none;
-  }
-}
+/* No reduced-motion freeze here: the theme flow is a slow color crossfade,
+   not spatial motion, and freezing only some themed surfaces (this headline
+   used to stop while buttons kept cycling) makes the UI show mismatched
+   colors. Spatial effects (hover scale below) still respect the setting. */
 
 /* "Read More" CTA — matches the music-card play button exactly:
    gradient fill + black label + soft glow at rest, then on hover it GOES BLACK

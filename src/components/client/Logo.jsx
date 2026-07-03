@@ -46,6 +46,8 @@ export default function Logo({size = "30px"}) {
     <div ref={wrapperRef} className="logoWrapper">
       <span style={{fontSize: size}} className="letter">T</span>
       <span style={{fontSize: size}} className="letter">.</span>
+      {/* brand is "T. HENDO" with a space; plain span so hover skips it */}
+      <span style={{fontSize: size}} aria-hidden="true">&nbsp;</span>
       <span style={{fontSize: size}} className="letter">H</span>
       <span style={{fontSize: size}} className="letter">E</span>
       <span style={{fontSize: size}} className="letter">N</span>
