@@ -8,20 +8,20 @@ import Link from "next/link";
 import HomeMusicSectionServer from "@/components/server/HomeMusicSectionServer";
 
 export const metadata: Metadata = {
-  title: "T.HENDO-DREAMSTATION",
+  title: "T. HENDO-DREAMSTATION",
   description: "Discover premium music beats and exclusive tracks with full rights.",
   openGraph: {
-    title: "T.HENDO-DREAMSTATION",
+    title: "T. HENDO-DREAMSTATION",
     description: "Discover premium music beats and exclusive tracks with full rights.",
     url: 'https://thelegendofhendo.com', 
-    siteName: 'T.Hendo Music',
+    siteName: 'T. Hendo Music',
     images: [
       {
         // This points to the file you just put in the public folder
         url: 'https://thelegendofhendo.com/hendo-og.jpg', 
         width: 1200,
         height: 630,
-        alt: 'T.Hendo Music Beats',
+        alt: 'T. Hendo Music Beats',
       },
     ],
     type: 'website',

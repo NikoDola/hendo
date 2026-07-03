@@ -206,7 +206,7 @@ export default function UserPurchasesList({
                       purchase.id,
                       'zip',
                       purchase.zipUrl?.includes('Hendo-Beats-Collection')
-                        ? 'T.Hendo-Beats-Collection.zip'
+                        ? 'T. Hendo - Beats Collection.zip'
                         : `${purchase.trackTitle}.zip`
                     )
                   }
