@@ -40,7 +40,7 @@
 }
 
 .userListTitleIcon {
-  color: #6bbf5f;
+  color: var(--theme-c1);
 }
 
 

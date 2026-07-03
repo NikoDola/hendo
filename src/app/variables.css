@@ -56,3 +56,50 @@
   --space-32: 20rem;      /* 320px */
   --space-33: 24rem;      /* 384px */
 }
+
+/* ========================================================================
+   Theme palette — THE single place to change the site's colors.
+
+   Every color-changing UI (headings, buttons, play buttons, progress bars,
+   card rings, glows) builds its gradient from these six colors. Change a
+   --theme-c* value and every component updates together.
+
+   --theme-flow        one tall 698px tile: big surfaces and text clips
+   --theme-flow-button same palette squeezed to a 288px tile so ~48px-tall
+                       buttons always show a two-color blend at rest
+                       (stops = the 698px stops scaled by 288/698)
+
+   These variables are static — only background-position animates
+   (themeFlowY / themeFlowYButton in theme-cycle.css), so there is no
+   per-frame restyle cost.
+   ======================================================================== */
+:root {
+  --theme-c1: #6bbf5f; /* green */
+  --theme-c2: #4581f0; /* blue */
+  --theme-c3: #8455a2; /* purple */
+  --theme-c4: #ba499b; /* pink-magenta */
+  --theme-c5: #ef3835; /* red */
+  --theme-c6: #f26831; /* orange */
+
+  --theme-flow: repeating-linear-gradient(
+    180deg,
+    var(--theme-c1) 0px,
+    var(--theme-c2) 120px,
+    var(--theme-c3) 259px,
+    var(--theme-c4) 394px,
+    var(--theme-c5) 500px,
+    var(--theme-c6) 612px,
+    var(--theme-c1) 698px
+  );
+
+  --theme-flow-button: repeating-linear-gradient(
+    180deg,
+    var(--theme-c1) 0px,
+    var(--theme-c2) 50px,
+    var(--theme-c3) 107px,
+    var(--theme-c4) 163px,
+    var(--theme-c5) 206px,
+    var(--theme-c6) 253px,
+    var(--theme-c1) 288px
+  );
+}

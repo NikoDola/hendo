@@ -3,7 +3,11 @@
 
    The theme is one repeated vertical gradient. UI elements that need the
    theme clip that same gradient into text, fills, borders, and card rings.
-   No JavaScript writes colors. No root theme color variables.
+   No JavaScript writes colors. The palette and the gradients live as static
+   :root variables in variables.css (--theme-c1..c6, --theme-flow,
+   --theme-flow-button); only background-position animates, so the variables
+   cost nothing per frame. ThemeClockSync.tsx keeps all instances on one
+   clock.
    ======================================================================== */
 
 @keyframes themeFlowY {
@@ -65,16 +69,7 @@
 
 .theme-text,
 .theme-gradient-text {
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   -webkit-background-clip: text;
@@ -86,16 +81,7 @@
 
 .theme-fill,
 .theme-gradient-fill {
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   animation: themeFlowY 16s ease-in-out infinite;
@@ -105,16 +91,7 @@
   border-color: transparent;
   background:
     linear-gradient(#000, #000) padding-box,
-    repeating-linear-gradient(
-      180deg,
-      #6bbf5f 0px,
-      #45c7f0 120px,
-      #8455a2 259px,
-      #ba499b 394px,
-      #ef3835 500px,
-      #f26831 612px,
-      #6bbf5f 698px
-    ) border-box;
+    var(--theme-flow) border-box;
   background-size: 100% 100%, 100% 698px;
   background-repeat: no-repeat, repeat;
   animation: themeFlowY 16s ease-in-out infinite;
@@ -144,16 +121,7 @@
   inset: 0;
   border-radius: inherit;
   box-sizing: border-box;
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -175,10 +143,12 @@
   content: none;
 }
 
-/* Intentionally no prefers-reduced-motion freeze for the theme flow: it is a
-   slow color crossfade, not spatial motion, and freezing only the surfaces
-   that had a reduced-motion rule (while buttons, headings and rings kept
-   cycling) left the UI showing mismatched colors — e.g. a green headline next
-   to a purple button. All theme gradients run everywhere on one clock (see
-   ThemeClockSync.tsx); transforms and hover scaling still respect the
-   reduced-motion setting in their own rules. */
+@media (prefers-reduced-motion: reduce) {
+  .theme-text,
+  .theme-gradient-text,
+  .theme-fill,
+  .theme-gradient-fill,
+  .theme-gradient-border {
+    animation: none !important;
+  }
+}

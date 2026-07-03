@@ -83,16 +83,7 @@ h1, h2{
 
   width: max-content;
   line-height: 1;
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   -webkit-background-clip: text;
@@ -181,16 +172,7 @@ button {
   /* Button-scale gradient: see themeFlowYButton in theme-cycle.css. Stops are
      the 698px theme stops scaled by 288/698 so a button always shows the same
      hues as the big theme elements at the same moment. */
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 50px,
-    #8455a2 107px,
-    #ba499b 163px,
-    #ef3835 206px,
-    #f26831 253px,
-    #6bbf5f 288px
-  );
+  background-image: var(--theme-flow-button);
   background-size: 100% 288px;
   background-repeat: repeat;
   border: none;
@@ -296,16 +278,7 @@ button:hover {
 }
 
 .view-more:hover {
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   -webkit-background-clip: text;
@@ -323,16 +296,7 @@ button:hover {
   left: 50%;
   transform: translate(-50%);
   bottom: 0;
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   animation: themeFlowY 16s ease-in-out infinite;
@@ -772,16 +736,7 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"]:checked {
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   border-color: transparent;

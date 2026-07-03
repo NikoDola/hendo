@@ -145,8 +145,8 @@
   min-height: 40px;
   border-radius: 50%;
   background: transparent;
-  border: 2px solid #6bbf5f;
-  color: #6bbf5f;
+  border: 2px solid var(--theme-c1);
+  color: var(--theme-c1);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -161,16 +161,7 @@
 }
 
 .adminTrackPlayButton.playing {
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   border: none;
@@ -196,16 +187,7 @@
 
 .adminTrackProgressFill {
   height: 100%;
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   animation: themeFlowY 16s ease-in-out infinite;

@@ -71,16 +71,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   animation: themeFlowY 16s ease-in-out infinite;
@@ -192,16 +183,7 @@
 .cartPageItemPrice {
   font-size: 1.25rem;
   font-weight: 700;
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   -webkit-background-clip: text;
@@ -257,16 +239,7 @@
 }
 
 .cartPageSummaryTotalPrice {
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   -webkit-background-clip: text;
@@ -286,16 +259,7 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 1rem 1.5rem;
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   animation: themeFlowY 16s ease-in-out infinite;
@@ -464,16 +428,7 @@
   padding: 0.9rem 1rem;
   border-radius: 0.75rem;
   border: none;
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   animation: themeFlowY 16s ease-in-out infinite;

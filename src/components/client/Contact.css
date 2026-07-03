@@ -37,7 +37,7 @@
   }
 
   h1::selection {
-    background-color: #6bbf5f;
+    background-color: var(--theme-c1);
   }
 
 

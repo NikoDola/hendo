@@ -132,16 +132,7 @@
 }
 
 .musicCardPlaying .musicCardTitle {
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   -webkit-background-clip: text;
@@ -260,16 +251,7 @@
   aspect-ratio: 1 / 1;
   /* Button-scale gradient (698px theme stops scaled to 288px):
      see themeFlowYButton in theme-cycle.css */
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 50px,
-    #8455a2 107px,
-    #ba499b 163px,
-    #ef3835 206px,
-    #f26831 253px,
-    #6bbf5f 288px
-  );
+  background-image: var(--theme-flow-button);
   background-size: 100% 288px;
   background-repeat: repeat;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
@@ -286,16 +268,7 @@
 
 .musicCardPlayButton.playing {
   /* Keep identical to default so it matches /music */
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 50px,
-    #8455a2 107px,
-    #ba499b 163px,
-    #ef3835 206px,
-    #f26831 253px,
-    #6bbf5f 288px
-  );
+  background-image: var(--theme-flow-button);
   background-size: 100% 288px;
   background-repeat: repeat;
   border: none;
@@ -324,16 +297,7 @@
 
 .musicCardProgressFill {
   height: 100%;
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   border-radius: 3px;
@@ -374,16 +338,7 @@
 .musicCardPrice {
   font-size: 1.5rem;
   font-weight: 700;
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   -webkit-background-clip: text;
@@ -455,16 +410,7 @@
 }
 
 .musicCardIconButton.active {
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   color: white;
@@ -499,16 +445,7 @@
   justify-content: center;
   gap: 0.5rem;
   font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.25);

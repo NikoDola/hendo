@@ -309,7 +309,7 @@
 .lucide-download{
   width: 2rem;
   height: 3rem;
-  color: #6bbf5f;
+  color: var(--theme-c1);
 }
 
 .userPurchaseButton:hover {
@@ -381,16 +381,7 @@
 .userLibraryTab.active {
   color: white;
   border: none;
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   animation: themeFlowY 16s ease-in-out infinite;

@@ -24,7 +24,7 @@
 }
 
 .navIcons {
-  color: #6bbf5f;
+  color: var(--theme-c1);
   transition: 1s;
   font-size: 1.5rem;
   cursor: pointer;
@@ -80,7 +80,7 @@
 }
 
 .linkDesktop:hover {
-  color: #6bbf5f;
+  color: var(--theme-c1);
 }
 
 .linkDesktop:before {
@@ -90,16 +90,7 @@
   top: 120%;
   height: 5px;
   width: 0%;
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   transition: width 1s;
@@ -282,7 +273,7 @@
   }
 
   .linkMobile:hover {
-    color: #6bbf5f;
+    color: var(--theme-c1);
   }
 
   .linkMobile:before {
@@ -291,16 +282,7 @@
     top: 95%;
     height: 5px;
     width: 0%;
-    background-image: repeating-linear-gradient(
-      180deg,
-      #6bbf5f 0px,
-      #45c7f0 120px,
-      #8455a2 259px,
-      #ba499b 394px,
-      #ef3835 500px,
-      #f26831 612px,
-      #6bbf5f 698px
-    );
+    background-image: var(--theme-flow);
     background-size: 100% 698px;
     background-repeat: repeat;
     transition: width 1s;
@@ -377,19 +359,19 @@
 }
 
 .dropdownLink:hover {
-  color: #6bbf5f;
+  color: var(--theme-c1);
   cursor: pointer !important;
 }
 
 .dropdownIcon {
   font-size: 1.2rem;
-  color: #6bbf5f;
+  color: var(--theme-c1);
   transition: all 0.3s ease;
   display: inline-block;
 }
 
 .dropdownLink:hover .dropdownIcon {
-  color: #6bbf5f;
+  color: var(--theme-c1);
   transform: scale(1.1);
 }
 
@@ -432,18 +414,18 @@
 }
 
 .mobileStoreDropdownItem:hover {
-  color: #6bbf5f;
+  color: var(--theme-c1);
 }
 
 .mobileDropdownIcon {
   font-size: 1.2rem;
-  color: #6bbf5f;
+  color: var(--theme-c1);
   transition: all 0.3s ease;
   display: inline-block;
 }
 
 .mobileStoreDropdownItem:hover .mobileDropdownIcon {
-  color: #6bbf5f;
+  color: var(--theme-c1);
   transform: scale(1.1);
 }
 

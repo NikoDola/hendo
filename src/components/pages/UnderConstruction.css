@@ -29,16 +29,7 @@
   cursor: pointer;
   border: none;
   font-family: var(--lemonmilk);
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   transition: background-color 0.3s ease, box-shadow 1s ease;
@@ -65,7 +56,7 @@
 
 .subscribeDescription::selection {
   margin-top: 1rem;
-  background: #6bbf5f;
+  background: var(--theme-c1);
   transition: background-color 1s ease, box-shadow 1s ease;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
   color: black;

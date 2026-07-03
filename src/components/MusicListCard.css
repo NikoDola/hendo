@@ -97,16 +97,7 @@
   pointer-events: none;
   transition: opacity 0.2s ease;
   border-radius: 12px;
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   filter: blur(24px);
@@ -152,16 +143,7 @@
 
 .musicListCardPrice {
   font-weight: 700;
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   -webkit-background-clip: text;
@@ -220,16 +202,7 @@
 
 .musicListCardIconButton.active {
   color: white;
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   box-shadow: none;
@@ -344,16 +317,7 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   color: black;
@@ -408,18 +372,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Button-scale gradient (698px theme stops scaled to 288px):
-     see themeFlowYButton in theme-cycle.css */
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 50px,
-    #8455a2 107px,
-    #ba499b 163px,
-    #ef3835 206px,
-    #f26831 253px,
-    #6bbf5f 288px
-  );
+  /* Button-scale gradient (48px bands): see themeFlowYButton in theme-cycle.css */
+  background-image: var(--theme-flow-button);
   background-size: 100% 288px;
   background-repeat: repeat;
   color: black;
@@ -465,16 +419,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   border-radius: 3px;
@@ -502,16 +447,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  background-image: repeating-linear-gradient(
-    180deg,
-    #6bbf5f 0px,
-    #45c7f0 120px,
-    #8455a2 259px,
-    #ba499b 394px,
-    #ef3835 500px,
-    #f26831 612px,
-    #6bbf5f 698px
-  );
+  background-image: var(--theme-flow);
   background-size: 100% 698px;
   background-repeat: repeat;
   filter: blur(8px);

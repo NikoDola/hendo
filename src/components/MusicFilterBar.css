@@ -32,7 +32,7 @@
 }
 
 .musicFilterLabel svg {
-  color: #6bbf5f;
+  color: var(--theme-c1);
 }
 
 .musicFilterSelect {
@@ -77,7 +77,7 @@
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #6bbf5f;
+  color: var(--theme-c1);
   pointer-events: none;
 }
 
