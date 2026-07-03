@@ -18,7 +18,15 @@ export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('users');
   const shouldLoadUsers = !isLoading && !!user && user.role === 'admin' && activeTab === 'users';
-  const { users, loading: usersLoading, loadUsers, deleteUser } = useUsers(shouldLoadUsers);
+  const {
+    users,
+    total: usersTotal,
+    loading: usersLoading,
+    loadingMore: usersLoadingMore,
+    hasMore: usersHasMore,
+    loadMore: loadMoreUsers,
+    deleteUser,
+  } = useUsers(shouldLoadUsers);
   const shouldLoadTracks = !isLoading && !!user && user.role === 'admin' && activeTab === 'products';
   const { tracks, loadTracks, deleteTrack } = useMusicTracks(shouldLoadTracks);
   const [showForm, setShowForm] = useState(false);
@@ -96,10 +104,9 @@ export default function AdminDashboard() {
   };
 
   const handleDeleteUser = async (userId: string) => {
-    const success = await deleteUser(userId);
-    if (success) {
-      await loadUsers();
-    }
+    // deleteUser already removes the row and decrements the total locally —
+    // no refetch, so the admin keeps their loaded pages and scroll position.
+    await deleteUser(userId);
   };
 
   const handleDeleteTrack = async (trackId: string) => {
@@ -147,7 +154,14 @@ export default function AdminDashboard() {
                   <p className="adminTabLoadingText">Loading users...</p>
                 </div>
               ) : (
-                <AdminUsersList users={users} onDeleteUser={handleDeleteUser} />
+                <AdminUsersList
+                  users={users}
+                  onDeleteUser={handleDeleteUser}
+                  total={usersTotal}
+                  hasMore={usersHasMore}
+                  loadingMore={usersLoadingMore}
+                  onLoadMore={loadMoreUsers}
+                />
               )}
             </>
           )}

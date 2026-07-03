@@ -7,9 +7,23 @@ import DeleteConfirmModal from './DeleteConfirmModal';
 interface AdminUsersListProps {
   users: User[];
   onDeleteUser: (userId: string) => void;
+  /** Total user count on the server (null if unknown). */
+  total?: number | null;
+  /** True while more pages exist on the server. */
+  hasMore?: boolean;
+  /** True while the next page is being fetched. */
+  loadingMore?: boolean;
+  onLoadMore?: () => void;
 }
 
-export default function AdminUsersList({ users, onDeleteUser }: AdminUsersListProps) {
+export default function AdminUsersList({
+  users,
+  onDeleteUser,
+  total = null,
+  hasMore = false,
+  loadingMore = false,
+  onLoadMore,
+}: AdminUsersListProps) {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<'all' | 'admin' | 'user'>('all');
@@ -78,7 +92,8 @@ export default function AdminUsersList({ users, onDeleteUser }: AdminUsersListPr
       <h2 className="adminSectionTitle" data-text="Users">Users</h2>
 
       <p style={{ margin: '0.25rem 0 1rem', fontSize: '0.875rem', opacity: 0.7 }}>
-        Total: {users.length} &middot; Admins: {adminCount}
+        Total: {total ?? users.length} &middot; Loaded: {users.length} &middot; Admins: {adminCount}
+        {hasMore && searchTerm && ' · search covers loaded users only'}
       </p>
 
       <div className="adminUsersControls">
@@ -191,6 +206,21 @@ export default function AdminUsersList({ users, onDeleteUser }: AdminUsersListPr
           </tbody>
         </table>
       </div>
+
+      {hasMore && onLoadMore && (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '1rem 0' }}>
+          <button
+            onClick={onLoadMore}
+            className="adminFilterButton"
+            disabled={loadingMore}
+            style={{ width: 'auto', padding: '0.6rem 1.6rem' }}
+          >
+            {loadingMore
+              ? 'Loading...'
+              : `Load ${total !== null ? Math.min(10, Math.max(0, total - users.length)) : 10} more`}
+          </button>
+        </div>
+      )}
 
       <DeleteConfirmModal
         isOpen={deleteModalOpen}
