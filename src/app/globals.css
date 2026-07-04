@@ -182,7 +182,10 @@ button {
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
-  animation: themeFlowYButton 16s ease-in-out infinite;
+  box-shadow: 0 0 20px 2px var(--theme-c1);
+  animation:
+    themeFlowYButton 16s ease-in-out infinite,
+    themeFlowYButtonShadow 16s ease-in-out infinite;
   font-size: 1rem;
   display: flex;
   align-items: center;

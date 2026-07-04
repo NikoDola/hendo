@@ -67,6 +67,37 @@
   }
 }
 
+/* Centered blurred glow that recolors on the same clock as themeFlowYButton.
+   No offset — the shadow sits behind the button on all sides so it reads as
+   an outer glow. One palette color per rest stop, matching the hue the button
+   gradient shows at that moment: green → purple → pink → red. The
+   "themeFlowY" name prefix keeps it pinned by ThemeClockSync.tsx. */
+@keyframes themeFlowYButtonShadow {
+  0%,
+  18.75% {
+    box-shadow: 0 0 20px 2px var(--theme-c1);
+  }
+
+  25%,
+  43.75% {
+    box-shadow: 0 0 20px 2px var(--theme-c3);
+  }
+
+  50%,
+  68.75% {
+    box-shadow: 0 0 20px 2px var(--theme-c4);
+  }
+
+  75%,
+  93.75% {
+    box-shadow: 0 0 20px 2px var(--theme-c5);
+  }
+
+  100% {
+    box-shadow: 0 0 20px 2px var(--theme-c1);
+  }
+}
+
 .theme-text,
 .theme-gradient-text {
   background-image: var(--theme-flow);
