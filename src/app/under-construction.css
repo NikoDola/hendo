@@ -119,9 +119,7 @@
   padding: 1rem 2rem;
   font-size: 1rem;
   font-weight: 600;
-  background-image: var(--theme-flow);
-  background-size: 100% 698px;
-  background-repeat: repeat;
+  /* Gradient + glow + animation come from the global `button` rule. */
   color: white;
   border: none;
   border-radius: 12px;
@@ -133,12 +131,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: themeFlowY 16s ease-in-out infinite;
 }
 
 .underConstructionButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(255, 20, 147, 0.4);
 }
 
 .underConstructionButton:active:not(:disabled) {

@@ -201,14 +201,12 @@
 
 
 .musicListCardIconButton.active {
+  /* Re-enable the gradient over the black base. The global `button`
+     animations keep running underneath, so flow + glow stay on the clock. */
   color: white;
-  background-image: var(--theme-flow);
-  background-size: 100% 698px;
+  background-image: var(--theme-flow-button);
+  background-size: 100% 288px;
   background-repeat: repeat;
-  box-shadow: 0 0 20px 2px var(--theme-c1);
-  animation:
-    themeFlowY 16s ease-in-out infinite,
-    themeFlowYButtonShadow 16s ease-in-out infinite;
 }
 
 .musicListCardIconButton.active::before,
@@ -319,14 +317,8 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  background-image: var(--theme-flow);
-  background-size: 100% 698px;
-  background-repeat: repeat;
+  /* Gradient + glow + animation come from the global `button` rule. */
   color: black;
-  box-shadow: 0 0 20px 2px var(--theme-c1);
-  animation:
-    themeFlowY 16s ease-in-out infinite,
-    themeFlowYButtonShadow 16s ease-in-out infinite;
   transition: transform 0.3s ease, color 0.3s ease;
   white-space: nowrap;
 }
@@ -341,7 +333,6 @@
 .musicListCardPurchaseBtn:hover:not(:disabled) {
   background: black;
   color: var(--light-gray);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
   transform: translateY(-2px);
 }
 
@@ -376,10 +367,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Button-scale gradient (48px bands): see themeFlowYButton in theme-cycle.css */
-  background-image: var(--theme-flow-button);
-  background-size: 100% 288px;
-  background-repeat: repeat;
+  /* Gradient + glow + animation come from the global `button` rule. */
   color: black;
   border: none;
   border-radius: 50%;
@@ -388,10 +376,6 @@
   transition: transform 0.3s ease;
   aspect-ratio: 1 / 1;
   padding: 0;
-  box-shadow: 0 0 20px 2px var(--theme-c1);
-  animation:
-    themeFlowYButton 16s ease-in-out infinite,
-    themeFlowYButtonShadow 16s ease-in-out infinite;
 }
 
 .musicListCardPlayButton svg {
@@ -400,7 +384,6 @@
 
 .musicListCardPlayButton:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.35);
 }
 
 .musicListCardProgressContainer {

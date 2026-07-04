@@ -379,13 +379,13 @@
 }
 
 .userLibraryTab.active {
+  /* Re-enable the gradient; the global `button` animations keep running
+     underneath, so flow + glow stay on the clock. */
   color: white;
   border: none;
-  background-image: var(--theme-flow);
-  background-size: 100% 698px;
+  background-image: var(--theme-flow-button);
+  background-size: 100% 288px;
   background-repeat: repeat;
-  animation: themeFlowY 16s ease-in-out infinite;
-  box-shadow: 0 0 18px rgba(255, 255, 255, 0.08);
 }
 
 .userLibraryTabLabel {

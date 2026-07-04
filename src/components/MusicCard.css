@@ -249,36 +249,26 @@
   flex-grow: 0;
   padding: 0;
   aspect-ratio: 1 / 1;
-  /* Button-scale gradient (698px theme stops scaled to 288px):
-     see themeFlowYButton in theme-cycle.css */
-  background-image: var(--theme-flow-button);
-  background-size: 100% 288px;
-  background-repeat: repeat;
-  box-shadow: 0 0 20px 2px var(--theme-c1);
-  animation:
-    themeFlowYButton 16s ease-in-out infinite,
-    themeFlowYButtonShadow 16s ease-in-out infinite;
-
+  /* Gradient + glow + animation come from the global `button` rule. */
 }
 
 
 
 .musicCardPlayButton:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.35);
 }
 
 .musicCardPlayButton.playing {
-  /* Keep identical to default so it matches /music */
-  background-image: var(--theme-flow-button);
-  background-size: 100% 288px;
-  background-repeat: repeat;
+  /* Same skin as default (global `button` rule) so it matches /music */
   border: none;
   color: black;
-  box-shadow: 0 0 20px 2px var(--theme-c1);
-  animation:
-    themeFlowYButton 16s ease-in-out infinite,
-    themeFlowYButtonShadow 16s ease-in-out infinite;
+}
+
+/* The .playing color beats the global button:hover color (higher
+   specificity), which left a black pause icon on the black hover
+   background — flip it to white so the pause stays visible. */
+.musicCardPlayButton.playing:hover {
+  color: white;
 }
 
 .musicCardProgressBar {
@@ -414,14 +404,12 @@
 }
 
 .musicCardIconButton.active {
-  background-image: var(--theme-flow);
-  background-size: 100% 698px;
+  /* Re-enable the gradient over the black base. The global `button`
+     animations keep running underneath, so flow + glow stay on the clock. */
+  background-image: var(--theme-flow-button);
+  background-size: 100% 288px;
   background-repeat: repeat;
   color: white;
-  box-shadow: 0 0 20px 2px var(--theme-c1);
-  animation:
-    themeFlowY 16s ease-in-out infinite,
-    themeFlowYButtonShadow 16s ease-in-out infinite;
 }
 
 .musicCardIconButton.favorite.active .musicCardFavoriteIcon {
@@ -451,13 +439,6 @@
   justify-content: center;
   gap: 0.5rem;
   font-family: var(--font-lemonmilk, 'LEMON MILK', sans-serif);
-  background-image: var(--theme-flow);
-  background-size: 100% 698px;
-  background-repeat: repeat;
-  box-shadow: 0 0 20px 2px var(--theme-c1);
-  animation:
-    themeFlowY 16s ease-in-out infinite,
-    themeFlowYButtonShadow 16s ease-in-out infinite;
   font-size: 0.9rem;
 }
 
@@ -470,7 +451,6 @@
 .musicCardPurchaseButton:hover {
   background: black;
   color: var(--light-gray);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
   transform: translateY(-1px);
 }
 
@@ -485,6 +465,8 @@
   background: rgba(255, 255, 255, 0.05);
   color: rgba(255, 255, 255, 0.5);
   box-shadow: none;
+  /* Freeze the global skin animations so the gray disabled state has no glow */
+  animation: none;
   pointer-events: none;
 }
 

@@ -116,20 +116,13 @@
 }
 
 .purchaseWarningButtonPrimary {
-  background-image: var(--theme-flow);
-  background-size: 100% 698px;
-  background-repeat: repeat;
+  /* Gradient + glow + animation come from the global `button` rule. */
   color: white;
-  box-shadow: 0 0 20px 2px var(--theme-c1);
-  animation:
-    themeFlowY 16s ease-in-out infinite,
-    themeFlowYButtonShadow 16s ease-in-out infinite;
 }
 
 .purchaseWarningButtonPrimary:hover {
   background: black;
   color: var(--light-gray);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
 }
 
 .purchaseWarningButtonSecondary {

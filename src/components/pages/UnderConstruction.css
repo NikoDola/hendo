@@ -29,12 +29,8 @@
   cursor: pointer;
   border: none;
   font-family: var(--lemonmilk);
-  background-image: var(--theme-flow);
-  background-size: 100% 698px;
-  background-repeat: repeat;
-  transition: background-color 0.3s ease, box-shadow 1s ease;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
-  animation: themeFlowY 16s ease-in-out infinite;
+  /* Gradient + glow + animation come from the global `button` rule. */
+  transition: background-color 0.3s ease;
 }
 
 .subscribe:hover {

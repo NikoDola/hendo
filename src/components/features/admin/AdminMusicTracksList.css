@@ -161,13 +161,13 @@
 }
 
 .adminTrackPlayButton.playing {
-  background-image: var(--theme-flow);
-  background-size: 100% 698px;
+  /* Re-enable the gradient over the ghost base. The global `button`
+     animations keep running underneath, so flow + glow stay on the clock. */
+  background-image: var(--theme-flow-button);
+  background-size: 100% 288px;
   background-repeat: repeat;
   border: none;
   color: white;
-  box-shadow: 0 0 14px rgba(255, 255, 255, 0.25);
-  animation: themeFlowY 16s ease-in-out infinite;
 }
 
 .adminTrackProgressBar {

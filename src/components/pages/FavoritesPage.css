@@ -67,15 +67,20 @@
   margin-bottom: 2rem;
 }
 
+/* <Link>, not <button>: the global button rule can't reach it, so it
+   carries the same canonical skin (button tile, glow, clock) locally. */
 .favoritesPageEmptyButton {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background-image: var(--theme-flow);
-  background-size: 100% 698px;
+  background-image: var(--theme-flow-button);
+  background-size: 100% 288px;
   background-repeat: repeat;
-  animation: themeFlowY 16s ease-in-out infinite;
+  box-shadow: 0 0 20px 2px var(--theme-c1);
+  animation:
+    themeFlowYButton 16s ease-in-out infinite,
+    themeFlowYButtonShadow 16s ease-in-out infinite;
   border: none;
   border-radius: 0.5rem;
   color: white;
@@ -271,10 +276,7 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 1rem 1.5rem;
-  background-image: var(--theme-flow);
-  background-size: 100% 698px;
-  background-repeat: repeat;
-  animation: themeFlowY 16s ease-in-out infinite;
+  /* Gradient + glow + animation come from the global `button` rule. */
   border: none;
   border-radius: 0.5rem;
   color: white;
