@@ -256,10 +256,7 @@
   .theme-gradient-text,
   .theme-fill,
   .theme-gradient-fill,
-  .theme-gradient-border,
-  .navIcons,
-  .dropdownIcon,
-  .mobileDropdownIcon {
+  .theme-gradient-border {
     animation: none !important;
   }
 }
