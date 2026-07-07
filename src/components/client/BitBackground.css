@@ -109,10 +109,15 @@
 .bit-particle {
   position: absolute;
   border-radius: 50%;
-  background-image: var(--theme-flow);
-  background-size: 100% 698px;
+  /* Solid fill that cycles through the palette in phase with the buttons (see
+     themeFlowYBgColor). Two animations: `float` for the drift, and the color
+     cycle. Per-particle timing below only varies `float` — the color cycle
+     stays a uniform 16s with no delay so all dots recolor together. */
+  background-color: var(--theme-c1);
   transition: all 0.1s ease;
-  animation: float 6s ease-in-out infinite;
+  animation:
+    float 6s ease-in-out infinite,
+    themeFlowYBgColor 16s ease-in-out infinite;
 }
 
 .bit-1 {
@@ -120,8 +125,8 @@
   height: 20px;
   top: 20%;
   left: 10%;
-  animation-delay: 0s;
-  animation-duration: 8s;
+  animation-delay: 0s, 0s;
+  animation-duration: 8s, 16s;
 }
 
 .bit-2 {
@@ -129,8 +134,8 @@
   height: 15px;
   top: 60%;
   left: 80%;
-  animation-delay: 2s;
-  animation-duration: 6s;
+  animation-delay: 2s, 0s;
+  animation-duration: 6s, 16s;
 }
 
 .bit-3 {
@@ -138,8 +143,8 @@
   height: 25px;
   top: 40%;
   left: 70%;
-  animation-delay: 4s;
-  animation-duration: 10s;
+  animation-delay: 4s, 0s;
+  animation-duration: 10s, 16s;
 }
 
 .bit-4 {
@@ -147,8 +152,8 @@
   height: 12px;
   top: 80%;
   left: 20%;
-  animation-delay: 1s;
-  animation-duration: 7s;
+  animation-delay: 1s, 0s;
+  animation-duration: 7s, 16s;
 }
 
 .beat-pulse {

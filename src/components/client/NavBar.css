@@ -24,7 +24,10 @@
 }
 
 .navIcons {
+  /* Solid color cycles in phase with the buttons (see themeFlowYIconColor in
+     theme-cycle.css). --theme-c1 is the fallback for reduced motion. */
   color: var(--theme-c1);
+  animation: themeFlowYIconColor 16s ease-in-out infinite;
   transition: 1s;
   font-size: 1.5rem;
   cursor: pointer;
@@ -33,6 +36,8 @@
 }
 
 .navIcons:hover {
+  /* Freeze the cycle and settle on white while hovered. */
+  animation: none;
   color: white;
   box-shadow: white 2px;
 }
@@ -366,11 +371,13 @@
 .dropdownIcon {
   font-size: 1.2rem;
   color: var(--theme-c1);
+  animation: themeFlowYIconColor 16s ease-in-out infinite;
   transition: all 0.3s ease;
   display: inline-block;
 }
 
 .dropdownLink:hover .dropdownIcon {
+  animation: none;
   color: var(--theme-c1);
   transform: scale(1.1);
 }
@@ -420,11 +427,13 @@
 .mobileDropdownIcon {
   font-size: 1.2rem;
   color: var(--theme-c1);
+  animation: themeFlowYIconColor 16s ease-in-out infinite;
   transition: all 0.3s ease;
   display: inline-block;
 }
 
 .mobileStoreDropdownItem:hover .mobileDropdownIcon {
+  animation: none;
   color: var(--theme-c1);
   transform: scale(1.1);
 }

@@ -98,6 +98,83 @@
   }
 }
 
+/* Solid color that recolors on the same clock as the button glow
+   (themeFlowYButtonShadow): green → purple → pink → red. Nav icons (cart,
+   profile) and the store dropdown "planet" icons (moon/shirt) use this so
+   they cycle a single solid color — no gradient — in phase with the buttons.
+
+   These are react-icons SVGs painted via fill="currentColor" /
+   stroke="currentColor" presentation ATTRIBUTES. Animating `color` alone does
+   not reliably repaint currentColor attributes, so we animate `fill` and
+   `stroke` directly (CSS wins over the attribute and is what actually paints).
+   `color` is kept in sync too for any icon that reads it.
+
+   The "themeFlowY" name prefix keeps it pinned by ThemeClockSync.tsx. */
+@keyframes themeFlowYIconColor {
+  0%,
+  18.75% {
+    color: var(--theme-c1);
+    fill: var(--theme-c1);
+    stroke: var(--theme-c1);
+  }
+
+  25%,
+  43.75% {
+    color: var(--theme-c3);
+    fill: var(--theme-c3);
+    stroke: var(--theme-c3);
+  }
+
+  50%,
+  68.75% {
+    color: var(--theme-c4);
+    fill: var(--theme-c4);
+    stroke: var(--theme-c4);
+  }
+
+  75%,
+  93.75% {
+    color: var(--theme-c5);
+    fill: var(--theme-c5);
+    stroke: var(--theme-c5);
+  }
+
+  100% {
+    color: var(--theme-c1);
+    fill: var(--theme-c1);
+    stroke: var(--theme-c1);
+  }
+}
+
+/* Same solid recolor as themeFlowYIconColor, but on background-color — for
+   filled dots/shapes (the floating "planet" bit-particles) that cycle a solid
+   fill instead of a gradient, in phase with the buttons. */
+@keyframes themeFlowYBgColor {
+  0%,
+  18.75% {
+    background-color: var(--theme-c1);
+  }
+
+  25%,
+  43.75% {
+    background-color: var(--theme-c3);
+  }
+
+  50%,
+  68.75% {
+    background-color: var(--theme-c4);
+  }
+
+  75%,
+  93.75% {
+    background-color: var(--theme-c5);
+  }
+
+  100% {
+    background-color: var(--theme-c1);
+  }
+}
+
 .theme-text,
 .theme-gradient-text {
   background-image: var(--theme-flow);
@@ -179,7 +256,10 @@
   .theme-gradient-text,
   .theme-fill,
   .theme-gradient-fill,
-  .theme-gradient-border {
+  .theme-gradient-border,
+  .navIcons,
+  .dropdownIcon,
+  .mobileDropdownIcon {
     animation: none !important;
   }
 }
