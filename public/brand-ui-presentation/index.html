@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>T. Hendo Dreamstation - Brand and UI Presentation</title>
+  <meta name="description" content="Branding and UI presentation for the T. Hendo Dreamstation music platform.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="cosmic-stage" aria-hidden="true">
+    <span class="tiny-star s1"></span>
+    <span class="tiny-star s2"></span>
+    <span class="tiny-star s3"></span>
+    <span class="tiny-star s4"></span>
+    <span class="tiny-star s5"></span>
+    <span class="tiny-star s6"></span>
+    <span class="tiny-star s7"></span>
+    <span class="tiny-star s8"></span>
+    <span class="tiny-star s9"></span>
+    <span class="tiny-star s10"></span>
+    <span class="comet c1"></span>
+    <span class="comet c2"></span>
+    <span class="bit b1"></span>
+    <span class="bit b2"></span>
+    <span class="bit b3"></span>
+    <span class="bit b4"></span>
+  </div>
+
+  <header class="topbar">
+    <a class="wordmark" href="#project" aria-label="T. Hendo presentation home">
+      <span>T</span><span>.</span><span>&nbsp;</span><span>H</span><span>E</span><span>N</span><span>D</span><span>O</span>
+    </a>
+    <nav class="topnav" aria-label="Presentation sections">
+      <a class="map-button" href="#guide-title">Presentation Map</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="project" class="intro-section">
+      <p class="eyebrow">Project description</p>
+      <h1>T. HENDO DREAMSTATION</h1>
+      <p class="hero-description">
+        T. Hendo Dreamstation is a galaxy cyberpunk music platform for a music creator
+        with gaming-inspired energy. The experience presents original beats, premium
+        music purchases, account access, admin management, and neon motion inside a
+        dark digital universe.
+      </p>
+    </section>
+
+    <section class="guide-section" aria-labelledby="guide-title">
+      <div class="section-heading">
+        <p class="eyebrow">Project guidelines</p>
+        <h2 id="guide-title">Presentation Map</h2>
+      </div>
+      <div class="guide-grid">
+        <a class="manual-card" href="#colors">
+          <span>01</span>
+          <strong>Colors</strong>
+          <small>Theme palette, glass surfaces, background gradient, and animation system.</small>
+        </a>
+        <a class="manual-card" href="#fonts">
+          <span>02</span>
+          <strong>Fonts</strong>
+          <small>Headline, body, alphabet samples, and usage rules.</small>
+        </a>
+        <a class="manual-card" href="#about">
+          <span>03</span>
+          <strong>About Project</strong>
+          <small>Concept, audience, tone, and product purpose.</small>
+        </a>
+        <a class="manual-card" href="#logo">
+          <span>04</span>
+          <strong>Logo</strong>
+          <small>Interactive T. Hendo wordmark and hover behavior.</small>
+        </a>
+        <a class="manual-card" href="#background">
+          <span>05</span>
+          <strong>Background</strong>
+          <small>Galaxy cyberpunk motion layer and atmosphere.</small>
+        </a>
+        <a class="manual-card" href="#components">
+          <span>06</span>
+          <strong>Interface</strong>
+          <small>Music card, login, buttons, inputs, and status states.</small>
+        </a>
+        <a class="manual-card" href="#admin">
+          <span>07</span>
+          <strong>Admin Dashboard</strong>
+          <small>Track management, users, tables, badges, and actions.</small>
+        </a>
+        <a class="manual-card" href="#email">
+          <span>08</span>
+          <strong>Email Template</strong>
+          <small>Purchase confirmation and account verification examples.</small>
+        </a>
+      </div>
+    </section>
+
+    <section id="about" class="content-band">
+      <div class="section-heading">
+        <p class="eyebrow">About project</p>
+        <h2>Creative Direction</h2>
+      </div>
+      <div class="split-layout">
+        <div>
+          <p>
+            T. Hendo Dreamstation positions T. Hendo as a music creator inside a digital,
+            game-inspired universe. The interface should feel like a sound station in deep space:
+            dark, clean, premium, animated, and powered by neon color changes.
+          </p>
+          <p>
+            The product experience focuses on previewing tracks, exploring beats, purchasing
+            licenses, signing into a personal dashboard, viewing purchases, and managing music
+            through an admin panel.
+          </p>
+        </div>
+        <div class="tone-list">
+          <span>Galaxy</span>
+          <span>Cyberpunk</span>
+          <span>Gaming</span>
+          <span>Neon</span>
+          <span>Premium Beats</span>
+          <span>Glass UI</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="colors" class="content-band">
+      <div class="section-heading">
+        <p class="eyebrow">Colors used</p>
+        <h2>Color</h2>
+        <p>
+          The brand uses a black galaxy base, transparent glass panels, white text, and a
+          six-color neon gradient. The same gradient powers headings, buttons, prices,
+          progress bars, active rings, icons, and highlights.
+        </p>
+        <p>
+          The animated color system is fast because the palette is defined once as a static
+          repeating CSS gradient. The UI only moves the gradient position, so the browser can
+          animate the visual theme without constantly recalculating every color.
+        </p>
+      </div>
+      <div class="color-grid">
+        <article class="swatch black"><strong>Black Base</strong><span>#000000</span></article>
+        <article class="swatch white"><strong>White Text</strong><span>#FFFFFF</span></article>
+        <article class="swatch gray"><strong>Light Gray</strong><span>rgb(187, 187, 187)</span></article>
+        <article class="swatch glass"><strong>Glass Surface</strong><span>rgba(255,255,255,.025)</span></article>
+        <article class="swatch c1"><strong>Theme Green</strong><span>#6BBF5F</span></article>
+        <article class="swatch c2"><strong>Theme Blue</strong><span>#4581F0</span></article>
+        <article class="swatch c3"><strong>Theme Purple</strong><span>#8455A2</span></article>
+        <article class="swatch c4"><strong>Theme Magenta</strong><span>#BA499B</span></article>
+        <article class="swatch c5"><strong>Theme Red</strong><span>#EF3835</span></article>
+        <article class="swatch c6"><strong>Theme Orange</strong><span>#F26831</span></article>
+        <article class="swatch success"><strong>Success</strong><span>#22C55E</span></article>
+        <article class="swatch error"><strong>Error</strong><span>#EF4444</span></article>
+      </div>
+    </section>
+
+    <section id="animated-gradient" class="content-band gradient-section">
+      <div class="section-heading">
+        <h2>Animated shared gradient:</h2>
+      </div>
+      <div class="gradient-strip" aria-label="Animated shared gradient sample"></div>
+    </section>
+
+    <section id="fonts" class="content-band">
+      <div class="section-heading">
+        <p class="eyebrow">Fonts used</p>
+        <h2>Fonts</h2>
+      </div>
+      <div class="font-grid">
+        <article class="font-sample lemon">
+          <span>Headline and UI Font</span>
+          <strong>Lemon Milk</strong>
+          <p>Used for the logo, page headlines, buttons, navigation, music prices, badges, and admin labels.</p>
+          <div class="letter-sample">
+            <span>A B C D E F G</span>
+            <span>H I J K L M N</span>
+            <span>O P Q R S T U</span>
+            <span>V W X Y Z</span>
+          </div>
+        </article>
+        <article class="font-sample roboto">
+          <span>Body Font</span>
+          <strong>Roboto</strong>
+          <p>Used for paragraphs, descriptions, form fields, helper text, dashboard rows, and readable interface copy.</p>
+          <div class="letter-sample roboto-letters">
+            <span>A B C D E F G</span>
+            <span>H I J K L M N</span>
+            <span>O P Q R S T U</span>
+            <span>V W X Y Z</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="logo" class="content-band">
+      <div class="section-heading">
+        <p class="eyebrow">Logo</p>
+        <h2>Interactive Wordmark</h2>
+      </div>
+      <div class="logo-showcase">
+        <div class="logo-large">
+          <span>T</span><span>.</span><span>&nbsp;</span><span>H</span><span>E</span><span>N</span><span>D</span><span>O</span>
+        </div>
+        <p>
+          The logo is a simple text wordmark using the Lemon Milk brand font. In the live app,
+          each letter lifts and changes neon color on hover, giving the mark a game-menu feel.
+        </p>
+      </div>
+    </section>
+
+    <section id="background" class="content-band">
+      <div class="section-heading">
+        <h2>Background Theme</h2>
+      </div>
+      <div class="background-demo">
+        <span class="demo-star ds1"></span>
+        <span class="demo-star ds2"></span>
+        <span class="demo-star ds3"></span>
+        <span class="demo-comet dc1"></span>
+        <span class="demo-comet dc2"></span>
+        <span class="demo-bit db1"></span>
+        <span class="demo-bit db2"></span>
+        <img class="background-artist" src="../images/hendo/hendo2025.webp" alt="T. Hendo background theme preview">
+      </div>
+    </section>
+
+    <section id="components" class="content-band">
+      <div class="section-heading">
+        <h2>Interface</h2>
+      </div>
+
+      <div id="music-card" class="interface-grid">
+        <article class="music-card playing">
+          <div class="theme-ring" aria-hidden="true"></div>
+          <div class="art-wrap">
+            <img id="trackImage" src="../hendo-og.jpg" alt="T. Hendo music artwork">
+          </div>
+          <div class="music-info">
+            <h3 id="trackTitle">Loading track...</h3>
+            <p id="trackDescription">The card will use the first live track from the app API when opened through the Next.js site.</p>
+            <button type="button" class="tag-toggle">View Hashtags</button>
+            <div id="trackTags" class="tag-row">
+              <span>#galaxy</span>
+              <span>#cyberpunk</span>
+              <span>#gaming</span>
+            </div>
+          </div>
+          <div class="purchase-row">
+            <strong id="trackPrice">$49.00</strong>
+            <button type="button" class="purchase-button">Purchase</button>
+          </div>
+          <div class="player-row">
+            <button id="playPreview" type="button" class="round-play" aria-label="Play preview">
+              <svg class="play-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7Z"></path></svg>
+              <svg class="pause-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h4v14H6Zm8 0h4v14h-4Z"></path></svg>
+            </button>
+            <div class="progress-track" aria-hidden="true"><span id="previewProgress"></span></div>
+          </div>
+          <audio id="trackAudio" preload="none" src="../music/WhatsApp%20Audio%202025-10-18%20at%201.12.24%20PM.mp4"></audio>
+        </article>
+
+        <form class="auth-form login-panel" aria-label="Login form mockup">
+          <h3>Login</h3>
+          <label>Email<input type="email" value="artist@dreamstation.com"></label>
+          <label>Password<input type="password" value="dreamstation"></label>
+          <button type="button">Sign In</button>
+          <div class="divider"><span></span><small>OR</small><span></span></div>
+          <button type="button" class="google-button">
+            <svg class="google-logo" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Continue with Google
+          </button>
+          <p>No account? <a href="#components">Create one</a></p>
+        </form>
+      </div>
+
+      <div class="component-notes">
+        <div class="status-message success-message">Success message: Track added to cart.</div>
+        <div class="status-message error-message">Error message: Please sign in before purchasing.</div>
+        <div class="control-row">
+          <button type="button">Gradient Button</button>
+          <button type="button" class="icon-button" aria-label="Favorite">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 17.3 6.2 3.7-1.6-7 5.4-4.7-7.2-.6L12 2 9.2 8.7 2 9.3 7.4 14l-1.6 7Z"></path></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="admin" class="content-band">
+      <div class="section-heading">
+        <h2>Admin Dashboard</h2>
+      </div>
+      <div class="admin-shell">
+        <aside class="admin-sidebar">
+          <strong>Admin</strong>
+          <button class="active" type="button">Music</button>
+          <button type="button">Users</button>
+          <button type="button">Coupons</button>
+          <button type="button">Emails</button>
+        </aside>
+        <div class="admin-main">
+          <div class="admin-header">
+            <h3>Admin Dashboard</h3>
+            <button type="button">Add Track</button>
+          </div>
+          <div class="metric-grid">
+            <div><span>Tracks</span><strong>24</strong></div>
+            <div><span>Users</span><strong>318</strong></div>
+            <div><span>Sales</span><strong>$4.8k</strong></div>
+          </div>
+          <div class="admin-controls">
+            <input type="search" value="Search music">
+            <select aria-label="Sort tracks"><option>Newest</option><option>Price</option></select>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Track</th>
+                <th>Genre</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Dreamstation Loop</td>
+                <td>Gaming Trap</td>
+                <td>$49.00</td>
+                <td><span class="badge">Live</span></td>
+                <td><button type="button" class="table-action">Edit</button></td>
+              </tr>
+              <tr>
+                <td>Galaxy Runner</td>
+                <td>Cyberpunk</td>
+                <td>$79.00</td>
+                <td><span class="badge muted">Draft</span></td>
+                <td><button type="button" class="table-action">View</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="email" class="content-band">
+      <div class="section-heading">
+        <h2>Email Template</h2>
+      </div>
+      <div class="email-preview email-grid">
+        <div class="email-card">
+          <div class="email-logo">T. HENDO</div>
+          <h3>Purchase Confirmed</h3>
+          <p>
+            Your license for Dreamstation Loop is ready. This email style uses a dark base,
+            starfield texture, neon CTA, and email-safe table-inspired spacing.
+          </p>
+          <div class="email-summary">
+            <span>Beat License</span>
+            <strong>$49.00</strong>
+          </div>
+          <a href="#email" class="email-cta">Download Files</a>
+          <small>You received this email because you made a purchase at thelegendofhendo.com.</small>
+        </div>
+        <div class="email-card">
+          <div class="email-logo">T. HENDO</div>
+          <h3>Verify Account</h3>
+          <p>
+            Confirm your Dreamstation account to unlock your dashboard, purchases,
+            downloads, favorites, and updates from T. Hendo.
+          </p>
+          <div class="email-summary">
+            <span>Account Access</span>
+            <strong>Secure</strong>
+          </div>
+          <a href="#email" class="email-cta">Verify Email</a>
+          <small>This email is sent when a user creates or verifies an account.</small>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>T. Hendo Dreamstation</span>
+    <a href="#project">Back to top</a>
+  </footer>
+
+  <script>
+    const fallbackTrack = {
+      title: "Dreamstation Preview",
+      description: "A galaxy cyberpunk beat preview for the branding presentation.",
+      hashtags: ["galaxy", "cyberpunk", "gaming", "neon"],
+      price: 49,
+      imageFileUrl: "../hendo-og.jpg",
+      audioFileUrl: "../music/WhatsApp%20Audio%202025-10-18%20at%201.12.24%20PM.mp4"
+    };
+
+    const els = {
+      title: document.getElementById("trackTitle"),
+      description: document.getElementById("trackDescription"),
+      tags: document.getElementById("trackTags"),
+      price: document.getElementById("trackPrice"),
+      image: document.getElementById("trackImage"),
+      audio: document.getElementById("trackAudio"),
+      play: document.getElementById("playPreview"),
+      progress: document.getElementById("previewProgress")
+    };
+
+    function formatPrice(value) {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD"
+      }).format(Number(value || 0));
+    }
+
+    function normalizeAsset(url, fallback) {
+      if (!url) return fallback;
+      return String(url);
+    }
+
+    function renderTrack(track, sourceLabel) {
+      els.title.textContent = track.title || fallbackTrack.title;
+      els.description.textContent = track.description || fallbackTrack.description;
+      els.price.textContent = formatPrice(track.price || fallbackTrack.price);
+      els.image.src = fallbackTrack.imageFileUrl;
+      els.image.alt = (track.title || fallbackTrack.title) + " artwork";
+      els.audio.src = normalizeAsset(track.audioFileUrl, fallbackTrack.audioFileUrl);
+
+      const tags = Array.isArray(track.hashtags) && track.hashtags.length
+        ? track.hashtags
+        : fallbackTrack.hashtags;
+      els.tags.textContent = "";
+      tags.slice(0, 5).forEach((tag) => {
+        const chip = document.createElement("span");
+        chip.textContent = `#${String(tag).replace(/^#/, "")}`;
+        els.tags.appendChild(chip);
+      });
+
+      const status = document.querySelector(".music-info .tag-toggle");
+      status.textContent = sourceLabel;
+    }
+
+    async function loadLiveTrack() {
+      if (window.location.protocol === "file:") {
+        renderTrack(fallbackTrack, "Local sample track");
+        return;
+      }
+
+      const endpoints = ["/api/music/home", "/api/music"];
+      for (const endpoint of endpoints) {
+        try {
+          const response = await fetch(endpoint, { headers: { "Accept": "application/json" } });
+          if (!response.ok) continue;
+          const data = await response.json();
+          const track = data && Array.isArray(data.tracks) ? data.tracks[0] : null;
+          if (track) {
+            renderTrack(track, `Live data from ${endpoint}`);
+            return;
+          }
+        } catch (error) {
+          continue;
+        }
+      }
+
+      renderTrack(fallbackTrack, "Fallback sample track");
+    }
+
+    els.play.addEventListener("click", async () => {
+      if (els.audio.paused) {
+        try {
+          await els.audio.play();
+          els.play.classList.add("is-playing");
+        } catch (error) {
+          els.play.classList.remove("is-playing");
+        }
+      } else {
+        els.audio.pause();
+        els.play.classList.remove("is-playing");
+      }
+    });
+
+    els.audio.addEventListener("timeupdate", () => {
+      const duration = els.audio.duration || 0;
+      const percent = duration ? (els.audio.currentTime / duration) * 100 : 0;
+      els.progress.style.width = `${percent}%`;
+    });
+
+    els.audio.addEventListener("ended", () => {
+      els.play.classList.remove("is-playing");
+      els.progress.style.width = "0%";
+    });
+
+    loadLiveTrack();
+  </script>
+</body>
+</html>

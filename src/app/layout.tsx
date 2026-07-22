@@ -32,7 +32,7 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "T. Hendo - Premium Music Beats & Rights",
+  title: "T. Hendo - Premium Music Beats",
   description: "Discover and purchase exclusive music tracks with full rights. Premium beats for your creative projects.",
 };
 
